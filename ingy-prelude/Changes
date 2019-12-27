@@ -1,0 +1,10 @@
+---
+version: 0.0.2
+date:    Sun May 27 16:28:05 PDT 2018
+changes:
+- Refactor code, add comments, fix a bug
+---
+version: 0.0.1
+date:    Sat May 26 18:20:18 PDT 2018
+changes:
+- First release
