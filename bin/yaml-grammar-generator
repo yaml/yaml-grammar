@@ -1,0 +1,9 @@
+#!/usr/bin/env coffee
+
+require 'ingy-prelude'
+
+main = ()->
+  say "OK"
+
+
+main()

@@ -1,0 +1,266 @@
+#!/usr/bin/env perl
+
+use strict; use warnings;
+# use XXX;
+
+sub main {
+  my $index = 0;
+  if (@_ and $_[0] eq '--index') {
+    shift;
+    $index = 1;
+  }
+  my $text = do { local $/; <STDIN> };
+  $text = reformat($text);
+  if ($index) {
+    $text = make_index($text);
+  }
+  else {
+    $text = make_yaml($text);
+  }
+  print "### Generated from https://yaml.org/spec/1.2/spec.html\n\n";
+  print $text;
+}
+
+sub reformat {
+  $_ = shift;
+
+  # Get section containing all productions:
+  s/.*
+    (
+      ^5\.1\.\ Character\ Set
+      .*
+    )
+    ^\ \ \ Example\ 9\.6\.\ Stream
+    .*
+  /$1/smx;
+
+  # Remove reference numbers ([123] and [1234]):
+  s/\[\d{3,4}\](?!\s)//g;
+
+  # Collapse broken comments:
+  s/(\/\*[^*]+)\n/$1/g;
+  s/(\/\*[^*]+)\n/$1/g;
+
+  # Blank out text lines following a rule:
+  s/^   [A-Z].*//gm;
+  s/^    ? ?\* [A-Z].*//gm;
+
+  # Remove all leading whitespace:
+  s/^\ +//gm;
+
+  # Add extra blank lines between paragraphs:
+  s/^\[/\n\n[/gm;
+  s/\n\n/\n\n\n/gm;
+
+  # Remove all extra prose paragraphs:
+  s/\n\n(?!\n|\[\d|\d+\.\d+\.(?:\d+\.)?\ ).*?(?=\n\n)/\n\n/gs;
+
+  # Remove extra blank lines:
+  s/\n\n+/\n\n/g;
+
+  # Remove comments
+  s/
+    \ *\/\*\ +
+    (?:
+      (?:A|a|0|8|16|32|LF|CR|SP|TAB|DOS|MacOS|UNIX|Key|Value)
+      [\-\ \,]
+      .*?
+    )
+    \ *\*\/
+  //gx;
+
+  # Fix typo in spec:
+  s/safe\(c\)\)/safe(c)/g;
+
+  # Various normalizations:
+  s/::= ([ct]) = /::=\n$1 = /g;
+  s/⇒/=>/g;
+  s/=>\n/=> /g;
+  s/::= +/::=\n/g;
+  s/ \|\n/ \| /g;
+  s/ -\n/ - /g;
+  s/  +/ /g;
+  # s/“'”/"'"/g;
+  s/“(.)”/'$1'/g;
+  s/#x/x:/g;
+  s/≤/<=/g;
+  s/ =\n/ = /g;
+  s/\)\)/) )/g;
+  s/ × (\S+)/{$1}/g;
+
+  # Make special comments into tokens:
+  sub token {
+    $_ = lc $_[0];
+    s/\) \)/))/g;
+    s/ /_/g;
+    $_;
+  }
+  s/\/\*\ (.*?)\ \*\//'<' . token($1) . '>'/ge;
+
+  # Parenthesize => expressions:
+  s/^(.* = .*)/( $1 )/gm;
+
+  return $_;
+}
+
+my ($tokens, $seqs, $num, $key, $copy);
+sub make_index {
+  my $text = shift;
+  my $index = '';
+
+  while ($text =~ s/.*?\n\[(\d+)\]\ (\S+)//s) {
+    $index .= "'$1': $2\n";
+  }
+
+  return $index;
+}
+
+sub make_yaml {
+  my $text = shift;
+
+  my @yaml = ();
+
+  while ($text =~ s/^(\S.*?)\n\n+//s) {
+    my $para = $1;
+    if ($para =~ /^\d/) {
+      push @yaml, make_comment($para);
+    }
+    else {
+      push @yaml, make_rule($para);
+    }
+  }
+
+  my $yaml = join "\n\n", @yaml;
+
+  return $yaml;
+}
+
+sub make_comment {
+  $_ = shift;
+
+  my $comment;
+
+  if (/^\d+\.\d+\.\d+\./) {
+    return "##### $_";
+  }
+  else {
+    return "### $_";
+  }
+}
+
+sub make_rule {
+  my $text = shift;
+  my $copy = $text;
+
+  $text =~ s/^\[(\d+)\]\ (\S+)\ ::=\n// or die $text;
+  ($num, $key) = ($1, $2);
+
+  $tokens = [ split /\s+/, $text ];
+  $seqs = [];
+
+  make_seq();
+  my $rule = pop @$seqs;
+
+  $rule = pretty($rule);
+
+  return "# [$num]\n$key: $rule";
+}
+
+sub make_seq {
+  push @$seqs, '';
+
+  my $seq = \$seqs->[-1];
+
+  my $count = 0;
+  while (my $token = shift @$tokens) {
+    if ($token eq '(') {
+      make_seq();
+      $$seq .= ', ' if length $$seq;
+      $$seq .= pop(@$seqs);
+      $count++;
+    }
+    elsif ($token =~ /^\)([\?\*\+]?)/) {
+      $$seq .= ", '/$1'" if ($1);
+      last;
+    }
+    else {
+      $$seq .= ', ' if length $$seq;
+      $$seq .= format_token($token);
+      $count++;
+    }
+  }
+
+  $$seq = '[' . $$seq . ']' if $count > 1;
+}
+
+sub format_token {
+  $_ = shift;
+  s/^'''$/'`'''/ or
+  s/^'(.)'$/'`$1'/ or
+  s/^\|$/\// or
+  s/^(.*[\[\{\(\,\:\?].*)/'$1'/ or
+  1;
+  $_;
+}
+
+sub pretty {
+  $_ = shift;
+  $copy = $_;
+  my $o = '';
+  my $i = '    ';
+
+  return $_ unless s/^\[(.*)/$1/;
+  $o .= "[";
+
+
+  while (length $_) {
+    if (s/^\[//) {
+      $o .= "\n$i\[";
+      $i .= '  ';
+    }
+    elsif (s/^\]//) {
+      $i =~ s/  //;
+      $o .= "\n$i]";
+    }
+    elsif (s/^('(?:''|[^'])+')//) {
+      $o .= "\n$i$1";
+    }
+    elsif (s/^([a-z][^,\]]+)//) {
+      $o .= "\n$i$1";
+    }
+    elsif (s/^(<(?:_>|[^>])+>)//) {
+      $o .= "\n$i$1";
+    }
+    elsif (s/^([ct],\ .*?)\]//) {
+      $o .= " $1 ]";
+      $i =~ s/  //;
+    }
+    elsif (s/^(=>,\ [^\]]+\])//) {
+      my $t = $1;
+      $o =~ s/(.*\[)\s+(.*)/$1$2/s;
+      $o .= " $t";
+      $i =~ s/  //;
+    }
+    elsif (s/^([\/\-])//) {
+      $o .= " $1";
+    }
+    elsif (s/^(,\ ?)//) {
+      $o .= ',';
+    }
+    else {
+      die "# [$num]\n$o\n>>>$copy<<<\n>>>$_<<<\n";
+    }
+  }
+  # die ">>>$o\n<<<" if $num == 27;
+  # warn "# [$num]\n$key: $o\n";
+
+  $o =~ s/(\ -,)\s+/$1 /g;
+  $o =~ s/\ \ \[\n\s+/  [ /g;
+  $o =~ s/\[\ \[\n\s+/[ [ /g;
+  $o =~ s/\[\ (\S[^\]]+)\n\ +\]/[ $1 ]/g;
+  $o =~ s/^(\ +\[[^\]\/\n]+?)\n\ +([^\]\/\n]+?\])/$1 $2/gm;
+
+  return $o;
+}
+
+main @ARGV;
