@@ -29,6 +29,14 @@ default:
 
 build: $(BUILD_ALL)
 
+check: $(SPEC12_YAML) $(SPEC12_INDEX_YAML)
+	@( \
+	    for f in $^; do \
+	        echo -n "$$f: "; \
+		perl -MYAML::XS -E 'YAML::XS::LoadFile(shift); say "OK"' $$f; \
+	    done; \
+	)
+
 clean:
 	rm -fr $(SPEC12_TXT) $(BUILD_ALL)
 
