@@ -1,13 +1,20 @@
 #!/usr/bin/env perl
 
 use strict; use warnings;
+use YAML::PP;
 # use XXX;
+
+my $debug = 0;
 
 sub main {
   my $index = 0;
-  if (@_ and $_[0] eq '--index') {
-    shift;
-    $index = 1;
+  for (@_) {
+    if ($_ eq '--index') {
+      $index = 1;
+    }
+    if (/^--debug=(\d+)$/) {
+      $debug = $1;
+    }
   }
   my $text = do { local $/; <STDIN> };
   $text = reformat($text);
@@ -100,10 +107,18 @@ sub reformat {
   # Parenthesize => expressions:
   s/^(.* = .*)/( $1 )/gm;
 
+  # Remove unwanted space in a couple rules:
+  s/(ns-s-flow-seq-entries\(n,in-flow\(c\)) (\)\?)/$1$2/;
+  s/(ns-s-flow-map-entries\(n,in-flow\(c\)) (\)\?)/$1$2/;
+  s/(l\+block-sequence\(seq-spaces\(n,c\)) (\))/$1$2/;
+
+  s{\( t = (\S+) => (\S+) \| (<end_of_file>) \)}
+   {- [ t, =, $1, =>, [ '|', $2, $3 ] ]}g;
+
   return $_;
 }
 
-my ($tokens, $seqs, $num, $key, $copy);
+my ($tokens, $seqs, $num, $key);
 sub make_index {
   my $text = shift;
   my $index = '';
@@ -124,6 +139,11 @@ sub make_yaml {
     my $para = $1;
     if ($para =~ /^\d/) {
       push @yaml, make_comment($para);
+    }
+    elsif ($debug && $para =~ /(\d+)/) {
+      next unless $debug == $1;
+      print make_rule($para);
+      exit;
     }
     else {
       push @yaml, make_rule($para);
@@ -150,117 +170,131 @@ sub make_comment {
 
 sub make_rule {
   my $text = shift;
-  my $copy = $text;
+  my $doc = $text;
+
+  $doc =~ s/^/# /gm;
 
   $text =~ s/^\[(\d+)\]\ (\S+)\ ::=\n// or die $text;
   ($num, $key) = ($1, $2);
 
-  $tokens = [ split /\s+/, $text ];
-  $seqs = [];
+  make_tokens($text);
 
-  make_seq();
-  my $rule = pop @$seqs;
+  my $rule;
+  if ($text =~ /^- \[ /) {
+    $rule = "\n$text";
+  }
+  elsif (ref($tokens->[0]) and (grep $_ eq '=>', @{$tokens->[0]})) {
+    $rule = special_format_1($tokens);
+  }
+  elsif (@$tokens == 1 and not ref $tokens->[0]) {
+    $rule = YAML::PP::Dump($tokens->[0]);
+    $rule =~ s/^--- //;
+  }
+  else {
+    $rule = YAML::PP::Dump($tokens);
+    $rule =~ s/^---//;
+  }
 
-  $rule = pretty($rule);
+  my $yaml = "$doc\n$key: $rule";
+  $yaml =~ s/\ +$//gm;
 
-  return "# [$num]\n$key: $rule";
+  return $yaml;
 }
 
-sub make_seq {
-  push @$seqs, '';
+sub special_format_1 {
+  my ($tokens) = @_;
+  my $out = "\n";
+  for my $array (@$tokens) {
+    $out .= '- [ ' . join(', ', @$array) . " ]\n";
+  }
+  return $out;
+}
 
-  my $seq = \$seqs->[-1];
+sub make_tokens {
+  my $text = shift;
+  $tokens = [];
+  my $insert = [$tokens];
+  my @input = split /\s+/, $text;
 
-  my $count = 0;
-  while (my $token = shift @$tokens) {
+  if (@input > 1 and $input[0] =~ /^'([?*|])'$/) {
+    $input[0] = "\\$1";
+  }
+
+  for (my $i = 0; $i < @input; $i++) {
+    my $token = $input[$i];
+
+    if ($token eq '|' and
+        @{$insert->[-1]} > 1 and
+        not grep $_ eq '|', @{$insert->[-1]}
+    ) {
+      my $array = $insert->[-1];
+      @$array = ([@$array], '|');
+      next;
+    }
     if ($token eq '(') {
-      make_seq();
-      $$seq .= ', ' if length $$seq;
-      $$seq .= pop(@$seqs);
-      $count++;
+      my $array = [];
+
+      if ($input[$i+1] =~ /^'([?*|])'$/) {
+        $input[$i+1] = "\\$1";
+      }
+
+      push @{$insert->[-1]}, $array;
+      push @$insert, $array;
+      next;
     }
-    elsif ($token =~ /^\)([\?\*\+]?)/) {
-      $$seq .= ", '/$1'" if ($1);
-      last;
+    elsif ($token =~ /^\)([\*\+\?]?)/) {
+      my $q = $1 || '';
+      my $array = pop @$insert;
+      if (@$array > 1 and $array->[1] =~ /^[-|]$/) {
+        my $operator = $array->[1];
+        @$array = grep { $_ ne $operator } @$array;
+        unshift @$array, "$operator$q";
+      }
+      elsif ($q) {
+        unshift @$array, $q;
+      }
+      next;
     }
-    else {
-      $$seq .= ', ' if length $$seq;
-      $$seq .= format_token($token);
-      $count++;
+    push @{$insert->[-1]}, format_token($token);
+  }
+  if (@$tokens > 1 and $tokens->[1] =~ /^[-|]$/ and $tokens->[0] ne $tokens->[1]) {
+    my $operator = $tokens->[1];
+    @$tokens = grep { $_ ne $operator } @$tokens;
+    unshift @$tokens, $operator;
+  }
+
+  for (my $i = 0; $i < @$tokens; $i++) {
+    my $token = $tokens->[$i];
+    if (ref($token) eq 'ARRAY' and @$token == 1) {
+      $tokens->[$i] = $token->[0];
     }
   }
 
-  $$seq = '[' . $$seq . ']' if $count > 1;
+  # print YAML::PP::Dump [$num, $text, $tokens];
 }
 
 sub format_token {
   $_ = shift;
-  s/^'''$/'`'''/ or
-  s/^'(.)'$/'`$1'/ or
-  s/^\|$/\// or
-  s/^(.*[\[\{\(\,\:\?].*)/'$1'/ or
-  1;
+
+  if (/^x:(.*)/) {
+    $_ = format_hex($1);
+  }
+  elsif (/^\[x:(.*)-x:(.*)\]$/) {
+    $_ = format_hex($1) . '-' . format_hex($2);
+  }
+  elsif (/^'(.*)'/) {
+    $_ = $1;
+  }
+
   $_;
 }
 
-sub pretty {
+sub format_hex {
   $_ = shift;
-  $copy = $_;
-  my $o = '';
-  my $i = '    ';
-
-  return $_ unless s/^\[(.*)/$1/;
-  $o .= "[";
-
-
-  while (length $_) {
-    if (s/^\[//) {
-      $o .= "\n$i\[";
-      $i .= '  ';
-    }
-    elsif (s/^\]//) {
-      $i =~ s/  //;
-      $o .= "\n$i]";
-    }
-    elsif (s/^('(?:''|[^'])+')//) {
-      $o .= "\n$i$1";
-    }
-    elsif (s/^([a-z][^,\]]+)//) {
-      $o .= "\n$i$1";
-    }
-    elsif (s/^(<(?:_>|[^>])+>)//) {
-      $o .= "\n$i$1";
-    }
-    elsif (s/^([ct],\ .*?)\]//) {
-      $o .= " $1 ]";
-      $i =~ s/  //;
-    }
-    elsif (s/^(=>,\ [^\]]+\])//) {
-      my $t = $1;
-      $o =~ s/(.*\[)\s+(.*)/$1$2/s;
-      $o .= " $t";
-      $i =~ s/  //;
-    }
-    elsif (s/^([\/\-])//) {
-      $o .= " $1";
-    }
-    elsif (s/^(,\ ?)//) {
-      $o .= ',';
-    }
-    else {
-      die "# [$num]\n$o\n>>>$copy<<<\n>>>$_<<<\n";
-    }
+  if (length("$_") % 2) {
+    $_ = "0$_"
   }
-  # die ">>>$o\n<<<" if $num == 27;
-  # warn "# [$num]\n$key: $o\n";
-
-  $o =~ s/(\ -,)\s+/$1 /g;
-  $o =~ s/\ \ \[\n\s+/  [ /g;
-  $o =~ s/\[\ \[\n\s+/[ [ /g;
-  $o =~ s/\[\ (\S[^\]]+)\n\ +\]/[ $1 ]/g;
-  $o =~ s/^(\ +\[[^\]\/\n]+?)\n\ +([^\]\/\n]+?\])/$1 $2/gm;
-
-  return $o;
+  return "x$_";
 }
 
 main @ARGV;
