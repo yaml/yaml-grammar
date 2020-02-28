@@ -181,7 +181,7 @@ sub make_rule {
 
   my $rule;
   if ($text =~ /^- \[ /) {
-    $rule = "\n$text";
+    $rule = "\n$text\n";
   }
   elsif (ref($tokens->[0]) and (grep $_ eq '=>', @{$tokens->[0]})) {
     $rule = special_format_1($tokens);
