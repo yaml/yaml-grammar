@@ -1,4 +1,4 @@
-/spec-1.2.yaml
-
+/generate/
 /node_modules/
 /spec/
+/package-lock.json
