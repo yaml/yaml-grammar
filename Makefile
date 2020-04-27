@@ -4,8 +4,10 @@ MODULES := \
     argparse \
     coffeescript \
     ingy-prelude \
-    js-yaml \
     lodash \
+    sprintf \
+    yaml \
+
 
 update:
 	(LC_ALL=C; rm -fr [a-z]* .bin)

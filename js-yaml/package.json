@@ -1,29 +1,27 @@
 {
-  "_from": "js-yaml",
+  "_from": "js-yaml@>=3.11.0",
   "_id": "js-yaml@3.13.1",
   "_inBundle": false,
   "_integrity": "sha512-YfbcO7jXDdyj0DGxYVSlSeQNHbD7XPWvrVWeVUujrQEoZzWJIRrCPoyk6kL6IAjAG2IolMK4T0hNUe0HOUs5Jw==",
   "_location": "/js-yaml",
   "_phantomChildren": {},
   "_requested": {
-    "type": "tag",
+    "type": "range",
     "registry": true,
-    "raw": "js-yaml",
+    "raw": "js-yaml@>=3.11.0",
     "name": "js-yaml",
     "escapedName": "js-yaml",
-    "rawSpec": "",
+    "rawSpec": ">=3.11.0",
     "saveSpec": null,
-    "fetchSpec": "latest"
+    "fetchSpec": ">=3.11.0"
   },
   "_requiredBy": [
-    "#USER",
-    "/",
     "/ingy-prelude"
   ],
   "_resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-3.13.1.tgz",
   "_shasum": "aff151b30bfdfa8e49e05da22e7415e9dfa37847",
-  "_spec": "js-yaml",
-  "_where": "/home/ingy/src/yaml-grammar/node_modules",
+  "_spec": "js-yaml@>=3.11.0",
+  "_where": "/home/ingy/src/yaml-grammar/node_modules/ingy-prelude",
   "author": {
     "name": "Vladimir Zapparov",
     "email": "dervus.grim@gmail.com"
