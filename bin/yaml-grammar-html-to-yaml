@@ -142,7 +142,7 @@ sub make_yaml {
     }
     elsif ($debug && $para =~ /(\d+)/) {
       next unless $debug == $1;
-      print make_rule($para);
+      warn make_rule($para);
       exit;
     }
     else {
@@ -217,7 +217,7 @@ sub make_tokens {
   my @input = split /\s+/, $text;
 
   if (@input > 1 and $input[0] =~ /^'([?*|])'$/) {
-    $input[0] = "\\$1";
+    $input[0] = "$1";
   }
 
   for (my $i = 0; $i < @input; $i++) {
@@ -248,10 +248,10 @@ sub make_tokens {
       if (@$array > 1 and $array->[1] =~ /^[-|]$/) {
         my $operator = $array->[1];
         @$array = grep { $_ ne $operator } @$array;
-        unshift @$array, "$operator$q";
+        unshift @$array, "<$operator$q>";
       }
       elsif ($q) {
-        unshift @$array, $q;
+        unshift @$array, "<$q>";
       }
       next;
     }
@@ -260,7 +260,7 @@ sub make_tokens {
   if (@$tokens > 1 and $tokens->[1] =~ /^[-|]$/ and $tokens->[0] ne $tokens->[1]) {
     my $operator = $tokens->[1];
     @$tokens = grep { $_ ne $operator } @$tokens;
-    unshift @$tokens, $operator;
+    unshift @$tokens, "<$operator>";
   }
 
   for (my $i = 0; $i < @$tokens; $i++) {
@@ -270,7 +270,7 @@ sub make_tokens {
     }
   }
 
-  # print YAML::PP::Dump [$num, $text, $tokens];
+  # warn YAML::PP::Dump [$num, $text, $tokens];
 }
 
 sub format_token {
