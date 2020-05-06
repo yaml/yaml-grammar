@@ -3,15 +3,16 @@ SHELL := bash
 CWD := $(shell pwd)
 
 SPEC12_URL := https://yaml.org/spec/1.2/spec.html
-SPEC12_TXT := spec/spec-1.2.txt
-SPEC12_YAML := spec/spec-1.2.yaml
-SPEC12_INDEX_YAML := spec/spec-1.2.index.yaml
+SPEC12_TXT := spec-1.2.txt
+SPEC12_YAML := spec-1.2.yaml
+SPEC12_INDEX_YAML := spec-1.2.index.yaml
 SPEC12_DSL_YAML := $(SPEC12_YAML:%.yaml=%.dsl.yaml)
 SPEC12_PCRE_YAML := $(SPEC12_YAML:%.yaml=%.pcre.yaml)
 SPEC12_PERL_YAML := $(SPEC12_YAML:%.yaml=%.perl.yaml)
 
+BUILD := $(SPEC12_YAML)
+
 BUILD_ALL := \
-    $(SPEC12_YAML) \
     $(SPEC12_INDEX_YAML) \
     $(SPEC12_DSL_YAML) \
     $(SPEC12_PCRE_YAML) \
@@ -19,7 +20,6 @@ BUILD_ALL := \
 
 WORK_BRANCHES := \
     node_modules \
-    spec \
 
 export PATH := $(CWD)/bin:$(CWD)/node_modules/.bin:$(PATH)
 
@@ -27,7 +27,9 @@ export PATH := $(CWD)/bin:$(CWD)/node_modules/.bin:$(PATH)
 #------------------------------------------------------------------------------
 default:
 
-build: $(BUILD_ALL)
+build: $(BUILD)
+
+build-all: build $(BUILD_ALL)
 
 check: $(SPEC12_YAML) $(SPEC12_INDEX_YAML)
 	@( \
