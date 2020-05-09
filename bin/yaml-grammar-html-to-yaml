@@ -259,7 +259,8 @@ sub make_tokens {
   }
   if (@$tokens > 1 and $tokens->[1] =~ /^[-|]$/ and $tokens->[0] ne $tokens->[1]) {
     my $operator = $tokens->[1];
-    @$tokens = grep { $_ ne $operator } @$tokens;
+    my $i = 0;
+    @$tokens = grep { ++$i % 2 } @$tokens;
     unshift @$tokens, "<$operator>";
   }
 

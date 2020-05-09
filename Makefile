@@ -45,7 +45,7 @@ clean:
 realclean: clean
 	rm -fr $(WORK_BRANCHES)
 
-$(SPEC12_TXT): spec
+$(SPEC12_TXT):
 	lynx --dump $(SPEC12_URL) > $@
 
 $(SPEC12_YAML): $(SPEC12_TXT)
