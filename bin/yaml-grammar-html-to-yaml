@@ -234,10 +234,6 @@ sub make_tokens {
     if ($token eq '(') {
       my $array = [];
 
-      if ($input[$i+1] =~ /^'([?*|])'$/) {
-        $input[$i+1] = "\\$1";
-      }
-
       push @{$insert->[-1]}, $array;
       push @$insert, $array;
       next;
