@@ -1506,13 +1506,13 @@ c-chomping-indicator(t):
 
 
 # [165] b-chomped-last(t) ::=
-# - [ t, =, strip, =>, [ '|', b-non-content, <end_of_file> ] ]
-# - [ t, =, clip, =>, [ '|', b-as-line-feed, <end_of_file> ] ]
-# - [ t, =, keep, =>, [ '|', b-as-line-feed, <end_of_file> ] ]
+# ( t = strip => b-non-content | <end_of_file> )
+# ( t = clip => b-as-line-feed | <end_of_file> )
+# ( t = keep => b-as-line-feed | <end_of_file> )
 b-chomped-last(t):
-- [ t, =, strip, =>, [ '|', b-non-content, <end_of_file> ] ]
-- [ t, =, clip, =>, [ '|', b-as-line-feed, <end_of_file> ] ]
-- [ t, =, keep, =>, [ '|', b-as-line-feed, <end_of_file> ] ]
+- [ t, =, strip, =>, [ '<|>', b-non-content, <end_of_file> ] ]
+- [ t, =, clip, =>, [ '<|>', b-as-line-feed, <end_of_file> ] ]
+- [ t, =, keep, =>, [ '<|>', b-as-line-feed, <end_of_file> ] ]
 
 
 # [166] l-chomped-empty(n,t) ::=

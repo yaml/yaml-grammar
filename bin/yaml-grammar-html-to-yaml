@@ -111,9 +111,6 @@ sub reformat {
   s/(ns-s-flow-map-entries\(n,in-flow\(c\)) (\)\?)/$1$2/;
   s/(l\+block-sequence\(seq-spaces\(n,c\)) (\))/$1$2/;
 
-  s{\( t = (\S+) => (\S+) \| (<end_of_file>) \)}
-   {- [ t, =, $1, =>, [ '|', $2, $3 ] ]}g;
-
   return $_;
 }
 
@@ -179,7 +176,10 @@ sub make_rule {
   make_tokens($text);
 
   my $rule;
-  if ($text =~ /^- \[ /) {
+  if (
+    $text =~ s{\( t = (\S+) => (\S+) \| (<end_of_file>) \)}
+             {- [ t, =, $1, =>, [ '<|>', $2, $3 ] ]}g
+  ) {
     $rule = "\n$text\n";
   }
   elsif (ref($tokens->[0]) and (grep $_ eq '=>', @{$tokens->[0]})) {
