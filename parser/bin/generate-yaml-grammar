@@ -1,0 +1,42 @@
+#!/usr/bin/env coffee
+
+require 'ingy-prelude'
+{ArgumentParser} = require 'argparse'
+
+ap = new ArgumentParser
+  version: '0.0.1',
+  addHelp: true,
+  description: 'YAML Grammar Generator'
+
+ap.addArgument ['-f', '--from'],
+  help: "File path of 'yaml-spec-#.#.yaml"
+  required: true
+  type: 'string'
+
+ap.addArgument ['-t', '--to'],
+  help: 'Language to generate YAML parser into'
+  required: true
+  choices: ['coffee', 'perl']
+
+ap.addArgument ['-r', '--rule'],
+  help: 'Starting rule of grammar'
+  required: true
+
+{from, to, rule} = ap.parseArgs()
+
+spec = file_read from
+
+{coffee_generator_class} = require "../lib/generate-grammar-#{to}"
+
+generator = new coffee_generator_class(spec)
+
+try
+  generator.generate_grammar(rule)
+
+catch e
+  file_write '/tmp/yaml-grammar.coffee', generator.grammar
+  throw e
+
+file_write '/tmp/yaml-grammar.coffee', generator.grammar # XXX
+
+out generator.grammar
