@@ -1128,8 +1128,8 @@ ns-plain-char(c):
 # ( c = block-key => ns-plain-one-line(c) )
 # ( c = flow-key => ns-plain-one-line(c) )
 ns-plain(n,c):
-- [ c, =, flow-out, =>, ns-plain-multi-line(n,c) ]
-- [ c, =, flow-in, =>, ns-plain-multi-line(n,c) ]
+- [ c, =, flow-out, =>, 'ns-plain-multi-line(n,c)' ]
+- [ c, =, flow-in, =>, 'ns-plain-multi-line(n,c)' ]
 - [ c, =, block-key, =>, ns-plain-one-line(c) ]
 - [ c, =, flow-key, =>, ns-plain-one-line(c) ]
 

@@ -2,7 +2,6 @@
 
 use strict; use warnings;
 use YAML::PP;
-# use XXX;
 
 my $debug = 0;
 
@@ -205,6 +204,7 @@ sub special_format_1 {
   my ($tokens) = @_;
   my $out = "\n";
   for my $array (@$tokens) {
+    $array = [ map { /,/ ? "'$_'" : $_ } @$array ];
     $out .= '- [ ' . join(', ', @$array) . " ]\n";
   }
   return $out;
