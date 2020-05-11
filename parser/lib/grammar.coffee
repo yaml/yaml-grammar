@@ -1,3 +1,7 @@
+###
+This grammar class was generated from https://yaml.org/spec/1.2/spec.html
+###
+
 class Grammar extends Parser
 
   TOP: -> @l_yaml_stream
@@ -1995,7 +1999,6 @@ class Grammar extends Parser
   # l-literal-content(n+m,t)
   @::c_l_literal.num = 170
   c_l_literal: (n)->
-    XXX @
     @all(
       @chr('|'),
       [@c_b_block_header, m, t],

@@ -268,6 +268,10 @@ class YamlGrammarCoffeeScriptGenerator
   generate_grammar_head: (top)->
     [name] = @rule_name top
     """\
+    ###
+    This grammar class was generated from https://yaml.org/spec/1.2/spec.html
+    ###
+
     class Grammar extends Parser
 
       TOP: -> @#{name}
