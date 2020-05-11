@@ -43,27 +43,30 @@ class Parser
 
   containers: ['all', 'any', 'x00', 'x01', 'x10']
 
-  call: (f)->
-    name = f.name
-    # say "Calling #{name}"
+  call: (func)->
+    args = []
+    if _.isArray func
+      [func, args...] = func
 
-    @trace f if process.env.TRACE
+    unless typeof(func) == 'function'        # XXX
+      WWW func
+      throw console.trace "Bad call type '#{typeof func}'"
+
+    name = func.name
+
+    @trace func if process.env.TRACE
 
     @level++ if name in @containers
 
-    unless typeof(f) == 'function'        # XXX
-      console.trace()
-      die "Bad call type '#{typeof f}'"
+    func = func.apply(@, args)
+    while typeof(func) == 'function' or _.isArray func
+      func = @call func
 
-    f = f.apply(@)
-    while typeof(f) == 'function'
-      f = @call f
-
-    die typeof f unless typeof(f) == 'boolean'  # XXX
+    die typeof func unless typeof(func) == 'boolean'  # XXX
 
     @level-- if name in @containers
 
-    return f
+    return func
 
   # Match all subrule methods:
   all: (fs...)->
@@ -124,7 +127,8 @@ class Parser
 
   # Call a rule depending on state value:
   case: (c, table)->
-    XXX c, table
+    table[c] or
+      xxx "Can't find '#{c}' in:", table
 
   # Match a single char:
   chr: (c)->

@@ -261,7 +261,7 @@ class YamlGrammarCoffeeScriptGenerator
       rule = @generate_rule item[0]
       prop = item[2]
       value = item[4]
-      out += "  @set(#{rule}, '#{prop}', '#{value}'),\n"
+      out += "  @if_set(#{rule}, '#{prop}', '#{value}'),\n"
     out += ")\n"
     out
 
@@ -329,7 +329,7 @@ class YamlGrammarCoffeeScriptGenerator
       if v in "cmnt"
         v
       else if v in ['n/a', 'block_key', 'block_in', 'block_out', 'flow_key', 'flow_in', 'flow_out']
-        "'#{v}'"
+        "'#{v.replace '_', '-'}'"
       else if v == 'n_m'
         '(n + @m)'
       else if v == '_1'
