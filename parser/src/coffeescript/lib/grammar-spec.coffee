@@ -2,7 +2,7 @@
 This grammar class was generated from https://yaml.org/spec/1.2/spec.html
 ###
 
-class Grammar extends Parser
+class GrammarSpec
 
   TOP: -> @l_yaml_stream
 
@@ -612,14 +612,20 @@ class Grammar extends Parser
   # s-space{m} <where_m_<_n>
   @::s_indent_lt.num = 64
   s_indent_lt: (n)->
-    die "[64] s-indent(<n) --> not implemented yet"
+    @all(
+      @rep(@s_space, m),
+      @where_m_lt_n,
+    )
 
 
   # [65] s-indent(<=n) ::=
   # s-space{m} <where_m_<=_n>
   @::s_indent_le.num = 65
   s_indent_le: (n)->
-    die "[65] s-indent(<=n) --> not implemented yet"
+    @all(
+      @rep(@s_space, m),
+      @where_m_le_n,
+    )
 
 
   # [66] s-separate-in-line ::=
@@ -1911,7 +1917,10 @@ class Grammar extends Parser
   # ( <empty> => m = auto-detect() )
   @::c_indentation_indicator.num = 163
   c_indentation_indicator: (m)->
-    die "[163] c-indentation-indicator(m) --> not implemented yet"
+    @any(
+      @if_set(@ns_dec_digit, 'm', 'ns-dec-digit'),
+      @if_set(@empty, 'm', 'auto-detect()'),
+    )
 
 
   # [164] c-chomping-indicator(t) ::=
@@ -2575,4 +2584,4 @@ class Grammar extends Parser
     )
 
 
-global.YamlGrammar = Grammar
+global.GrammarSpec = GrammarSpec

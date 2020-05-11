@@ -1,11 +1,18 @@
-# This is a parser class. It has a parse() method and parsing primitives for
-# the grammar. It also calls matching methods in the receiver class, when a
-# rule matches:
-class Parser
+###
+This is a parser class. It has a parse() method and parsing primitives for the
+grammar. It also calls matching methods in the receiver class, when a rule
+matches:
+###
+
+require './grammar'
+
+class Parser extends Grammar
   empty: -> true
   excluding_c_forbidden_content: -> false
 
   constructor: (@receiver)->
+    super()
+
     methods =
       Reflect.ownKeys(@receiver.constructor.prototype).filter (k)->
         k not in ['constructor', 'TOP']

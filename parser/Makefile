@@ -1,26 +1,16 @@
 SHELL = bash
 
-# .DELETE_ON_ERROR:
+.DELETE_ON_ERROR:
 
 default:
 
 .PHONY: test
-test: test-coffee
+test: test-coffeescript
 
-test-coffee: build-coffee
-	TRACE=1 coffee ./test.coffee
+build: build-coffeescript
 
-build-coffee: lib/grammar.coffee
+test-%:
+	make -C src/$(@:test-%=%) test
 
-lib/grammar.coffee: ../spec-1.2.yaml
-	./bin/generate-yaml-grammar \
-	    --from=$< \
-	    --to=coffee \
-	    --rule=l-yaml-stream \
-	> $@
-
-../spec-1.2.yaml:
-	make -C .. $(@:../%=%)
-
-clean:
-	rm -f lib/grammar.coffee
+build-*:
+	make -C src/$(@:test-%=%) build

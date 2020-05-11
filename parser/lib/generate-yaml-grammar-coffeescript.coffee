@@ -9,9 +9,11 @@ class YamlGrammarCoffeeScriptGenerator
 
   grammar: ''
 
-  miss: [64, 65, 163]
-  true: [] # [80, 163,164,165,166]
-  false: [] # [131, 200,202,208]
+  # XXX These 3 need to be generated differently:
+  miss: []  # [64, 65, 163]
+
+  true: []  # [80, 164, 165, 166]
+  false: [] # [131, 200, 202, 208]
 
   generate_grammar: (top)->
     @out @generate_grammar_head top
@@ -272,7 +274,7 @@ class YamlGrammarCoffeeScriptGenerator
     This grammar class was generated from https://yaml.org/spec/1.2/spec.html
     ###
 
-    class Grammar extends Parser
+    class GrammarSpec
 
       TOP: -> @#{name}
 
@@ -282,7 +284,7 @@ class YamlGrammarCoffeeScriptGenerator
 
   generate_grammar_tail: (top)->
     """
-    global.YamlGrammar = Grammar
+    global.GrammarSpec = GrammarSpec
     """
 
   out: (text)->
