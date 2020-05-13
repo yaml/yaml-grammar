@@ -22,15 +22,6 @@ class Grammar extends GrammarSpec
   #----------------------------------------------------------------
   # Fix for case switcher
   #----------------------------------------------------------------
-  @::in_flow.num = 136
-  in_flow: (c)->
-    @case(c, {
-      'flow-out': 'flow-in',
-      'flow-in': 'flow-in',
-      'block-key': 'flow-key',
-      'flow-key': 'flow-key',
-    })
-
   @::c_flow_mapping.num = 140
   c_flow_mapping: (n, c)->
     @all(

@@ -1501,10 +1501,10 @@ class GrammarSpec
   @::in_flow.num = 136
   in_flow: (c)->
     @case(c, {
-      'flow-out': @flow_in,
-      'flow-in': @flow_in,
-      'block-key': @flow_key,
-      'flow-key': @flow_key,
+      'flow-out': 'flow-in',
+      'flow-in': 'flow-in',
+      'block-key': 'flow-key',
+      'flow-key': 'flow-key',
     })
 
 

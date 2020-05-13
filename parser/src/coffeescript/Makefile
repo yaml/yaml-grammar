@@ -13,6 +13,6 @@ build: $(GRAMMAR_SPEC)
 $(GRAMMAR_SPEC): $(YAML_SPEC_YAML) $(GENERATOR_LIB)
 	$(GENERATOR) \
 	    --from=$< \
-	    --to=coffee \
+	    --to=coffeescript \
 	    --rule=l-yaml-stream \
 	> $@

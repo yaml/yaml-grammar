@@ -16,7 +16,7 @@ ap.addArgument ['-f', '--from'],
 ap.addArgument ['-t', '--to'],
   help: 'Language to generate YAML parser into'
   required: true
-  choices: ['coffee', 'perl']
+  choices: ['coffeescript', 'perl']
 
 ap.addArgument ['-r', '--rule'],
   help: 'Starting rule of grammar'

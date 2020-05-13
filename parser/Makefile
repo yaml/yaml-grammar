@@ -12,5 +12,5 @@ build: build-coffeescript
 test-%:
 	make -C src/$(@:test-%=%) test
 
-build-*:
-	make -C src/$(@:test-%=%) build
+build-%:
+	make -C src/$(@:build-%=%) build

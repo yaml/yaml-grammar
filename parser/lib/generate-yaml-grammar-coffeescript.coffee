@@ -247,12 +247,15 @@ class YamlGrammarCoffeeScriptGenerator
           .replace(/\( /, '(')
         out += "  '#{value}': #{call},\n"
       else
-        [name, args...] = @rule_name func
-        if args.length
-          args = @format_args_case args
-          out += "  '#{value}': [@#{name}, #{args}],\n"
+        if func.match /^flow/
+          out += "  '#{value}': '#{func}',\n"
         else
-          out += "  '#{value}': @#{name},\n"
+          [name, args...] = @rule_name func
+          if args.length
+            args = @format_args_case args
+            out += "  '#{value}': [@#{name}, #{args}],\n"
+          else
+            out += "  '#{value}': @#{name},\n"
     out += "})\n"
     out
 
