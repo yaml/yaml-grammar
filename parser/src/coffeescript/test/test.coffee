@@ -27,7 +27,7 @@ test_parse = (yaml)->
     say "FAIL - '#{n}#{yaml}'"
     return false
 
-# exit 1 unless test_parse "123 # foo"
+test_parse "[] # foo"
 test_parse "{}"
 test_parse "{}\n"
 test_parse "''\n"

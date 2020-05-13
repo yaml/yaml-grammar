@@ -22,23 +22,16 @@ class Grammar extends GrammarSpec
   #----------------------------------------------------------------
   # Fix for case switcher
   #----------------------------------------------------------------
-  @::c_flow_mapping.num = 140
-  c_flow_mapping: (n, c)->
-    @all(
-      @chr('{'),
-      @x01([@s_separate, n, c]),
-      @x01([@ns_s_flow_map_entries, n, @in_flow(c)]),
-      @chr('}'),
-    )
+  # [201] seq-spaces(n,c) ::=
+  # ( c = block-out => n-1 )
+  # ( c = block-in => n )
+  @::seq_spaces.num = 201
+  seq_spaces: (n, c)->
+    @case(c, {
+      'block-out': n - 1,
+      'block-in': n,
+    })
 
-  @::c_flow_sequence.num = 137
-  c_flow_sequence: (n, c)->
-    @all(
-      @chr('['),
-      @x01([@s_separate, n, c]),
-      @x01([@ns_s_flow_seq_entries, n, @in_flow(c)]),
-      @chr(']'),
-    )
 
   #----------------------------------------------------------------
   # Fixes for @m

@@ -55,6 +55,10 @@ class Parser extends Grammar
     args = []
     if _.isArray func
       [func, args...] = func
+      args = _.map args, (a)=>
+        if _.isArray a
+          a = a[0].apply @, a[1..]
+        a
 
     unless typeof(func) == 'function'        # XXX
       die "Bad call type '#{typeof func}'"
