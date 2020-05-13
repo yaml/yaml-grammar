@@ -8,7 +8,27 @@ require '../lib/grammar'
 
 class Receiver
 
-parser = new Parser(new Receiver)
+test_parse = (yaml)->
+  parser = new Parser(new Receiver)
 
-parser.parse('{}')
-# parser.parse('{""}')
+  pass = true
+  try
+    parser.parse(yaml)
+  catch e
+    warn e
+    pass = false
+
+  n = if yaml.match /\n./ then "\n" else ''
+
+  if pass
+    say "PASS - '#{n}#{yaml}'"
+    return true
+  else
+    say "FAIL - '#{n}#{yaml}'"
+    return false
+
+# exit 1 unless test_parse "123 # foo"
+test_parse "{}"
+test_parse "{}\n"
+test_parse "''\n"
+test_parse '"'

@@ -37,6 +37,7 @@ class Parser extends Grammar
         false
 
   parse: (@input)->
+    @len = @input.length
     @pos = 0
     @level = 0
 
@@ -56,8 +57,7 @@ class Parser extends Grammar
       [func, args...] = func
 
     unless typeof(func) == 'function'        # XXX
-      WWW func
-      throw console.trace "Bad call type '#{typeof func}'"
+      die "Bad call type '#{typeof func}'"
 
     name = func.name
 
@@ -184,9 +184,6 @@ class Parser extends Grammar
 
   # Special grammar rules (written by hand):
   # TODO Move to separate class module file.
-  empty: ->
-    warn "Not implemented 'empty'"
-    false
   start_of_line: ->
     @pos == 0 or
       @input[@pos - 1] == "\n"
@@ -232,7 +229,7 @@ class Parser extends Grammar
       .replace(/\r/g, '\\r')
       .replace(/\n/g, '\\n')
 
-    say sprintf(
+    warn sprintf(
       "#{@indent()}> %-25s  %-4d '%s'",
       name,
       @pos,

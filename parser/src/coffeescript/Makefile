@@ -6,7 +6,7 @@ YAML_SPEC_YAML := $(ROOT)/spec-1.2.yaml
 GRAMMAR_SPEC := lib/grammar-spec.coffee
 
 test: build
-	TRACE=1 coffee ./test/test.coffee
+	TRACE=$(TRACE) coffee ./test/test.coffee
 
 build: $(GRAMMAR_SPEC)
 
