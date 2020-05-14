@@ -2010,8 +2010,8 @@ class GrammarSpec
   c_l_literal: (n)->
     @all(
       @chr('|'),
-      [@c_b_block_header, m, t],
-      [@l_literal_content, (n + @m), t],
+      [@c_b_block_header, @m, @t],
+      [@l_literal_content, (n + @m), @t],
     )
 
 
@@ -2064,8 +2064,8 @@ class GrammarSpec
   c_l_folded: (n)->
     @all(
       @chr('>'),
-      [@c_b_block_header, m, t],
-      [@l_folded_content, (n + @m), t],
+      [@c_b_block_header, @m, @t],
+      [@l_folded_content, (n + @m), @t],
     )
 
 
@@ -2190,7 +2190,12 @@ class GrammarSpec
   @::l_block_sequence.num = 183
   l_block_sequence: (n)->
     @all(
-      @_,
+      @x10(
+        @all(
+          [@s_indent, (n + @m)],
+          [@c_l_block_seq_entry, (n + @m)],
+        )
+      ),
       @for_some_fixed_auto_detected_m_gt_0,
     )
 
@@ -2217,7 +2222,7 @@ class GrammarSpec
   s_l_block_indented: (n, c)->
     @any(
       @all(
-        [@s_indent, m],
+        [@s_indent, @m],
         @any(
           [@ns_l_compact_sequence, (n + 1 + @m)],
           [@ns_l_compact_mapping, (n + 1 + @m)],
@@ -2254,7 +2259,12 @@ class GrammarSpec
   @::l_block_mapping.num = 187
   l_block_mapping: (n)->
     @all(
-      @_,
+      @x10(
+        @all(
+          [@s_indent, (n + @m)],
+          [@ns_l_block_map_entry, (n + @m)],
+        )
+      ),
       @for_some_fixed_auto_detected_m_gt_0,
     )
 
@@ -2451,8 +2461,8 @@ class GrammarSpec
   @::seq_spaces.num = 201
   seq_spaces: (n, c)->
     @case(c, {
-      'block-out': @n_1,
-      'block-in': @n,
+      'block-out': n-1,
+      'block-in': n,
     })
 
 

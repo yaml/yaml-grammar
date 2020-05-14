@@ -46,9 +46,11 @@ class YamlGrammarCoffeeScriptGenerator
     [name, args...] = @rule_name name
 
     if args.length
+      @sig = args
       args = @format_args_sig args
       "  #{name}: (#{args})->"
     else
+      @sig = []
       "  #{name}: ->"
 
   generate_rule_body: (name)->
@@ -98,24 +100,26 @@ class YamlGrammarCoffeeScriptGenerator
       if rule[0][3] == '=>'
         return @generate_case rule
       else
-        return @generate_all rule
+        return @generate_list rule, 'all'
     else
       if rule[0] == '<?>'
-        return @generate_maybe_all rule[1..]
+        return @generate_repeat rule[1..], 'x01'
+      if rule[0] == '<+>'
+        return @generate_repeat rule[1..], 'x10'
       if rule[0] == '<*>'
-        return @generate_many_all rule[1..]
+        return @generate_repeat rule[1..], 'x00'
       if rule[0] == '<|*>'
-        return @generate_many_any rule[1..]
+        return @generate_repeat rule[1..], 'x00'
       if rule[0] == '<|>'
-        return @generate_any rule[1..]
+        return @generate_list rule[1..], 'any'
       else if rule[0] == '<->'
-        return @generate_but rule[1..]
+        return @generate_list rule[1..], 'but'
       else if rule[0].match(
         ///^
           (?:b|c|e|l|nb|ns|s)-[-a-z0-9]+
           .*
         $///) or rule[0].match(/^\\?.$/)
-        return @generate_all rule
+        return @generate_list rule, 'all'
       else if m = rule[0].match /^<(.+)>$/
         return @generate_ref m[1], ''
       else
@@ -195,45 +199,19 @@ class YamlGrammarCoffeeScriptGenerator
     name = @special_name name
     "@#{name}"
 
-  generate_maybe_all: (list)->
-    "@x01(\n" +
-      @indent(@generate_all(list).replace(/\s+$/, '')) +
+  generate_repeat: (list, repeat)->
+    "@#{repeat}(\n" +
+      @indent(@generate_list(list, 'all').replace(/\s+$/, '')) +
       "\n)"
 
-  generate_many_any: (list)->
-    "@x00(\n" +
-      @indent(@generate_all(list).replace(/\s+$/, '')) +
-      "\n)"
-
-  generate_many_all: (list)->
-    "@x00(\n" +
-      @indent(@generate_all(list).replace(/\s+$/, '')) +
-      "\n)"
-
-  # TODO generate_{all,any,but} can probably be one function
-  generate_all: (list)->
-    out = "@all(\n"
-    for item in list
-      out += @indent(@generate_rule(item).trim()) + ",\n"
-    out += ")\n"
-    out
-
-  generate_any: (list)->
-    out = "@any(\n"
-    for item in list
-      out += @indent(@generate_rule(item).trim()) + ",\n"
-    out += ")\n"
-    out
-
-  generate_but: (list)->
-    out = "@but(\n"
+  generate_list: (list, kind)->
+    out = "@#{kind}(\n"
     for item in list
       out += @indent(@generate_rule(item).trim()) + ",\n"
     out += ")\n"
     out
 
   generate_case: (list)->
-    # www @num, list
     out = "@case(#{list[0][0]}, {\n"
     for item in list
       value = item[2]
@@ -249,6 +227,8 @@ class YamlGrammarCoffeeScriptGenerator
       else
         if func.match /^flow/
           out += "  '#{value}': '#{func}',\n"
+        else if func in ['n', 'n-1']
+          out += "  '#{value}': #{func},\n"
         else
           [name, args...] = @rule_name func
           if args.length
@@ -260,7 +240,6 @@ class YamlGrammarCoffeeScriptGenerator
     out
 
   generate_set: (list)->
-    # www @num, list
     out = "@any(\n"
     for item in list
       rule = @generate_rule item[0]
@@ -297,23 +276,28 @@ class YamlGrammarCoffeeScriptGenerator
     text.replace(/^/gm, _.repeat('  ', n))
 
   rule_name: (name)->
+    orig = name
+    [name, args...] = name.split '('
+    args = args.join('(').replace /\)$/, ''
+
     name = name.replace /[-+]/g, '_'
 
-    return [name] unless name.match /\(/
+    return [name] unless args
 
-    if m = name.match /(.*)\(<n\)$/
-      return ["#{m[1]}_lt", 'n']
+    if args == '<n'
+      return ["#{name}_lt", 'n']
 
-    if m = name.match /(.*)\(<=n\)$/
-      return ["#{m[1]}_le", 'n']
+    if args == '<=n'
+      return ["#{name}_le", 'n']
 
-    if m = name.match /(.*)\(([cmnt]|n_1_m|block_key|flow_key|seq_spaces\(n,c\))\)$/
-      return [m[1], m[2]]
+    if args in 'cmnt' or
+       args in ['n+m', 'n+1+m', 'block-key', 'flow-key', 'seq-spaces(n,c)']
+      return [name, args]
 
-    if m = name.match /(.*)\(([mn]|_1|n_1|n_m|n\/a),([ct]|block_in|block_out|flow_in|flow_out|in_flow\(c\))\)$/
-      return [m[1], m[2], m[3]]
+    if m = args.match /^([mn]|-1|n\+1|n\+m|n\/a),([ct]|block-in|block-out|flow-in|flow-out|in-flow\(c\))$/
+      return [name, m[1], m[2]]
 
-    die "[#{@num}] Bad rule name in [#{@num}]: '#{name}'"
+    die "[#{@num}] Bad rule name in [#{@num}]: '#{orig}'"
 
   special_name: (name)->
     [name] = @rule_name name
@@ -321,8 +305,6 @@ class YamlGrammarCoffeeScriptGenerator
       .replace /(?:_<=_|\(<=)/, '_le_'
       .replace /(?:_<_|\(<)/, '_lt_'
       .replace /(?:_>_)/, '_gt_'
-#     warn ">>> " + name
-#     name
 
   format_args_sig: (list)->
     t = (v)=>
@@ -335,21 +317,24 @@ class YamlGrammarCoffeeScriptGenerator
 
   format_args_call: (list)->
     t = (v)=>
-      if v in "cmnt"
-        v
-      else if v in ['n/a', 'block_key', 'block_in', 'block_out', 'flow_key', 'flow_in', 'flow_out']
+      if v in 'cmnt'
+        if v in @sig
+          v
+        else
+          "@#{v}"
+      else if v in ['n/a', 'block-key', 'block-in', 'block-out', 'flow-key', 'flow-in', 'flow-out']
         "'#{v.replace '_', '-'}'"
-      else if v == 'n_m'
+      else if v == 'n+m'
         '(n + @m)'
-      else if v == '_1'
+      else if v == '-1'
         '-1'
-      else if v == 'n_1'
+      else if v == 'n+1'
         '(n + 1)'
-      else if v == 'n_1_m'
+      else if v == 'n+1+m'
         '(n + 1 + @m)'
-      else if v == 'in_flow(c)'
+      else if v == 'in-flow(c)'
         '[@in_flow, c]'
-      else if v == 'seq_spaces(n,c)'
+      else if v == 'seq-spaces(n,c)'
         '[@seq_spaces, n, c]'
       else
         xxx "[#{@num}] Bad list in format_args_call:", list
@@ -382,4 +367,3 @@ class YamlGrammarCoffeeScriptGenerator
 
 module.exports =
   coffee_generator_class: YamlGrammarCoffeeScriptGenerator
-
