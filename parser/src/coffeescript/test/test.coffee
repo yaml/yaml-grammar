@@ -6,10 +6,10 @@ require '../lib/parser'
 
 require '../lib/grammar'
 
-class Receiver
+receiver = require '../lib/test-receiver'
 
 test_parse = (yaml)->
-  parser = new Parser(new Receiver)
+  parser = new Parser(new receiver)
 
   pass = true
   try
@@ -27,8 +27,10 @@ test_parse = (yaml)->
     say "FAIL - '#{n}#{yaml}'"
     return false
 
-test_parse "[] # foo"
+# test_parse "a: b"
+test_parse "[]"
+test_parse "[foo]"
+test_parse "[ foo ]"
 test_parse "{}"
 test_parse "{}\n"
 test_parse "''\n"
-test_parse '"'

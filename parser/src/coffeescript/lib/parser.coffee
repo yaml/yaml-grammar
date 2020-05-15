@@ -7,8 +7,6 @@ matches:
 require './grammar'
 
 class Parser extends Grammar
-  empty: -> true
-  excluding_c_forbidden_content: -> false
 
   constructor: (@receiver)->
     super()
@@ -42,14 +40,14 @@ class Parser extends Grammar
     @level = 0
 
     if not @call @TOP
-      @error("Parser failed")
+      throw "Parser failed"
 
     if @pos < @input.length
-      @error("Parser finished before end of input")
+      throw "Parser finished before end of input"
 
     true
 
-  containers: ['all', 'any', 'x00', 'x01', 'x10']
+  containers: ['all', 'any', 'but', 'x00', 'x01', 'x10']
 
   call: (func)->
     args = []
@@ -73,7 +71,8 @@ class Parser extends Grammar
     while typeof(func) == 'function' or _.isArray func
       func = @call func
 
-    die typeof func unless typeof(func) == 'boolean'  # XXX
+    if typeof(func) != 'boolean'  # XXX
+      die "Calling '#{name}' returned '#{typeof func}' instead of 'boolean'"
 
     @level-- if name in @containers
 
@@ -182,46 +181,6 @@ class Parser extends Grammar
       else
         false
 
-  chk: (foo...)->
-    xxx foo
-
-
-  # Special grammar rules (written by hand):
-  # TODO Move to separate class module file.
-  start_of_line: ->
-    @pos == 0 or
-      @input[@pos - 1] == "\n"
-  end_of_file: ->
-    @pos >= @input.length
-  where_m_lt_n: ->
-    warn "Not implemented 'where_m_lt_n'"
-    false
-  where_m_le_n: ->
-    warn "Not implemented 'where_m_le_n'"
-    false
-  at_most_1024_characters_altogether: ->
-    warn "Not implemented 'at_most_1024_characters_altogether'"
-    false
-  for_some_fixed_auto_detected_m_gt_0: ->
-    warn "Not implemented 'for_some_fixed_auto_detected_m_gt_0'"
-    false
-  followed_by_an_ns_plain_safe: ->
-    warn "Not implemented 'followed_by_an_ns_plain_safe'"
-    false
-  not_followed_by_an_ns_plain_safe: ->
-    warn "Not implemented 'not_followed_by_an_ns_plain_safe'"
-    false
-  not_followed_by_an_ns_char: ->
-    warn "Not implemented 'not_followed_by_an_ns_char'"
-    false
-
-  # Helper functions
-  error: (msg)->
-    throw msg
-
-  indent: ->
-    _.repeat ' ', @level
-
   # Trace debugging:
   trace: (f)->
     name = f.name
@@ -234,7 +193,7 @@ class Parser extends Grammar
       .replace(/\n/g, '\\n')
 
     warn sprintf(
-      "#{@indent()}> %-25s  %-4d '%s'",
+      "#{_.repeat ' ', @level}> %-25s  %-4d '%s'",
       name,
       @pos,
       input
