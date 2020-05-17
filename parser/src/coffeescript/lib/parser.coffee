@@ -8,31 +8,9 @@ require './grammar'
 
 class Parser extends Grammar
 
-  constructor: (@receiver)->
-    super()
+  state: []
 
-    methods =
-      Reflect.ownKeys(@receiver.constructor.prototype).filter (k)->
-        k not in ['constructor', 'TOP']
-
-    for method in methods
-      @makeReceiver method
-
-  makeReceiver: (m)->
-    method = @constructor.prototype[m]
-    callback = @receiver.constructor.prototype[m]
-
-    @[m] = ->
-      pos = @pos
-      if @call method
-        if @pos > 0
-          text = @input[pos..(@pos - 1)]
-        else
-          text = ''
-        callback.call @receiver, text
-        true
-      else
-        false
+  constructor: (@receiver)-> super()
 
   parse: (@input)->
     @len = @input.length
@@ -55,40 +33,81 @@ class Parser extends Grammar
       [func, args...] = func
       args = _.map args, (a)=>
         if _.isArray a
-          a = a[0].apply @, a[1..]
-        a
+          a[0].apply @, a[1..]
+        else
+          a
 
     unless typeof(func) == 'function'        # XXX
       die "Bad call type '#{typeof func}'"
 
-    name = func.name
+    name = func.trace || func.name || func.toString()
 
-    @trace func if process.env.TRACE
+    @state.push name
 
     @level++ if name in @containers
 
-    func = func.apply(@, args)
-    while typeof(func) == 'function' or _.isArray func
-      func = @call func
+    @trace '?', name
 
-    if typeof(func) != 'boolean'  # XXX
-      die "Calling '#{name}' returned '#{typeof func}' instead of 'boolean'"
+    pos = @pos
+    @receive func, 'try', pos
+
+    result = func2 = func.apply(@, args)
+    while typeof(func2) == 'function' or _.isArray func2
+      result = func2 = @call func2
+
+    if typeof(result) != 'boolean'  # XXX
+      die "Calling '#{name}' returned '#{typeof result}' instead of 'boolean'"
+
+    if result
+      @trace '+', name
+      @receive func, 'got', pos
+    else
+      @trace 'x', name
 
     @level-- if name in @containers
 
-    return func
+    @state.pop()
+
+    return result
+
+  receive: (func, type, pos)->
+    receiver = (func.receivers ?= @make_receivers())[type]
+    return unless receiver
+
+    # warn receiver.name
+
+    receiver.call @receiver,
+      text: @input[pos..@pos-1]
+      parser: @
+      start: pos
+
+  make_receivers: ->
+    i = @state.length
+    names = []
+    while i > 0 and not (n = @state[--i]).match /_/
+      if m = n.match /^chr\((.)\)$/
+        n = 'chr_' + m[1].charCodeAt(0).toString(16)
+      names.unshift n
+    name = [n, names...].join '__'
+
+    try: @receiver.constructor.prototype["try__#{name}"] || false
+    got: @receiver.constructor.prototype["got__#{name}"] || false
+
 
   # Match all subrule methods:
   all: (fs...)->
     all = ->
+      pos = @pos
       for f in fs
         if not f?
           xxx '*** Missing function in @all group:', fs
           return false
 
         if not @call f
+          @pos = pos
           return false
-      true
+
+      return true
 
   # Match any subrule method. Rules are tried in order and stops on first
   # match:
@@ -97,7 +116,8 @@ class Parser extends Grammar
       for f in fs
         if @call f
           return true
-      false
+
+      return false
 
   # Match 0 or 1 times:
   x01: (f)->
@@ -151,8 +171,7 @@ class Parser extends Grammar
       else
         false
 
-    if process.env.TRACE
-      chr.trace = "chr(#{JSON.stringify(c)[1..-2]})"
+    chr.trace = "chr(#{JSON.stringify(c)[1..-2]})"
 
     chr
 
@@ -160,7 +179,7 @@ class Parser extends Grammar
   but: (fs...)->
     but = ->
       pos1 = @pos
-      return  false unless @call fs[0]
+      return false unless @call fs[0]
       pos2 = @pos
       @pos = pos1
       for f in fs[1..]
@@ -181,11 +200,16 @@ class Parser extends Grammar
       else
         false
 
+    if process.env.TRACE
+      rng.trace = "rng(#{JSON.stringify(x)[1..-2]},#{JSON.stringify(y)[1..-2]})"
+
+    rng
+
+
   # Trace debugging:
-  trace: (f)->
-    name = f.name
-    name = f.trace if f.trace?
-    name = f.toString() unless name
+  trace: (marker, name)->
+    return unless process.env.TRACE
+#     return unless marker in ['x', '+']
 
     input = @input[@pos..]
       .replace(/\t/g, '\\t')
@@ -193,8 +217,9 @@ class Parser extends Grammar
       .replace(/\n/g, '\\n')
 
     warn sprintf(
-      "#{_.repeat ' ', @level}> %-25s  %-4d '%s'",
-      name,
+      "#{_.repeat ' ', @level}%s %-30s  %4d '%s'",
+      marker,
+      "#{name}_#{@level}",
       @pos,
       input
     )

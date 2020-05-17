@@ -17,7 +17,7 @@ class Grammar extends GrammarSpec
 
   empty: -> true
 
-  excluding_c_forbidden_content: -> false
+  excluding_c_forbidden_content: -> true
 
   at_most_1024_characters_altogether: -> true
 
@@ -48,6 +48,28 @@ class Grammar extends GrammarSpec
     else
       @input[@pos - 1] not in " \t"
 
+
+  #----------------------------------------------------------------
+  # Debugging:
+  #----------------------------------------------------------------
+  match_regex: (rgx)->
+    return false unless @pos < @len
+    if m = @input[@pos..].match rgx
+      @pos += m[0].length
+      return true
+    else
+      return false
+
+  XXX_s_separate_in_line: ->
+    @match_regex(/^[\ \t]+/) or
+    @start_of_line()
+
+  # 114, 123, 132 has bug. @all not needed if only 1 param
+
+  XXX_ns_plain_one_line: (c)->
+    @match ///^
+    126
+    ///
 
   #----------------------------------------------------------------
   # Patches that need to be generated:

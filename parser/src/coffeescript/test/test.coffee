@@ -18,19 +18,27 @@ test_parse = (yaml)->
     warn e
     pass = false
 
-  n = if yaml.match /\n./ then "\n" else ''
+  if yaml.match /\n./
+    n = "\n"
+  else
+    n = ''
+    yaml = yaml.replace /\n$/, '\\n'
 
   if pass
     say "PASS - '#{n}#{yaml}'"
+    say parser.receiver.output()
     return true
   else
     say "FAIL - '#{n}#{yaml}'"
     return false
 
-# test_parse "a: b"
 test_parse "[]"
-test_parse "[foo]"
-test_parse "[ foo ]"
-test_parse "{}"
-test_parse "{}\n"
-test_parse "''\n"
+# test_parse "a: b"
+# test_parse ""
+# test_parse "---\n"
+# test_parse "..."
+# test_parse "[]  # foo"
+# test_parse "[ foo ]"
+# test_parse "{}"
+# test_parse "{}\n"
+# test_parse "''"

@@ -1194,13 +1194,11 @@ class GrammarSpec
   # ( s-white* ns-double-char )*
   @::nb_ns_double_in_line.num = 114
   nb_ns_double_in_line: ->
-    @all(
-      @x00(
-        @all(
-          @x00(@s_white),
-          @ns_double_char,
-        )
-      ),
+    @x00(
+      @all(
+        @x00(@s_white),
+        @ns_double_char,
+      )
     )
 
 
@@ -1310,13 +1308,11 @@ class GrammarSpec
   # ( s-white* ns-single-char )*
   @::nb_ns_single_in_line.num = 123
   nb_ns_single_in_line: ->
-    @all(
-      @x00(
-        @all(
-          @x00(@s_white),
-          @ns_single_char,
-        )
-      ),
+    @x00(
+      @all(
+        @x00(@s_white),
+        @ns_single_char,
+      )
     )
 
 
@@ -1449,13 +1445,11 @@ class GrammarSpec
   # ns-plain-char(c) )*
   @::nb_ns_plain_in_line.num = 132
   nb_ns_plain_in_line: (c)->
-    @all(
-      @x00(
-        @all(
-          @x00(@s_white),
-          [@ns_plain_char, c],
-        )
-      ),
+    @x00(
+      @all(
+        @x00(@s_white),
+        [@ns_plain_char, c],
+      )
     )
 
 
