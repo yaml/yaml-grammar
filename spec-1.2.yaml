@@ -949,9 +949,9 @@ s-double-break(n):
 # [114] nb-ns-double-in-line ::=
 # ( s-white* ns-double-char )*
 nb-ns-double-in-line:
-- - <*>
-  - s-white*
-  - ns-double-char
+- <*>
+- s-white*
+- ns-double-char
 
 
 # [115] s-double-next-line(n) ::=
@@ -1034,9 +1034,9 @@ nb-single-one-line: nb-single-char*
 # [123] nb-ns-single-in-line ::=
 # ( s-white* ns-single-char )*
 nb-ns-single-in-line:
-- - <*>
-  - s-white*
-  - ns-single-char
+- <*>
+- s-white*
+- ns-single-char
 
 
 # [124] s-single-next-line(n) ::=
@@ -1138,9 +1138,9 @@ ns-plain(n,c):
 # ( s-white*
 # ns-plain-char(c) )*
 nb-ns-plain-in-line(c):
-- - <*>
-  - s-white*
-  - ns-plain-char(c)
+- <*>
+- s-white*
+- ns-plain-char(c)
 
 
 # [133] ns-plain-one-line(c) ::=

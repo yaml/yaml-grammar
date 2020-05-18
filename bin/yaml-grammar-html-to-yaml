@@ -2,6 +2,7 @@
 
 use strict; use warnings;
 use YAML::PP;
+use XXX;
 
 my $debug = 0;
 
@@ -265,6 +266,14 @@ sub make_tokens {
     if (ref($token) eq 'ARRAY' and @$token == 1) {
       $tokens->[$i] = $token->[0];
     }
+  }
+
+  if (
+    ref($tokens) eq 'ARRAY' and
+    @$tokens == 1 and
+    ref($tokens->[0]) eq 'ARRAY'
+  ) {
+    $tokens = $tokens->[0];
   }
 
   # warn YAML::PP::Dump [$num, $text, $tokens];
