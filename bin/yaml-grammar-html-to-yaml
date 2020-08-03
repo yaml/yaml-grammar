@@ -1,7 +1,33 @@
 #!/usr/bin/env perl
 
-use strict; use warnings;
+# Double quote string params like: "block-in"
+# Single quote literal single chars
+#
+# followed_by_an_ns-plain-safe(c) becomes
+#   ns-plain-safe(c)=
+#
+# not_followed_by_an_ns-char becomes
+#   ns-char!
+#
+# [ c, =, flow-out, =>, nb-single-multi-line(n) ] becomes
+#   [ <c=>, "flow-out", nb-single-multi-line(n) ]
+#
+# block-key: ns-plain-one-line(c)
+# flow-in: ns-plain-multi-line(n,c)
+# flow-key: ns-plain-one-line(c)
+# flow-out: ns-plain-multi-line(n,c)
+#
+# ns-flow-yaml-node(n/a,c) becomes
+#   ns-flow-yaml-node(0,c) or
+#   ns-flow-yaml-node(-1,c)
+#
+# Weird rules: 163
+
+use strict;
+use warnings;
 use YAML::PP;
+my $ypp = YAML::PP->new();
+
 use XXX;
 
 my $debug = 0;
@@ -112,6 +138,10 @@ sub reformat {
   s/(ns-s-flow-map-entries\(n,in-flow\(c\)) (\)\?)/$1$2/;
   s/(l\+block-sequence\(seq-spaces\(n,c\)) (\))/$1$2/;
 
+  # Add missing parens in rule 211:
+  s/(l-document-suffix\+ l-document-prefix\*\nl-any-document\?)(\n\| )(l-document-prefix\* l-explicit-document\?)/( $1 )$2( $3 )/;
+
+
   return $_;
 }
 
@@ -187,11 +217,11 @@ sub make_rule {
     $rule = special_format_1($tokens);
   }
   elsif (@$tokens == 1 and not ref $tokens->[0]) {
-    $rule = YAML::PP::Dump($tokens->[0]);
+    $rule = $ypp->dump($tokens->[0]);
     $rule =~ s/^--- //;
   }
   else {
-    $rule = YAML::PP::Dump($tokens);
+    $rule = $ypp->dump($tokens);
     $rule =~ s/^---//;
   }
 
@@ -276,7 +306,7 @@ sub make_tokens {
     $tokens = $tokens->[0];
   }
 
-  # warn YAML::PP::Dump [$num, $text, $tokens];
+  # warn $ypp->dump(["($num) $key", $text, $tokens]) if $num >= 1;
 }
 
 sub format_token {

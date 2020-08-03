@@ -48,19 +48,19 @@ realclean: clean
 $(SPEC12_TXT):
 	lynx --dump $(SPEC12_URL) > $@
 
-$(SPEC12_YAML): $(SPEC12_TXT)
+$(SPEC12_YAML): $(SPEC12_TXT) Makefile
 	yaml-grammar-html-to-yaml < $< > $@
 
 $(SPEC12_INDEX_YAML): $(SPEC12_TXT)
 	yaml-grammar-html-to-yaml --index < $< > $@
 
-$(SPEC12_DSL_YAML): $(SPEC12_YAML) node_modules
+$(SPEC12_DSL_YAML): $(SPEC12_YAML) node_modules Makefile
 	yaml-grammar-generator --to=dsl.yaml $< > $@
 
-$(SPEC12_PCRE_YAML): $(SPEC12_YAML) node_modules
+$(SPEC12_PCRE_YAML): $(SPEC12_YAML) node_modules Makefile
 	yaml-grammar-generator --to=pcre.yaml $< > $@
 
-$(SPEC12_PERL_YAML): $(SPEC12_YAML) node_modules
+$(SPEC12_PERL_YAML): $(SPEC12_YAML) node_modules Makefile
 	yaml-grammar-generator --to=perl.yaml $< > $@
 
 work: $(WORK_BRANCHES)

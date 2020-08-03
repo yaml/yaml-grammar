@@ -1992,9 +1992,9 @@ l-any-document:
 
 # [211] l-yaml-stream ::=
 # l-document-prefix* l-any-document?
-# ( l-document-suffix+ l-document-prefix*
-# l-any-document?
-# | l-document-prefix* l-explicit-document? )*
+# ( ( l-document-suffix+ l-document-prefix*
+# l-any-document? )
+# | ( l-document-prefix* l-explicit-document? ) )*
 l-yaml-stream:
 - l-document-prefix*
 - l-any-document?
@@ -2002,5 +2002,5 @@ l-yaml-stream:
   - - l-document-suffix+
     - l-document-prefix*
     - l-any-document?
-  - l-document-prefix*
-  - l-explicit-document?
+  - - l-document-prefix*
+    - l-explicit-document?
