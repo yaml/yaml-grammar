@@ -7,7 +7,7 @@
 # | x:85 | [x:A0-x:D7FF] | [x:E000-x:FFFD]
 # | [x:10000-x:10FFFF]
 c-printable:
-- <|>
+- (|)
 - x09
 - x0A
 - x0D
@@ -21,7 +21,7 @@ c-printable:
 # [2] nb-json ::=
 # x:9 | [x:20-x:10FFFF]
 nb-json:
-- <|>
+- (|)
 - x09
 - x20-x10FFFF
 
@@ -123,7 +123,7 @@ c-directive: '%'
 # [21] c-reserved ::=
 # '@' | '`'
 c-reserved:
-- <|>
+- (|)
 - '@'
 - '`'
 
@@ -133,7 +133,7 @@ c-reserved:
 # | '#' | '&' | '*' | '!' | '|' | '>' | ''' | '"'
 # | '%' | '@' | '`'
 c-indicator:
-- <|>
+- (|)
 - '-'
 - '?'
 - ':'
@@ -158,7 +158,7 @@ c-indicator:
 # [23] c-flow-indicator ::=
 # ',' | '[' | ']' | '{' | '}'
 c-flow-indicator:
-- <|>
+- (|)
 - ','
 - '['
 - ']'
@@ -181,7 +181,7 @@ b-carriage-return: x0D
 # [26] b-char ::=
 # b-line-feed | b-carriage-return
 b-char:
-- <|>
+- (|)
 - b-line-feed
 - b-carriage-return
 
@@ -189,7 +189,7 @@ b-char:
 # [27] nb-char ::=
 # c-printable - b-char - c-byte-order-mark
 nb-char:
-- <->
+- (-)
 - c-printable
 - b-char
 - c-byte-order-mark
@@ -200,7 +200,7 @@ nb-char:
 # | b-carriage-return
 # | b-line-feed
 b-break:
-- <|>
+- (|)
 - - b-carriage-return
   - b-line-feed
 - b-carriage-return
@@ -232,7 +232,7 @@ s-tab: x09
 # [33] s-white ::=
 # s-space | s-tab
 s-white:
-- <|>
+- (|)
 - s-space
 - s-tab
 
@@ -240,7 +240,7 @@ s-white:
 # [34] ns-char ::=
 # nb-char - s-white
 ns-char:
-- <->
+- (-)
 - nb-char
 - s-white
 
@@ -256,7 +256,7 @@ ns-dec-digit: x30-x39
 # ns-dec-digit
 # | [x:41-x:46] | [x:61-x:66]
 ns-hex-digit:
-- <|>
+- (|)
 - ns-dec-digit
 - x41-x46
 - x61-x66
@@ -265,7 +265,7 @@ ns-hex-digit:
 # [37] ns-ascii-letter ::=
 # [x:41-x:5A] | [x:61-x:7A]
 ns-ascii-letter:
-- <|>
+- (|)
 - x41-x5A
 - x61-x7A
 
@@ -273,7 +273,7 @@ ns-ascii-letter:
 # [38] ns-word-char ::=
 # ns-dec-digit | ns-ascii-letter | '-'
 ns-word-char:
-- <|>
+- (|)
 - ns-dec-digit
 - ns-ascii-letter
 - '-'
@@ -284,7 +284,7 @@ ns-word-char:
 # | ';' | '/' | '?' | ':' | '@' | '&' | '=' | '+' | '$' | ','
 # | '_' | '.' | '!' | '~' | '*' | ''' | '(' | ')' | '[' | ']'
 ns-uri-char:
-- <|>
+- (|)
 - - '%'
   - ns-hex-digit
   - ns-hex-digit
@@ -315,7 +315,7 @@ ns-uri-char:
 # [40] ns-tag-char ::=
 # ns-uri-char - '!' - c-flow-indicator
 ns-tag-char:
-- <->
+- (-)
 - ns-uri-char
 - '!'
 - c-flow-indicator
@@ -346,7 +346,7 @@ ns-esc-backspace: b
 # [45] ns-esc-horizontal-tab ::=
 # 't' | x:9
 ns-esc-horizontal-tab:
-- <|>
+- (|)
 - t
 - x09
 
@@ -452,7 +452,7 @@ ns-esc-32-bit:
 # | ns-esc-8-bit | ns-esc-16-bit | ns-esc-32-bit )
 c-ns-esc-char:
 - \
-- - <|>
+- - (|)
   - ns-esc-null
   - ns-esc-bell
   - ns-esc-backspace
@@ -501,7 +501,7 @@ s-indent(<=n):
 # [66] s-separate-in-line ::=
 # s-white+ | <start_of_line>
 s-separate-in-line:
-- <|>
+- (|)
 - s-white+
 - <start_of_line>
 
@@ -539,7 +539,7 @@ s-flow-line-prefix(n):
 # ( s-line-prefix(n,c) | s-indent(<n) )
 # b-as-line-feed
 l-empty(n,c):
-- - <|>
+- - (|)
   - s-line-prefix(n,c)
   - s-indent(<n)
 - b-as-line-feed
@@ -562,7 +562,7 @@ b-as-space: b-break
 # [73] b-l-folded(n,c) ::=
 # b-l-trimmed(n,c) | b-as-space
 b-l-folded(n,c):
-- <|>
+- (|)
 - b-l-trimmed(n,c)
 - b-as-space
 
@@ -589,7 +589,7 @@ c-nb-comment-text:
 # [76] b-comment ::=
 # b-non-content | <end_of_file>
 b-comment:
-- <|>
+- (|)
 - b-non-content
 - <end_of_file>
 
@@ -599,7 +599,7 @@ b-comment:
 # c-nb-comment-text? )?
 # b-comment
 s-b-comment:
-- - <?>
+- - (?)
   - s-separate-in-line
   - c-nb-comment-text?
 - b-comment
@@ -618,7 +618,7 @@ l-comment:
 # ( s-b-comment | <start_of_line> )
 # l-comment*
 s-l-comments:
-- - <|>
+- - (|)
   - s-b-comment
   - <start_of_line>
 - l-comment*
@@ -647,7 +647,7 @@ s-separate(n,c):
 # s-flow-line-prefix(n) )
 # | s-separate-in-line
 s-separate-lines(n):
-- <|>
+- (|)
 - - s-l-comments
   - s-flow-line-prefix(n)
 - s-separate-in-line
@@ -663,7 +663,7 @@ s-separate-lines(n):
 # s-l-comments
 l-directive:
 - '%'
-- - <|>
+- - (|)
   - ns-yaml-directive
   - ns-tag-directive
   - ns-reserved-directive
@@ -675,7 +675,7 @@ l-directive:
 # ( s-separate-in-line ns-directive-parameter )*
 ns-reserved-directive:
 - ns-directive-name
-- - <*>
+- - (*)
   - s-separate-in-line
   - ns-directive-parameter
 
@@ -733,7 +733,7 @@ ns-tag-directive:
 # | c-secondary-tag-handle
 # | c-primary-tag-handle
 c-tag-handle:
-- <|>
+- (|)
 - c-named-tag-handle
 - c-secondary-tag-handle
 - c-primary-tag-handle
@@ -762,7 +762,7 @@ c-named-tag-handle:
 # [93] ns-tag-prefix ::=
 # c-ns-local-tag-prefix | ns-global-tag-prefix
 ns-tag-prefix:
-- <|>
+- (|)
 - c-ns-local-tag-prefix
 - ns-global-tag-prefix
 
@@ -789,13 +789,13 @@ ns-global-tag-prefix:
 # | ( c-ns-anchor-property
 # ( s-separate(n,c) c-ns-tag-property )? )
 c-ns-properties(n,c):
-- <|>
+- (|)
 - - c-ns-tag-property
-  - - <?>
+  - - (?)
     - s-separate(n,c)
     - c-ns-anchor-property
 - - c-ns-anchor-property
-  - - <?>
+  - - (?)
     - s-separate(n,c)
     - c-ns-tag-property
 
@@ -807,7 +807,7 @@ c-ns-properties(n,c):
 # | c-ns-shorthand-tag
 # | c-non-specific-tag
 c-ns-tag-property:
-- <|>
+- (|)
 - c-verbatim-tag
 - c-ns-shorthand-tag
 - c-non-specific-tag
@@ -846,7 +846,7 @@ c-ns-anchor-property:
 # [102] ns-anchor-char ::=
 # ns-char - c-flow-indicator
 ns-anchor-char:
-- <->
+- (-)
 - ns-char
 - c-flow-indicator
 
@@ -884,9 +884,9 @@ e-node: e-scalar
 # [107] nb-double-char ::=
 # c-ns-esc-char | ( nb-json - '\' - '"' )
 nb-double-char:
-- <|>
+- (|)
 - c-ns-esc-char
-- - <->
+- - (-)
   - nb-json
   - \
   - '"'
@@ -895,7 +895,7 @@ nb-double-char:
 # [108] ns-double-char ::=
 # nb-double-char - s-white
 ns-double-char:
-- <->
+- (-)
 - nb-double-char
 - s-white
 
@@ -941,7 +941,7 @@ s-double-escaped(n):
 # [113] s-double-break(n) ::=
 # s-double-escaped(n) | s-flow-folded(n)
 s-double-break(n):
-- <|>
+- (|)
 - s-double-escaped(n)
 - s-flow-folded(n)
 
@@ -949,7 +949,7 @@ s-double-break(n):
 # [114] nb-ns-double-in-line ::=
 # ( s-white* ns-double-char )*
 nb-ns-double-in-line:
-- <*>
+- (*)
 - s-white*
 - ns-double-char
 
@@ -960,10 +960,10 @@ nb-ns-double-in-line:
 # ( s-double-next-line(n) | s-white* ) )?
 s-double-next-line(n):
 - s-double-break(n)
-- - <?>
+- - (?)
   - ns-double-char
   - nb-ns-double-in-line
-  - - <|>
+  - - (|)
     - s-double-next-line(n)
     - s-white*
 
@@ -973,7 +973,7 @@ s-double-next-line(n):
 # ( s-double-next-line(n) | s-white* )
 nb-double-multi-line(n):
 - nb-ns-double-in-line
-- - <|>
+- - (|)
   - s-double-next-line(n)
   - s-white*
 
@@ -990,9 +990,9 @@ c-quoted-quote:
 # [118] nb-single-char ::=
 # c-quoted-quote | ( nb-json - ''' )
 nb-single-char:
-- <|>
+- (|)
 - c-quoted-quote
-- - <->
+- - (-)
   - nb-json
   - ''''
 
@@ -1000,7 +1000,7 @@ nb-single-char:
 # [119] ns-single-char ::=
 # nb-single-char - s-white
 ns-single-char:
-- <->
+- (-)
 - nb-single-char
 - s-white
 
@@ -1034,7 +1034,7 @@ nb-single-one-line: nb-single-char*
 # [123] nb-ns-single-in-line ::=
 # ( s-white* ns-single-char )*
 nb-ns-single-in-line:
-- <*>
+- (*)
 - s-white*
 - ns-single-char
 
@@ -1045,10 +1045,10 @@ nb-ns-single-in-line:
 # ( s-single-next-line(n) | s-white* ) )?
 s-single-next-line(n):
 - s-flow-folded(n)
-- - <?>
+- - (?)
   - ns-single-char
   - nb-ns-single-in-line
-  - - <|>
+  - - (|)
     - s-single-next-line(n)
     - s-white*
 
@@ -1058,7 +1058,7 @@ s-single-next-line(n):
 # ( s-single-next-line(n) | s-white* )
 nb-single-multi-line(n):
 - nb-ns-single-in-line
-- - <|>
+- - (|)
   - s-single-next-line(n)
   - s-white*
 
@@ -1070,11 +1070,11 @@ nb-single-multi-line(n):
 # | ( ( '?' | ':' | '-' )
 # <followed_by_an_ns-plain-safe(c)> )
 ns-plain-first(c):
-- <|>
-- - <->
+- (|)
+- - (-)
   - ns-char
   - c-indicator
-- - - <|>
+- - - (|)
     - '?'
     - ':'
     - '-'
@@ -1101,7 +1101,7 @@ ns-plain-safe-out: ns-char
 # [129] ns-plain-safe-in ::=
 # ns-char - c-flow-indicator
 ns-plain-safe-in:
-- <->
+- (-)
 - ns-char
 - c-flow-indicator
 
@@ -1111,8 +1111,8 @@ ns-plain-safe-in:
 # | ( <an_ns-char_preceding> '#' )
 # | ( ':' <followed_by_an_ns-plain-safe(c)> )
 ns-plain-char(c):
-- <|>
-- - <->
+- (|)
+- - (-)
   - ns-plain-safe(c)
   - ':'
   - '#'
@@ -1138,7 +1138,7 @@ ns-plain(n,c):
 # ( s-white*
 # ns-plain-char(c) )*
 nb-ns-plain-in-line(c):
-- <*>
+- (*)
 - s-white*
 - ns-plain-char(c)
 
@@ -1202,7 +1202,7 @@ c-flow-sequence(n,c):
 ns-s-flow-seq-entries(n,c):
 - ns-flow-seq-entry(n,c)
 - s-separate(n,c)?
-- - <?>
+- - (?)
   - ','
   - s-separate(n,c)?
   - ns-s-flow-seq-entries(n,c)?
@@ -1211,7 +1211,7 @@ ns-s-flow-seq-entries(n,c):
 # [139] ns-flow-seq-entry(n,c) ::=
 # ns-flow-pair(n,c) | ns-flow-node(n,c)
 ns-flow-seq-entry(n,c):
-- <|>
+- (|)
 - ns-flow-pair(n,c)
 - ns-flow-node(n,c)
 
@@ -1236,7 +1236,7 @@ c-flow-mapping(n,c):
 ns-s-flow-map-entries(n,c):
 - ns-flow-map-entry(n,c)
 - s-separate(n,c)?
-- - <?>
+- - (?)
   - ','
   - s-separate(n,c)?
   - ns-s-flow-map-entries(n,c)?
@@ -1247,7 +1247,7 @@ ns-s-flow-map-entries(n,c):
 # ns-flow-map-explicit-entry(n,c) )
 # | ns-flow-map-implicit-entry(n,c)
 ns-flow-map-entry(n,c):
-- <|>
+- (|)
 - - '?'
   - s-separate(n,c)
   - ns-flow-map-explicit-entry(n,c)
@@ -1259,7 +1259,7 @@ ns-flow-map-entry(n,c):
 # | ( e-node
 # e-node )
 ns-flow-map-explicit-entry(n,c):
-- <|>
+- (|)
 - ns-flow-map-implicit-entry(n,c)
 - - e-node
   - e-node
@@ -1270,7 +1270,7 @@ ns-flow-map-explicit-entry(n,c):
 # | c-ns-flow-map-empty-key-entry(n,c)
 # | c-ns-flow-map-json-key-entry(n,c)
 ns-flow-map-implicit-entry(n,c):
-- <|>
+- (|)
 - ns-flow-map-yaml-key-entry(n,c)
 - c-ns-flow-map-empty-key-entry(n,c)
 - c-ns-flow-map-json-key-entry(n,c)
@@ -1283,7 +1283,7 @@ ns-flow-map-implicit-entry(n,c):
 # | e-node )
 ns-flow-map-yaml-key-entry(n,c):
 - ns-flow-yaml-node(n,c)
-- - <|>
+- - (|)
   - - s-separate(n,c)?
     - c-ns-flow-map-separate-value(n,c)
   - e-node
@@ -1304,7 +1304,7 @@ c-ns-flow-map-empty-key-entry(n,c):
 c-ns-flow-map-separate-value(n,c):
 - ':'
 - <not_followed_by_an_ns-plain-safe(c)>
-- - <|>
+- - (|)
   - - s-separate(n,c)
     - ns-flow-node(n,c)
   - e-node
@@ -1317,7 +1317,7 @@ c-ns-flow-map-separate-value(n,c):
 # | e-node )
 c-ns-flow-map-json-key-entry(n,c):
 - c-flow-json-node(n,c)
-- - <|>
+- - (|)
   - - s-separate(n,c)?
     - c-ns-flow-map-adjacent-value(n,c)
   - e-node
@@ -1330,7 +1330,7 @@ c-ns-flow-map-json-key-entry(n,c):
 # | e-node )
 c-ns-flow-map-adjacent-value(n,c):
 - ':'
-- - <|>
+- - (|)
   - - s-separate(n,c)?
     - ns-flow-node(n,c)
   - e-node
@@ -1341,7 +1341,7 @@ c-ns-flow-map-adjacent-value(n,c):
 # ns-flow-map-explicit-entry(n,c) )
 # | ns-flow-pair-entry(n,c)
 ns-flow-pair(n,c):
-- <|>
+- (|)
 - - '?'
   - s-separate(n,c)
   - ns-flow-map-explicit-entry(n,c)
@@ -1353,7 +1353,7 @@ ns-flow-pair(n,c):
 # | c-ns-flow-map-empty-key-entry(n,c)
 # | c-ns-flow-pair-json-key-entry(n,c)
 ns-flow-pair-entry(n,c):
-- <|>
+- (|)
 - ns-flow-pair-yaml-key-entry(n,c)
 - c-ns-flow-map-empty-key-entry(n,c)
 - c-ns-flow-pair-json-key-entry(n,c)
@@ -1406,7 +1406,7 @@ ns-flow-yaml-content(n,c): ns-plain(n,c)
 # c-flow-sequence(n,c) | c-flow-mapping(n,c)
 # | c-single-quoted(n,c) | c-double-quoted(n,c)
 c-flow-json-content(n,c):
-- <|>
+- (|)
 - c-flow-sequence(n,c)
 - c-flow-mapping(n,c)
 - c-single-quoted(n,c)
@@ -1416,7 +1416,7 @@ c-flow-json-content(n,c):
 # [158] ns-flow-content(n,c) ::=
 # ns-flow-yaml-content(n,c) | c-flow-json-content(n,c)
 ns-flow-content(n,c):
-- <|>
+- (|)
 - ns-flow-yaml-content(n,c)
 - c-flow-json-content(n,c)
 
@@ -1429,11 +1429,11 @@ ns-flow-content(n,c):
 # ns-flow-yaml-content(n,c) )
 # | e-scalar ) )
 ns-flow-yaml-node(n,c):
-- <|>
+- (|)
 - c-ns-alias-node
 - ns-flow-yaml-content(n,c)
 - - c-ns-properties(n,c)
-  - - <|>
+  - - (|)
     - - s-separate(n,c)
       - ns-flow-yaml-content(n,c)
     - e-scalar
@@ -1444,7 +1444,7 @@ ns-flow-yaml-node(n,c):
 # s-separate(n,c) )?
 # c-flow-json-content(n,c)
 c-flow-json-node(n,c):
-- - <?>
+- - (?)
   - c-ns-properties(n,c)
   - s-separate(n,c)
 - c-flow-json-content(n,c)
@@ -1458,11 +1458,11 @@ c-flow-json-node(n,c):
 # ns-flow-content(n,c) )
 # | e-scalar ) )
 ns-flow-node(n,c):
-- <|>
+- (|)
 - c-ns-alias-node
 - ns-flow-content(n,c)
 - - c-ns-properties(n,c)
-  - - <|>
+  - - (|)
     - - s-separate(n,c)
       - ns-flow-content(n,c)
     - e-scalar
@@ -1479,7 +1479,7 @@ ns-flow-node(n,c):
 # c-indentation-indicator(m) ) )
 # s-b-comment
 c-b-block-header(m,t):
-- - <|>
+- - (|)
   - - c-indentation-indicator(m)
     - c-chomping-indicator(t)
   - - c-chomping-indicator(t)
@@ -1510,9 +1510,9 @@ c-chomping-indicator(t):
 # ( t = clip => b-as-line-feed | <end_of_file> )
 # ( t = keep => b-as-line-feed | <end_of_file> )
 b-chomped-last(t):
-- [ t, =, strip, =>, [ '<|>', b-non-content, <end_of_file> ] ]
-- [ t, =, clip, =>, [ '<|>', b-as-line-feed, <end_of_file> ] ]
-- [ t, =, keep, =>, [ '<|>', b-as-line-feed, <end_of_file> ] ]
+- [ t, =, strip, =>, [ '(|)', b-non-content, <end_of_file> ] ]
+- [ t, =, clip, =>, [ '(|)', b-as-line-feed, <end_of_file> ] ]
+- [ t, =, keep, =>, [ '(|)', b-as-line-feed, <end_of_file> ] ]
 
 
 # [166] l-chomped-empty(n,t) ::=
@@ -1529,7 +1529,7 @@ l-chomped-empty(n,t):
 # ( s-indent(<=n) b-non-content )*
 # l-trail-comments(n)?
 l-strip-empty(n):
-- - <*>
+- - (*)
   - s-indent(<=n)
   - b-non-content
 - l-trail-comments(n)?
@@ -1588,7 +1588,7 @@ b-nb-literal-next(n):
 # b-chomped-last(t) )?
 # l-chomped-empty(n,t)
 l-literal-content(n,t):
-- - <?>
+- - (?)
   - l-nb-literal-text(n)
   - b-nb-literal-next(n)*
   - b-chomped-last(t)
@@ -1620,7 +1620,7 @@ s-nb-folded-text(n):
 # ( b-l-folded(n,block-in) s-nb-folded-text(n) )*
 l-nb-folded-lines(n):
 - s-nb-folded-text(n)
-- - <*>
+- - (*)
   - b-l-folded(n,block-in)
   - s-nb-folded-text(n)
 
@@ -1647,7 +1647,7 @@ b-l-spaced(n):
 # ( b-l-spaced(n) s-nb-spaced-text(n) )*
 l-nb-spaced-lines(n):
 - s-nb-spaced-text(n)
-- - <*>
+- - (*)
   - b-l-spaced(n)
   - s-nb-spaced-text(n)
 
@@ -1657,7 +1657,7 @@ l-nb-spaced-lines(n):
 # ( l-nb-folded-lines(n) | l-nb-spaced-lines(n) )
 l-nb-same-lines(n):
 - l-empty(n,block-in)*
-- - <|>
+- - (|)
   - l-nb-folded-lines(n)
   - l-nb-spaced-lines(n)
 
@@ -1667,7 +1667,7 @@ l-nb-same-lines(n):
 # ( b-as-line-feed l-nb-same-lines(n) )*
 l-nb-diff-lines(n):
 - l-nb-same-lines(n)
-- - <*>
+- - (*)
   - b-as-line-feed
   - l-nb-same-lines(n)
 
@@ -1677,7 +1677,7 @@ l-nb-diff-lines(n):
 # b-chomped-last(t) )?
 # l-chomped-empty(n,t)
 l-folded-content(n,t):
-- - <?>
+- - (?)
   - l-nb-diff-lines(n)
   - b-chomped-last(t)
 - l-chomped-empty(n,t)
@@ -1692,7 +1692,7 @@ l-folded-content(n,t):
 # c-l-block-seq-entry(n+m) )+
 # <for_some_fixed_auto-detected_m_>_0>
 l+block-sequence(n):
-- - <+>
+- - (+)
   - s-indent(n+m)
   - c-l-block-seq-entry(n+m)
 - <for_some_fixed_auto-detected_m_>_0>
@@ -1714,9 +1714,9 @@ c-l-block-seq-entry(n):
 # | s-l+block-node(n,c)
 # | ( e-node s-l-comments )
 s-l+block-indented(n,c):
-- <|>
+- (|)
 - - s-indent(m)
-  - - <|>
+  - - (|)
     - ns-l-compact-sequence(n+1+m)
     - ns-l-compact-mapping(n+1+m)
 - s-l+block-node(n,c)
@@ -1729,7 +1729,7 @@ s-l+block-indented(n,c):
 # ( s-indent(n) c-l-block-seq-entry(n) )*
 ns-l-compact-sequence(n):
 - c-l-block-seq-entry(n)
-- - <*>
+- - (*)
   - s-indent(n)
   - c-l-block-seq-entry(n)
 
@@ -1741,7 +1741,7 @@ ns-l-compact-sequence(n):
 # ns-l-block-map-entry(n+m) )+
 # <for_some_fixed_auto-detected_m_>_0>
 l+block-mapping(n):
-- - <+>
+- - (+)
   - s-indent(n+m)
   - ns-l-block-map-entry(n+m)
 - <for_some_fixed_auto-detected_m_>_0>
@@ -1751,7 +1751,7 @@ l+block-mapping(n):
 # c-l-block-map-explicit-entry(n)
 # | ns-l-block-map-implicit-entry(n)
 ns-l-block-map-entry(n):
-- <|>
+- (|)
 - c-l-block-map-explicit-entry(n)
 - ns-l-block-map-implicit-entry(n)
 
@@ -1762,7 +1762,7 @@ ns-l-block-map-entry(n):
 # | e-node )
 c-l-block-map-explicit-entry(n):
 - c-l-block-map-explicit-key(n)
-- - <|>
+- - (|)
   - l-block-map-explicit-value(n)
   - e-node
 
@@ -1790,7 +1790,7 @@ l-block-map-explicit-value(n):
 # | e-node )
 # c-l-block-map-implicit-value(n)
 ns-l-block-map-implicit-entry(n):
-- - <|>
+- - (|)
   - ns-s-block-map-implicit-key
   - e-node
 - c-l-block-map-implicit-value(n)
@@ -1800,7 +1800,7 @@ ns-l-block-map-implicit-entry(n):
 # c-s-implicit-json-key(block-key)
 # | ns-s-implicit-yaml-key(block-key)
 ns-s-block-map-implicit-key:
-- <|>
+- (|)
 - c-s-implicit-json-key(block-key)
 - ns-s-implicit-yaml-key(block-key)
 
@@ -1811,7 +1811,7 @@ ns-s-block-map-implicit-key:
 # | ( e-node s-l-comments ) )
 c-l-block-map-implicit-value(n):
 - ':'
-- - <|>
+- - (|)
   - s-l+block-node(n,block-out)
   - - e-node
     - s-l-comments
@@ -1822,7 +1822,7 @@ c-l-block-map-implicit-value(n):
 # ( s-indent(n) ns-l-block-map-entry(n) )*
 ns-l-compact-mapping(n):
 - ns-l-block-map-entry(n)
-- - <*>
+- - (*)
   - s-indent(n)
   - ns-l-block-map-entry(n)
 
@@ -1832,7 +1832,7 @@ ns-l-compact-mapping(n):
 # [196] s-l+block-node(n,c) ::=
 # s-l+block-in-block(n,c) | s-l+flow-in-block(n)
 s-l+block-node(n,c):
-- <|>
+- (|)
 - s-l+block-in-block(n,c)
 - s-l+flow-in-block(n)
 
@@ -1849,7 +1849,7 @@ s-l+flow-in-block(n):
 # [198] s-l+block-in-block(n,c) ::=
 # s-l+block-scalar(n,c) | s-l+block-collection(n,c)
 s-l+block-in-block(n,c):
-- <|>
+- (|)
 - s-l+block-scalar(n,c)
 - s-l+block-collection(n,c)
 
@@ -1860,10 +1860,10 @@ s-l+block-in-block(n,c):
 # ( c-l+literal(n) | c-l+folded(n) )
 s-l+block-scalar(n,c):
 - s-separate(n+1,c)
-- - <?>
+- - (?)
   - c-ns-properties(n+1,c)
   - s-separate(n+1,c)
-- - <|>
+- - (|)
   - c-l+literal(n)
   - c-l+folded(n)
 
@@ -1875,11 +1875,11 @@ s-l+block-scalar(n,c):
 # ( l+block-sequence(seq-spaces(n,c))
 # | l+block-mapping(n) )
 s-l+block-collection(n,c):
-- - <?>
+- - (?)
   - s-separate(n+1,c)
   - c-ns-properties(n+1,c)
 - s-l-comments
-- - <|>
+- - (|)
   - l+block-sequence(seq-spaces(n,c))
   - l+block-mapping(n)
 
@@ -1934,10 +1934,10 @@ l-document-suffix:
 # ( b-char | s-white | <end_of_file> )
 c-forbidden:
 - <start_of_line>
-- - <|>
+- - (|)
   - c-directives-end
   - c-document-end
-- - <|>
+- - (|)
   - b-char
   - s-white
   - <end_of_file>
@@ -1961,7 +1961,7 @@ l-bare-document:
 # | ( e-node s-l-comments ) )
 l-explicit-document:
 - c-directives-end
-- - <|>
+- - (|)
   - l-bare-document
   - - e-node
     - s-l-comments
@@ -1984,7 +1984,7 @@ l-directive-document:
 # | l-explicit-document
 # | l-bare-document
 l-any-document:
-- <|>
+- (|)
 - l-directive-document
 - l-explicit-document
 - l-bare-document
@@ -1998,8 +1998,8 @@ l-any-document:
 l-yaml-stream:
 - l-document-prefix*
 - l-any-document?
-- - <*>
-  - - <|>
+- - (*)
+  - - (|)
     - - l-document-suffix+
       - l-document-prefix*
       - l-any-document?

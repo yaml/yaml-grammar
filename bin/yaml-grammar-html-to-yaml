@@ -1,6 +1,5 @@
 #!/usr/bin/env perl
 
-# Change <|> <*> etc, to (|), (*)
 # Double quote string params like: "block-in"
 # Single quote literal single chars
 #
@@ -210,7 +209,7 @@ sub make_rule {
   my $rule;
   if (
     $text =~ s{\( t = (\S+) => (\S+) \| (<end_of_file>) \)}
-             {- [ t, =, $1, =>, [ '<|>', $2, $3 ] ]}g
+             {- [ t, =, $1, =>, [ '(|)', $2, $3 ] ]}g
   ) {
     $rule = "\n$text\n";
   }
@@ -276,17 +275,17 @@ sub make_tokens {
       if (@$array > 1 and $array->[1] =~ /^[-|]$/) {
         my $operator = $array->[1];
         @$array = grep { $_ ne $operator } @$array;
-        unshift @$array, "<$operator>";
+        unshift @$array, "($operator)";
         if ($q) {
           my @array;
           while (@$array) {
             push @array, shift(@$array);
           }
-          push @$array, "<$q>", \@array;
+          push @$array, "($q)", \@array;
         }
       }
       elsif ($q) {
-        unshift @$array, "<$q>";
+        unshift @$array, "($q)";
       }
       next;
     }
@@ -296,7 +295,7 @@ sub make_tokens {
     my $operator = $tokens->[1];
     my $i = 0;
     @$tokens = grep { ++$i % 2 } @$tokens;
-    unshift @$tokens, "<$operator>";
+    unshift @$tokens, "($operator)";
   }
 
   for (my $i = 0; $i < @$tokens; $i++) {
