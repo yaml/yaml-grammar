@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 
+# Change <|> <*> etc, to (|), (*)
 # Double quote string params like: "block-in"
 # Single quote literal single chars
 #
@@ -275,7 +276,14 @@ sub make_tokens {
       if (@$array > 1 and $array->[1] =~ /^[-|]$/) {
         my $operator = $array->[1];
         @$array = grep { $_ ne $operator } @$array;
-        unshift @$array, "<$operator$q>";
+        unshift @$array, "<$operator>";
+        if ($q) {
+          my @array;
+          while (@$array) {
+            push @array, shift(@$array);
+          }
+          push @$array, "<$q>", \@array;
+        }
       }
       elsif ($q) {
         unshift @$array, "<$q>";
