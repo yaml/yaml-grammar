@@ -514,10 +514,10 @@ s-separate-in-line:
 # ( c = flow-out => s-flow-line-prefix(n) )
 # ( c = flow-in => s-flow-line-prefix(n) )
 s-line-prefix(n,c):
-- [ c, =, block-out, =>, s-block-line-prefix(n) ]
-- [ c, =, block-in, =>, s-block-line-prefix(n) ]
-- [ c, =, flow-out, =>, s-flow-line-prefix(n) ]
-- [ c, =, flow-in, =>, s-flow-line-prefix(n) ]
+- [ c, =, "block-out", =>, s-block-line-prefix(n) ]
+- [ c, =, "block-in", =>, s-block-line-prefix(n) ]
+- [ c, =, "flow-out", =>, s-flow-line-prefix(n) ]
+- [ c, =, "flow-in", =>, s-flow-line-prefix(n) ]
 
 
 # [68] s-block-line-prefix(n) ::=
@@ -573,7 +573,7 @@ b-l-folded(n,c):
 # s-flow-line-prefix(n)
 s-flow-folded(n):
 - s-separate-in-line?
-- b-l-folded(n,flow-in)
+- b-l-folded(n,"flow-in")
 - s-flow-line-prefix(n)
 
 
@@ -634,12 +634,12 @@ s-l-comments:
 # ( c = block-key => s-separate-in-line )
 # ( c = flow-key => s-separate-in-line )
 s-separate(n,c):
-- [ c, =, block-out, =>, s-separate-lines(n) ]
-- [ c, =, block-in, =>, s-separate-lines(n) ]
-- [ c, =, flow-out, =>, s-separate-lines(n) ]
-- [ c, =, flow-in, =>, s-separate-lines(n) ]
-- [ c, =, block-key, =>, s-separate-in-line ]
-- [ c, =, flow-key, =>, s-separate-in-line ]
+- [ c, =, "block-out", =>, s-separate-lines(n) ]
+- [ c, =, "block-in", =>, s-separate-lines(n) ]
+- [ c, =, "flow-out", =>, s-separate-lines(n) ]
+- [ c, =, "flow-in", =>, s-separate-lines(n) ]
+- [ c, =, "block-key", =>, s-separate-in-line ]
+- [ c, =, "flow-key", =>, s-separate-in-line ]
 
 
 # [81] s-separate-lines(n) ::=
@@ -915,10 +915,10 @@ c-double-quoted(n,c):
 # ( c = block-key => nb-double-one-line )
 # ( c = flow-key => nb-double-one-line )
 nb-double-text(n,c):
-- [ c, =, flow-out, =>, nb-double-multi-line(n) ]
-- [ c, =, flow-in, =>, nb-double-multi-line(n) ]
-- [ c, =, block-key, =>, nb-double-one-line ]
-- [ c, =, flow-key, =>, nb-double-one-line ]
+- [ c, =, "flow-out", =>, nb-double-multi-line(n) ]
+- [ c, =, "flow-in", =>, nb-double-multi-line(n) ]
+- [ c, =, "block-key", =>, nb-double-one-line ]
+- [ c, =, "flow-key", =>, nb-double-one-line ]
 
 
 # [111] nb-double-one-line ::=
@@ -934,7 +934,7 @@ s-double-escaped(n):
 - s-white*
 - '\'
 - b-non-content
-- l-empty(n,flow-in)*
+- l-empty(n,"flow-in")*
 - s-flow-line-prefix(n)
 
 
@@ -1020,10 +1020,10 @@ c-single-quoted(n,c):
 # ( c = block-key => nb-single-one-line )
 # ( c = flow-key => nb-single-one-line )
 nb-single-text(n,c):
-- [ c, =, flow-out, =>, nb-single-multi-line(n) ]
-- [ c, =, flow-in, =>, nb-single-multi-line(n) ]
-- [ c, =, block-key, =>, nb-single-one-line ]
-- [ c, =, flow-key, =>, nb-single-one-line ]
+- [ c, =, "flow-out", =>, nb-single-multi-line(n) ]
+- [ c, =, "flow-in", =>, nb-single-multi-line(n) ]
+- [ c, =, "block-key", =>, nb-single-one-line ]
+- [ c, =, "flow-key", =>, nb-single-one-line ]
 
 
 # [122] nb-single-one-line ::=
@@ -1087,10 +1087,10 @@ ns-plain-first(c):
 # ( c = block-key => ns-plain-safe-out )
 # ( c = flow-key => ns-plain-safe-in )
 ns-plain-safe(c):
-- [ c, =, flow-out, =>, ns-plain-safe-out ]
-- [ c, =, flow-in, =>, ns-plain-safe-in ]
-- [ c, =, block-key, =>, ns-plain-safe-out ]
-- [ c, =, flow-key, =>, ns-plain-safe-in ]
+- [ c, =, "flow-out", =>, ns-plain-safe-out ]
+- [ c, =, "flow-in", =>, ns-plain-safe-in ]
+- [ c, =, "block-key", =>, ns-plain-safe-out ]
+- [ c, =, "flow-key", =>, ns-plain-safe-in ]
 
 
 # [128] ns-plain-safe-out ::=
@@ -1128,10 +1128,10 @@ ns-plain-char(c):
 # ( c = block-key => ns-plain-one-line(c) )
 # ( c = flow-key => ns-plain-one-line(c) )
 ns-plain(n,c):
-- [ c, =, flow-out, =>, 'ns-plain-multi-line(n,c)' ]
-- [ c, =, flow-in, =>, 'ns-plain-multi-line(n,c)' ]
-- [ c, =, block-key, =>, ns-plain-one-line(c) ]
-- [ c, =, flow-key, =>, ns-plain-one-line(c) ]
+- [ c, =, "flow-out", =>, 'ns-plain-multi-line(n,c)' ]
+- [ c, =, "flow-in", =>, 'ns-plain-multi-line(n,c)' ]
+- [ c, =, "block-key", =>, ns-plain-one-line(c) ]
+- [ c, =, "flow-key", =>, ns-plain-one-line(c) ]
 
 
 # [132] nb-ns-plain-in-line(c) ::=
@@ -1176,10 +1176,10 @@ ns-plain-multi-line(n,c):
 # ( c = block-key => flow-key )
 # ( c = flow-key => flow-key )
 in-flow(c):
-- [ c, =, flow-out, =>, flow-in ]
-- [ c, =, flow-in, =>, flow-in ]
-- [ c, =, block-key, =>, flow-key ]
-- [ c, =, flow-key, =>, flow-key ]
+- [ c, =, "flow-out", =>, "flow-in" ]
+- [ c, =, "flow-in", =>, "flow-in" ]
+- [ c, =, "block-key", =>, "flow-key" ]
+- [ c, =, "flow-key", =>, "flow-key" ]
 
 
 ##### 7.4.1. Flow Sequences
@@ -1363,7 +1363,7 @@ ns-flow-pair-entry(n,c):
 # ns-s-implicit-yaml-key(flow-key)
 # c-ns-flow-map-separate-value(n,c)
 ns-flow-pair-yaml-key-entry(n,c):
-- ns-s-implicit-yaml-key(flow-key)
+- ns-s-implicit-yaml-key("flow-key")
 - c-ns-flow-map-separate-value(n,c)
 
 
@@ -1371,7 +1371,7 @@ ns-flow-pair-yaml-key-entry(n,c):
 # c-s-implicit-json-key(flow-key)
 # c-ns-flow-map-adjacent-value(n,c)
 c-ns-flow-pair-json-key-entry(n,c):
-- c-s-implicit-json-key(flow-key)
+- c-s-implicit-json-key("flow-key")
 - c-ns-flow-map-adjacent-value(n,c)
 
 
@@ -1539,7 +1539,7 @@ l-strip-empty(n):
 # l-empty(n,block-in)*
 # l-trail-comments(n)?
 l-keep-empty(n):
-- l-empty(n,block-in)*
+- l-empty(n,"block-in")*
 - l-trail-comments(n)?
 
 
@@ -1569,7 +1569,7 @@ c-l+literal(n):
 # l-empty(n,block-in)*
 # s-indent(n) nb-char+
 l-nb-literal-text(n):
-- l-empty(n,block-in)*
+- l-empty(n,"block-in")*
 - s-indent(n)
 - nb-char+
 
@@ -1621,7 +1621,7 @@ s-nb-folded-text(n):
 l-nb-folded-lines(n):
 - s-nb-folded-text(n)
 - - (*)
-  - b-l-folded(n,block-in)
+  - b-l-folded(n,"block-in")
   - s-nb-folded-text(n)
 
 
@@ -1639,7 +1639,7 @@ s-nb-spaced-text(n):
 # l-empty(n,block-in)*
 b-l-spaced(n):
 - b-as-line-feed
-- l-empty(n,block-in)*
+- l-empty(n,"block-in")*
 
 
 # [179] l-nb-spaced-lines(n) ::=
@@ -1656,7 +1656,7 @@ l-nb-spaced-lines(n):
 # l-empty(n,block-in)*
 # ( l-nb-folded-lines(n) | l-nb-spaced-lines(n) )
 l-nb-same-lines(n):
-- l-empty(n,block-in)*
+- l-empty(n,"block-in")*
 - - (|)
   - l-nb-folded-lines(n)
   - l-nb-spaced-lines(n)
@@ -1704,7 +1704,7 @@ l+block-sequence(n):
 c-l-block-seq-entry(n):
 - '-'
 - <not_followed_by_an_ns-char>
-- s-l+block-indented(n,block-in)
+- s-l+block-indented(n,"block-in")
 
 
 # [185] s-l+block-indented(n,c) ::=
@@ -1772,7 +1772,7 @@ c-l-block-map-explicit-entry(n):
 # s-l+block-indented(n,block-out)
 c-l-block-map-explicit-key(n):
 - '?'
-- s-l+block-indented(n,block-out)
+- s-l+block-indented(n,"block-out")
 
 
 # [191] l-block-map-explicit-value(n) ::=
@@ -1781,7 +1781,7 @@ c-l-block-map-explicit-key(n):
 l-block-map-explicit-value(n):
 - s-indent(n)
 - ':'
-- s-l+block-indented(n,block-out)
+- s-l+block-indented(n,"block-out")
 
 
 # [192] ns-l-block-map-implicit-entry(n) ::=
@@ -1801,8 +1801,8 @@ ns-l-block-map-implicit-entry(n):
 # | ns-s-implicit-yaml-key(block-key)
 ns-s-block-map-implicit-key:
 - (|)
-- c-s-implicit-json-key(block-key)
-- ns-s-implicit-yaml-key(block-key)
+- c-s-implicit-json-key("block-key")
+- ns-s-implicit-yaml-key("block-key")
 
 
 # [194] c-l-block-map-implicit-value(n) ::=
@@ -1812,7 +1812,7 @@ ns-s-block-map-implicit-key:
 c-l-block-map-implicit-value(n):
 - ':'
 - - (|)
-  - s-l+block-node(n,block-out)
+  - s-l+block-node(n,"block-out")
   - - e-node
     - s-l-comments
 
@@ -1841,8 +1841,8 @@ s-l+block-node(n,c):
 # s-separate(n+1,flow-out)
 # ns-flow-node(n+1,flow-out) s-l-comments
 s-l+flow-in-block(n):
-- s-separate(n+1,flow-out)
-- ns-flow-node(n+1,flow-out)
+- s-separate(n+1,"flow-out")
+- ns-flow-node(n+1,"flow-out")
 - s-l-comments
 
 
@@ -1888,8 +1888,8 @@ s-l+block-collection(n,c):
 # ( c = block-out => n-1 )
 # ( c = block-in => n )
 seq-spaces(n,c):
-- [ c, =, block-out, =>, n-1 ]
-- [ c, =, block-in, =>, n ]
+- [ c, =, "block-out", =>, n-1 ]
+- [ c, =, "block-in", =>, n ]
 
 
 ### 9.1. Documents
@@ -1949,7 +1949,7 @@ c-forbidden:
 # s-l+block-node(-1,block-in)
 # <excluding_c-forbidden_content>
 l-bare-document:
-- s-l+block-node(-1,block-in)
+- s-l+block-node(-1,"block-in")
 - <excluding_c-forbidden_content>
 
 

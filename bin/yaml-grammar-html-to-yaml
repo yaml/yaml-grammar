@@ -1,7 +1,5 @@
 #!/usr/bin/env perl
 
-# Double quote string params like: "block-in"
-#
 # followed_by_an_ns-plain-safe(c) becomes
 #   ns-plain-safe(c)=
 #
@@ -9,18 +7,18 @@
 #   ns-char!
 #
 # [ c, =, flow-out, =>, nb-single-multi-line(n) ] becomes
-#   [ <c=>, "flow-out", nb-single-multi-line(n) ]
-#
-# block-key: ns-plain-one-line(c)
-# flow-in: ns-plain-multi-line(n,c)
-# flow-key: ns-plain-one-line(c)
-# flow-out: ns-plain-multi-line(n,c)
+# (case c):
+#   block-key: ns-plain-one-line(c)
+#   flow-in: ns-plain-multi-line(n,c)
+#   flow-key: ns-plain-one-line(c)
+#   flow-out: ns-plain-multi-line(n,c)
 #
 # ns-flow-yaml-node(n/a,c) becomes
+#   ns-flow-yaml-node(null,c) or
 #   ns-flow-yaml-node(0,c) or
 #   ns-flow-yaml-node(-1,c)
 #
-# Weird rules: 163
+# Weird rules: 163, 170
 
 use strict;
 use warnings;
