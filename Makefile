@@ -48,7 +48,7 @@ realclean: clean
 $(SPEC12_TXT):
 	lynx --dump $(SPEC12_URL) > $@
 
-$(SPEC12_YAML): $(SPEC12_TXT) Makefile
+$(SPEC12_YAML): $(SPEC12_TXT) Makefile bin/*
 	yaml-grammar-html-to-yaml < $< > $@
 
 $(SPEC12_INDEX_YAML): $(SPEC12_TXT)

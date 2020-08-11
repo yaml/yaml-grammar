@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 
 # Double quote string params like: "block-in"
-# Single quote literal single chars
 #
 # followed_by_an_ns-plain-safe(c) becomes
 #   ns-plain-safe(c)=
@@ -224,6 +223,13 @@ sub make_rule {
     $rule = $ypp->dump($tokens);
     $rule =~ s/^---//;
   }
+
+  $rule =~ s/- ([\w<.=+;()\/\$\\])$/- '$1'/gm;
+  $rule =~ s/^(.)$/'$1'/gm;
+  $rule =~ s/((?:block|flow)-(?:in|out|key)(?=[,\)]|\ \]))/"$1"/g;
+
+  # XXX Can go away after YAML::PP@0.024
+  $rule =~ s/''''$/"'"/gm;
 
   my $yaml = "$doc\n$key: $rule";
   $yaml =~ s/\ +$//gm;

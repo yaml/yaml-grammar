@@ -107,7 +107,7 @@ c-folded: '>'
 
 # [18] c-single-quote ::=
 # '''
-c-single-quote: ''''
+c-single-quote: "'"
 
 
 # [19] c-double-quote ::=
@@ -148,7 +148,7 @@ c-indicator:
 - '!'
 - '|'
 - '>'
-- ''''
+- "'"
 - '"'
 - '%'
 - '@'
@@ -290,24 +290,24 @@ ns-uri-char:
   - ns-hex-digit
 - ns-word-char
 - '#'
-- ;
-- /
+- ';'
+- '/'
 - '?'
 - ':'
 - '@'
 - '&'
-- =
-- +
-- $
+- '='
+- '+'
+- '$'
 - ','
-- _
-- .
+- '_'
+- '.'
 - '!'
 - '~'
 - '*'
-- ''''
-- (
-- )
+- "'"
+- '('
+- ')'
 - '['
 - ']'
 
@@ -325,7 +325,7 @@ ns-tag-char:
 
 # [41] c-escape ::=
 # '\'
-c-escape: \
+c-escape: '\'
 
 
 # [42] ns-esc-null ::=
@@ -335,45 +335,45 @@ ns-esc-null: '0'
 
 # [43] ns-esc-bell ::=
 # 'a'
-ns-esc-bell: a
+ns-esc-bell: 'a'
 
 
 # [44] ns-esc-backspace ::=
 # 'b'
-ns-esc-backspace: b
+ns-esc-backspace: 'b'
 
 
 # [45] ns-esc-horizontal-tab ::=
 # 't' | x:9
 ns-esc-horizontal-tab:
 - (|)
-- t
+- 't'
 - x09
 
 
 # [46] ns-esc-line-feed ::=
 # 'n'
-ns-esc-line-feed: n
+ns-esc-line-feed: 'n'
 
 
 # [47] ns-esc-vertical-tab ::=
 # 'v'
-ns-esc-vertical-tab: v
+ns-esc-vertical-tab: 'v'
 
 
 # [48] ns-esc-form-feed ::=
 # 'f'
-ns-esc-form-feed: f
+ns-esc-form-feed: 'f'
 
 
 # [49] ns-esc-carriage-return ::=
 # 'r'
-ns-esc-carriage-return: r
+ns-esc-carriage-return: 'r'
 
 
 # [50] ns-esc-escape ::=
 # 'e'
-ns-esc-escape: e
+ns-esc-escape: 'e'
 
 
 # [51] ns-esc-space ::=
@@ -388,39 +388,39 @@ ns-esc-double-quote: '"'
 
 # [53] ns-esc-slash ::=
 # '/'
-ns-esc-slash: /
+ns-esc-slash: '/'
 
 
 # [54] ns-esc-backslash ::=
 # '\'
-ns-esc-backslash: \
+ns-esc-backslash: '\'
 
 
 # [55] ns-esc-next-line ::=
 # 'N'
-ns-esc-next-line: N
+ns-esc-next-line: 'N'
 
 
 # [56] ns-esc-non-breaking-space ::=
 # '_'
-ns-esc-non-breaking-space: _
+ns-esc-non-breaking-space: '_'
 
 
 # [57] ns-esc-line-separator ::=
 # 'L'
-ns-esc-line-separator: L
+ns-esc-line-separator: 'L'
 
 
 # [58] ns-esc-paragraph-separator ::=
 # 'P'
-ns-esc-paragraph-separator: P
+ns-esc-paragraph-separator: 'P'
 
 
 # [59] ns-esc-8-bit ::=
 # 'x'
 # ( ns-hex-digit{2} )
 ns-esc-8-bit:
-- x
+- 'x'
 - ns-hex-digit{2}
 
 
@@ -428,7 +428,7 @@ ns-esc-8-bit:
 # 'u'
 # ( ns-hex-digit{4} )
 ns-esc-16-bit:
-- u
+- 'u'
 - ns-hex-digit{4}
 
 
@@ -436,7 +436,7 @@ ns-esc-16-bit:
 # 'U'
 # ( ns-hex-digit{8} )
 ns-esc-32-bit:
-- U
+- 'U'
 - ns-hex-digit{8}
 
 
@@ -451,7 +451,7 @@ ns-esc-32-bit:
 # | ns-esc-line-separator | ns-esc-paragraph-separator
 # | ns-esc-8-bit | ns-esc-16-bit | ns-esc-32-bit )
 c-ns-esc-char:
-- \
+- '\'
 - - (|)
   - ns-esc-null
   - ns-esc-bell
@@ -696,10 +696,10 @@ ns-directive-parameter: ns-char+
 # 'Y' 'A' 'M' 'L'
 # s-separate-in-line ns-yaml-version
 ns-yaml-directive:
-- Y
-- A
-- M
-- L
+- 'Y'
+- 'A'
+- 'M'
+- 'L'
 - s-separate-in-line
 - ns-yaml-version
 
@@ -708,7 +708,7 @@ ns-yaml-directive:
 # ns-dec-digit+ '.' ns-dec-digit+
 ns-yaml-version:
 - ns-dec-digit+
-- .
+- '.'
 - ns-dec-digit+
 
 
@@ -719,9 +719,9 @@ ns-yaml-version:
 # s-separate-in-line c-tag-handle
 # s-separate-in-line ns-tag-prefix
 ns-tag-directive:
-- T
-- A
-- G
+- 'T'
+- 'A'
+- 'G'
 - s-separate-in-line
 - c-tag-handle
 - s-separate-in-line
@@ -817,7 +817,7 @@ c-ns-tag-property:
 # '!' '<' ns-uri-char+ '>'
 c-verbatim-tag:
 - '!'
-- <
+- '<'
 - ns-uri-char+
 - '>'
 
@@ -888,7 +888,7 @@ nb-double-char:
 - c-ns-esc-char
 - - (-)
   - nb-json
-  - \
+  - '\'
   - '"'
 
 
@@ -932,7 +932,7 @@ nb-double-one-line: nb-double-char*
 # l-empty(n,flow-in)* s-flow-line-prefix(n)
 s-double-escaped(n):
 - s-white*
-- \
+- '\'
 - b-non-content
 - l-empty(n,flow-in)*
 - s-flow-line-prefix(n)
@@ -983,8 +983,8 @@ nb-double-multi-line(n):
 # [117] c-quoted-quote ::=
 # ''' '''
 c-quoted-quote:
-- ''''
-- ''''
+- "'"
+- "'"
 
 
 # [118] nb-single-char ::=
@@ -994,7 +994,7 @@ nb-single-char:
 - c-quoted-quote
 - - (-)
   - nb-json
-  - ''''
+  - "'"
 
 
 # [119] ns-single-char ::=
@@ -1009,9 +1009,9 @@ ns-single-char:
 # ''' nb-single-text(n,c)
 # '''
 c-single-quoted(n,c):
-- ''''
+- "'"
 - nb-single-text(n,c)
-- ''''
+- "'"
 
 
 # [121] nb-single-text(n,c) ::=
@@ -1916,9 +1916,9 @@ c-directives-end:
 # [204] c-document-end ::=
 # '.' '.' '.'
 c-document-end:
-- .
-- .
-- .
+- '.'
+- '.'
+- '.'
 
 
 # [205] l-document-suffix ::=
