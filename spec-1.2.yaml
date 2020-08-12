@@ -2005,3 +2005,5 @@ l-yaml-stream:
       - l-any-document?
     - - l-document-prefix*
       - l-explicit-document?
+
+# vim: iskeyword=@,+,- sw=2:

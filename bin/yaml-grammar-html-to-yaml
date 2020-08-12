@@ -1,8 +1,24 @@
 #!/usr/bin/env perl
 
-# Add vim settings:
-#   Add + and - to word chars
-#   # vim: iskeyword=@,+,- sw=2:
+# Reformat input comments like:
+# [67]
+# s-line-prefix(n,c) ::=
+#   ( c = block-out => s-block-line-prefix(n) )
+#   ( c = block-in => s-block-line-prefix(n) )
+#   ( c = flow-out => s-flow-line-prefix(n) )
+#   ( c = flow-in => s-flow-line-prefix(n) )
+#
+# - s-space{m} becomes
+#   - s-space*
+# and
+# - <where_m_<_n> becomes
+#   - [ (lt), $lastMatchLength, n ]
+#
+# s-indent(<n) becomes
+#   s-indent-lt(n)
+#
+# s-indent(<=n) becomes
+#   s-indent-le(n)
 #
 # followed_by_an_ns-plain-safe(c) becomes
 #   ns-plain-safe(c)=
@@ -21,17 +37,17 @@
 #   "flow-out": "flow-in"
 #
 # [ ns-dec-digit, =>, m, ns-dec-digit, -, x30 ] becomes
-# - ns-dec-digit
-# - [ (set), $m, [ (charToInt), $lastMatch ] ]
+#   - ns-dec-digit
+#   - [ (set), $m, [ (charToInt), $lastMatchValue ] ]
 #
 # [ - =>, t, =, strip ] becomes
-# - '-'
-# - [ (set), $t, "strip" ]
+#   - '-'
+#   - [ (set), $t, "strip" ]
 #
 # [ c, =, "block-out", =>, n-1 ] becomes
-# (switch):
-#   var: c
-#   "block-out": [ (minusOne), n ]
+#   (switch):
+#     var: c
+#     "block-out": [ (minusOne), n ]
 #
 # ns-flow-yaml-node(n/a,c) becomes
 #   ns-flow-yaml-node(null,c) or
@@ -71,6 +87,7 @@ sub main {
   }
   print "### Generated from https://yaml.org/spec/1.2/spec.html\n\n";
   print $text;
+  print "\n# vim: iskeyword=@,+,- sw=2:\n";
 }
 
 sub reformat {
