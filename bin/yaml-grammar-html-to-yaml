@@ -1,24 +1,46 @@
 #!/usr/bin/env perl
 
+# Add vim settings:
+#   Add + and - to word chars
+#   # vim: iskeyword=@,+,- sw=2:
+#
 # followed_by_an_ns-plain-safe(c) becomes
 #   ns-plain-safe(c)=
 #
 # not_followed_by_an_ns-char becomes
 #   ns-char!
 #
-# [ c, =, flow-out, =>, nb-single-multi-line(n) ] becomes
-# (case c):
-#   block-key: ns-plain-one-line(c)
-#   flow-in: ns-plain-multi-line(n,c)
-#   flow-key: ns-plain-one-line(c)
-#   flow-out: ns-plain-multi-line(n,c)
+# [ c, =, "flow-out", =>, nb-single-multi-line(n) ] becomes
+# (case):
+#   var: c
+#   "flow-out": nb-single-multi-line(c)
+#
+# [ c, =, "flow-out", =>, "flow-in" ] becomes
+# (switch):
+#   var: c
+#   "flow-out": "flow-in"
+#
+# [ ns-dec-digit, =>, m, ns-dec-digit, -, x30 ] becomes
+# - ns-dec-digit
+# - [ (set), $m, [ (charToInt), $lastMatch ] ]
+#
+# [ - =>, t, =, strip ] becomes
+# - '-'
+# - [ (set), $t, "strip" ]
+#
+# [ c, =, "block-out", =>, n-1 ] becomes
+# (switch):
+#   var: c
+#   "block-out": [ (minusOne), n ]
 #
 # ns-flow-yaml-node(n/a,c) becomes
 #   ns-flow-yaml-node(null,c) or
 #   ns-flow-yaml-node(0,c) or
 #   ns-flow-yaml-node(-1,c)
 #
-# Weird rules: 163, 170
+# Weird rules: 163, 170, 183
+# What is:
+# - <for_some_fixed_auto-detected_m_>_0>
 
 use strict;
 use warnings;
