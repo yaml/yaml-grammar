@@ -5,14 +5,6 @@
 # Preserve custome comments
 #   Save in spec-1.2-comments.yaml
 #
-# Add index entries to the grammar
-#   "080": "s-separate(n,c)"
-#   "#s-separate(n,c)": "080"
-#   # s-separate(n,c) ::=
-#   #   ( c = block-out => s-separate-lines(n) )
-#   s-separate(n,c):
-#   - [ c, =, "block-out", =>, s-separate-lines(n) ]
-#
 # Also publish as JSON (spec-1.2.json).
 #
 # - s-space{m} becomes
@@ -240,12 +232,13 @@ sub make_comment {
 
 sub make_rule {
   my $text = shift;
-  my $doc = $text;
+  my $orig = $text;
 
-  $doc =~ s/^/  /gm;
-  $doc =~ s/^  //;
-  $doc =~ s/ /\n/;
-  $doc =~ s/^/# /gm;
+  $orig =~ s/^/  /gm;
+  $orig =~ s/^  //;
+  $orig =~ s/ /\n/;
+  $orig =~ s/^/# /gm;
+  $orig =~ s/.*\n//;
 
   $text =~ s/^\[(\d+)\]\ (\S+)\ ::=\n// or die $text;
   ($num, $key) = ($1, $2);
@@ -278,8 +271,10 @@ sub make_rule {
   # XXX Can go away after YAML::PP@0.024
   $rule =~ s/''''$/"'"/gm;
 
-  my $yaml = "$doc\n$key: $rule";
+  my $yaml = "$orig\n$key: $rule";
   $yaml =~ s/\ +$//gm;
+  $yaml = sprintf qq{"%03d": "%s"\n"#%s": "%03d"\n%s},
+    $num, $key, $key, $num, $yaml;
 
   return $yaml;
 }
