@@ -1,5 +1,19 @@
 #!/usr/bin/env perl
 
+# Add explanation/rules section to the top of the grammar
+#
+# Preserve custome comments
+#   Save in spec-1.2-comments.yaml
+#
+# Add index entries to the grammar
+#   "080": "s-separate(n,c)"
+#   "#s-separate(n,c)": "080"
+#   # s-separate(n,c) ::=
+#   #   ( c = block-out => s-separate-lines(n) )
+#   s-separate(n,c):
+#   - [ c, =, "block-out", =>, s-separate-lines(n) ]
+#
+# Also publish as JSON (spec-1.2.json).
 #
 # - s-space{m} becomes
 #   - s-space*
