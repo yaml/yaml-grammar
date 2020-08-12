@@ -1,12 +1,5 @@
 #!/usr/bin/env perl
 
-# Reformat input comments like:
-# [67]
-# s-line-prefix(n,c) ::=
-#   ( c = block-out => s-block-line-prefix(n) )
-#   ( c = block-in => s-block-line-prefix(n) )
-#   ( c = flow-out => s-flow-line-prefix(n) )
-#   ( c = flow-in => s-flow-line-prefix(n) )
 #
 # - s-space{m} becomes
 #   - s-space*
@@ -235,6 +228,9 @@ sub make_rule {
   my $text = shift;
   my $doc = $text;
 
+  $doc =~ s/^/  /gm;
+  $doc =~ s/^  //;
+  $doc =~ s/ /\n/;
   $doc =~ s/^/# /gm;
 
   $text =~ s/^\[(\d+)\]\ (\S+)\ ::=\n// or die $text;

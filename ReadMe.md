@@ -18,6 +18,6 @@ It is intended to be both a reference for people trying to understand the rules,
 
 From there that starting point, the grammar data is further formatted into various forms that should be useful in creating scanner/lexer/parser code in many programming languages.
 
-Eventually this project aims to generate the scanner/lexer/parser code itself.
+Eventually this project aims to generate the scanner/lexer/parser code itself (for all the relevant languages).
 
 The generated code hopes to be completely correct since it is created directly from the YAML 1.2 definition.
