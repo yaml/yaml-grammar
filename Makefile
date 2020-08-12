@@ -5,12 +5,13 @@ CWD := $(shell pwd)
 SPEC12_URL := https://yaml.org/spec/1.2/spec.html
 SPEC12_TXT := spec-1.2.txt
 SPEC12_YAML := spec-1.2.yaml
+SPEC12_JSON := spec-1.2.json
 SPEC12_INDEX_YAML := spec-1.2.index.yaml
 SPEC12_DSL_YAML := $(SPEC12_YAML:%.yaml=%.dsl.yaml)
 SPEC12_PCRE_YAML := $(SPEC12_YAML:%.yaml=%.pcre.yaml)
 SPEC12_PERL_YAML := $(SPEC12_YAML:%.yaml=%.perl.yaml)
 
-BUILD := $(SPEC12_YAML)
+BUILD := $(SPEC12_YAML) $(SPEC12_JSON)
 
 BUILD_ALL := \
     $(SPEC12_INDEX_YAML) \
@@ -50,6 +51,9 @@ $(SPEC12_TXT):
 
 $(SPEC12_YAML): $(SPEC12_TXT) Makefile bin/*
 	yaml-grammar-html-to-yaml < $< > $@
+
+$(SPEC12_JSON): $(SPEC12_YAML)
+	yaml-grammar-yaml-to-json < $< > $@
 
 $(SPEC12_INDEX_YAML): $(SPEC12_TXT)
 	yaml-grammar-html-to-yaml --index < $< > $@

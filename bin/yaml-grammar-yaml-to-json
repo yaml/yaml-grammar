@@ -1,0 +1,6 @@
+#!/usr/bin/env coffee
+
+yaml = require 'yaml'
+require 'ingy-prelude'
+
+say JSON.stringify yaml.parse(file_read '-'), null, 2
