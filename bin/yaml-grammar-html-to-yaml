@@ -1,11 +1,9 @@
 #!/usr/bin/env perl
 
-# Add explanation/rules section to the top of the grammar
-#
-# Preserve custome comments
-#   Save in spec-1.2-comments.yaml
-#
-# Also publish as JSON (spec-1.2.json).
+# Inject comments into grammar yaml file
+#   Add comments before rule numbers
+#   Preserve custome comments
+#     Save in spec-1.2-comments.yaml
 #
 # - s-space{m} becomes
 #   - s-space*
@@ -67,6 +65,7 @@ use XXX;
 my $debug = 0;
 
 sub main {
+  my ($spec_html, $comment_data) = read_input_files(@_);
   my $index = 0;
   for (@_) {
     if ($_ eq '--index') {
@@ -76,17 +75,38 @@ sub main {
       $debug = $1;
     }
   }
-  my $text = do { local $/; <STDIN> };
-  $text = reformat($text);
+  my $text = reformat($spec_html);
   if ($index) {
     $text = make_index($text);
   }
   else {
     $text = make_yaml($text);
   }
-  print "### Generated from https://yaml.org/spec/1.2/spec.html\n\n";
+  for my $comment (@{$comment_data->{'000'}}) {
+    print format_comment($comment);
+  }
   print $text;
   print "\n# vim: iskeyword=@,+,- sw=2:\n";
+}
+
+sub read_input_files {
+  my ($spec_file, $comment_file) = @_;
+  open my $spec, $spec_file or
+    die "Can't open '$spec_file' for input";
+  my $spec_html = do { local $/; <$spec> };
+  open my $comment, $comment_file or
+    die "Can't open '$comment_file' for input";
+  my $comment_yaml = do { local $/, <$comment> };
+  my $comment_data = $ypp->load_string($comment_yaml);
+  return ($spec_html, $comment_data);
+}
+
+sub format_comment {
+  my ($comment) = @_;
+  my $line = '#' . ('=' x 79) . "\n";
+  $comment =~ s/^/# /gm;
+  $comment =~ s/ +$//gm;
+  return "$line$comment$line\n";
 }
 
 sub reformat {

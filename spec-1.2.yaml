@@ -1,4 +1,87 @@
-### Generated from https://yaml.org/spec/1.2/spec.html
+#===============================================================================
+# This YAML grammar was generated from https://yaml.org/spec/1.2/spec.html
+# by:
+# https://github.com/yaml/yaml-grammar/tree/master/bin/yaml-grammar-html-to-yaml
+#
+# This grammar is a YAML file that should be loadable by any decent existing
+# YAML loader. It can easily converted to JSON. In fact, the JSON is already
+# generated next to this file in the repository.
+#
+# Its purpose is to:
+# * Make the spec clearer and more precise to people implementing YAML parsers
+# * All 100% correct parsers to be generated in most programming languages
+#
+# This grammar mirrors the 1.2 spec faithfully, but tries to express the rules
+# in a more concrete and programatic fashion. Some of the rules that are more
+# difficult to explain have comment sections (like this one) to explain things.
+# Each rule is prefixed by the original YAML 1.2 spec rule text, formatted as a
+# comment.
+#===============================================================================
+
+#===============================================================================
+# The following is an explanation of the various EBNF/DSL syntax forms used in
+# this grammar.
+#
+#   Note: The various forms used here were chosen carefully to be easily read
+#   and understood by the people reading it. Better forms may exist for
+#   consumption by software, like YAML parser generators. It should be easy to
+#   produce those forms programatically from this form.
+#
+# The overall structure is a mapping of rule-names to rule-definitions. There
+# are 211 mapping pairs, that come from the 211 grammar rules in the spec.
+#
+#   Rule Names
+#
+# A rule name consists of groups of lower case characters separated by dashes
+# (`-`) and sometimes plus signs (`+`).
+#
+# Some rule names also have trailing arguments of the form `(x)` or `(x,y)`.
+# These arguments are considered a literal part of the name in the grammar
+# form.
+#
+# Each rule name has a 1 or 2 character prefix indicating the rule type.
+#
+# Example rule names:
+# * nb-foo-bar
+# * nb+foo-bar
+# * nb-foo-bar(n)
+# * nb-foo-bar(n,c)
+#
+#   Rule Name Prefixes
+#
+# e  -- Empty (matches no characters)
+# c  -- Character (match one single character)
+# b  -- Break (match a single line break character)
+# nb -- Non-break (match a single non-break character)
+# s  -- Space (match a single whitespace character)
+# ns -- Non-space (match a single non-space character)
+# l  -- Line (match a complete line)
+#
+# Where X and Y are each one of the above prefixes:
+#
+# X-Y  -- Match starting with an X- character and ending with a Y- character
+# X+   -- Match X where indentation is greater than n
+# X-Y+ -- Match X-Y where indentation is greater than n
+#
+#   Rules Variables
+#
+# Some rules are defined with trailing arguments indicating that they should be
+# passed values when being used. There are only 3 distinct variables used in
+# the YAML 1.2 grammar.
+#
+# n -- Current indentation level. An integer indicating the number of spaces.
+# c -- Current context. String that is one of:
+# * block-in
+# * block-out
+# * block-key
+# * flow-in
+# * flow-out
+# * clow-key
+# t -- How to treat whitespace after a literal scalar. One of:
+# * strip
+# * clip
+# * keep
+#===============================================================================
 
 ### 5.1. Character Set
 

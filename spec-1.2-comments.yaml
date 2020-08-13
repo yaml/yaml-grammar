@@ -1,22 +1,22 @@
 '000':
 - |
-    This YAML grammar was generated from https://yaml.org/spec/1.2/spec.html
-    by:
-    https://github.com/yaml/yaml-grammar/tree/master/bin/yaml-grammar-html-to-yaml
+  This YAML grammar was generated from https://yaml.org/spec/1.2/spec.html
+  by:
+  https://github.com/yaml/yaml-grammar/tree/master/bin/yaml-grammar-html-to-yaml
 
-    This grammar is a YAML file that should be loadable by any decent existing
-    YAML loader. It can easily converted to JSON. In fact, the JSON is already
-    generated next to this file in the repository.
+  This grammar is a YAML file that should be loadable by any decent existing
+  YAML loader. It can easily converted to JSON. In fact, the JSON is already
+  generated next to this file in the repository.
 
-    Its purpose is to:
-    * Make the spec clearer and more precise to people implementing YAML parsers
-    * All 100% correct parsers to be generated in most programming languages
+  Its purpose is to:
+  * Make the spec clearer and more precise to people implementing YAML parsers
+  * All 100% correct parsers to be generated in most programming languages
 
-    This grammar mirrors the 1.2 spec faithfully, but tries to express the rules
-    in a more concrete and programatic fashion. Some of the rules that are more
-    difficult to explain have comment sections (like this one) to explain things.
-    Each rule is prefixed by the original YAML 1.2 spec rule text, formatted as a
-    comment.
+  This grammar mirrors the 1.2 spec faithfully, but tries to express the rules
+  in a more concrete and programatic fashion. Some of the rules that are more
+  difficult to explain have comment sections (like this one) to explain things.
+  Each rule is prefixed by the original YAML 1.2 spec rule text, formatted as a
+  comment.
 - |
   The following is an explanation of the various EBNF/DSL syntax forms used in
   this grammar.
