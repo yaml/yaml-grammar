@@ -27,6 +27,8 @@ export PATH := $(CWD)/bin:$(CWD)/node_modules/.bin:$(PATH)
 #------------------------------------------------------------------------------
 default:
 
+force:
+
 build: $(BUILD)
 
 comments: $(SPEC12_COMMENTS)
@@ -48,7 +50,7 @@ $(SPEC12_YAML): $(SPEC12_TXT) $(SPEC12_COMMENTS) Makefile bin
 $(SPEC12_JSON): $(SPEC12_YAML)
 	yaml-grammar-yaml-to-json < $< > $@
 
-$(SPEC12_COMMENTS):
+$(SPEC12_COMMENTS): force
 	yaml-grammar-to-comments $(SPEC12_YAML) > $@
 
 $(SPEC12_INDEX_YAML): $(SPEC12_TXT)

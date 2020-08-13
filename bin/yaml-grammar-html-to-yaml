@@ -409,3 +409,5 @@ sub format_hex {
 }
 
 main @ARGV;
+
+# vim: sw=2:

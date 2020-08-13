@@ -19,21 +19,31 @@
 #===============================================================================
 
 #===============================================================================
+#
+#   = Syntax Guide =
+#
 # The following is an explanation of the various EBNF/DSL syntax forms used in
 # this grammar.
 #
-#   Note: The various forms used here were chosen carefully to be easily read
-#   and understood by the people reading it. Better forms may exist for
-#   consumption by software, like YAML parser generators. It should be easy to
-#   produce those forms programatically from this form.
+# There are 211 rules in the YAML 1.2 spec. This grammar file has 211 sections,
+# one for each rule. The overall structure of this file is a big mapping with
+# 3 pairs for each grammar rule. Each rule group looks like this:
 #
-# The overall structure is a mapping of rule-names to rule-definitions. There
-# are 211 mapping pairs, that come from the 211 grammar rules in the spec.
+#   rule-number -> rule-name
+#   rule-name   -> rule-number
+#   rule-name   -> rule definition
 #
-#   Rule Names
+# The first 2 pairs are just for indexing the rule back to the 1.2 spec. The
+# rule definition is the important part. Complex definitions are data
+# structures mostly comprised of other rule-names. The simplest rules point to
+# single characters. This forms a top-down grammar where the top is the last
+# rule, #211.
 #
-# A rule name consists of groups of lower case characters separated by dashes
-# (`-`) and sometimes plus signs (`+`).
+#
+#   == Rule Names ==
+#
+# A rule name consists of groups of lower case characters and numbers separated
+# by dashes (`-`).
 #
 # Some rule names also have trailing arguments of the form `(x)` or `(x,y)`.
 # These arguments are considered a literal part of the name in the grammar
@@ -42,45 +52,110 @@
 # Each rule name has a 1 or 2 character prefix indicating the rule type.
 #
 # Example rule names:
-# * nb-foo-bar
-# * nb+foo-bar
-# * nb-foo-bar(n)
-# * nb-foo-bar(n,c)
 #
-#   Rule Name Prefixes
+#   * nb-foo-bar
+#   * nb+foo-bar
+#   * nb-foo-bar(n)
+#   * nb-foo-bar(n,c)
 #
-# e  -- Empty (matches no characters)
-# c  -- Character (match one single character)
-# b  -- Break (match a single line break character)
-# nb -- Non-break (match a single non-break character)
-# s  -- Space (match a single whitespace character)
-# ns -- Non-space (match a single non-space character)
-# l  -- Line (match a complete line)
 #
-# Where X and Y are each one of the above prefixes:
+#   === Rule Name Prefixes ===
 #
-# X-Y  -- Match starting with an X- character and ending with a Y- character
-# X+   -- Match X where indentation is greater than n
-# X-Y+ -- Match X-Y where indentation is greater than n
+# The rule type prefixes are:
 #
-#   Rules Variables
+#   e  -- Empty (matches no characters)
+#   c  -- Character (match one single character)
+#   b  -- Break (match a single line break character)
+#   nb -- Non-break (match a single non-break character)
+#   s  -- Space (match a single whitespace character)
+#   ns -- Non-space (match a single non-space character)
+#   l  -- Line (match a complete line)
+#
+# And also (where X and Y are each one of the above prefixes):
+#
+#   X-Y  -- Match starting with an X- character and ending with a Y- character
+#   X+   -- Match X where indentation is greater than n
+#   X-Y+ -- Match X-Y where indentation is greater than n
+#
+#
+#   === Rules Variables ===
 #
 # Some rules are defined with trailing arguments indicating that they should be
 # passed values when being used. There are only 3 distinct variables used in
 # the YAML 1.2 grammar.
 #
-# n -- Current indentation level. An integer indicating the number of spaces.
-# c -- Current context. String that is one of:
-# * block-in
-# * block-out
-# * block-key
-# * flow-in
-# * flow-out
-# * clow-key
-# t -- How to treat whitespace after a literal scalar. One of:
-# * strip
-# * clip
-# * keep
+#   n -- Current indentation level. An integer indicating the number of spaces.
+#
+#   c -- Current context. String that is one of:
+#     * "block-in"
+#     * "block-out"
+#     * "block-key"
+#     * "flow-in"
+#     * "flow-out"
+#     * "flow-key"
+#
+#   t -- How to treat whitespace after a literal scalar. One of:
+#     * "strip"
+#     * "clip"
+#     * "keep"
+#
+# The starting values of n (-1) and c ("block-in") are set in rule #207.
+#
+#
+#   == Rule Definitions ==
+#
+# The rule definitions here are expressed as YAML data structures where the
+# scalar values can be:
+#
+#   * A rule name
+#   * A literal character (always single quoted for clarity)
+#   * Some special DSL forms
+#
+# The various DSL forms were chosen carefully to be easily read and understood
+# by the people reading it. The rest of this section describes those forms.
+#
+#
+#   === Groups ===
+#
+# Each sequence is a group (things that are parenthesized). An element of a
+# group may be another group.
+#
+# If the first element of the sequence is the string `(|)`, then ONE of the
+# remaining elements must match for that group to match. This is used to
+# express rules of the form `( a | b | c )`.
+#
+# Otherwise ALL of the remaining elements must match. ie `( a b c )`.
+#
+# If the first element of a group is `(*)`, `(+)` or `(?)`:
+#
+#   * (*) The entire group must match 0 or more times
+#   * (+) The entire group must match 1 or more times
+#   * (?) The entire group must match 0 or 1 times
+#
+# If the first element of a group is `(-)`, then the following elements all
+# represent sets of characters. The overall meaning is a set of characters
+# consisting of the first set minus all the following sets.
+#
+#
+#   === Hex Codes ===
+#
+# Hex codes are scalars beginning with `x:` followed by an even number of
+# hexadecimal digits.
+#
+# There are hex ranges as well, which consist of 2 hex codes separated by a
+# dash.
+#
+#
+#   === Rule Quantifiers ===
+#
+# Rule names can end with a quantifier indicating how many times they should
+# match.
+#
+#   * `+`    -- 1 or more times
+#   * `*`    -- 0 or more times
+#   * `?`    -- 0 or 1 times
+#   * `{n}`  -- n times
+#
 #===============================================================================
 
 ### 5.1. Character Set
@@ -114,6 +189,11 @@ nb-json:
 
 
 ### 5.2. Character Encodings
+
+#===============================================================================
+# Rules 003-021 define single characters. These rules are never referenced in
+# the rest of the grammar. They should at least be referenced in rule 022.
+#===============================================================================
 
 "003": "c-byte-order-mark"
 "#c-byte-order-mark": "003"
@@ -252,6 +332,10 @@ c-reserved:
 - '@'
 - '`'
 
+#===============================================================================
+# Rule 022 should probably be defined using the rule names above rather than
+# literal characters.
+#===============================================================================
 
 "022": "c-indicator"
 "#c-indicator": "022"

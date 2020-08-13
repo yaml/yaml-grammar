@@ -1,0 +1,37 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use IO::All;
+use YAML::PP;
+use XXX;
+
+sub main {
+  my ($yaml_file) = @_;
+
+  $_ = io($yaml_file)->all;
+
+  my $comments = {};
+  my $comment0 = [];
+
+  my $line = '#=====*\n';
+
+  while (s/\A$line(.*?)^$line\n//sm) {
+    my $comment = $1;
+    $comment =~ s/^# ?//gm;
+    push @$comment0, $comment;
+  }
+  $comments->{"000"} = $comment0;
+
+  while (s/^$line(.*?)^$line\n"(\d{3})"//sm) {
+    my ($comment, $num) = ($1, $2);
+    $comment =~ s/^# ?//gm;
+    $comments->{$num} = $comment;
+  }
+
+  print YAML::PP->new->dump($comments);
+}
+
+main(@ARGV);
+
+# vim: sw=2:
