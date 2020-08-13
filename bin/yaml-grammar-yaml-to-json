@@ -1,6 +1,7 @@
-#!/usr/bin/env coffee
+#!/usr/bin/env bash
 
-yaml = require 'yaml'
-require 'ingy-prelude'
-
-say JSON.stringify yaml.parse(file_read '-'), null, 2
+node -e '
+  yaml=require("yaml");
+  require("ingy-prelude");
+  say(JSON.stringify(yaml.parse(file_read("-"))));
+' | jq -S .
