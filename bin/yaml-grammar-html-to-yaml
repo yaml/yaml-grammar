@@ -1,11 +1,5 @@
 #!/usr/bin/env perl
 
-# followed_by_an_ns-plain-safe(c) becomes
-#   ns-plain-safe(c)=
-#
-# not_followed_by_an_ns-char becomes
-#   ns-char!
-#
 # [ c, =, "flow-out", =>, nb-single-multi-line(n) ] becomes
 # (case):
 #   var: c
@@ -278,6 +272,8 @@ sub make_rule {
   $rule =~ s/''''$/"'"/gm;
 
   $rule =~ s/<where_m_(<=?)_n>/[ ($1), \$lastMatchLength, n]/;
+  $rule =~ s/<followed_by_an_(.*)>/$1=/;
+  $rule =~ s/<not_followed_by_an_(.*)>/$1!/;
 
   my $yaml = "%%%\n$key: $rule";
   $yaml =~ s/\ +$//gm;

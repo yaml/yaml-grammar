@@ -1498,7 +1498,7 @@ ns-plain-first(c):
     - '?'
     - ':'
     - '-'
-  - <followed_by_an_ns-plain-safe(c)>
+  - ns-plain-safe(c)=
 
 
 "127": "ns-plain-safe(c)"
@@ -1547,7 +1547,7 @@ ns-plain-char(c):
 - - <an_ns-char_preceding>
   - '#'
 - - ':'
-  - <followed_by_an_ns-plain-safe(c)>
+  - ns-plain-safe(c)=
 
 
 "131": "ns-plain(n,c)"
@@ -1765,7 +1765,7 @@ c-ns-flow-map-empty-key-entry(n,c):
 #   | e-node )
 c-ns-flow-map-separate-value(n,c):
 - ':'
-- <not_followed_by_an_ns-plain-safe(c)>
+- ns-plain-safe(c)!
 - - (|)
   - - s-separate(n,c)
     - ns-flow-node(n,c)
@@ -2239,7 +2239,7 @@ l+block-sequence(n):
 #   s-l+block-indented(n,block-in)
 c-l-block-seq-entry(n):
 - '-'
-- <not_followed_by_an_ns-char>
+- ns-char!
 - s-l+block-indented(n,"block-in")
 
 
