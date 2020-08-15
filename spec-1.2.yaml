@@ -781,8 +781,8 @@ s-indent(n): s-space{n}
 # s-indent(<n) ::=
 #   s-space{m} <where_m_<_n>
 s-indent(<n):
-- s-space{m}
-- <where_m_<_n>
+- s-space*
+- [ (<), $lastMatchLength, n]
 
 
 "065": "s-indent(<=n)"
@@ -790,8 +790,8 @@ s-indent(<n):
 # s-indent(<=n) ::=
 #   s-space{m} <where_m_<=_n>
 s-indent(<=n):
-- s-space{m}
-- <where_m_<=_n>
+- s-space*
+- [ (<=), $lastMatchLength, n]
 
 
 ### 6.2. Separation Spaces

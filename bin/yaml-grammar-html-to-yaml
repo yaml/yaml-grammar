@@ -1,11 +1,5 @@
 #!/usr/bin/env perl
 
-# - s-space{m} becomes
-#   - s-space*
-# and
-# - <where_m_<_n> becomes
-#   - [ (lt), $lastMatchLength, n ]
-#
 # s-indent(<n) becomes
 #   s-indent-lt(n)
 #
@@ -289,6 +283,8 @@ sub make_rule {
   # XXX Can go away after YAML::PP@0.024
   $rule =~ s/''''$/"'"/gm;
 
+  $rule =~ s/<where_m_(<=?)_n>/[ ($1), \$lastMatchLength, n]/;
+
   my $yaml = "$orig\n$key: $rule";
   $yaml =~ s/\ +$//gm;
   $yaml = sprintf qq{"%03d": "%s"\n"#%s": "%03d"\n%s},
@@ -399,6 +395,8 @@ sub format_token {
   }
   elsif (/^'(.*)'/) {
     $_ = $1;
+  }
+  elsif (s/\{m\}$/*/) {
   }
 
   $_;
