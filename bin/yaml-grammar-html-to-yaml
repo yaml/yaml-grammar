@@ -1,10 +1,5 @@
 #!/usr/bin/env perl
 
-# Inject comments into grammar yaml file
-#   Add comments before rule numbers
-#   Preserve custome comments
-#     Save in spec-1.2-comments.yaml
-#
 # - s-space{m} becomes
 #   - s-space*
 # and
@@ -59,6 +54,7 @@ use strict;
 use warnings;
 use YAML::PP;
 my $ypp = YAML::PP->new();
+my $comments;
 
 use XXX;
 
@@ -66,6 +62,8 @@ my $debug = 0;
 
 sub main {
   my ($spec_html, $comment_data) = read_input_files(@_);
+  $comments = $comment_data;
+
   my $index = 0;
   for (@_) {
     if ($_ eq '--index') {
@@ -295,6 +293,12 @@ sub make_rule {
   $yaml =~ s/\ +$//gm;
   $yaml = sprintf qq{"%03d": "%s"\n"#%s": "%03d"\n%s},
     $num, $key, $key, $num, $yaml;
+
+  $num = sprintf "%03d", $num;
+  if (my $comment = $comments->{$num}) {
+    $comment = format_comment($comment);
+    $yaml = "$comment$yaml";
+  }
 
   return $yaml;
 }
