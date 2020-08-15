@@ -776,20 +776,20 @@ c-ns-esc-char:
 s-indent(n): s-space{n}
 
 
-"064": "s-indent(<n)"
-"#s-indent(<n)": "064"
+"064": "s-indent-lt(n)"
+"#s-indent-lt(n)": "064"
 # s-indent(<n) ::=
 #   s-space{m} <where_m_<_n>
-s-indent(<n):
+s-indent-lt(n):
 - s-space*
 - [ (<), $lastMatchLength, n]
 
 
-"065": "s-indent(<=n)"
-"#s-indent(<=n)": "065"
+"065": "s-indent-le(n)"
+"#s-indent-le(n)": "065"
 # s-indent(<=n) ::=
 #   s-space{m} <where_m_<=_n>
-s-indent(<=n):
+s-indent-le(n):
 - s-space*
 - [ (<=), $lastMatchLength, n]
 
@@ -849,7 +849,7 @@ s-flow-line-prefix(n):
 l-empty(n,c):
 - - (|)
   - s-line-prefix(n,c)
-  - s-indent(<n)
+  - s-indent-lt(n)
 - b-as-line-feed
 
 
@@ -2032,7 +2032,7 @@ l-chomped-empty(n,t):
 #   l-trail-comments(n)?
 l-strip-empty(n):
 - - (*)
-  - s-indent(<=n)
+  - s-indent-le(n)
   - b-non-content
 - l-trail-comments(n)?
 
@@ -2054,7 +2054,7 @@ l-keep-empty(n):
 #   c-nb-comment-text b-comment
 #   l-comment*
 l-trail-comments(n):
-- s-indent(<n)
+- s-indent-lt(n)
 - c-nb-comment-text
 - b-comment
 - l-comment*

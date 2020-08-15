@@ -1,11 +1,5 @@
 #!/usr/bin/env perl
 
-# s-indent(<n) becomes
-#   s-indent-lt(n)
-#
-# s-indent(<=n) becomes
-#   s-indent-le(n)
-#
 # followed_by_an_ns-plain-safe(c) becomes
 #   ns-plain-safe(c)=
 #
@@ -285,10 +279,15 @@ sub make_rule {
 
   $rule =~ s/<where_m_(<=?)_n>/[ ($1), \$lastMatchLength, n]/;
 
-  my $yaml = "$orig\n$key: $rule";
+  my $yaml = "%%%\n$key: $rule";
   $yaml =~ s/\ +$//gm;
   $yaml = sprintf qq{"%03d": "%s"\n"#%s": "%03d"\n%s},
     $num, $key, $key, $num, $yaml;
+
+  $yaml =~ s/s-indent\(<n\)/s-indent-lt(n)/g;
+  $yaml =~ s/s-indent\(<=n\)/s-indent-le(n)/g;
+
+  $yaml =~ s/^%%%$/$orig/m;
 
   $num = sprintf "%03d", $num;
   if (my $comment = $comments->{$num}) {
