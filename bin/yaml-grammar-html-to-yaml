@@ -1,10 +1,5 @@
 #!/usr/bin/env perl
 
-# [ c, =, "flow-out", =>, "flow-in" ] becomes
-# (switch):
-#   var: c
-#   "flow-out": "flow-in"
-#
 # [ ns-dec-digit, =>, m, ns-dec-digit, -, x30 ] becomes
 #   - ns-dec-digit
 #   - [ (set), $m, [ (charToInt), $lastMatchValue ] ]
@@ -22,6 +17,8 @@
 #   ns-flow-yaml-node(null,c) or
 #   ns-flow-yaml-node(0,c) or
 #   ns-flow-yaml-node(-1,c)
+#
+# Put (&) in front of 64, 64
 #
 # Weird rules: 163, 170, 183
 # What is:
@@ -293,17 +290,17 @@ sub special_format {
   my ($tokens) = @_;
 
   my $e = $tokens->[0];
-  # my $s = join ',', @$e;
+  my $s = join ',', @$e;
   if (@$e == 5) {
     if ($e->[4] =~ /-.*-/) {
       return special_format_case($tokens);
     }
-#     elsif ($e->[4] =~ /(-in|-out)$/) {
-#       WWW $tokens;
-#     }
+    elsif ($e->[4] =~ /(-in|-out)$/) {
+      return special_format_switch($tokens);
+    }
   }
-  # warn "--- $s\n";
-  # WWW $tokens;
+  warn "--- $s\n";
+  WWW $tokens;
 
   my $out = "\n";
   for my $array (@$tokens) {
@@ -326,6 +323,23 @@ sub special_format_case {
   for my $e (@$tokens) {
     my ($s, $r) = @{$e}[2,4];
     $out .= sprintf "    %-${l}s %s\n", qq{"$s":}, $r;
+  }
+  return $out;
+}
+
+sub special_format_switch {
+  my ($tokens) = @_;
+  my $var = $tokens->[0][0];
+  my $out = "\n  (switch):\n    var: $var\n";
+  my $l = 0;
+  for my $e (@$tokens) {
+    $_ = length $e->[2];
+    $l = $_ if $_ > $l;
+  }
+  $l += 3;
+  for my $e (@$tokens) {
+    my ($s, $r) = @{$e}[2,4];
+    $out .= sprintf "    %-${l}s %s\n", qq{"$s":}, qq{"$r"};
   }
   return $out;
 }

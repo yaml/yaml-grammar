@@ -1628,10 +1628,12 @@ ns-plain-multi-line(n,c):
 #   ( c = block-key => flow-key )
 #   ( c = flow-key => flow-key )
 in-flow(c):
-- [ c, =, "flow-out", =>, "flow-in" ]
-- [ c, =, "flow-in", =>, "flow-in" ]
-- [ c, =, "block-key", =>, "flow-key" ]
-- [ c, =, "flow-key", =>, "flow-key" ]
+  (switch):
+    var: c
+    "flow-out":  "flow-in"
+    "flow-in":   "flow-in"
+    "block-key": "flow-key"
+    "flow-key":  "flow-key"
 
 
 ##### 7.4.1. Flow Sequences
