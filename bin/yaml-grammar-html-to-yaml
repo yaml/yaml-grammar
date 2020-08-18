@@ -1,10 +1,5 @@
 #!/usr/bin/env perl
 
-# [ c, =, "flow-out", =>, nb-single-multi-line(n) ] becomes
-# (case):
-#   var: c
-#   "flow-out": nb-single-multi-line(c)
-#
 # [ c, =, "flow-out", =>, "flow-in" ] becomes
 # (switch):
 #   var: c
@@ -253,7 +248,7 @@ sub make_rule {
     $rule = "\n$text\n";
   }
   elsif (ref($tokens->[0]) and (grep $_ eq '=>', @{$tokens->[0]})) {
-    $rule = special_format_1($tokens);
+    $rule = special_format($tokens);
   }
   elsif (@$tokens == 1 and not ref $tokens->[0]) {
     $rule = $ypp->dump($tokens->[0]);
@@ -294,12 +289,43 @@ sub make_rule {
   return $yaml;
 }
 
-sub special_format_1 {
+sub special_format {
   my ($tokens) = @_;
+
+  my $e = $tokens->[0];
+  # my $s = join ',', @$e;
+  if (@$e == 5) {
+    if ($e->[4] =~ /-.*-/) {
+      return special_format_case($tokens);
+    }
+#     elsif ($e->[4] =~ /(-in|-out)$/) {
+#       WWW $tokens;
+#     }
+  }
+  # warn "--- $s\n";
+  # WWW $tokens;
+
   my $out = "\n";
   for my $array (@$tokens) {
     $array = [ map { /,/ ? "'$_'" : $_ } @$array ];
     $out .= '- [ ' . join(', ', @$array) . " ]\n";
+  }
+  return $out;
+}
+
+sub special_format_case {
+  my ($tokens) = @_;
+  my $var = $tokens->[0][0];
+  my $out = "\n  (case):\n    var: $var\n";
+  my $l = 0;
+  for my $e (@$tokens) {
+    $_ = length $e->[2];
+    $l = $_ if $_ > $l;
+  }
+  $l += 3;
+  for my $e (@$tokens) {
+    my ($s, $r) = @{$e}[2,4];
+    $out .= sprintf "    %-${l}s %s\n", qq{"$s":}, $r;
   }
   return $out;
 }

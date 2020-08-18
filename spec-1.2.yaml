@@ -816,10 +816,12 @@ s-separate-in-line:
 #   ( c = flow-out => s-flow-line-prefix(n) )
 #   ( c = flow-in => s-flow-line-prefix(n) )
 s-line-prefix(n,c):
-- [ c, =, "block-out", =>, s-block-line-prefix(n) ]
-- [ c, =, "block-in", =>, s-block-line-prefix(n) ]
-- [ c, =, "flow-out", =>, s-flow-line-prefix(n) ]
-- [ c, =, "flow-in", =>, s-flow-line-prefix(n) ]
+  (case):
+    var: c
+    "block-out": s-block-line-prefix(n)
+    "block-in":  s-block-line-prefix(n)
+    "flow-out":  s-flow-line-prefix(n)
+    "flow-in":   s-flow-line-prefix(n)
 
 
 "068": "s-block-line-prefix(n)"
@@ -962,12 +964,14 @@ s-l-comments:
 #   ( c = block-key => s-separate-in-line )
 #   ( c = flow-key => s-separate-in-line )
 s-separate(n,c):
-- [ c, =, "block-out", =>, s-separate-lines(n) ]
-- [ c, =, "block-in", =>, s-separate-lines(n) ]
-- [ c, =, "flow-out", =>, s-separate-lines(n) ]
-- [ c, =, "flow-in", =>, s-separate-lines(n) ]
-- [ c, =, "block-key", =>, s-separate-in-line ]
-- [ c, =, "flow-key", =>, s-separate-in-line ]
+  (case):
+    var: c
+    "block-out": s-separate-lines(n)
+    "block-in":  s-separate-lines(n)
+    "flow-out":  s-separate-lines(n)
+    "flow-in":   s-separate-lines(n)
+    "block-key": s-separate-in-line
+    "flow-key":  s-separate-in-line
 
 
 "081": "s-separate-lines(n)"
@@ -1303,10 +1307,12 @@ c-double-quoted(n,c):
 #   ( c = block-key => nb-double-one-line )
 #   ( c = flow-key => nb-double-one-line )
 nb-double-text(n,c):
-- [ c, =, "flow-out", =>, nb-double-multi-line(n) ]
-- [ c, =, "flow-in", =>, nb-double-multi-line(n) ]
-- [ c, =, "block-key", =>, nb-double-one-line ]
-- [ c, =, "flow-key", =>, nb-double-one-line ]
+  (case):
+    var: c
+    "flow-out":  nb-double-multi-line(n)
+    "flow-in":   nb-double-multi-line(n)
+    "block-key": nb-double-one-line
+    "flow-key":  nb-double-one-line
 
 
 "111": "nb-double-one-line"
@@ -1430,10 +1436,12 @@ c-single-quoted(n,c):
 #   ( c = block-key => nb-single-one-line )
 #   ( c = flow-key => nb-single-one-line )
 nb-single-text(n,c):
-- [ c, =, "flow-out", =>, nb-single-multi-line(n) ]
-- [ c, =, "flow-in", =>, nb-single-multi-line(n) ]
-- [ c, =, "block-key", =>, nb-single-one-line ]
-- [ c, =, "flow-key", =>, nb-single-one-line ]
+  (case):
+    var: c
+    "flow-out":  nb-single-multi-line(n)
+    "flow-in":   nb-single-multi-line(n)
+    "block-key": nb-single-one-line
+    "flow-key":  nb-single-one-line
 
 
 "122": "nb-single-one-line"
@@ -1509,10 +1517,12 @@ ns-plain-first(c):
 #   ( c = block-key => ns-plain-safe-out )
 #   ( c = flow-key => ns-plain-safe-in )
 ns-plain-safe(c):
-- [ c, =, "flow-out", =>, ns-plain-safe-out ]
-- [ c, =, "flow-in", =>, ns-plain-safe-in ]
-- [ c, =, "block-key", =>, ns-plain-safe-out ]
-- [ c, =, "flow-key", =>, ns-plain-safe-in ]
+  (case):
+    var: c
+    "flow-out":  ns-plain-safe-out
+    "flow-in":   ns-plain-safe-in
+    "block-key": ns-plain-safe-out
+    "flow-key":  ns-plain-safe-in
 
 
 "128": "ns-plain-safe-out"
@@ -1558,10 +1568,12 @@ ns-plain-char(c):
 #   ( c = block-key => ns-plain-one-line(c) )
 #   ( c = flow-key => ns-plain-one-line(c) )
 ns-plain(n,c):
-- [ c, =, "flow-out", =>, 'ns-plain-multi-line(n,c)' ]
-- [ c, =, "flow-in", =>, 'ns-plain-multi-line(n,c)' ]
-- [ c, =, "block-key", =>, ns-plain-one-line(c) ]
-- [ c, =, "flow-key", =>, ns-plain-one-line(c) ]
+  (case):
+    var: c
+    "flow-out":  ns-plain-multi-line(n,c)
+    "flow-in":   ns-plain-multi-line(n,c)
+    "block-key": ns-plain-one-line(c)
+    "flow-key":  ns-plain-one-line(c)
 
 
 "132": "nb-ns-plain-in-line(c)"
@@ -2020,9 +2032,11 @@ b-chomped-last(t):
 #   ( t = clip => l-strip-empty(n) )
 #   ( t = keep => l-keep-empty(n) )
 l-chomped-empty(n,t):
-- [ t, =, strip, =>, l-strip-empty(n) ]
-- [ t, =, clip, =>, l-strip-empty(n) ]
-- [ t, =, keep, =>, l-keep-empty(n) ]
+  (case):
+    var: t
+    "strip": l-strip-empty(n)
+    "clip":  l-strip-empty(n)
+    "keep":  l-keep-empty(n)
 
 
 "167": "l-strip-empty(n)"
