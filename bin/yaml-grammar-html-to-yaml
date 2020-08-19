@@ -4,11 +4,6 @@
 #   - ns-dec-digit
 #   - [ (set), m, [ (charToInt), $lastMatchValue ] ]
 #
-# [ c, =, "block-out", =>, n-1 ] becomes
-#   (switch):
-#     var: c
-#     "block-out": [ (minusOne), n ]
-#
 # ns-flow-yaml-node(n/a,c) becomes
 #   ns-flow-yaml-node(null,c) or
 #   ns-flow-yaml-node(0,c) or
@@ -298,9 +293,12 @@ sub special_format {
     elsif ($e->[2] eq 't') {
       return special_format_if_set($tokens);
     }
+    elsif ($e->[0] eq 'c') {
+      return special_format_switch_var($tokens);
+    }
   }
-#   warn "--- $s\n";
-#   WWW $tokens;
+  warn "--- $s\n";
+  WWW $tokens;
 
   my $out = "\n";
   for my $array (@$tokens) {
@@ -352,6 +350,26 @@ sub special_format_if_set {
     $rule = "'$rule'" if length $rule == 1;
     $out .= qq{- (if):  $rule\n};
     $out .= qq{  (set): [$var, "$val"]\n};
+  }
+  return $out;
+}
+
+sub special_format_switch_var {
+  my ($tokens) = @_;
+  my $var = $tokens->[0][0];
+  my $out = "\n  (switch):\n    var: $var\n";
+  my $l = 0;
+  for my $e (@$tokens) {
+    $_ = length $e->[2];
+    $l = $_ if $_ > $l;
+  }
+  $l += 3;
+  for my $e (@$tokens) {
+    my ($s, $v) = @{$e}[2,4];
+    if ($v eq 'n-1') {
+      $v = "[(minus-1), n]";
+    }
+    $out .= sprintf "    %-${l}s %s\n", qq{"$s":}, $v;
   }
   return $out;
 }

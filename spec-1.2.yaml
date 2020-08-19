@@ -2478,8 +2478,10 @@ s-l+block-collection(n,c):
 #   ( c = block-out => n-1 )
 #   ( c = block-in => n )
 seq-spaces(n,c):
-- [ c, =, "block-out", =>, n-1 ]
-- [ c, =, "block-in", =>, n ]
+  (switch):
+    var: c
+    "block-out": [(minus-1), n]
+    "block-in":  n
 
 
 ### 9.1. Documents
