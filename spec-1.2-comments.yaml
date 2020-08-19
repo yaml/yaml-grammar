@@ -1,8 +1,7 @@
 ---
 '000':
 - |
-  This YAML grammar was generated from https://yaml.org/spec/1.2/spec.html
-  by:
+  This YAML grammar was generated from https://yaml.org/spec/1.2/spec.html by:
   https://github.com/yaml/yaml-grammar/tree/master/bin/yaml-grammar-html-to-yaml
 
   This grammar is a YAML file that should be loadable by any decent existing
@@ -11,7 +10,7 @@
 
   Its purpose is to:
   * Make the spec clearer and more precise to people implementing YAML parsers
-  * All 100% correct parsers to be generated in most programming languages
+  * To generate 100% correct parsers in most programming languages
 
   This grammar mirrors the 1.2 spec faithfully, but tries to express the rules
   in a more concrete and programatic fashion. Some of the rules that are more
@@ -27,17 +26,17 @@
 
   There are 211 rules in the YAML 1.2 spec. This grammar file has 211 sections,
   one for each rule. The overall structure of this file is a big mapping with
-  3 pairs for each grammar rule. Each rule group looks like this:
+  2 pairs for each grammar rule. Each rule group looks like this:
 
     rule-number -> rule-name
-    rule-name   -> rule-number
+    <original spec rule as a comment>
     rule-name   -> rule definition
 
-  The first 2 pairs are just for indexing the rule back to the 1.2 spec. The
-  rule definition is the important part. Complex definitions are data
-  structures mostly comprised of other rule-names. The simplest rules point to
-  single characters. This forms a top-down grammar where the top is the last
-  rule, #211.
+  The first pair is just for indexing the rule back to the 1.2 spec. The rule
+  definition is the important part. Complex definitions are data structures
+  mostly comprised of other rule-names. The simplest rules point to single
+  characters. This forms a top-down grammar where the top is the last rule,
+  #211.
 
 
     == Rule Names ==
@@ -81,8 +80,8 @@
     === Rules Variables ===
 
   Some rules are defined with trailing arguments indicating that they should be
-  passed values when being used. There are only 3 distinct variables used in
-  the YAML 1.2 grammar.
+  passed values when being used. There are 3 distinct variables used in the
+  YAML 1.2 grammar.
 
     n -- Current indentation level. An integer indicating the number of spaces.
 
@@ -155,6 +154,14 @@
     * `*`    -- 0 or more times
     * `?`    -- 0 or 1 times
     * `{n}`  -- n times
+
+    === Rule Assertions ===
+
+  Rule names can end with an assertion indicator. This means they must match
+  but do not consume any text in the parsing process.
+
+    * `=`    -- Positive look-ahead assertion
+    * `!`    -- Negative look-ahead assertion
 
 '003': |
   Rules 003-021 define single characters. These rules are never referenced in

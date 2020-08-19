@@ -166,7 +166,7 @@ sub make_yaml {
     }
   }
 
-  my $yaml = join "\n\n", @yaml;
+  my $yaml = join "\n\n\n", @yaml;
 
   return $yaml;
 }
@@ -189,14 +189,14 @@ sub make_rule {
   my $text = shift;
   my $orig = $text;
 
+  $text =~ s/^\[(\d+)\]\ (\S+)\ ::=\n// or die $text;
+  ($num, $key) = ($1, $2);
+
   $orig =~ s/^/  /gm;
   $orig =~ s/^  //;
   $orig =~ s/ /\n/;
   $orig =~ s/^/# /gm;
   $orig =~ s/.*\n//;
-
-  $text =~ s/^\[(\d+)\]\ (\S+)\ ::=\n// or die $text;
-  ($num, $key) = ($1, $2);
 
   make_tokens($text);
 
@@ -233,15 +233,13 @@ sub make_rule {
     $rule = "\n- (&)$rule";
   }
 
-  my $yaml = "%%%\n$key: $rule";
+  my $yaml = "$key: $rule";
   $yaml =~ s/\ +$//gm;
-  $yaml = sprintf qq{"%03d": "%s"\n"#%s": "%03d"\n%s},
-    $num, $key, $key, $num, $yaml;
+  $yaml = sprintf qq{'+%03d': '%s'\n%s\n\n%s},
+    $num, $key, $orig, $yaml;
 
   $yaml =~ s/s-indent\(<n\)/s-indent-lt(n)/g;
   $yaml =~ s/s-indent\(<=n\)/s-indent-le(n)/g;
-
-  $yaml =~ s/^%%%$/$orig/m;
 
   $num = sprintf "%03d", $num;
   if (my $comment = $comments->{$num}) {

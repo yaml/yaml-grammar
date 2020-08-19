@@ -1,7 +1,11 @@
-#!/usr/bin/env bash
+#!/usr/bin/env coffee
 
-node -e '
-  yaml=require("yaml");
-  require("ingy-prelude");
-  say(JSON.stringify(yaml.parse(file_read("-"))));
-' | jq -S .
+require("ingy-prelude")
+yaml = require("yaml")
+
+json = JSON.stringify yaml.parse(file_read "-"), null, 2
+
+json = json.replace /^(  "\+\d)/mg, "\n$1"
+json = json.replace /(\{\n)\n/, "$1"
+
+say json
