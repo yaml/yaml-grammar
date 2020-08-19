@@ -1870,7 +1870,7 @@ c-ns-flow-pair-json-key-entry(n,c):
 #   s-separate-in-line?
 #   <at_most_1024_characters_altogether>
 ns-s-implicit-yaml-key(c):
-- ns-flow-yaml-node(n/a,c)
+- ns-flow-yaml-node(null,c)
 - s-separate-in-line?
 - <at_most_1024_characters_altogether>
 
@@ -1882,7 +1882,7 @@ ns-s-implicit-yaml-key(c):
 #   s-separate-in-line?
 #   <at_most_1024_characters_altogether>
 c-s-implicit-json-key(c):
-- c-flow-json-node(n/a,c)
+- c-flow-json-node(null,c)
 - s-separate-in-line?
 - <at_most_1024_characters_altogether>
 

@@ -1,10 +1,5 @@
 #!/usr/bin/env perl
 
-# ns-flow-yaml-node(n/a,c) becomes
-#   ns-flow-yaml-node(null,c) or
-#   ns-flow-yaml-node(0,c) or
-#   ns-flow-yaml-node(-1,c)
-#
 # Put (&) in front of 64, 65
 #
 # Weird rules: 163, 170, 183
@@ -254,6 +249,8 @@ sub make_rule {
   $rule =~ s/<where_m_(<=?)_n>/[ ($1), \$lastMatchLength, n]/;
   $rule =~ s/<followed_by_an_(.*)>/$1=/;
   $rule =~ s/<not_followed_by_an_(.*)>/$1!/;
+
+  $rule =~ s{n/a}{null};
 
   my $yaml = "%%%\n$key: $rule";
   $yaml =~ s/\ +$//gm;
