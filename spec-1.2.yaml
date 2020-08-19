@@ -1999,8 +1999,11 @@ c-b-block-header(m,t):
 #   ( ns-dec-digit => m = ns-dec-digit - x:30 )
 #   ( <empty> => m = auto-detect() )
 c-indentation-indicator(m):
-- [ ns-dec-digit, =>, m, =, ns-dec-digit, -, x30 ]
-- [ <empty>, =>, m, =, auto-detect() ]
+- (|)
+- (if):  ns-dec-digit
+  (set): [ m, [ (charToInt), $lastMatch ] ]
+- (if):  <empty>
+  (set): [ m, "auto-detect" ]
 
 
 "164": "c-chomping-indicator(t)"
@@ -2012,11 +2015,11 @@ c-indentation-indicator(m):
 c-chomping-indicator(t):
 - (|)
 - (if):  '-'
-  (set): [t, "strip"]
+  (set): [ t, "strip" ]
 - (if):  '+'
-  (set): [t, "keep"]
+  (set): [ t, "keep" ]
 - (if):  <empty>
-  (set): [t, "clip"]
+  (set): [ t, "clip" ]
 
 
 "165": "b-chomped-last(t)"
@@ -2480,7 +2483,7 @@ s-l+block-collection(n,c):
 seq-spaces(n,c):
   (switch):
     var: c
-    "block-out": [(minus-1), n]
+    "block-out": [ (minus-1), n ]
     "block-in":  n
 
 

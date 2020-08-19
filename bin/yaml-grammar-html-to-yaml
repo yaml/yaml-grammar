@@ -1,20 +1,16 @@
 #!/usr/bin/env perl
 
-# [ ns-dec-digit, =>, m, ns-dec-digit, -, x30 ] becomes
-#   - ns-dec-digit
-#   - [ (set), m, [ (charToInt), $lastMatchValue ] ]
-#
 # ns-flow-yaml-node(n/a,c) becomes
 #   ns-flow-yaml-node(null,c) or
 #   ns-flow-yaml-node(0,c) or
 #   ns-flow-yaml-node(-1,c)
 #
-# Put (&) in front of 64, 64
+# Put (&) in front of 64, 65
 #
 # Weird rules: 163, 170, 183
-# What is:
+#
+# What is this?:
 # - <for_some_fixed_auto-detected_m_>_0>
-
 
 use strict;
 use warnings;
@@ -287,25 +283,20 @@ sub special_format {
     if ($e->[4] =~ /-.*-/) {
       return special_format_case($tokens);
     }
-    elsif ($e->[4] =~ /(-in|-out)$/) {
+    if ($e->[4] =~ /(-in|-out)$/) {
       return special_format_switch($tokens);
     }
-    elsif ($e->[2] eq 't') {
+    if ($e->[2] eq 't') {
       return special_format_if_set($tokens);
     }
-    elsif ($e->[0] eq 'c') {
+    if ($e->[0] eq 'c') {
       return special_format_switch_var($tokens);
     }
   }
-  warn "--- $s\n";
-  WWW $tokens;
-
-  my $out = "\n";
-  for my $array (@$tokens) {
-    $array = [ map { /,/ ? "'$_'" : $_ } @$array ];
-    $out .= '- [ ' . join(', ', @$array) . " ]\n";
+  if (@$e == 7) {
+    return special_format_if_set_number($tokens);
   }
-  return $out;
+  die;
 }
 
 sub special_format_case {
@@ -342,18 +333,6 @@ sub special_format_switch {
   return $out;
 }
 
-sub special_format_if_set {
-  my ($tokens) = @_;
-  my $out = "\n- (|)\n";
-  for my $e (@$tokens) {
-    my ($rule, $var, $val) = @{$e}[0, 2,4];
-    $rule = "'$rule'" if length $rule == 1;
-    $out .= qq{- (if):  $rule\n};
-    $out .= qq{  (set): [$var, "$val"]\n};
-  }
-  return $out;
-}
-
 sub special_format_switch_var {
   my ($tokens) = @_;
   my $var = $tokens->[0][0];
@@ -367,9 +346,37 @@ sub special_format_switch_var {
   for my $e (@$tokens) {
     my ($s, $v) = @{$e}[2,4];
     if ($v eq 'n-1') {
-      $v = "[(minus-1), n]";
+      $v = "[ (minus-1), n ]";
     }
     $out .= sprintf "    %-${l}s %s\n", qq{"$s":}, $v;
+  }
+  return $out;
+}
+
+sub special_format_if_set {
+  my ($tokens) = @_;
+  my $out = "\n- (|)\n";
+  for my $e (@$tokens) {
+    my ($rule, $var, $val) = @{$e}[0, 2,4];
+    $rule = "'$rule'" if length $rule == 1;
+    $out .= qq{- (if):  $rule\n};
+    $out .= qq{  (set): [ $var, "$val" ]\n};
+  }
+  return $out;
+}
+
+sub special_format_if_set_number {
+  my ($tokens) = @_;
+  my $out = "\n- (|)\n";
+  for my $e (@$tokens) {
+    my ($rule, $var, $val) = @{$e}[0, 2,4];
+    if ($val eq 'ns-dec-digit') {
+      $val = '[ (charToInt), $lastMatch ]';
+    } elsif ($val eq 'auto-detect()') {
+      $val = '"auto-detect"';
+    } else { die }
+    $out .= qq{- (if):  $rule\n};
+    $out .= qq{  (set): [ $var, $val ]\n};
   }
   return $out;
 }
