@@ -781,6 +781,7 @@ s-indent(n): s-space{n}
 # s-indent(<n) ::=
 #   s-space{m} <where_m_<_n>
 s-indent-lt(n):
+- (&)
 - s-space*
 - [ (<), $lastMatchLength, n]
 
@@ -790,6 +791,7 @@ s-indent-lt(n):
 # s-indent(<=n) ::=
 #   s-space{m} <where_m_<=_n>
 s-indent-le(n):
+- (&)
 - s-space*
 - [ (<=), $lastMatchLength, n]
 
