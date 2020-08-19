@@ -855,7 +855,7 @@ s-indent(n): s-space{n}
 
 
 '+064': 's-indent-lt(n)'
-# s-indent-lt(n) ::=
+# s-indent(<n) ::=
 #   s-space{m} <where_m_<_n>
 
 s-indent-lt(n):
@@ -866,7 +866,7 @@ s-indent-lt(n):
 
 
 '+065': 's-indent-le(n)'
-# s-indent-le(n) ::=
+# s-indent(<=n) ::=
 #   s-space{m} <where_m_<=_n>
 
 s-indent-le(n):
@@ -934,7 +934,7 @@ s-flow-line-prefix(n):
 
 '+070': 'l-empty(n,c)'
 # l-empty(n,c) ::=
-#   ( s-line-prefix(n,c) | s-indent-lt(n) )
+#   ( s-line-prefix(n,c) | s-indent(<n) )
 #   b-as-line-feed
 
 l-empty(n,c):
@@ -2257,7 +2257,7 @@ l-chomped-empty(n,t):
 
 '+167': 'l-strip-empty(n)'
 # l-strip-empty(n) ::=
-#   ( s-indent-le(n) b-non-content )*
+#   ( s-indent(<=n) b-non-content )*
 #   l-trail-comments(n)?
 
 l-strip-empty(n):
@@ -2281,7 +2281,7 @@ l-keep-empty(n):
 
 '+169': 'l-trail-comments(n)'
 # l-trail-comments(n) ::=
-#   s-indent-lt(n)
+#   s-indent(<n)
 #   c-nb-comment-text b-comment
 #   l-comment*
 

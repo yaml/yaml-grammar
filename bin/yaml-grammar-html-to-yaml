@@ -229,6 +229,11 @@ sub make_rule {
 
   $rule =~ s{n/a}{null};
 
+  $rule =~ s/s-indent\(<n\)/s-indent-lt(n)/g;
+  $rule =~ s/s-indent\(<=n\)/s-indent-le(n)/g;
+  $key =~ s/s-indent\(<n\)/s-indent-lt(n)/;
+  $key =~ s/s-indent\(<=n\)/s-indent-le(n)/;
+
   if ($rule =~ /lastMatchLength/) {
     $rule = "\n- (&)$rule";
   }
@@ -237,9 +242,6 @@ sub make_rule {
   $yaml =~ s/\ +$//gm;
   $yaml = sprintf qq{'+%03d': '%s'\n%s\n\n%s},
     $num, $key, $orig, $yaml;
-
-  $yaml =~ s/s-indent\(<n\)/s-indent-lt(n)/g;
-  $yaml =~ s/s-indent\(<=n\)/s-indent-le(n)/g;
 
   $num = sprintf "%03d", $num;
   if (my $comment = $comments->{$num}) {
