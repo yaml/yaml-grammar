@@ -1,10 +1,5 @@
 #!/usr/bin/env perl
 
-# Weird rules: 163, 170, 183
-#
-# What is this?:
-# - <for_some_fixed_auto-detected_m_>_0>
-
 use strict;
 use warnings;
 use YAML::PP;
@@ -277,7 +272,6 @@ sub special_format {
   my ($tokens) = @_;
 
   my $e = $tokens->[0];
-  my $s = join ',', @$e;
   if (@$e == 5) {
     if ($e->[4] =~ /-.*-/) {
       return special_format_case($tokens);

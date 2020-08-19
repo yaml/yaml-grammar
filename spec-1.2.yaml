@@ -2244,6 +2244,10 @@ l-folded-content(n,t):
 
 ##### 8.2.1. Block Sequences
 
+#===============================================================================
+# XXX Need figure out what <for_some_fixed_auto-detected_m_>_0> is about
+#===============================================================================
+
 "183": "l+block-sequence(n)"
 "#l+block-sequence(n)": "183"
 # l+block-sequence(n) ::=
