@@ -2010,9 +2010,13 @@ c-indentation-indicator(m):
 #   ( '+' => t = keep )
 #   ( <empty> => t = clip )
 c-chomping-indicator(t):
-- [ -, =>, t, =, strip ]
-- [ +, =>, t, =, keep ]
-- [ <empty>, =>, t, =, clip ]
+- (|)
+- (if):  '-'
+  (set): [t, "strip"]
+- (if):  '+'
+  (set): [t, "keep"]
+- (if):  <empty>
+  (set): [t, "clip"]
 
 
 "165": "b-chomped-last(t)"
