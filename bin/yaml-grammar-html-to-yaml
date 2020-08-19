@@ -11,28 +11,26 @@ use XXX;
 my $debug = 0;
 
 sub main {
-  my ($spec_html, $comment_data) = read_input_files(@_);
-  $comments = $comment_data;
-
-  my $index = 0;
+  my @files;
   for (@_) {
-    if ($_ eq '--index') {
-      $index = 1;
-    }
     if (/^--debug=(\d+)$/) {
       $debug = $1;
     }
+    else {
+      push @files, $_;
+    }
   }
+
+  my ($spec_html, $comment_data) = read_input_files(@files);
+  $comments = $comment_data;
+
   my $text = reformat($spec_html);
-  if ($index) {
-    $text = make_index($text);
-  }
-  else {
-    $text = make_yaml($text);
-  }
+  $text = make_yaml($text);
+
   for my $comment (@{$comment_data->{'000'}}) {
     print format_comment($comment);
   }
+
   print $text;
   print "\n# vim: iskeyword=@,+,- sw=2:\n";
 }
@@ -148,18 +146,6 @@ sub reformat {
   return $_;
 }
 
-my ($tokens, $seqs, $num, $key);
-sub make_index {
-  my $text = shift;
-  my $index = '';
-
-  while ($text =~ s/.*?\n\[(\d+)\]\ (\S+)//s) {
-    $index .= "'$1': $2\n";
-  }
-
-  return $index;
-}
-
 sub make_yaml {
   my $text = shift;
 
@@ -198,6 +184,7 @@ sub make_comment {
   }
 }
 
+my ($tokens, $num, $key);
 sub make_rule {
   my $text = shift;
   my $orig = $text;
@@ -235,9 +222,6 @@ sub make_rule {
   $rule =~ s/- ([\w<.=+;()\/\$\\])$/- '$1'/gm;
   $rule =~ s/^(.)$/'$1'/gm;
   $rule =~ s/((?:block|flow)-(?:in|out|key)(?=[,\)]|\ \]))/"$1"/g;
-
-  # XXX Can go away after YAML::PP@0.024
-  $rule =~ s/''''$/"'"/gm;
 
   $rule =~ s/<where_m_(<=?)_n>/[ ($1), \$lastMatchLength, n]/;
   $rule =~ s/<followed_by_an_(.*)>/$1=/;
