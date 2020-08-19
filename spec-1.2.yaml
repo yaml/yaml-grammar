@@ -893,6 +893,13 @@ s-separate-in-line:
 ### 6.3. Line Prefixes
 
 
+#===============================================================================
+# A `(case)` statement is a mapping that chooses the next rule based on the
+# value of a state variable (in this case `c`).
+#
+# 7 rules in this grammar have case statements.
+#===============================================================================
+
 '+067': 's-line-prefix(n,c)'
 # s-line-prefix(n,c) ::=
 #   ( c = block-out => s-block-line-prefix(n) )
