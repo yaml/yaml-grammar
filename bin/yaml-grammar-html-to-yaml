@@ -1,5 +1,12 @@
 #!/usr/bin/env perl
 
+# Make 183 be:
+#   l+block-sequence(n):
+#   - - (+)
+#     - set: [ m, <auto_detect_indent> ]
+#     - s-indent(n+m)
+#     - c-l-block-seq-entry(n+m)
+
 use strict;
 use warnings;
 use YAML::PP;
@@ -201,11 +208,8 @@ sub make_rule {
   make_tokens($text);
 
   my $rule;
-  if (
-    $text =~ s{\( t = (\S+) => (\S+) \| (<end_of_file>) \)}
-             {- [ t, =, $1, =>, [ '(|)', $2, $3 ] ]}g
-  ) {
-    $rule = "\n$text\n";
+  if ($text =~ /\( t = (\S+) => (\S+) \| (<end_of_file>) \)/) {
+    $rule = special_format_case_or($tokens);
   }
   elsif (ref($tokens->[0]) and (grep $_ eq '=>', @{$tokens->[0]})) {
     $rule = special_format($tokens);
@@ -289,6 +293,24 @@ sub special_format_case {
   for my $e (@$tokens) {
     my ($s, $r) = @{$e}[2,4];
     $out .= sprintf "    %-${l}s %s\n", qq{"$s":}, $r;
+  }
+  return $out;
+}
+
+sub special_format_case_or {
+  my ($tokens) = @_;
+  $tokens = [ map $_->[1], @$tokens ];
+  my $var = $tokens->[0][0];
+  my $out = "\n  (case):\n    var: $var\n";
+  my $l = 0;
+  for my $e (@$tokens) {
+    $_ = length $e->[2];
+    $l = $_ if $_ > $l;
+  }
+  $l += 3;
+  for my $e (@$tokens) {
+    my ($s, $r) = @{$e}[2,4];
+    $out .= sprintf "    %-${l}s %s\n", qq{"$s":}, qq{[ (|), $r, <end_of_file> ]};
   }
   return $out;
 }

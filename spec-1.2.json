@@ -1245,41 +1245,26 @@
   ],
 
   "+165": "b-chomped-last(t)",
-  "b-chomped-last(t)": [
-    [
-      "t",
-      "=",
-      "strip",
-      "=>",
-      [
+  "b-chomped-last(t)": {
+    "(case)": {
+      "var": "t",
+      "strip": [
         "(|)",
         "b-non-content",
         "<end_of_file>"
-      ]
-    ],
-    [
-      "t",
-      "=",
-      "clip",
-      "=>",
-      [
+      ],
+      "clip": [
+        "(|)",
+        "b-as-line-feed",
+        "<end_of_file>"
+      ],
+      "keep": [
         "(|)",
         "b-as-line-feed",
         "<end_of_file>"
       ]
-    ],
-    [
-      "t",
-      "=",
-      "keep",
-      "=>",
-      [
-        "(|)",
-        "b-as-line-feed",
-        "<end_of_file>"
-      ]
-    ]
-  ],
+    }
+  },
 
   "+166": "l-chomped-empty(n,t)",
   "l-chomped-empty(n,t)": {

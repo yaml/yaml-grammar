@@ -2241,9 +2241,11 @@ c-chomping-indicator(t):
 #   ( t = keep => b-as-line-feed | <end_of_file> )
 
 b-chomped-last(t):
-- [ t, =, strip, =>, [ '(|)', b-non-content, <end_of_file> ] ]
-- [ t, =, clip, =>, [ '(|)', b-as-line-feed, <end_of_file> ] ]
-- [ t, =, keep, =>, [ '(|)', b-as-line-feed, <end_of_file> ] ]
+  (case):
+    var: t
+    "strip": [ (|), b-non-content, <end_of_file> ]
+    "clip":  [ (|), b-as-line-feed, <end_of_file> ]
+    "keep":  [ (|), b-as-line-feed, <end_of_file> ]
 
 
 
