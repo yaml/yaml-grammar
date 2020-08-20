@@ -5,6 +5,8 @@ YAML_SPEC_YAML := $(ROOT)/spec-1.2.yaml
 
 GRAMMAR_SPEC := lib/grammar-spec.coffee
 
+.DELETE_ON_ERROR:
+
 test: build
 	TRACE=$(TRACE) coffee ./test/test.coffee
 
