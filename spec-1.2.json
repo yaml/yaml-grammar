@@ -1,5 +1,5 @@
 {
-  "+001": "c-printable",
+  ":001": "c-printable",
   "c-printable": [
     "(|)",
     "x09",
@@ -11,76 +11,55 @@
     "xE000-xFFFD",
     "x010000-x10FFFF"
   ],
-
-  "+002": "nb-json",
+  ":002": "nb-json",
   "nb-json": [
     "(|)",
     "x09",
     "x20-x10FFFF"
   ],
-
-  "+003": "c-byte-order-mark",
+  ":003": "c-byte-order-mark",
   "c-byte-order-mark": "xFEFF",
-
-  "+004": "c-sequence-entry",
+  ":004": "c-sequence-entry",
   "c-sequence-entry": "-",
-
-  "+005": "c-mapping-key",
+  ":005": "c-mapping-key",
   "c-mapping-key": "?",
-
-  "+006": "c-mapping-value",
+  ":006": "c-mapping-value",
   "c-mapping-value": ":",
-
-  "+007": "c-collect-entry",
+  ":007": "c-collect-entry",
   "c-collect-entry": ",",
-
-  "+008": "c-sequence-start",
+  ":008": "c-sequence-start",
   "c-sequence-start": "[",
-
-  "+009": "c-sequence-end",
+  ":009": "c-sequence-end",
   "c-sequence-end": "]",
-
-  "+010": "c-mapping-start",
+  ":010": "c-mapping-start",
   "c-mapping-start": "{",
-
-  "+011": "c-mapping-end",
+  ":011": "c-mapping-end",
   "c-mapping-end": "}",
-
-  "+012": "c-comment",
+  ":012": "c-comment",
   "c-comment": "#",
-
-  "+013": "c-anchor",
+  ":013": "c-anchor",
   "c-anchor": "&",
-
-  "+014": "c-alias",
+  ":014": "c-alias",
   "c-alias": "*",
-
-  "+015": "c-tag",
+  ":015": "c-tag",
   "c-tag": "!",
-
-  "+016": "c-literal",
+  ":016": "c-literal",
   "c-literal": "|",
-
-  "+017": "c-folded",
+  ":017": "c-folded",
   "c-folded": ">",
-
-  "+018": "c-single-quote",
+  ":018": "c-single-quote",
   "c-single-quote": "'",
-
-  "+019": "c-double-quote",
+  ":019": "c-double-quote",
   "c-double-quote": "\"",
-
-  "+020": "c-directive",
+  ":020": "c-directive",
   "c-directive": "%",
-
-  "+021": "c-reserved",
+  ":021": "c-reserved",
   "c-reserved": [
     "(|)",
     "@",
     "`"
   ],
-
-  "+022": "c-indicator",
+  ":022": "c-indicator",
   "c-indicator": [
     "(|)",
     "-",
@@ -103,8 +82,7 @@
     "@",
     "`"
   ],
-
-  "+023": "c-flow-indicator",
+  ":023": "c-flow-indicator",
   "c-flow-indicator": [
     "(|)",
     ",",
@@ -113,29 +91,24 @@
     "{",
     "}"
   ],
-
-  "+024": "b-line-feed",
+  ":024": "b-line-feed",
   "b-line-feed": "x0A",
-
-  "+025": "b-carriage-return",
+  ":025": "b-carriage-return",
   "b-carriage-return": "x0D",
-
-  "+026": "b-char",
+  ":026": "b-char",
   "b-char": [
     "(|)",
     "b-line-feed",
     "b-carriage-return"
   ],
-
-  "+027": "nb-char",
+  ":027": "nb-char",
   "nb-char": [
     "(-)",
     "c-printable",
     "b-char",
     "c-byte-order-mark"
   ],
-
-  "+028": "b-break",
+  ":028": "b-break",
   "b-break": [
     "(|)",
     [
@@ -145,60 +118,49 @@
     "b-carriage-return",
     "b-line-feed"
   ],
-
-  "+029": "b-as-line-feed",
+  ":029": "b-as-line-feed",
   "b-as-line-feed": "b-break",
-
-  "+030": "b-non-content",
+  ":030": "b-non-content",
   "b-non-content": "b-break",
-
-  "+031": "s-space",
+  ":031": "s-space",
   "s-space": "x20",
-
-  "+032": "s-tab",
+  ":032": "s-tab",
   "s-tab": "x09",
-
-  "+033": "s-white",
+  ":033": "s-white",
   "s-white": [
     "(|)",
     "s-space",
     "s-tab"
   ],
-
-  "+034": "ns-char",
+  ":034": "ns-char",
   "ns-char": [
     "(-)",
     "nb-char",
     "s-white"
   ],
-
-  "+035": "ns-dec-digit",
+  ":035": "ns-dec-digit",
   "ns-dec-digit": "x30-x39",
-
-  "+036": "ns-hex-digit",
+  ":036": "ns-hex-digit",
   "ns-hex-digit": [
     "(|)",
     "ns-dec-digit",
     "x41-x46",
     "x61-x66"
   ],
-
-  "+037": "ns-ascii-letter",
+  ":037": "ns-ascii-letter",
   "ns-ascii-letter": [
     "(|)",
     "x41-x5A",
     "x61-x7A"
   ],
-
-  "+038": "ns-word-char",
+  ":038": "ns-word-char",
   "ns-word-char": [
     "(|)",
     "ns-dec-digit",
     "ns-ascii-letter",
     "-"
   ],
-
-  "+039": "ns-uri-char",
+  ":039": "ns-uri-char",
   "ns-uri-char": [
     "(|)",
     [
@@ -229,92 +191,69 @@
     "[",
     "]"
   ],
-
-  "+040": "ns-tag-char",
+  ":040": "ns-tag-char",
   "ns-tag-char": [
     "(-)",
     "ns-uri-char",
     "!",
     "c-flow-indicator"
   ],
-
-  "+041": "c-escape",
+  ":041": "c-escape",
   "c-escape": "\\",
-
-  "+042": "ns-esc-null",
+  ":042": "ns-esc-null",
   "ns-esc-null": "0",
-
-  "+043": "ns-esc-bell",
+  ":043": "ns-esc-bell",
   "ns-esc-bell": "a",
-
-  "+044": "ns-esc-backspace",
+  ":044": "ns-esc-backspace",
   "ns-esc-backspace": "b",
-
-  "+045": "ns-esc-horizontal-tab",
+  ":045": "ns-esc-horizontal-tab",
   "ns-esc-horizontal-tab": [
     "(|)",
     "t",
     "x09"
   ],
-
-  "+046": "ns-esc-line-feed",
+  ":046": "ns-esc-line-feed",
   "ns-esc-line-feed": "n",
-
-  "+047": "ns-esc-vertical-tab",
+  ":047": "ns-esc-vertical-tab",
   "ns-esc-vertical-tab": "v",
-
-  "+048": "ns-esc-form-feed",
+  ":048": "ns-esc-form-feed",
   "ns-esc-form-feed": "f",
-
-  "+049": "ns-esc-carriage-return",
+  ":049": "ns-esc-carriage-return",
   "ns-esc-carriage-return": "r",
-
-  "+050": "ns-esc-escape",
+  ":050": "ns-esc-escape",
   "ns-esc-escape": "e",
-
-  "+051": "ns-esc-space",
+  ":051": "ns-esc-space",
   "ns-esc-space": "x20",
-
-  "+052": "ns-esc-double-quote",
+  ":052": "ns-esc-double-quote",
   "ns-esc-double-quote": "\"",
-
-  "+053": "ns-esc-slash",
+  ":053": "ns-esc-slash",
   "ns-esc-slash": "/",
-
-  "+054": "ns-esc-backslash",
+  ":054": "ns-esc-backslash",
   "ns-esc-backslash": "\\",
-
-  "+055": "ns-esc-next-line",
+  ":055": "ns-esc-next-line",
   "ns-esc-next-line": "N",
-
-  "+056": "ns-esc-non-breaking-space",
+  ":056": "ns-esc-non-breaking-space",
   "ns-esc-non-breaking-space": "_",
-
-  "+057": "ns-esc-line-separator",
+  ":057": "ns-esc-line-separator",
   "ns-esc-line-separator": "L",
-
-  "+058": "ns-esc-paragraph-separator",
+  ":058": "ns-esc-paragraph-separator",
   "ns-esc-paragraph-separator": "P",
-
-  "+059": "ns-esc-8-bit",
+  ":059": "ns-esc-8-bit",
   "ns-esc-8-bit": [
     "x",
     "ns-hex-digit{2}"
   ],
-
-  "+060": "ns-esc-16-bit",
+  ":060": "ns-esc-16-bit",
   "ns-esc-16-bit": [
     "u",
     "ns-hex-digit{4}"
   ],
-
-  "+061": "ns-esc-32-bit",
+  ":061": "ns-esc-32-bit",
   "ns-esc-32-bit": [
     "U",
     "ns-hex-digit{8}"
   ],
-
-  "+062": "c-ns-esc-char",
+  ":062": "c-ns-esc-char",
   "c-ns-esc-char": [
     "\\",
     [
@@ -341,11 +280,9 @@
       "ns-esc-32-bit"
     ]
   ],
-
-  "+063": "s-indent(n)",
+  ":063": "s-indent(n)",
   "s-indent(n)": "s-space{n}",
-
-  "+064": "s-indent-lt(n)",
+  ":064": "s-indent-lt(n)",
   "s-indent-lt(n)": [
     "(&)",
     "s-space*",
@@ -355,8 +292,7 @@
       "n"
     ]
   ],
-
-  "+065": "s-indent-le(n)",
+  ":065": "s-indent-le(n)",
   "s-indent-le(n)": [
     "(&)",
     "s-space*",
@@ -366,15 +302,13 @@
       "n"
     ]
   ],
-
-  "+066": "s-separate-in-line",
+  ":066": "s-separate-in-line",
   "s-separate-in-line": [
     "(|)",
     "s-white+",
     "<start_of_line>"
   ],
-
-  "+067": "s-line-prefix(n,c)",
+  ":067": "s-line-prefix(n,c)",
   "s-line-prefix(n,c)": {
     "(case)": {
       "var": "c",
@@ -384,17 +318,14 @@
       "flow-in": "s-flow-line-prefix(n)"
     }
   },
-
-  "+068": "s-block-line-prefix(n)",
+  ":068": "s-block-line-prefix(n)",
   "s-block-line-prefix(n)": "s-indent(n)",
-
-  "+069": "s-flow-line-prefix(n)",
+  ":069": "s-flow-line-prefix(n)",
   "s-flow-line-prefix(n)": [
     "s-indent(n)",
     "s-separate-in-line?"
   ],
-
-  "+070": "l-empty(n,c)",
+  ":070": "l-empty(n,c)",
   "l-empty(n,c)": [
     [
       "(|)",
@@ -403,44 +334,37 @@
     ],
     "b-as-line-feed"
   ],
-
-  "+071": "b-l-trimmed(n,c)",
+  ":071": "b-l-trimmed(n,c)",
   "b-l-trimmed(n,c)": [
     "b-non-content",
     "l-empty(n,c)+"
   ],
-
-  "+072": "b-as-space",
+  ":072": "b-as-space",
   "b-as-space": "b-break",
-
-  "+073": "b-l-folded(n,c)",
+  ":073": "b-l-folded(n,c)",
   "b-l-folded(n,c)": [
     "(|)",
     "b-l-trimmed(n,c)",
     "b-as-space"
   ],
-
-  "+074": "s-flow-folded(n)",
+  ":074": "s-flow-folded(n)",
   "s-flow-folded(n)": [
     "s-separate-in-line?",
     "b-l-folded(n,\"flow-in\")",
     "s-flow-line-prefix(n)"
   ],
-
-  "+075": "c-nb-comment-text",
+  ":075": "c-nb-comment-text",
   "c-nb-comment-text": [
     "#",
     "nb-char*"
   ],
-
-  "+076": "b-comment",
+  ":076": "b-comment",
   "b-comment": [
     "(|)",
     "b-non-content",
     "<end_of_file>"
   ],
-
-  "+077": "s-b-comment",
+  ":077": "s-b-comment",
   "s-b-comment": [
     [
       "(?)",
@@ -449,15 +373,13 @@
     ],
     "b-comment"
   ],
-
-  "+078": "l-comment",
+  ":078": "l-comment",
   "l-comment": [
     "s-separate-in-line",
     "c-nb-comment-text?",
     "b-comment"
   ],
-
-  "+079": "s-l-comments",
+  ":079": "s-l-comments",
   "s-l-comments": [
     [
       "(|)",
@@ -466,8 +388,7 @@
     ],
     "l-comment*"
   ],
-
-  "+080": "s-separate(n,c)",
+  ":080": "s-separate(n,c)",
   "s-separate(n,c)": {
     "(case)": {
       "var": "c",
@@ -479,8 +400,7 @@
       "flow-key": "s-separate-in-line"
     }
   },
-
-  "+081": "s-separate-lines(n)",
+  ":081": "s-separate-lines(n)",
   "s-separate-lines(n)": [
     "(|)",
     [
@@ -489,8 +409,7 @@
     ],
     "s-separate-in-line"
   ],
-
-  "+082": "l-directive",
+  ":082": "l-directive",
   "l-directive": [
     "%",
     [
@@ -501,8 +420,7 @@
     ],
     "s-l-comments"
   ],
-
-  "+083": "ns-reserved-directive",
+  ":083": "ns-reserved-directive",
   "ns-reserved-directive": [
     "ns-directive-name",
     [
@@ -511,14 +429,11 @@
       "ns-directive-parameter"
     ]
   ],
-
-  "+084": "ns-directive-name",
+  ":084": "ns-directive-name",
   "ns-directive-name": "ns-char+",
-
-  "+085": "ns-directive-parameter",
+  ":085": "ns-directive-parameter",
   "ns-directive-parameter": "ns-char+",
-
-  "+086": "ns-yaml-directive",
+  ":086": "ns-yaml-directive",
   "ns-yaml-directive": [
     "Y",
     "A",
@@ -527,15 +442,13 @@
     "s-separate-in-line",
     "ns-yaml-version"
   ],
-
-  "+087": "ns-yaml-version",
+  ":087": "ns-yaml-version",
   "ns-yaml-version": [
     "ns-dec-digit+",
     ".",
     "ns-dec-digit+"
   ],
-
-  "+088": "ns-tag-directive",
+  ":088": "ns-tag-directive",
   "ns-tag-directive": [
     "T",
     "A",
@@ -545,51 +458,43 @@
     "s-separate-in-line",
     "ns-tag-prefix"
   ],
-
-  "+089": "c-tag-handle",
+  ":089": "c-tag-handle",
   "c-tag-handle": [
     "(|)",
     "c-named-tag-handle",
     "c-secondary-tag-handle",
     "c-primary-tag-handle"
   ],
-
-  "+090": "c-primary-tag-handle",
+  ":090": "c-primary-tag-handle",
   "c-primary-tag-handle": "!",
-
-  "+091": "c-secondary-tag-handle",
+  ":091": "c-secondary-tag-handle",
   "c-secondary-tag-handle": [
     "!",
     "!"
   ],
-
-  "+092": "c-named-tag-handle",
+  ":092": "c-named-tag-handle",
   "c-named-tag-handle": [
     "!",
     "ns-word-char+",
     "!"
   ],
-
-  "+093": "ns-tag-prefix",
+  ":093": "ns-tag-prefix",
   "ns-tag-prefix": [
     "(|)",
     "c-ns-local-tag-prefix",
     "ns-global-tag-prefix"
   ],
-
-  "+094": "c-ns-local-tag-prefix",
+  ":094": "c-ns-local-tag-prefix",
   "c-ns-local-tag-prefix": [
     "!",
     "ns-uri-char*"
   ],
-
-  "+095": "ns-global-tag-prefix",
+  ":095": "ns-global-tag-prefix",
   "ns-global-tag-prefix": [
     "ns-tag-char",
     "ns-uri-char*"
   ],
-
-  "+096": "c-ns-properties(n,c)",
+  ":096": "c-ns-properties(n,c)",
   "c-ns-properties(n,c)": [
     "(|)",
     [
@@ -609,61 +514,50 @@
       ]
     ]
   ],
-
-  "+097": "c-ns-tag-property",
+  ":097": "c-ns-tag-property",
   "c-ns-tag-property": [
     "(|)",
     "c-verbatim-tag",
     "c-ns-shorthand-tag",
     "c-non-specific-tag"
   ],
-
-  "+098": "c-verbatim-tag",
+  ":098": "c-verbatim-tag",
   "c-verbatim-tag": [
     "!",
     "<",
     "ns-uri-char+",
     ">"
   ],
-
-  "+099": "c-ns-shorthand-tag",
+  ":099": "c-ns-shorthand-tag",
   "c-ns-shorthand-tag": [
     "c-tag-handle",
     "ns-tag-char+"
   ],
-
-  "+100": "c-non-specific-tag",
+  ":100": "c-non-specific-tag",
   "c-non-specific-tag": "!",
-
-  "+101": "c-ns-anchor-property",
+  ":101": "c-ns-anchor-property",
   "c-ns-anchor-property": [
     "&",
     "ns-anchor-name"
   ],
-
-  "+102": "ns-anchor-char",
+  ":102": "ns-anchor-char",
   "ns-anchor-char": [
     "(-)",
     "ns-char",
     "c-flow-indicator"
   ],
-
-  "+103": "ns-anchor-name",
+  ":103": "ns-anchor-name",
   "ns-anchor-name": "ns-anchor-char+",
-
-  "+104": "c-ns-alias-node",
+  ":104": "c-ns-alias-node",
   "c-ns-alias-node": [
     "*",
     "ns-anchor-name"
   ],
-
-  "+105": "e-scalar",
+  ":105": "e-scalar",
   "e-scalar": "<empty>",
-
-  "+106": "e-node",
+  ":106": "e-node",
   "e-node": "e-scalar",
-
-  "+107": "nb-double-char",
+  ":107": "nb-double-char",
   "nb-double-char": [
     "(|)",
     "c-ns-esc-char",
@@ -674,22 +568,19 @@
       "\""
     ]
   ],
-
-  "+108": "ns-double-char",
+  ":108": "ns-double-char",
   "ns-double-char": [
     "(-)",
     "nb-double-char",
     "s-white"
   ],
-
-  "+109": "c-double-quoted(n,c)",
+  ":109": "c-double-quoted(n,c)",
   "c-double-quoted(n,c)": [
     "\"",
     "nb-double-text(n,c)",
     "\""
   ],
-
-  "+110": "nb-double-text(n,c)",
+  ":110": "nb-double-text(n,c)",
   "nb-double-text(n,c)": {
     "(case)": {
       "var": "c",
@@ -699,11 +590,9 @@
       "flow-key": "nb-double-one-line"
     }
   },
-
-  "+111": "nb-double-one-line",
+  ":111": "nb-double-one-line",
   "nb-double-one-line": "nb-double-char*",
-
-  "+112": "s-double-escaped(n)",
+  ":112": "s-double-escaped(n)",
   "s-double-escaped(n)": [
     "s-white*",
     "\\",
@@ -711,22 +600,19 @@
     "l-empty(n,\"flow-in\")*",
     "s-flow-line-prefix(n)"
   ],
-
-  "+113": "s-double-break(n)",
+  ":113": "s-double-break(n)",
   "s-double-break(n)": [
     "(|)",
     "s-double-escaped(n)",
     "s-flow-folded(n)"
   ],
-
-  "+114": "nb-ns-double-in-line",
+  ":114": "nb-ns-double-in-line",
   "nb-ns-double-in-line": [
     "(*)",
     "s-white*",
     "ns-double-char"
   ],
-
-  "+115": "s-double-next-line(n)",
+  ":115": "s-double-next-line(n)",
   "s-double-next-line(n)": [
     "s-double-break(n)",
     [
@@ -740,8 +626,7 @@
       ]
     ]
   ],
-
-  "+116": "nb-double-multi-line(n)",
+  ":116": "nb-double-multi-line(n)",
   "nb-double-multi-line(n)": [
     "nb-ns-double-in-line",
     [
@@ -750,14 +635,12 @@
       "s-white*"
     ]
   ],
-
-  "+117": "c-quoted-quote",
+  ":117": "c-quoted-quote",
   "c-quoted-quote": [
     "'",
     "'"
   ],
-
-  "+118": "nb-single-char",
+  ":118": "nb-single-char",
   "nb-single-char": [
     "(|)",
     "c-quoted-quote",
@@ -767,22 +650,19 @@
       "'"
     ]
   ],
-
-  "+119": "ns-single-char",
+  ":119": "ns-single-char",
   "ns-single-char": [
     "(-)",
     "nb-single-char",
     "s-white"
   ],
-
-  "+120": "c-single-quoted(n,c)",
+  ":120": "c-single-quoted(n,c)",
   "c-single-quoted(n,c)": [
     "'",
     "nb-single-text(n,c)",
     "'"
   ],
-
-  "+121": "nb-single-text(n,c)",
+  ":121": "nb-single-text(n,c)",
   "nb-single-text(n,c)": {
     "(case)": {
       "var": "c",
@@ -792,18 +672,15 @@
       "flow-key": "nb-single-one-line"
     }
   },
-
-  "+122": "nb-single-one-line",
+  ":122": "nb-single-one-line",
   "nb-single-one-line": "nb-single-char*",
-
-  "+123": "nb-ns-single-in-line",
+  ":123": "nb-ns-single-in-line",
   "nb-ns-single-in-line": [
     "(*)",
     "s-white*",
     "ns-single-char"
   ],
-
-  "+124": "s-single-next-line(n)",
+  ":124": "s-single-next-line(n)",
   "s-single-next-line(n)": [
     "s-flow-folded(n)",
     [
@@ -817,8 +694,7 @@
       ]
     ]
   ],
-
-  "+125": "nb-single-multi-line(n)",
+  ":125": "nb-single-multi-line(n)",
   "nb-single-multi-line(n)": [
     "nb-ns-single-in-line",
     [
@@ -827,8 +703,7 @@
       "s-white*"
     ]
   ],
-
-  "+126": "ns-plain-first(c)",
+  ":126": "ns-plain-first(c)",
   "ns-plain-first(c)": [
     "(|)",
     [
@@ -846,8 +721,7 @@
       "ns-plain-safe(c)="
     ]
   ],
-
-  "+127": "ns-plain-safe(c)",
+  ":127": "ns-plain-safe(c)",
   "ns-plain-safe(c)": {
     "(case)": {
       "var": "c",
@@ -857,18 +731,15 @@
       "flow-key": "ns-plain-safe-in"
     }
   },
-
-  "+128": "ns-plain-safe-out",
+  ":128": "ns-plain-safe-out",
   "ns-plain-safe-out": "ns-char",
-
-  "+129": "ns-plain-safe-in",
+  ":129": "ns-plain-safe-in",
   "ns-plain-safe-in": [
     "(-)",
     "ns-char",
     "c-flow-indicator"
   ],
-
-  "+130": "ns-plain-char(c)",
+  ":130": "ns-plain-char(c)",
   "ns-plain-char(c)": [
     "(|)",
     [
@@ -886,8 +757,7 @@
       "ns-plain-safe(c)="
     ]
   ],
-
-  "+131": "ns-plain(n,c)",
+  ":131": "ns-plain(n,c)",
   "ns-plain(n,c)": {
     "(case)": {
       "var": "c",
@@ -897,34 +767,29 @@
       "flow-key": "ns-plain-one-line(c)"
     }
   },
-
-  "+132": "nb-ns-plain-in-line(c)",
+  ":132": "nb-ns-plain-in-line(c)",
   "nb-ns-plain-in-line(c)": [
     "(*)",
     "s-white*",
     "ns-plain-char(c)"
   ],
-
-  "+133": "ns-plain-one-line(c)",
+  ":133": "ns-plain-one-line(c)",
   "ns-plain-one-line(c)": [
     "ns-plain-first(c)",
     "nb-ns-plain-in-line(c)"
   ],
-
-  "+134": "s-ns-plain-next-line(n,c)",
+  ":134": "s-ns-plain-next-line(n,c)",
   "s-ns-plain-next-line(n,c)": [
     "s-flow-folded(n)",
     "ns-plain-char(c)",
     "nb-ns-plain-in-line(c)"
   ],
-
-  "+135": "ns-plain-multi-line(n,c)",
+  ":135": "ns-plain-multi-line(n,c)",
   "ns-plain-multi-line(n,c)": [
     "ns-plain-one-line(c)",
     "s-ns-plain-next-line(n,c)*"
   ],
-
-  "+136": "in-flow(c)",
+  ":136": "in-flow(c)",
   "in-flow(c)": {
     "(switch)": {
       "var": "c",
@@ -934,16 +799,14 @@
       "flow-key": "flow-key"
     }
   },
-
-  "+137": "c-flow-sequence(n,c)",
+  ":137": "c-flow-sequence(n,c)",
   "c-flow-sequence(n,c)": [
     "[",
     "s-separate(n,c)?",
     "ns-s-flow-seq-entries(n,in-flow(c))?",
     "]"
   ],
-
-  "+138": "ns-s-flow-seq-entries(n,c)",
+  ":138": "ns-s-flow-seq-entries(n,c)",
   "ns-s-flow-seq-entries(n,c)": [
     "ns-flow-seq-entry(n,c)",
     "s-separate(n,c)?",
@@ -954,23 +817,20 @@
       "ns-s-flow-seq-entries(n,c)?"
     ]
   ],
-
-  "+139": "ns-flow-seq-entry(n,c)",
+  ":139": "ns-flow-seq-entry(n,c)",
   "ns-flow-seq-entry(n,c)": [
     "(|)",
     "ns-flow-pair(n,c)",
     "ns-flow-node(n,c)"
   ],
-
-  "+140": "c-flow-mapping(n,c)",
+  ":140": "c-flow-mapping(n,c)",
   "c-flow-mapping(n,c)": [
     "{",
     "s-separate(n,c)?",
     "ns-s-flow-map-entries(n,in-flow(c))?",
     "}"
   ],
-
-  "+141": "ns-s-flow-map-entries(n,c)",
+  ":141": "ns-s-flow-map-entries(n,c)",
   "ns-s-flow-map-entries(n,c)": [
     "ns-flow-map-entry(n,c)",
     "s-separate(n,c)?",
@@ -981,8 +841,7 @@
       "ns-s-flow-map-entries(n,c)?"
     ]
   ],
-
-  "+142": "ns-flow-map-entry(n,c)",
+  ":142": "ns-flow-map-entry(n,c)",
   "ns-flow-map-entry(n,c)": [
     "(|)",
     [
@@ -992,8 +851,7 @@
     ],
     "ns-flow-map-implicit-entry(n,c)"
   ],
-
-  "+143": "ns-flow-map-explicit-entry(n,c)",
+  ":143": "ns-flow-map-explicit-entry(n,c)",
   "ns-flow-map-explicit-entry(n,c)": [
     "(|)",
     "ns-flow-map-implicit-entry(n,c)",
@@ -1002,16 +860,14 @@
       "e-node"
     ]
   ],
-
-  "+144": "ns-flow-map-implicit-entry(n,c)",
+  ":144": "ns-flow-map-implicit-entry(n,c)",
   "ns-flow-map-implicit-entry(n,c)": [
     "(|)",
     "ns-flow-map-yaml-key-entry(n,c)",
     "c-ns-flow-map-empty-key-entry(n,c)",
     "c-ns-flow-map-json-key-entry(n,c)"
   ],
-
-  "+145": "ns-flow-map-yaml-key-entry(n,c)",
+  ":145": "ns-flow-map-yaml-key-entry(n,c)",
   "ns-flow-map-yaml-key-entry(n,c)": [
     "ns-flow-yaml-node(n,c)",
     [
@@ -1023,14 +879,12 @@
       "e-node"
     ]
   ],
-
-  "+146": "c-ns-flow-map-empty-key-entry(n,c)",
+  ":146": "c-ns-flow-map-empty-key-entry(n,c)",
   "c-ns-flow-map-empty-key-entry(n,c)": [
     "e-node",
     "c-ns-flow-map-separate-value(n,c)"
   ],
-
-  "+147": "c-ns-flow-map-separate-value(n,c)",
+  ":147": "c-ns-flow-map-separate-value(n,c)",
   "c-ns-flow-map-separate-value(n,c)": [
     ":",
     "ns-plain-safe(c)!",
@@ -1043,8 +897,7 @@
       "e-node"
     ]
   ],
-
-  "+148": "c-ns-flow-map-json-key-entry(n,c)",
+  ":148": "c-ns-flow-map-json-key-entry(n,c)",
   "c-ns-flow-map-json-key-entry(n,c)": [
     "c-flow-json-node(n,c)",
     [
@@ -1056,8 +909,7 @@
       "e-node"
     ]
   ],
-
-  "+149": "c-ns-flow-map-adjacent-value(n,c)",
+  ":149": "c-ns-flow-map-adjacent-value(n,c)",
   "c-ns-flow-map-adjacent-value(n,c)": [
     ":",
     [
@@ -1069,8 +921,7 @@
       "e-node"
     ]
   ],
-
-  "+150": "ns-flow-pair(n,c)",
+  ":150": "ns-flow-pair(n,c)",
   "ns-flow-pair(n,c)": [
     "(|)",
     [
@@ -1080,45 +931,38 @@
     ],
     "ns-flow-pair-entry(n,c)"
   ],
-
-  "+151": "ns-flow-pair-entry(n,c)",
+  ":151": "ns-flow-pair-entry(n,c)",
   "ns-flow-pair-entry(n,c)": [
     "(|)",
     "ns-flow-pair-yaml-key-entry(n,c)",
     "c-ns-flow-map-empty-key-entry(n,c)",
     "c-ns-flow-pair-json-key-entry(n,c)"
   ],
-
-  "+152": "ns-flow-pair-yaml-key-entry(n,c)",
+  ":152": "ns-flow-pair-yaml-key-entry(n,c)",
   "ns-flow-pair-yaml-key-entry(n,c)": [
     "ns-s-implicit-yaml-key(\"flow-key\")",
     "c-ns-flow-map-separate-value(n,c)"
   ],
-
-  "+153": "c-ns-flow-pair-json-key-entry(n,c)",
+  ":153": "c-ns-flow-pair-json-key-entry(n,c)",
   "c-ns-flow-pair-json-key-entry(n,c)": [
     "c-s-implicit-json-key(\"flow-key\")",
     "c-ns-flow-map-adjacent-value(n,c)"
   ],
-
-  "+154": "ns-s-implicit-yaml-key(c)",
+  ":154": "ns-s-implicit-yaml-key(c)",
   "ns-s-implicit-yaml-key(c)": [
     "ns-flow-yaml-node(null,c)",
     "s-separate-in-line?",
     "<at_most_1024_characters_altogether>"
   ],
-
-  "+155": "c-s-implicit-json-key(c)",
+  ":155": "c-s-implicit-json-key(c)",
   "c-s-implicit-json-key(c)": [
     "c-flow-json-node(null,c)",
     "s-separate-in-line?",
     "<at_most_1024_characters_altogether>"
   ],
-
-  "+156": "ns-flow-yaml-content(n,c)",
+  ":156": "ns-flow-yaml-content(n,c)",
   "ns-flow-yaml-content(n,c)": "ns-plain(n,c)",
-
-  "+157": "c-flow-json-content(n,c)",
+  ":157": "c-flow-json-content(n,c)",
   "c-flow-json-content(n,c)": [
     "(|)",
     "c-flow-sequence(n,c)",
@@ -1126,15 +970,13 @@
     "c-single-quoted(n,c)",
     "c-double-quoted(n,c)"
   ],
-
-  "+158": "ns-flow-content(n,c)",
+  ":158": "ns-flow-content(n,c)",
   "ns-flow-content(n,c)": [
     "(|)",
     "ns-flow-yaml-content(n,c)",
     "c-flow-json-content(n,c)"
   ],
-
-  "+159": "ns-flow-yaml-node(n,c)",
+  ":159": "ns-flow-yaml-node(n,c)",
   "ns-flow-yaml-node(n,c)": [
     "(|)",
     "c-ns-alias-node",
@@ -1151,8 +993,7 @@
       ]
     ]
   ],
-
-  "+160": "c-flow-json-node(n,c)",
+  ":160": "c-flow-json-node(n,c)",
   "c-flow-json-node(n,c)": [
     [
       "(?)",
@@ -1161,8 +1002,7 @@
     ],
     "c-flow-json-content(n,c)"
   ],
-
-  "+161": "ns-flow-node(n,c)",
+  ":161": "ns-flow-node(n,c)",
   "ns-flow-node(n,c)": [
     "(|)",
     "c-ns-alias-node",
@@ -1179,8 +1019,7 @@
       ]
     ]
   ],
-
-  "+162": "c-b-block-header(m,t)",
+  ":162": "c-b-block-header(m,t)",
   "c-b-block-header(m,t)": [
     [
       "(|)",
@@ -1195,8 +1034,7 @@
     ],
     "s-b-comment"
   ],
-
-  "+163": "c-indentation-indicator(m)",
+  ":163": "c-indentation-indicator(m)",
   "c-indentation-indicator(m)": [
     "(|)",
     {
@@ -1217,8 +1055,7 @@
       ]
     }
   ],
-
-  "+164": "c-chomping-indicator(t)",
+  ":164": "c-chomping-indicator(t)",
   "c-chomping-indicator(t)": [
     "(|)",
     {
@@ -1243,8 +1080,7 @@
       ]
     }
   ],
-
-  "+165": "b-chomped-last(t)",
+  ":165": "b-chomped-last(t)",
   "b-chomped-last(t)": {
     "(case)": {
       "var": "t",
@@ -1265,8 +1101,7 @@
       ]
     }
   },
-
-  "+166": "l-chomped-empty(n,t)",
+  ":166": "l-chomped-empty(n,t)",
   "l-chomped-empty(n,t)": {
     "(case)": {
       "var": "t",
@@ -1275,8 +1110,7 @@
       "keep": "l-keep-empty(n)"
     }
   },
-
-  "+167": "l-strip-empty(n)",
+  ":167": "l-strip-empty(n)",
   "l-strip-empty(n)": [
     [
       "(*)",
@@ -1285,42 +1119,36 @@
     ],
     "l-trail-comments(n)?"
   ],
-
-  "+168": "l-keep-empty(n)",
+  ":168": "l-keep-empty(n)",
   "l-keep-empty(n)": [
     "l-empty(n,\"block-in\")*",
     "l-trail-comments(n)?"
   ],
-
-  "+169": "l-trail-comments(n)",
+  ":169": "l-trail-comments(n)",
   "l-trail-comments(n)": [
     "s-indent-lt(n)",
     "c-nb-comment-text",
     "b-comment",
     "l-comment*"
   ],
-
-  "+170": "c-l+literal(n)",
+  ":170": "c-l+literal(n)",
   "c-l+literal(n)": [
     "|",
     "c-b-block-header(m,t)",
     "l-literal-content(n+m,t)"
   ],
-
-  "+171": "l-nb-literal-text(n)",
+  ":171": "l-nb-literal-text(n)",
   "l-nb-literal-text(n)": [
     "l-empty(n,\"block-in\")*",
     "s-indent(n)",
     "nb-char+"
   ],
-
-  "+172": "b-nb-literal-next(n)",
+  ":172": "b-nb-literal-next(n)",
   "b-nb-literal-next(n)": [
     "b-as-line-feed",
     "l-nb-literal-text(n)"
   ],
-
-  "+173": "l-literal-content(n,t)",
+  ":173": "l-literal-content(n,t)",
   "l-literal-content(n,t)": [
     [
       "(?)",
@@ -1330,22 +1158,19 @@
     ],
     "l-chomped-empty(n,t)"
   ],
-
-  "+174": "c-l+folded(n)",
+  ":174": "c-l+folded(n)",
   "c-l+folded(n)": [
     ">",
     "c-b-block-header(m,t)",
     "l-folded-content(n+m,t)"
   ],
-
-  "+175": "s-nb-folded-text(n)",
+  ":175": "s-nb-folded-text(n)",
   "s-nb-folded-text(n)": [
     "s-indent(n)",
     "ns-char",
     "nb-char*"
   ],
-
-  "+176": "l-nb-folded-lines(n)",
+  ":176": "l-nb-folded-lines(n)",
   "l-nb-folded-lines(n)": [
     "s-nb-folded-text(n)",
     [
@@ -1354,21 +1179,18 @@
       "s-nb-folded-text(n)"
     ]
   ],
-
-  "+177": "s-nb-spaced-text(n)",
+  ":177": "s-nb-spaced-text(n)",
   "s-nb-spaced-text(n)": [
     "s-indent(n)",
     "s-white",
     "nb-char*"
   ],
-
-  "+178": "b-l-spaced(n)",
+  ":178": "b-l-spaced(n)",
   "b-l-spaced(n)": [
     "b-as-line-feed",
     "l-empty(n,\"block-in\")*"
   ],
-
-  "+179": "l-nb-spaced-lines(n)",
+  ":179": "l-nb-spaced-lines(n)",
   "l-nb-spaced-lines(n)": [
     "s-nb-spaced-text(n)",
     [
@@ -1377,8 +1199,7 @@
       "s-nb-spaced-text(n)"
     ]
   ],
-
-  "+180": "l-nb-same-lines(n)",
+  ":180": "l-nb-same-lines(n)",
   "l-nb-same-lines(n)": [
     "l-empty(n,\"block-in\")*",
     [
@@ -1387,8 +1208,7 @@
       "l-nb-spaced-lines(n)"
     ]
   ],
-
-  "+181": "l-nb-diff-lines(n)",
+  ":181": "l-nb-diff-lines(n)",
   "l-nb-diff-lines(n)": [
     "l-nb-same-lines(n)",
     [
@@ -1397,8 +1217,7 @@
       "l-nb-same-lines(n)"
     ]
   ],
-
-  "+182": "l-folded-content(n,t)",
+  ":182": "l-folded-content(n,t)",
   "l-folded-content(n,t)": [
     [
       "(?)",
@@ -1407,8 +1226,7 @@
     ],
     "l-chomped-empty(n,t)"
   ],
-
-  "+183": "l+block-sequence(n)",
+  ":183": "l+block-sequence(n)",
   "l+block-sequence(n)": [
     "(+)",
     {
@@ -1420,15 +1238,13 @@
     "s-indent(n+m)",
     "c-l-block-seq-entry(n+m)"
   ],
-
-  "+184": "c-l-block-seq-entry(n)",
+  ":184": "c-l-block-seq-entry(n)",
   "c-l-block-seq-entry(n)": [
     "-",
     "ns-char!",
     "s-l+block-indented(n,\"block-in\")"
   ],
-
-  "+185": "s-l+block-indented(n,c)",
+  ":185": "s-l+block-indented(n,c)",
   "s-l+block-indented(n,c)": [
     "(|)",
     [
@@ -1445,8 +1261,7 @@
       "s-l-comments"
     ]
   ],
-
-  "+186": "ns-l-compact-sequence(n)",
+  ":186": "ns-l-compact-sequence(n)",
   "ns-l-compact-sequence(n)": [
     "c-l-block-seq-entry(n)",
     [
@@ -1455,8 +1270,7 @@
       "c-l-block-seq-entry(n)"
     ]
   ],
-
-  "+187": "l+block-mapping(n)",
+  ":187": "l+block-mapping(n)",
   "l+block-mapping(n)": [
     "(+)",
     {
@@ -1468,15 +1282,13 @@
     "s-indent(n+m)",
     "ns-l-block-map-entry(n+m)"
   ],
-
-  "+188": "ns-l-block-map-entry(n)",
+  ":188": "ns-l-block-map-entry(n)",
   "ns-l-block-map-entry(n)": [
     "(|)",
     "c-l-block-map-explicit-entry(n)",
     "ns-l-block-map-implicit-entry(n)"
   ],
-
-  "+189": "c-l-block-map-explicit-entry(n)",
+  ":189": "c-l-block-map-explicit-entry(n)",
   "c-l-block-map-explicit-entry(n)": [
     "c-l-block-map-explicit-key(n)",
     [
@@ -1485,21 +1297,18 @@
       "e-node"
     ]
   ],
-
-  "+190": "c-l-block-map-explicit-key(n)",
+  ":190": "c-l-block-map-explicit-key(n)",
   "c-l-block-map-explicit-key(n)": [
     "?",
     "s-l+block-indented(n,\"block-out\")"
   ],
-
-  "+191": "l-block-map-explicit-value(n)",
+  ":191": "l-block-map-explicit-value(n)",
   "l-block-map-explicit-value(n)": [
     "s-indent(n)",
     ":",
     "s-l+block-indented(n,\"block-out\")"
   ],
-
-  "+192": "ns-l-block-map-implicit-entry(n)",
+  ":192": "ns-l-block-map-implicit-entry(n)",
   "ns-l-block-map-implicit-entry(n)": [
     [
       "(|)",
@@ -1508,15 +1317,13 @@
     ],
     "c-l-block-map-implicit-value(n)"
   ],
-
-  "+193": "ns-s-block-map-implicit-key",
+  ":193": "ns-s-block-map-implicit-key",
   "ns-s-block-map-implicit-key": [
     "(|)",
     "c-s-implicit-json-key(\"block-key\")",
     "ns-s-implicit-yaml-key(\"block-key\")"
   ],
-
-  "+194": "c-l-block-map-implicit-value(n)",
+  ":194": "c-l-block-map-implicit-value(n)",
   "c-l-block-map-implicit-value(n)": [
     ":",
     [
@@ -1528,8 +1335,7 @@
       ]
     ]
   ],
-
-  "+195": "ns-l-compact-mapping(n)",
+  ":195": "ns-l-compact-mapping(n)",
   "ns-l-compact-mapping(n)": [
     "ns-l-block-map-entry(n)",
     [
@@ -1538,29 +1344,25 @@
       "ns-l-block-map-entry(n)"
     ]
   ],
-
-  "+196": "s-l+block-node(n,c)",
+  ":196": "s-l+block-node(n,c)",
   "s-l+block-node(n,c)": [
     "(|)",
     "s-l+block-in-block(n,c)",
     "s-l+flow-in-block(n)"
   ],
-
-  "+197": "s-l+flow-in-block(n)",
+  ":197": "s-l+flow-in-block(n)",
   "s-l+flow-in-block(n)": [
     "s-separate(n+1,\"flow-out\")",
     "ns-flow-node(n+1,\"flow-out\")",
     "s-l-comments"
   ],
-
-  "+198": "s-l+block-in-block(n,c)",
+  ":198": "s-l+block-in-block(n,c)",
   "s-l+block-in-block(n,c)": [
     "(|)",
     "s-l+block-scalar(n,c)",
     "s-l+block-collection(n,c)"
   ],
-
-  "+199": "s-l+block-scalar(n,c)",
+  ":199": "s-l+block-scalar(n,c)",
   "s-l+block-scalar(n,c)": [
     "s-separate(n+1,c)",
     [
@@ -1574,8 +1376,7 @@
       "c-l+folded(n)"
     ]
   ],
-
-  "+200": "s-l+block-collection(n,c)",
+  ":200": "s-l+block-collection(n,c)",
   "s-l+block-collection(n,c)": [
     [
       "(?)",
@@ -1589,8 +1390,7 @@
       "l+block-mapping(n)"
     ]
   ],
-
-  "+201": "seq-spaces(n,c)",
+  ":201": "seq-spaces(n,c)",
   "seq-spaces(n,c)": {
     "(switch)": {
       "var": "c",
@@ -1601,34 +1401,29 @@
       "block-in": "n"
     }
   },
-
-  "+202": "l-document-prefix",
+  ":202": "l-document-prefix",
   "l-document-prefix": [
     "c-byte-order-mark?",
     "l-comment*"
   ],
-
-  "+203": "c-directives-end",
+  ":203": "c-directives-end",
   "c-directives-end": [
     "-",
     "-",
     "-"
   ],
-
-  "+204": "c-document-end",
+  ":204": "c-document-end",
   "c-document-end": [
     ".",
     ".",
     "."
   ],
-
-  "+205": "l-document-suffix",
+  ":205": "l-document-suffix",
   "l-document-suffix": [
     "c-document-end",
     "s-l-comments"
   ],
-
-  "+206": "c-forbidden",
+  ":206": "c-forbidden",
   "c-forbidden": [
     "<start_of_line>",
     [
@@ -1643,14 +1438,12 @@
       "<end_of_file>"
     ]
   ],
-
-  "+207": "l-bare-document",
+  ":207": "l-bare-document",
   "l-bare-document": [
     "s-l+block-node(-1,\"block-in\")",
     "<excluding_c-forbidden_content>"
   ],
-
-  "+208": "l-explicit-document",
+  ":208": "l-explicit-document",
   "l-explicit-document": [
     "c-directives-end",
     [
@@ -1662,22 +1455,19 @@
       ]
     ]
   ],
-
-  "+209": "l-directive-document",
+  ":209": "l-directive-document",
   "l-directive-document": [
     "l-directive+",
     "l-explicit-document"
   ],
-
-  "+210": "l-any-document",
+  ":210": "l-any-document",
   "l-any-document": [
     "(|)",
     "l-directive-document",
     "l-explicit-document",
     "l-bare-document"
   ],
-
-  "+211": "l-yaml-stream",
+  ":211": "l-yaml-stream",
   "l-yaml-stream": [
     "l-document-prefix*",
     "l-any-document?",

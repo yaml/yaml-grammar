@@ -239,7 +239,7 @@ sub make_rule {
 
   my $yaml = "$key: $rule";
   $yaml =~ s/\ +$//gm;
-  $yaml = sprintf qq{'+%03d': '%s'\n%s\n\n%s},
+  $yaml = sprintf qq{:%03d: %s\n%s\n\n%s},
     $num, $key, $orig, $yaml;
 
   $num = sprintf "%03d", $num;
