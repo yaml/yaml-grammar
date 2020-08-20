@@ -1410,12 +1410,15 @@
 
   "+183": "l+block-sequence(n)",
   "l+block-sequence(n)": [
-    [
-      "(+)",
-      "s-indent(n+m)",
-      "c-l-block-seq-entry(n+m)"
-    ],
-    "<for_some_fixed_auto-detected_m_>_0>"
+    "(+)",
+    {
+      "(set)": [
+        "m",
+        "<auto_detect_indent>"
+      ]
+    },
+    "s-indent(n+m)",
+    "c-l-block-seq-entry(n+m)"
   ],
 
   "+184": "c-l-block-seq-entry(n)",
@@ -1455,12 +1458,15 @@
 
   "+187": "l+block-mapping(n)",
   "l+block-mapping(n)": [
-    [
-      "(+)",
-      "s-indent(n+m)",
-      "ns-l-block-map-entry(n+m)"
-    ],
-    "<for_some_fixed_auto-detected_m_>_0>"
+    "(+)",
+    {
+      "(set)": [
+        "m",
+        "<auto_detect_indent>"
+      ]
+    },
+    "s-indent(n+m)",
+    "ns-l-block-map-entry(n+m)"
   ],
 
   "+188": "ns-l-block-map-entry(n)",

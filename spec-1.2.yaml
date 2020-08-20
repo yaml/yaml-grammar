@@ -2478,10 +2478,6 @@ l-folded-content(n,t):
 ##### 8.2.1. Block Sequences
 
 
-#===============================================================================
-# XXX Need figure out what <for_some_fixed_auto-detected_m_>_0> is about
-#===============================================================================
-
 '+183': 'l+block-sequence(n)'
 # l+block-sequence(n) ::=
 #   ( s-indent(n+m)
@@ -2489,10 +2485,10 @@ l-folded-content(n,t):
 #   <for_some_fixed_auto-detected_m_>_0>
 
 l+block-sequence(n):
-- - (+)
-  - s-indent(n+m)
-  - c-l-block-seq-entry(n+m)
-- <for_some_fixed_auto-detected_m_>_0>
+- (+)
+- (set): [ m, <auto_detect_indent> ]
+- s-indent(n+m)
+- c-l-block-seq-entry(n+m)
 
 
 
@@ -2551,10 +2547,10 @@ ns-l-compact-sequence(n):
 #   <for_some_fixed_auto-detected_m_>_0>
 
 l+block-mapping(n):
-- - (+)
-  - s-indent(n+m)
-  - ns-l-block-map-entry(n+m)
-- <for_some_fixed_auto-detected_m_>_0>
+- (+)
+- (set): [ m, <auto_detect_indent> ]
+- s-indent(n+m)
+- ns-l-block-map-entry(n+m)
 
 
 

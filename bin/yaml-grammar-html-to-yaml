@@ -1,12 +1,5 @@
 #!/usr/bin/env perl
 
-# Make 183 be:
-#   l+block-sequence(n):
-#   - - (+)
-#     - set: [ m, <auto_detect_indent> ]
-#     - s-indent(n+m)
-#     - c-l-block-seq-entry(n+m)
-
 use strict;
 use warnings;
 use YAML::PP;
@@ -208,7 +201,7 @@ sub make_rule {
   make_tokens($text);
 
   my $rule;
-  if ($text =~ /\( t = (\S+) => (\S+) \| (<end_of_file>) \)/) {
+  if ($text =~ /t = .*<end_of_file>/) {
     $rule = special_format_case_or($tokens);
   }
   elsif (ref($tokens->[0]) and (grep $_ eq '=>', @{$tokens->[0]})) {
@@ -230,6 +223,8 @@ sub make_rule {
   $rule =~ s/<where_m_(<=?)_n>/[ ($1), \$lastMatchLength, n]/;
   $rule =~ s/<followed_by_an_(.*)>/$1=/;
   $rule =~ s/<not_followed_by_an_(.*)>/$1!/;
+  $rule =~ s{<for_some_fixed_auto-detected_m_>_0>}
+            {(set): [ m, <auto_detect_indent> ]};
 
   $rule =~ s{n/a}{null};
 
@@ -450,6 +445,16 @@ sub make_tokens {
     ref($tokens->[0]) eq 'ARRAY'
   ) {
     $tokens = $tokens->[0];
+  }
+
+  if (
+    ref($tokens) eq 'ARRAY' and
+    @$tokens >= 2 and
+    $tokens->[1] eq '<for_some_fixed_auto-detected_m_>_0>'
+  ) {
+    my $token = $tokens->[1];
+    $tokens = $tokens->[0];
+    splice(@$tokens, 1, 0, $token);
   }
 
   # warn $ypp->dump(["($num) $key", $text, $tokens]) if $num >= 1;
