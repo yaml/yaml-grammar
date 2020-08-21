@@ -23,7 +23,7 @@ sub main {
   }
   $comments->{"000"} = $comment0;
 
-  while (s/^$line(.*?)^$line\n'\+(\d{3})'//sm) {
+  while (s/^$line(.*?)^$line\n:(\d{3})://sm) {
     my ($comment, $num) = ($1, $2);
     $comment =~ s/^# ?//gm;
     $comments->{$num} = $comment;
