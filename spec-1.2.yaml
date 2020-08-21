@@ -2816,14 +2816,23 @@ c-forbidden:
 ##### 9.1.3. Bare Documents
 
 
+#===============================================================================
+# The l-bare-document is the topmost rule for parsing a document.
+#
+# The <excluding_c-forbidden_content> says that in every other rule you must
+# check that c-forbidden does not occur.
+#
+# This is a bad design choice for a formal grammar.
+#===============================================================================
+
 :207: l-bare-document
 # l-bare-document ::=
 #   s-l+block-node(-1,block-in)
 #   <excluding_c-forbidden_content>
 
 l-bare-document:
+- (exclude): c-forbidden
 - s-l+block-node(-1,"block-in")
-- <excluding_c-forbidden_content>
 
 
 

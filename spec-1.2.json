@@ -1440,8 +1440,10 @@
   ],
   ":207": "l-bare-document",
   "l-bare-document": [
-    "s-l+block-node(-1,\"block-in\")",
-    "<excluding_c-forbidden_content>"
+    {
+      "(exclude)": "c-forbidden"
+    },
+    "s-l+block-node(-1,\"block-in\")"
   ],
   ":208": "l-explicit-document",
   "l-explicit-document": [

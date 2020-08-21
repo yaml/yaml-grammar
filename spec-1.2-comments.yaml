@@ -174,3 +174,10 @@
   value of a state variable (in this case `c`).
 
   7 rules in this grammar have case statements.
+'207': |
+  The l-bare-document is the topmost rule for parsing a document.
+
+  The <excluding_c-forbidden_content> says that in every other rule you must
+  check that c-forbidden does not occur.
+
+  This is a bad design choice for a formal grammar.

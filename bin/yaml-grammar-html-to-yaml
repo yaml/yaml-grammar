@@ -1,5 +1,13 @@
 #!/usr/bin/env perl
 
+# <an_ns-char_preceding> becomes (130)
+#   ns-char<=
+#
+# ns-s-implicit-yaml-key(c) becomes (154, 155)
+#   - (limit): 1024
+#   - ns-flow-yaml-node(null,c)
+#   - s-separate-in-line?
+
 use strict;
 use warnings;
 use YAML::PP;
@@ -225,6 +233,8 @@ sub make_rule {
   $rule =~ s/<not_followed_by_an_(.*)>/$1!/;
   $rule =~ s{<for_some_fixed_auto-detected_m_>_0>}
             {(set): [ m, <auto_detect_indent> ]};
+  $rule =~ s{<excluding_c-forbidden_content>}
+            {(exclude): c-forbidden};
 
   $rule =~ s{n/a}{null};
 
@@ -449,12 +459,16 @@ sub make_tokens {
 
   if (
     ref($tokens) eq 'ARRAY' and
-    @$tokens >= 2 and
-    $tokens->[1] eq '<for_some_fixed_auto-detected_m_>_0>'
+    @$tokens >= 2
   ) {
-    my $token = $tokens->[1];
-    $tokens = $tokens->[0];
-    splice(@$tokens, 1, 0, $token);
+    if ($tokens->[1] eq '<for_some_fixed_auto-detected_m_>_0>') {
+      my $token = $tokens->[1];
+      $tokens = $tokens->[0];
+      splice(@$tokens, 1, 0, $token);
+    }
+    elsif ($tokens->[-1] eq '<excluding_c-forbidden_content>') {
+      unshift @$tokens, pop @$tokens;
+    }
   }
 
   # warn $ypp->dump(["($num) $key", $text, $tokens]) if $num >= 1;
