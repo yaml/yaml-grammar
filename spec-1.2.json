@@ -950,15 +950,19 @@
   ],
   ":154": "ns-s-implicit-yaml-key(c)",
   "ns-s-implicit-yaml-key(c)": [
+    {
+      "(limit)": 1024
+    },
     "ns-flow-yaml-node(null,c)",
-    "s-separate-in-line?",
-    "<at_most_1024_characters_altogether>"
+    "s-separate-in-line?"
   ],
   ":155": "c-s-implicit-json-key(c)",
   "c-s-implicit-json-key(c)": [
+    {
+      "(limit)": 1024
+    },
     "c-flow-json-node(null,c)",
-    "s-separate-in-line?",
-    "<at_most_1024_characters_altogether>"
+    "s-separate-in-line?"
   ],
   ":156": "ns-flow-yaml-content(n,c)",
   "ns-flow-yaml-content(n,c)": "ns-plain(n,c)",

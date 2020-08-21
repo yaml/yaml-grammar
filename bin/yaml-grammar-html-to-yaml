@@ -1,10 +1,5 @@
 #!/usr/bin/env perl
 
-# ns-s-implicit-yaml-key(c) becomes (154, 155)
-#   - (limit): 1024
-#   - ns-flow-yaml-node(null,c)
-#   - s-separate-in-line?
-
 use strict;
 use warnings;
 use YAML::PP;
@@ -233,6 +228,8 @@ sub make_rule {
             {(set): [ m, <auto_detect_indent> ]};
   $rule =~ s{<excluding_c-forbidden_content>}
             {(exclude): c-forbidden};
+  $rule =~ s{<at_most_1024_characters_altogether>}
+            {(limit): 1024};
 
   $rule =~ s{n/a}{null};
 
@@ -464,7 +461,10 @@ sub make_tokens {
       $tokens = $tokens->[0];
       splice(@$tokens, 1, 0, $token);
     }
-    elsif ($tokens->[-1] eq '<excluding_c-forbidden_content>') {
+    elsif (
+      $tokens->[-1] eq '<excluding_c-forbidden_content>' or
+      $tokens->[-1] eq '<at_most_1024_characters_altogether>'
+    ) {
       unshift @$tokens, pop @$tokens;
     }
   }
