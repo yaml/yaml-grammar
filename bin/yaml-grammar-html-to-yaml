@@ -1,8 +1,5 @@
 #!/usr/bin/env perl
 
-# <an_ns-char_preceding> becomes (130)
-#   ns-char<=
-#
 # ns-s-implicit-yaml-key(c) becomes (154, 155)
 #   - (limit): 1024
 #   - ns-flow-yaml-node(null,c)
@@ -162,7 +159,7 @@ sub make_yaml {
   while ($text =~ s/^(\S.*?)\n\n+//s) {
     my $para = $1;
     if ($para =~ /^\d/) {
-      push @yaml, make_comment($para);
+      push @yaml, make_section_comment($para);
     }
     elsif ($debug && $para =~ /(\d+)/) {
       next unless $debug == $1;
@@ -179,7 +176,7 @@ sub make_yaml {
   return $yaml;
 }
 
-sub make_comment {
+sub make_section_comment {
   $_ = shift;
 
   my $comment;
@@ -231,6 +228,7 @@ sub make_rule {
   $rule =~ s/<where_m_(<=?)_n>/[ ($1), \$lastMatchLength, n]/;
   $rule =~ s/<followed_by_an_(.*)>/$1=/;
   $rule =~ s/<not_followed_by_an_(.*)>/$1!/;
+  $rule =~ s/<an_ns-char_preceding>/ns-char<=/;
   $rule =~ s{<for_some_fixed_auto-detected_m_>_0>}
             {(set): [ m, <auto_detect_indent> ]};
   $rule =~ s{<excluding_c-forbidden_content>}

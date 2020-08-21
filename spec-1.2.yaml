@@ -1725,7 +1725,7 @@ ns-plain-char(c):
   - ns-plain-safe(c)
   - ':'
   - '#'
-- - <an_ns-char_preceding>
+- - ns-char<=
   - '#'
 - - ':'
   - ns-plain-safe(c)=
