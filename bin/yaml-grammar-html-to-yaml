@@ -10,8 +10,6 @@
 #===============================================================================
 
 # Commit input text file
-#
-# Change <end_of_file> to <end_of_stream>
 
 use strict;
 use warnings;
@@ -233,6 +231,7 @@ sub make_rule {
   $rule =~ s/<followed_by_an_(.*)>/$1=/;
   $rule =~ s/<not_followed_by_an_(.*)>/$1!/;
   $rule =~ s/<an_ns-char_preceding>/ns-char<=/;
+  $rule =~ s/<end_of_file>/<end_of_stream>/g;
   $rule =~ s{<for_some_fixed_auto-detected_m_>_0>}
             {(set): [ m, <auto_detect_indent> ]};
   $rule =~ s{<excluding_c-forbidden_content>}

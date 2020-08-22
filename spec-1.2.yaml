@@ -1174,7 +1174,7 @@ c-nb-comment-text:
 b-comment:
 - (|)
 - b-non-content
-- <end_of_file>
+- <end_of_stream>
 
 
 
@@ -2400,9 +2400,9 @@ c-chomping-indicator(t):
 b-chomped-last(t):
   (case):
     var: t
-    "strip": [ (|), b-non-content, <end_of_file> ]
-    "clip":  [ (|), b-as-line-feed, <end_of_file> ]
-    "keep":  [ (|), b-as-line-feed, <end_of_file> ]
+    "strip": [ (|), b-non-content, <end_of_stream> ]
+    "clip":  [ (|), b-as-line-feed, <end_of_stream> ]
+    "keep":  [ (|), b-as-line-feed, <end_of_stream> ]
 
 
 
@@ -2966,7 +2966,7 @@ c-forbidden:
 - - (|)
   - b-char
   - s-white
-  - <end_of_file>
+  - <end_of_stream>
 
 
 

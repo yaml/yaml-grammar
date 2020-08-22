@@ -368,7 +368,7 @@
   "b-comment": [
     "(|)",
     "b-non-content",
-    "<end_of_file>"
+    "<end_of_stream>"
   ],
   ":077": "s-b-comment",
   "s-b-comment": [
@@ -1097,17 +1097,17 @@
       "strip": [
         "(|)",
         "b-non-content",
-        "<end_of_file>"
+        "<end_of_stream>"
       ],
       "clip": [
         "(|)",
         "b-as-line-feed",
-        "<end_of_file>"
+        "<end_of_stream>"
       ],
       "keep": [
         "(|)",
         "b-as-line-feed",
-        "<end_of_file>"
+        "<end_of_stream>"
       ]
     }
   },
@@ -1446,7 +1446,7 @@
       "(|)",
       "b-char",
       "s-white",
-      "<end_of_file>"
+      "<end_of_stream>"
     ]
   ],
   ":207": "l-bare-document",
