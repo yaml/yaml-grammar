@@ -9,8 +9,6 @@
 # ever change, but the desired output may evolve.
 #===============================================================================
 
-# Commit input text file
-
 use strict;
 use warnings;
 use YAML::PP;
