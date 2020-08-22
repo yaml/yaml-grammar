@@ -1,30 +1,46 @@
 #!/usr/bin/env perl
 
+#===============================================================================
+# This script converts the YAML 1.2 spec HTML (after `lynx` has converted it to
+# a plain text representation) into a specific YAML format.
+#
+# This script is very hacky. The process is done by code so that can be
+# repeated and perfected over time. It is not expected that the input file will
+# ever change, but the desired output may evolve.
+#===============================================================================
+
+# Commit input text file
+#
+# Change $lastMatch to (lastMatch)
+#
+# Change $lastMatchLength to [ (length), (lastMatch) ]
+#
+# Change <end_of_file> to <end_of_stream>
+#
+# Change [ (minus-1), n ] to
+#   [ (subtract), n, 1 ]
+
 use strict;
 use warnings;
 use YAML::PP;
-my $ypp = YAML::PP->new();
-my $comments;
 
 use XXX;
 
+my $ypp = YAML::PP->new();
+my $comments;
 my $debug = 0;
 
 sub main {
   my @files;
   for (@_) {
-    if (/^--debug=(\d+)$/) {
-      $debug = $1;
-    }
-    else {
+    /^--debug=(\d+)$/ ? $debug = $1 :
       push @files, $_;
-    }
   }
 
   my ($spec_html, $comment_data) = read_input_files(@files);
   $comments = $comment_data;
 
-  my $text = reformat($spec_html);
+  my $text = reformat_input_text($spec_html);
   $text = make_yaml($text);
 
   for my $comment (@{$comment_data->{'000'}}) {
@@ -55,7 +71,7 @@ sub format_comment {
   return "$line$comment$line\n";
 }
 
-sub reformat {
+sub reformat_input_text {
   $_ = shift;
 
   # Get section containing all productions:

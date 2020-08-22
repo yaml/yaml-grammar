@@ -3,18 +3,30 @@
 # https://github.com/yaml/yaml-grammar/tree/master/bin/yaml-grammar-html-to-yaml
 #
 # This grammar is a YAML file that should be loadable by any decent existing
-# YAML loader. It can easily converted to JSON. In fact, the JSON is already
-# generated next to this file in the repository.
+# YAML loader. It has also been converted to JSON in a file next to this one.
+# The YAML file has lots of helpful comments. The JSON (of course) does not.
 #
-# Its purpose is to:
+# The purpose of this grammar-as-yaml file is to:
 # * Make the spec clearer and more precise to people implementing YAML parsers
-# * To generate 100% correct parsers in most programming languages
+# * To generate 100% correct YAML parsers in most programming languages
 #
 # This grammar mirrors the 1.2 spec faithfully, but tries to express the rules
 # in a more concrete and programatic fashion. Some of the rules that are more
-# difficult to explain have comment sections (like this one) to explain things.
-# Each rule is prefixed by the original YAML 1.2 spec rule text, formatted as a
-# comment.
+# difficult to understand have a comment section before them. Each rule
+# definition is preceded by the original YAML 1.2 spec rule text, formatted as
+# a comment.
+#
+# The DSL used in this file attempts to strike a balance between the original
+# 1.2 spec and a more normalized, programatic form. It errs on the side of
+# readability and human comprehension. This means that programs consuming this
+# file need to parse certain DSL constructs. All the rules, especially the ones
+# that act like functions passing arguments, could have been represented in a
+# form where things were already parsed into smaller units, but that would take
+# away from readability.
+#
+# It is expected that this file can and will be mutated programatically to
+# other forms. Future versions of the YAML spec will programatically mutate
+# this grammar, so that there is an exact and definitive path of progression.
 #===============================================================================
 
 #===============================================================================
@@ -22,21 +34,23 @@
 #   = Syntax Guide =
 #
 # The following is an explanation of the various EBNF/DSL syntax forms used in
-# this grammar.
+# this grammar. The original YAML 1.2 spec uses an EBNF form that has more than
+# a couple oddities. This file tries to make as much sense of them as possible.
+# Each rule that introduces a new syntax is preceded by an explanation.
 #
 # There are 211 rules in the YAML 1.2 spec. This grammar file has 211 sections,
 # one for each rule. The overall structure of this file is a big mapping with
-# 2 pairs for each grammar rule. Each rule group looks like this:
+# 2 mapping pairs for each grammar rule. Each rule group looks like this:
 #
-#   rule-number -> rule-name
-#   <original spec rule as a comment>
-#   rule-name   -> rule definition
+#   rule-number: rule-name
+#   # original-spec-rule-as-a-comment
+#   rule-name: rule-definition
 #
-# The first pair is just for indexing the rule back to the 1.2 spec. The rule
-# definition is the important part. Complex definitions are data structures
-# mostly comprised of other rule-names. The simplest rules point to single
-# characters. This forms a top-down grammar where the top is the last rule,
-# #211.
+# The first pair is just for indexing the rule (by rule number) back to the 1.2
+# spec. The rule definition is the important part. Complex definitions are data
+# structures mostly comprised of other rule-names. The simplest rules point to
+# single characters. This forms a top-down grammar where the top is the last
+# rule, #211.
 #
 #
 #   == Rule Names ==
@@ -56,7 +70,6 @@
 #   * nb+foo-bar
 #   * nb-foo-bar(n)
 #   * nb-foo-bar(n,c)
-#
 #
 #   === Rule Name Prefixes ===
 #
@@ -80,10 +93,12 @@
 #   === Rules Variables ===
 #
 # Some rules are defined with trailing arguments indicating that they should be
-# passed values when being used. There are 3 distinct variables used in the
+# passed values when being used. There are 4 distinct variables used in the
 # YAML 1.2 grammar.
 #
 #   n -- Current indentation level. An integer indicating the number of spaces.
+#
+#   m -- Additional indentation level. An integer indicating number of spaces.
 #
 #   c -- Current context. String that is one of:
 #     * "block-in"
@@ -98,7 +113,35 @@
 #     * "clip"
 #     * "keep"
 #
-# The starting values of n (-1) and c ("block-in") are set in rule #207.
+# Where and how these variables are set is a bit inconsistent. Some are set by
+# explicitly in rules that act like function calls. For example, The starting
+# values of n (-1) and c ("block-in") are set in rule 207.
+#
+# The m variable is set explicitly in rules 183 and 187, albeit by an undefined
+# special rule called <auto_detect_indent>. In rules like 185 it assumes that m
+# is stored as a state/stack variable and has been set somewhere else.
+#
+# The t variable is set using functional constructs in rule 164, depending on
+# the value of a c-chomping-indicator rule.
+#
+#
+#   == Special Rule Names ==
+#
+# A handful of rule names are words inside angle brackets. These are called
+# "special rules". They are not defined in the grammar. Each of these rules is
+# an assertion that doesn't consume any text in the parse. They are:
+#
+#   * <empty>
+#     Always matches.
+#
+#   * <start_of_line>
+#     Current parse position is at the start of a line.
+#
+#   * <end_of_stream>
+#     Current parse position is at the end of the input stream.
+#
+#   * <auto_detect_indent>
+#     Detect the number of characters of new indentation.
 #
 #
 #   == Rule Definitions ==
@@ -113,37 +156,28 @@
 # The various DSL forms were chosen carefully to be easily read and understood
 # by the people reading it. The rest of this section describes those forms.
 #
+#   === Special Syntax Used ===
 #
-#   === Groups ===
+# There are some syntax conventions used for clarity. Everything is valid YAML.
+# Certain things could be expressed in YAML different ways. For instance a
+# single character to be matched could be unquoted, single-quoted or
+# double-quoted. If the intent is to match a single character, it is single
+# quoted.
 #
-# Each sequence is a group (things that are parenthesized). An element of a
-# group may be another group.
-#
-# If the first element of the sequence is the string `(|)`, then ONE of the
-# remaining elements must match for that group to match. This is used to
-# express rules of the form `( a | b | c )`.
-#
-# Otherwise ALL of the remaining elements must match. ie `( a b c )`.
-#
-# If the first element of a group is `(*)`, `(+)` or `(?)`:
-#
-#   * (*) The entire group must match 0 or more times
-#   * (+) The entire group must match 1 or more times
-#   * (?) The entire group must match 0 or 1 times
-#
-# If the first element of a group is `(-)`, then the following elements all
-# represent sets of characters. The overall meaning is a set of characters
-# consisting of the first set minus all the following sets.
-#
+#   * unquoted-word         -- Usually a rule name
+#   * unquoted-single-char  -- A variable name
+#   * single-quoted-char    -- A character to match
+#   * double-quoted-string  -- A literal string value
+#   * (...)                 -- A parsing operator or function
+#   * [ (...), x, y ]       -- Function call with arguments
 #
 #   === Hex Codes ===
 #
-# Hex codes are scalars beginning with `x:` followed by an even number of
-# hexadecimal digits.
+# Hex codes are scalars beginning with an `x` followed by an even number of
+# uppercase hexadecimal digits.
 #
 # There are hex ranges as well, which consist of 2 hex codes separated by a
 # dash.
-#
 #
 #   === Rule Quantifiers ===
 #
@@ -162,11 +196,98 @@
 #
 #   * `=`    -- Positive look-ahead assertion
 #   * `!`    -- Negative look-ahead assertion
+#   * `<=`   -- Positive look-behind assertion
 #
+#   === Groups ===
+#
+# Each sequence is a group (things that are parenthesized). An element of a
+# group may be another group.
+#
+# If the first element of the sequence is the string `(|)`, then ONE of the
+# remaining elements must match for that group to match. This is used to
+# express rules of the form `( a | b | c )`.
+#
+# Otherwise ALL of the remaining elements must match. ie `( a b c )`.
+#
+#   === Operator Functions ===
+#
+#   * (*)
+#     The entire group must match 0 or more times
+#
+#   * (+)
+#     The entire group must match 1 or more times
+#
+#   * (?)
+#     The entire group must match 0 or 1 times
+#
+#   * (&)
+#     All the elements must match, or else backtrack.
+#
+#   * (-)
+#     A set of characters comprised of the first set minus each of the others.
+#
+#   * (<)
+#     First argument is less than the second.
+#
+#   * (<=)
+#     First argument is less than the second.
+#
+#   === Keyword Functions ===
+#
+#   * (case)
+#     A variable indicated by `var` must match one of the other keys. The value
+#     of the matching key pair is the next rule to be checked.
+#
+#   * (switch)
+#     Some grammar rules like 136, don't attempt to match anything. They are
+#     functions that change a variable. Rule 136 uses the (switch) function to
+#     change a variable from one value to another.
+#
+#   * (if)
+#     Check the rule indicated by the value. If it matches, call the (set)
+#     function that must be provided.
+#
+#   * (set)
+#     The value is a 2 element sequence. The first element is a variable and
+#     the second is an expression. Set the variable to the value of the
+#     evaluated expression.
+#
+#   * (charToInt)
+#     Convert a character 1-9 to an integer.
+#
+#   * (lastMatch)
+#     Return the string or character value of the last rule match.
+#
+#   * (length)
+#     Return the length of a string value.
+#
+#   * (subtract)
+#     Return the diffence between 2 numbers.
+#
+#   * (limit)
+#     The YAML spec grammar constrains some rules to complete in the next 1024
+#     characters. The (limit) function is used to indicate that this is the
+#     case. How it is implemented (like many things) is left as an exercise for
+#     the parser author.
+#
+#   * (exclude)
+#     This one is a doozy. It indicates a rule that must not match during any
+#     of the recursive sub-matches. Since it is used near the top of the
+#     grammar, it affects almost everything.
 #===============================================================================
 
 ### 5.1. Character Set
 
+
+#===============================================================================
+# This is the complete set of characters allowed in a YAML stream.
+#
+# The `(|)` means that any one of the remaining rules must match for the group
+# to match. The remaining rules are attempted in order.
+#
+# The rules beginning with `x` are hex codes. the pairs of hex codes separated
+# by dashes are character ranges.
+#===============================================================================
 
 :001: c-printable
 # c-printable ::=
@@ -216,6 +337,11 @@ c-byte-order-mark: xFEFF
 
 ### 5.3. Indicator Characters
 
+
+#===============================================================================
+# Rules 004 to 021 are single characters to match. Instead of a hex code, they
+# are specified as a single character in single quotes.
+#===============================================================================
 
 :004: c-sequence-entry
 # c-sequence-entry ::=
@@ -328,6 +454,11 @@ c-literal: '|'
 c-folded: '>'
 
 
+
+#===============================================================================
+# The single quote here is specified in YAML double quotes for clarity but is
+# meant to be a character, not a string.
+#===============================================================================
 
 :018: c-single-quote
 # c-single-quote ::=
@@ -443,6 +574,11 @@ b-char:
 
 
 
+#===============================================================================
+# The `(--)` operator here matches if the next character is in the first range,
+# but not in any of the following ranges.
+#===============================================================================
+
 :027: nb-char
 # nb-char ::=
 #   c-printable - b-char - c-byte-order-mark
@@ -454,6 +590,11 @@ nb-char:
 - c-byte-order-mark
 
 
+
+#===============================================================================
+# A rule in in a sequence of rules can be another sequence. This is how
+# parenthesized groups are represented.
+#===============================================================================
 
 :028: b-break
 # b-break ::=
@@ -772,6 +913,11 @@ ns-esc-paragraph-separator: 'P'
 
 
 
+#===============================================================================
+# Values in curly braces after a rule name are numeric quantifiers. ie The rule
+# must match that exact number of times.
+#===============================================================================
+
 :059: ns-esc-8-bit
 # ns-esc-8-bit ::=
 #   'x'
@@ -846,6 +992,11 @@ c-ns-esc-char:
 ### 6.1. Indentation Spaces
 
 
+#===============================================================================
+# Some rules are intended to be called with arguments. The arguments variables
+# are specified in parentheses after the rule name.
+#===============================================================================
+
 :063: s-indent(n)
 # s-indent(n) ::=
 #   s-space{n}
@@ -853,6 +1004,12 @@ c-ns-esc-char:
 s-indent(n): s-space{n}
 
 
+
+#===============================================================================
+# This rule means to match as many spaces as possible, then check the length of
+# the match is less than the indentation level in variable n. The (&) means
+# that if both assertions are not true, backtrack to where the rule started.
+#===============================================================================
 
 :064: s-indent-lt(n)
 # s-indent(<n) ::=
