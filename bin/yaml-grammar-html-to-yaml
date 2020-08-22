@@ -12,9 +12,6 @@
 # Commit input text file
 #
 # Change <end_of_file> to <end_of_stream>
-#
-# Change [ (minus-1), n ] to
-#   [ (subtract), n, 1 ]
 
 use strict;
 use warnings;
@@ -357,7 +354,7 @@ sub special_format_switch_var {
   for my $e (@$tokens) {
     my ($s, $v) = @{$e}[2,4];
     if ($v eq 'n-1') {
-      $v = "[ (minus-1), n ]";
+      $v = "[ (subtract), n, 1 ]";
     }
     $out .= sprintf "    %-${l}s %s\n", qq{"$s":}, $v;
   }

@@ -1405,8 +1405,9 @@
     "(switch)": {
       "var": "c",
       "block-out": [
-        "(minus-1)",
-        "n"
+        "(subtract)",
+        "n",
+        1
       ],
       "block-in": "n"
     }

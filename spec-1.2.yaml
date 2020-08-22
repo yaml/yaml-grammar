@@ -2896,7 +2896,7 @@ s-l+block-collection(n,c):
 seq-spaces(n,c):
   (switch):
     var: c
-    "block-out": [ (minus-1), n ]
+    "block-out": [ (subtract), n, 1 ]
     "block-in":  n
 
 
