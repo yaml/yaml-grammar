@@ -288,7 +288,10 @@
     "s-space*",
     [
       "(<)",
-      "$lastMatchLength",
+      [
+        "(length)",
+        "(lastMatch)"
+      ],
       "n"
     ]
   ],
@@ -298,7 +301,10 @@
     "s-space*",
     [
       "(<=)",
-      "$lastMatchLength",
+      [
+        "(length)",
+        "(lastMatch)"
+      ],
       "n"
     ]
   ],
@@ -1047,7 +1053,7 @@
         "m",
         [
           "(charToInt)",
-          "$lastMatch"
+          "(lastMatch)"
         ]
       ]
     },

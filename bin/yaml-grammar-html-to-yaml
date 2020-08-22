@@ -11,10 +11,6 @@
 
 # Commit input text file
 #
-# Change $lastMatch to (lastMatch)
-#
-# Change $lastMatchLength to [ (length), (lastMatch) ]
-#
 # Change <end_of_file> to <end_of_stream>
 #
 # Change [ (minus-1), n ] to
@@ -236,7 +232,7 @@ sub make_rule {
   $rule =~ s/^(.)$/'$1'/gm;
   $rule =~ s/((?:block|flow)-(?:in|out|key)(?=[,\)]|\ \]))/"$1"/g;
 
-  $rule =~ s/<where_m_(<=?)_n>/[ ($1), \$lastMatchLength, n]/;
+  $rule =~ s/<where_m_(<=?)_n>/[ ($1), [ (length), (lastMatch) ], n]/;
   $rule =~ s/<followed_by_an_(.*)>/$1=/;
   $rule =~ s/<not_followed_by_an_(.*)>/$1!/;
   $rule =~ s/<an_ns-char_preceding>/ns-char<=/;
@@ -254,7 +250,7 @@ sub make_rule {
   $key =~ s/s-indent\(<n\)/s-indent-lt(n)/;
   $key =~ s/s-indent\(<=n\)/s-indent-le(n)/;
 
-  if ($rule =~ /lastMatchLength/) {
+  if ($rule =~ /\(length\), \(lastMatch\)/) {
     $rule = "\n- (&)$rule";
   }
 
@@ -386,7 +382,7 @@ sub special_format_if_set_number {
   for my $e (@$tokens) {
     my ($rule, $var, $val) = @{$e}[0, 2,4];
     if ($val eq 'ns-dec-digit') {
-      $val = '[ (charToInt), $lastMatch ]';
+      $val = '[ (charToInt), (lastMatch) ]';
     } elsif ($val eq 'auto-detect()') {
       $val = '"auto-detect"';
     } else { die }

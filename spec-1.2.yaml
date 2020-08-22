@@ -1018,7 +1018,7 @@ s-indent(n): s-space{n}
 s-indent-lt(n):
 - (&)
 - s-space*
-- [ (<), $lastMatchLength, n]
+- [ (<), [ (length), (lastMatch) ], n]
 
 
 
@@ -1029,7 +1029,7 @@ s-indent-lt(n):
 s-indent-le(n):
 - (&)
 - s-space*
-- [ (<=), $lastMatchLength, n]
+- [ (<=), [ (length), (lastMatch) ], n]
 
 
 
@@ -2368,7 +2368,7 @@ c-b-block-header(m,t):
 c-indentation-indicator(m):
 - (|)
 - (if):  ns-dec-digit
-  (set): [ m, [ (charToInt), $lastMatch ] ]
+  (set): [ m, [ (charToInt), (lastMatch) ] ]
 - (if):  <empty>
   (set): [ m, "auto-detect" ]
 
