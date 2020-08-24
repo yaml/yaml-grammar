@@ -31,6 +31,8 @@ force:
 
 build: $(BUILD)
 
+build-yaml: $(SPEC12_YAML)
+
 comments: $(SPEC12_COMMENTS)
 
 # build-all: build $(BUILD_ALL)

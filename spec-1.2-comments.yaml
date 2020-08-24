@@ -32,8 +32,9 @@
   one for each rule. The overall structure of this file is a big mapping with
   2 mapping pairs for each grammar rule. Each rule group looks like this:
 
-    rule-number: rule-name
+    :rule-number: rule-name
     # original-spec-rule-as-a-comment
+
     rule-name: rule-definition
 
   The first pair is just for indexing the rule (by rule number) back to the 1.2
@@ -47,10 +48,6 @@
 
   A rule name consists of groups of lower case characters and numbers separated
   by dashes (`-`).
-
-  Some rule names also have trailing arguments of the form `(x)` or `(x,y)`.
-  These arguments are considered a literal part of the name in the grammar
-  form.
 
   Each rule name has a 1 or 2 character prefix indicating the rule type.
 
@@ -75,14 +72,14 @@
 
   And also (where X and Y are each one of the above prefixes):
 
-    X-Y  -- Match starting with an X- character and ending with a Y- character
+    X-Y  -- Match starting with an X- match and ending with a Y- match
     X+   -- Match X where indentation is greater than n
     X-Y+ -- Match X-Y where indentation is greater than n
 
 
-    === Rules Variables ===
+    == Rules Variables ==
 
-  Some rules are defined with trailing arguments indicating that they should be
+  Some rules are defined with variable arguments indicating that they should be
   passed values when being used. There are 4 distinct variables used in the
   YAML 1.2 grammar.
 
@@ -108,7 +105,7 @@
   values of n (-1) and c ("block-in") are set in rule 207.
 
   The m variable is set explicitly in rules 183 and 187, albeit by an undefined
-  special rule called <auto_detect_indent>. In rules like 185 it assumes that m
+  special rule called <auto-detect-indent>. In rules like 185 it assumes that m
   is stored as a state/stack variable and has been set somewhere else.
 
   The t variable is set using functional constructs in rule 164, depending on
@@ -124,13 +121,13 @@
     * <empty>
       Always matches.
 
-    * <start_of_line>
+    * <start-of-line>
       Current parse position is at the start of a line.
 
-    * <end_of_stream>
+    * <end-of-stream>
       Current parse position is at the end of the input stream.
 
-    * <auto_detect_indent>
+    * <auto-detect-indent>
       Detect the number of characters of new indentation.
 
 
@@ -158,79 +155,63 @@
     * unquoted-single-char  -- A variable name
     * single-quoted-char    -- A character to match
     * double-quoted-string  -- A literal string value
-    * (...)                 -- A parsing operator or function
-    * [ (...), x, y ]       -- Function call with arguments
+    * (...)                 -- A parsing function
+    * <...>                 -- A special rule name
 
     === Hex Codes ===
 
   Hex codes are scalars beginning with an `x` followed by an even number of
-  uppercase hexadecimal digits.
+  uppercase hexadecimal digits. Since hex codes represent characters they are
+  encoded in single quotes.
 
-  There are hex ranges as well, which consist of 2 hex codes separated by a
-  dash.
+  There are hex ranges as well, which consist of a pair hex codes.
 
-    === Rule Quantifiers ===
+    === Rule Functions ===
 
-  Rule names can end with a quantifier indicating how many times they should
-  match.
+  The grammar uses these functions. The function name is always in parentheses.
+  The name is a key of a single pair mapping.
 
-    * `+`    -- 1 or more times
-    * `*`    -- 0 or more times
-    * `?`    -- 0 or 1 times
-    * `{n}`  -- n times
+    * (any)
+      One of the rules in the group must match.
 
-    === Rule Assertions ===
+    * (all)
+      All of the rules in the group must match.
 
-  Rule names can end with an assertion indicator. This means they must match
-  but do not consume any text in the parsing process.
+    * (+++)
+      The rule must match 1 or more times.
 
-    * `=`    -- Positive look-ahead assertion
-    * `!`    -- Negative look-ahead assertion
-    * `<=`   -- Positive look-behind assertion
+    * (***)
+      The rule must match 0 or more times.
 
-    === Groups ===
+    * (???)
+      The rule must match 0 or 1 times.
 
-  Each sequence is a group (things that are parenthesized). An element of a
-  group may be another group.
+    * ({x})
+      The rule must match x times, where x is an integer or a variable.
 
-  If the first element of the sequence is the string `(|)`, then ONE of the
-  remaining elements must match for that group to match. This is used to
-  express rules of the form `( a | b | c )`.
+    * (===)
+      Positive look-ahead assertion.
 
-  Otherwise ALL of the remaining elements must match. ie `( a b c )`.
+    * (!==)
+      Negative look-ahead assertion.
 
-    === Operator Functions ===
+    * (<==)
+      Positive look-behind assertion.
 
-    * (*)
-      The entire group must match 0 or more times
-
-    * (+)
-      The entire group must match 1 or more times
-
-    * (?)
-      The entire group must match 0 or 1 times
-
-    * (&)
-      All the elements must match, or else backtrack.
-
-    * (-)
+    * (---)
       A set of characters comprised of the first set minus each of the others.
 
-    * (<)
-      First argument is less than the second.
-
-    * (<=)
-      First argument is less than the second.
-
-    === Keyword Functions ===
+    * (...)
+      The argument variables that are passed to this rule. Either a single
+      value or a sequence of values.
 
     * (case)
       A variable indicated by `var` must match one of the other keys. The value
       of the matching key pair is the next rule to be checked.
 
-    * (switch)
+    * (flip)
       Some grammar rules like 136, don't attempt to match anything. They are
-      functions that change a variable. Rule 136 uses the (switch) function to
+      functions that change a variable. Rule 136 uses the (flip) function to
       change a variable from one value to another.
 
     * (if)
@@ -242,21 +223,18 @@
       the second is an expression. Set the variable to the value of the
       evaluated expression.
 
-    * (charToInt)
-      Convert a character 1-9 to an integer.
+    * (ord)
+      Convert a character (1-9) to an integer.
 
-    * (lastMatch)
+    * (match)
       Return the string or character value of the last rule match.
 
-    * (length)
+    * (len)
       Return the length of a string value.
 
-    * (subtract)
-      Return the diffence between 2 numbers.
-
-    * (limit)
+    * (max)
       The YAML spec grammar constrains some rules to complete in the next 1024
-      characters. The (limit) function is used to indicate that this is the
+      characters. The (max) function is used to indicate that this is the
       case. How it is implemented (like many things) is left as an exercise for
       the parser author.
 
@@ -265,47 +243,94 @@
       of the recursive sub-matches. Since it is used near the top of the
       grammar, it affects almost everything.
 
+    * (+)
+      Return the first argument plus the second.
+
+    * (-)
+      Return the first argument minus the second.
+
+    * (<)
+      First argument is less than the second.
+
+    * (<=)
+      First argument is less than the second.
+
 '001': |
   This is the complete set of characters allowed in a YAML stream.
 
-  The `(|)` means that any one of the remaining rules must match for the group
-  to match. The remaining rules are attempted in order.
+  The (any) means that any one of the value group's rules must match for the
+  group to match. The remaining rules are attempted in order.
 
-  The rules beginning with `x` are hex codes. the pairs of hex codes separated
-  by dashes are character ranges.
+  The rules beginning with `x` are hex codes. The pairs of hex codes are
+  character ranges.
 '003': |
   Rules 003-021 define single characters. These rules are never referenced in
   the rest of the grammar. They should at least be referenced in rule 022.
 '004': |
   Rules 004 to 021 are single characters to match. Instead of a hex code, they
   are specified as a single character in single quotes.
-'018': |
-  The single quote here is specified in YAML double quotes for clarity but is
-  meant to be a character, not a string.
 '022': |
   Rule 022 should probably be defined using the rule names above rather than
   literal characters.
+'026': |
+  Rules can "call" other rules by name. This is called a rule reference. A
+  reference matches if its named rule matches.
 '027': |
-  The `(--)` operator here matches if the next character is in the first range,
+  The (---) operator here matches if the next character is in the first range,
   but not in any of the following ranges.
 '028': |
-  A rule in in a sequence of rules can be another sequence. This is how
-  parenthesized groups are represented.
+  A rule in in a group of rules can be another group. This is how parenthesized
+  groups are represented.
+
+  The (all) function matches if all the rules in its group match.
 '059': |
-  Values in curly braces after a rule name are numeric quantifiers. ie The rule
-  must match that exact number of times.
+  The ({x}) is a numeric quantifier. ie The rule must match that exact number
+  of times.
 '063': |
-  Some rules are intended to be called with arguments. The arguments variables
-  are specified in parentheses after the rule name.
+  Some rules are intended to be called with arguments. Arguments are specified
+  with the (...) key. A single argument is a scalar value. Multiple arguments
+  are specified as a sequence.
 '064': |
   This rule means to match as many spaces as possible, then check the length of
-  the match is less than the indentation level in variable n. The (&) means
+  the match is less than the indentation level in variable n. The (<<<) means
   that if both assertions are not true, backtrack to where the rule started.
-'067': |
-  A `(case)` statement is a mapping that chooses the next rule based on the
-  value of a state variable (in this case `c`).
 
-  7 rules in this grammar have case statements.
+  The (***) function means the rule must match 0 or more times.
+
+  The (<) function matches if the first argument is less than the second.
+
+  The (len) function returns the length of a string, and the (match) function
+  returns the last match.
+'065': |
+  The (<=) function matches if the first argument is less or equal to the
+  second.
+'066': |
+  The (+++) function means the rule must match 1 or more times.
+
+  The <start-of-line> rule is a "special" rule. It's not defined in the
+  grammar. It's an assertion that the current parse position is on a "start of
+  line" boundary.
+'067': |
+  A (case) statement is a mapping that chooses the next rule based on the value
+  of a state variable (in this case `c`).
+
+  7 rules in this grammar have (case) statements.
+'069': |
+  The (???) function means the rule must match 0 or 1 times.
+'105': "The <end-of-stream> rule is a \"special\" rule that matches when there is no\nmore text to parse.\n===============================================================================\n\n\n:076: b-comment\nb-comment ::=\n  b-non-content | <end_of_file>\n\nb-comment:\n  (any):\n  - b-non-content\n  - <end-of-stream>\n\n\n\n:077: s-b-comment\ns-b-comment ::=\n  ( s-separate-in-line\n  c-nb-comment-text? )?\n  b-comment\n\ns-b-comment:\n  (all):\n  - (???):\n      (all):\n      - s-separate-in-line\n      - (???): c-nb-comment-text\n  - b-comment\n\n\n\n:078: l-comment\nl-comment ::=\n  s-separate-in-line c-nb-comment-text?\n  b-comment\n\nl-comment:\n  (all):\n  - s-separate-in-line\n  - (???): c-nb-comment-text\n  - b-comment\n\n\n\n:079: s-l-comments\ns-l-comments ::=\n  ( s-b-comment | <start_of_line> )\n  l-comment*\n\ns-l-comments:\n  (all):\n  - (any):\n    - s-b-comment\n    - <start-of-line>\n  - (***): l-comment\n\n\n\n## 6.7. Separation Lines\n\n\n:080: s-separate\ns-separate(n,c) ::=\n  ( c = block-out => s-separate-lines(n) )\n  ( c = block-in => s-separate-lines(n) )\n  ( c = flow-out => s-separate-lines(n) )\n  ( c = flow-in => s-separate-lines(n) )\n  ( c = block-key => s-separate-in-line )\n  ( c = flow-key => s-separate-in-line )\n\ns-separate:\n  (...): [ n, c ]\n  (case):\n    var: c\n    \"block-in\": { s-separate-lines: n }\n    \"block-key\": s-separate-in-line\n    \"block-out\": { s-separate-lines: n }\n    \"flow-in\": { s-separate-lines: n }\n    \"flow-key\": s-separate-in-line\n    \"flow-out\": { s-separate-lines: n }\n\n\n\n:081: s-separate-lines\ns-separate-lines(n) ::=\n  ( s-l-comments\n  s-flow-line-prefix(n) )\n  | s-separate-in-line\n\ns-separate-lines:\n  (...): n\n  (any):\n  - (all):\n    - s-l-comments\n    - s-flow-line-prefix: n\n  - s-separate-in-line\n\n\n\n## 6.8. Directives\n\n\n:082: l-directive\nl-directive ::=\n  '%'\n  ( ns-yaml-directive\n  | ns-tag-directive\n  | ns-reserved-directive )\n  s-l-comments\n\nl-directive:\n  (all):\n  - '%'\n  - (any):\n    - ns-yaml-directive\n    - ns-tag-directive\n    - ns-reserved-directive\n  - s-l-comments\n\n\n\n:083: ns-reserved-directive\nns-reserved-directive ::=\n  ns-directive-name\n  ( s-separate-in-line ns-directive-parameter )*\n\nns-reserved-directive:\n  (all):\n  - ns-directive-name\n  - (***):\n      (all):\n      - s-separate-in-line\n      - ns-directive-parameter\n\n\n\n:084: ns-directive-name\nns-directive-name ::=\n  ns-char+\n\nns-directive-name: { (+++): ns-char }\n\n\n\n:085: ns-directive-parameter\nns-directive-parameter ::=\n  ns-char+\n\nns-directive-parameter: { (+++): ns-char }\n\n\n\n#### 6.8.1. â\x80\x9cYAMLâ\x80\x9d Directives\n\n\n:086: ns-yaml-directive\nns-yaml-directive ::=\n  'Y' 'A' 'M' 'L'\n  s-separate-in-line ns-yaml-version\n\nns-yaml-directive:\n  (all):\n  - 'Y'\n  - 'A'\n  - 'M'\n  - 'L'\n  - s-separate-in-line\n  - ns-yaml-version\n\n\n\n:087: ns-yaml-version\nns-yaml-version ::=\n  ns-dec-digit+ '.' ns-dec-digit+\n\nns-yaml-version:\n  (all):\n  - (+++): ns-dec-digit\n  - '.'\n  - (+++): ns-dec-digit\n\n\n\n#### 6.8.2. â\x80\x9cTAGâ\x80\x9d Directives\n\n\n:088: ns-tag-directive\nns-tag-directive ::=\n  'T' 'A' 'G'\n  s-separate-in-line c-tag-handle\n  s-separate-in-line ns-tag-prefix\n\nns-tag-directive:\n  (all):\n  - 'T'\n  - 'A'\n  - 'G'\n  - s-separate-in-line\n  - c-tag-handle\n  - s-separate-in-line\n  - ns-tag-prefix\n\n\n\n:089: c-tag-handle\nc-tag-handle ::=\n  c-named-tag-handle\n  | c-secondary-tag-handle\n  | c-primary-tag-handle\n\nc-tag-handle:\n  (any):\n  - c-named-tag-handle\n  - c-secondary-tag-handle\n  - c-primary-tag-handle\n\n\n\n:090: c-primary-tag-handle\nc-primary-tag-handle ::=\n  '!'\n\nc-primary-tag-handle: '!'\n\n\n\n:091: c-secondary-tag-handle\nc-secondary-tag-handle ::=\n  '!' '!'\n\nc-secondary-tag-handle:\n  (all):\n  - '!'\n  - '!'\n\n\n\n:092: c-named-tag-handle\nc-named-tag-handle ::=\n  '!' ns-word-char+ '!'\n\nc-named-tag-handle:\n  (all):\n  - '!'\n  - (+++): ns-word-char\n  - '!'\n\n\n\n:093: ns-tag-prefix\nns-tag-prefix ::=\n  c-ns-local-tag-prefix | ns-global-tag-prefix\n\nns-tag-prefix:\n  (any):\n  - c-ns-local-tag-prefix\n  - ns-global-tag-prefix\n\n\n\n:094: c-ns-local-tag-prefix\nc-ns-local-tag-prefix ::=\n  '!' ns-uri-char*\n\nc-ns-local-tag-prefix:\n  (all):\n  - '!'\n  - (***): ns-uri-char\n\n\n\n:095: ns-global-tag-prefix\nns-global-tag-prefix ::=\n  ns-tag-char ns-uri-char*\n\nns-global-tag-prefix:\n  (all):\n  - ns-tag-char\n  - (***): ns-uri-char\n\n\n\n## 6.9. Node Properties\n\n\n:096: c-ns-properties\nc-ns-properties(n,c) ::=\n  ( c-ns-tag-property\n  ( s-separate(n,c) c-ns-anchor-property )? )\n  | ( c-ns-anchor-property\n  ( s-separate(n,c) c-ns-tag-property )? )\n\nc-ns-properties:\n  (...): [ n, c ]\n  (any):\n  - (all):\n    - c-ns-tag-property\n    - (???):\n        (all):\n        - s-separate: [ n, c ]\n        - c-ns-anchor-property\n  - (all):\n    - c-ns-anchor-property\n    - (???):\n        (all):\n        - s-separate: [ n, c ]\n        - c-ns-tag-property\n\n\n\n#### 6.9.1. Node Tags\n\n\n:097: c-ns-tag-property\nc-ns-tag-property ::=\n  c-verbatim-tag\n  | c-ns-shorthand-tag\n  | c-non-specific-tag\n\nc-ns-tag-property:\n  (any):\n  - c-verbatim-tag\n  - c-ns-shorthand-tag\n  - c-non-specific-tag\n\n\n\n:098: c-verbatim-tag\nc-verbatim-tag ::=\n  '!' '<' ns-uri-char+ '>'\n\nc-verbatim-tag:\n  (all):\n  - '!'\n  - '<'\n  - (+++): ns-uri-char\n  - '>'\n\n\n\n:099: c-ns-shorthand-tag\nc-ns-shorthand-tag ::=\n  c-tag-handle ns-tag-char+\n\nc-ns-shorthand-tag:\n  (all):\n  - c-tag-handle\n  - (+++): ns-tag-char\n\n\n\n:100: c-non-specific-tag\nc-non-specific-tag ::=\n  '!'\n\nc-non-specific-tag: '!'\n\n\n\n#### 6.9.2. Node Anchors\n\n\n:101: c-ns-anchor-property\nc-ns-anchor-property ::=\n  '&' ns-anchor-name\n\nc-ns-anchor-property:\n  (all):\n  - '&'\n  - ns-anchor-name\n\n\n\n:102: ns-anchor-char\nns-anchor-char ::=\n  ns-char - c-flow-indicator\n\nns-anchor-char:\n  (---):\n  - ns-char\n  - c-flow-indicator\n\n\n\n:103: ns-anchor-name\nns-anchor-name ::=\n  ns-anchor-char+\n\nns-anchor-name: { (+++): ns-anchor-char }\n\n\n\n## 7.1. Alias Nodes\n\n\n:104: c-ns-alias-node\nc-ns-alias-node ::=\n  '*' ns-anchor-name\n\nc-ns-alias-node:\n  (all):\n  - '*'\n  - ns-anchor-name\n\n\n\n## 7.2. Empty Nodes\n\n===============================================================================\nThe <empty> rule is a \"special\" rule that always matches (but consumes no\ntext). It is used to for places in YAML that allow the absence of text to\nrepresent an empty plain scalar.\n"
+'126': |
+  The (===) function is a positive lookahead. It checks to see if a character
+  is next, but doesn't consume it.
+'136': |
+  The (flip) function uses a mapping to change an input value to another value,
+  and returns the new value.
+'154': |
+  The (max) function tells the parser that it can consider only the given
+  number of characters to match the next rule.
+'183': |
+  The <auto-detect-indent> rule is a "special" rule that finds the new level of
+  indentation and returns the number of columns. The level must be greater than
+  0. It does not consume the indentation.
 '207': |
   The l-bare-document is the topmost rule for parsing a document.
 

@@ -9,6 +9,8 @@
 # ever change, but the desired output may evolve.
 #===============================================================================
 
+# Rule 063 is wrong
+
 use strict;
 use warnings;
 use YAML::PP;
@@ -275,13 +277,13 @@ sub special_format {
       return special_format_case($tokens);
     }
     if ($e->[4] =~ /(-in|-out)$/) {
-      return special_format_switch($tokens);
+      return special_format_flip($tokens);
     }
     if ($e->[2] eq 't') {
       return special_format_if_set($tokens);
     }
     if ($e->[0] eq 'c') {
-      return special_format_switch_var($tokens);
+      return special_format_flip_var($tokens);
     }
   }
   if (@$e == 7) {
@@ -310,36 +312,36 @@ sub special_format_case_or {
   };
   for my $e (@$tokens) {
     my ($s, $r) = @{$e}[2,4];
-    $case->{$s} = flow([ '(|)', $r, '<end_of_stream>' ]);
+    $case->{$s} = flow({ '(any)' => [ $r, '<end-of-stream>' ]});
   }
   return { '(case)' => $case };
 }
 
-sub special_format_switch {
+sub special_format_flip {
   my ($tokens) = @_;
-  my $switch = {
+  my $flip = {
     'var' => $tokens->[0][0],
   };
   for my $e (@$tokens) {
     my ($s, $r) = @{$e}[2,4];
-    $switch->{$s} = $r;
+    $flip->{$s} = $r;
   }
-  return { '(switch)' => $switch };
+  return { '(flip)' => $flip };
 }
 
-sub special_format_switch_var {
+sub special_format_flip_var {
   my ($tokens) = @_;
-  my $switch = {
+  my $flip = {
     'var' => $tokens->[0][0],
   };
   for my $e (@$tokens) {
     my ($s, $v) = @{$e}[2,4];
     if ($v eq 'n-1') {
-      $v = flow([ '(subtract)', 'n', 1 ]);
+      $v = flow({ '(-)' => [ 'n', 1 ] });
     }
-    $switch->{$s} = $v
+    $flip->{$s} = $v
   }
-  return { '(switch)' => $switch };
+  return { '(flip)' => $flip };
 }
 
 sub special_format_if_set {
@@ -361,7 +363,7 @@ sub special_format_if_set_number {
   for my $e (@$tokens) {
     my ($rule, $var, $val) = @{$e}[0, 2, 4];
     if ($val eq 'ns-dec-digit') {
-      $val = '[ (charToInt), (lastMatch) ]';
+      $val = flow({ '(ord)' => '(match)' });
     } elsif ($val eq 'auto-detect()') {
       $val = '"auto-detect"';
     } else { die }
@@ -422,14 +424,19 @@ sub make_tokens {
 
     if ($token =~ /<where_m_(<=?)_n>/) {
       my $array = $insert->[-1];
-      push @$array, flow([ "($1)", [ '(length)', '(lastMatch)' ], 'n']);
+      push @$array, flow({
+        "($1)" => [
+          { '(len)' => '(match)' },
+          'n'
+        ]
+      });
       unshift @$array, '(&)';
       next;
     }
 
     if ($token =~ /<for_some_fixed_auto-detected_m_>_0>/) {
       my $array = $insert->[-1];
-      unshift @$array, flow({'(set)' => [ 'm', '<auto_detect_indent>' ]});
+      unshift @$array, flow({'(set)' => [ 'm', '<auto-detect-indent>' ]});
       next;
     }
 
@@ -441,7 +448,7 @@ sub make_tokens {
 
     if ($token =~ /<at_most_1024_characters_altogether>/) {
       my $array = $insert->[-1];
-      push @$array, flow({'(limit)' => 1024});
+      push @$array, flow({'(max)' => 1024});
       next;
     }
 
@@ -482,7 +489,7 @@ sub make_tokens {
     elsif (
       ref($tokens->[-1]) eq 'HASH' && (
         $tokens->[-1]->{'(exclude)'} ||
-        $tokens->[-1]->{'(limit)'}
+        $tokens->[-1]->{'(max)'}
       )
     ) {
       unshift @$tokens, pop @$tokens;
@@ -526,19 +533,45 @@ sub format_hex {
   return "x$_";
 }
 
+my %reformatted;
+my $op_to_func = {
+  '(|)' => '(any)',
+  '(-)' => '(---)',
+  '(*)' => '(***)',
+  '(+)' => '(+++)',
+  '(?)' => '(???)',
+  '(&)' => '(<<<)',
+};
+my $func_all = {
+  '(***)' => 1,
+  '(+++)' => 1,
+  '(???)' => 1,
+  '(<<<)' => 1,
+};
+my $w = '[-a-z0-9]';
+my $n = 1;
 sub reformat_data {
   my ($data) = @_;
 
   for my $next (@$data) {
-    if ($next->{rule}) {
-      $next->{rule}{rule} = reformat_node($next->{rule}{rule});
+    if (my $rule = $next->{rule}) {
+      $rule->{rule} = reformat_node($rule->{rule});
+      $n++;
     }
+  }
+
+  sub reformatted {
+    $reformatted{$_[0]} = $_[0];
+  }
+
+  sub is_reformatted {
+    defined($reformatted{$_[0]});
   }
 
   sub reformat_node {
     my ($node) = @_;
     if (not ref $node) {
-      return $node;
+      return reformat_scalar($node);
     }
     if (ref($node) eq 'ARRAY') {
       return reformat_array($node);
@@ -548,20 +581,91 @@ sub reformat_data {
     }
   }
 
-  sub reformat_array {
-    my ($node) = @_;
-    return $node; # XXX
-    return $node if is_flow($node);
-    if ($node->[0] eq '(|)') {
-      shift @$node;
-      return { '(any)' => reformat_node($node) };
+  sub reformat_scalar {
+    my ($scalar) = @_;
+
+    if ($scalar =~ /^(x\w+)-(x\w+)$/) {
+      return flow([ $1, $2 ]);
     }
-    return [ map reformat_node($_), @$node ];
+
+    if ($scalar =~ /^(.+)(\{\d\})$/) {
+      return flow({ "($2)" => reformat_scalar($1) });
+    }
+
+    if ($scalar =~ /^(.+)!$/) {
+      return flow({ "(!==)" => reformat_scalar($1) });
+    }
+
+    if ($scalar =~ /^(.+)<=$/) {
+      return flow({ "(<==)" => reformat_scalar($1) });
+    }
+
+    if ($scalar =~ /^(.+)([?*+=])$/) {
+      return flow({ "($2$2$2)" => reformat_scalar($1) });
+    }
+
+    if ($scalar =~ /^(.+)\{(.)\}$/) {
+      return flow({ "({$2})" => reformat_scalar($1) });
+    }
+
+    if ($scalar =~ /^(.+?)\((.+)\)$/) {
+      my $name = $1;
+      my $args = $2;
+      if ($args =~ /\(.+,.+\)/) {
+        $args = [ $args ];
+      }
+      else {
+        $args = [ split ',', $args ];
+      }
+      $args = [ map reformat_scalar($_), @$args ];
+      $args = $args->[0] if @$args == 1;
+      return flow({$name => $args});
+    }
+
+    if ($scalar =~ /^(.+?)\+(.+)$/) {
+      my ($a, $b) = ($1, $2);
+      return {'(+)' => [$a, reformat_scalar($b)]};
+    }
+
+    if ($scalar =~ /^<.+>$/) {
+      $scalar =~ s/_/-/g;
+      return $scalar;
+    }
+
+    return $scalar;
+  }
+
+  sub reformat_array {
+    my ($array) = @_;
+
+    return $array if is_flow($array);
+
+    if (my $func = $op_to_func->{$array->[0]}) {
+      shift @$array;
+      if ($func_all->{$func} and @$array > 1) {
+        return { $func => reformat_node($array) };
+      }
+      else {
+        return { $func => reformat_node(reformatted($array)) };
+      }
+    }
+
+    if (not is_reformatted($array)) {
+      return { '(all)' => [ map reformat_node($_), @$array ] };
+    }
+
+    return [ map reformat_node($_), @$array ];
   }
 
   sub reformat_hash {
-    my ($node) = @_;
-    return $node;
+    my ($hash) = @_;
+    for my $key (keys %$hash) {
+      my $value = $hash->{$key};
+      if (ref($value) ne 'ARRAY') {
+        $hash->{$key} = reformat_node($value);
+      }
+    }
+    return $hash;
   }
 }
 
@@ -582,9 +686,20 @@ sub dump_yaml {
         if (my $comment = $rule->{comment}) {
           $yaml .= $comment;
         }
+        my ($num, $name, $orig) = @{$rule}{qw<num name orig>};
+        my $dump = (dump_rule($rule->{rule}));
+        if ($name =~ /^(.+)\((.*)\)$/) {
+          $name = $1;
+          my $args = [ split ',', $2 ];
+          $args = $args->[0] if @$args == 1;
+          $args = dump_node(flow($args));
+          $dump =~ s/\A\n/\n  (...): $args\n/ or
+          ( $dump =~ s/^ \{ (.*) \}$/$1/ and
+            $dump = "\n  (...): $args\n  $dump"
+          ) or WWW [ $name, $args, $dump ];
+        }
         $yaml .= sprintf ":%03d: %s\n%s\n\n%s:%s\n\n\n",
-          @{$rule}{qw<num name orig name>},
-          (dump_rule($rule->{rule}));
+          $num, $name, $orig, $name, $dump;
       }
       else {
         XXX $next;
@@ -639,7 +754,7 @@ sub dump_yaml {
     my $dump = dump_node($rule);
 
     ($dump =~ /\n/ ? "\n" : ' ') .
-    (ref($rule) eq 'HASH' ? '  ' : '') .
+    ((ref($rule) eq 'HASH' and $dump =~ /\n/) ? '  ' : '') .
     $dump .
     ($dump =~ /\n/ ? '': "\n");
   }
@@ -674,7 +789,9 @@ sub dump_yaml {
 
     return "''''" if $scalar eq "'";
 
-    return "'$scalar'" if length($scalar) == 1;
+    return "'$scalar'" if
+      length($scalar) == 1 or
+      $scalar =~ /^x[0-9A-F]+$/;
 
     return qq'"$scalar"' if
       $scalar =~ /^(block|flow)-(in|out|key)$/ or
@@ -740,9 +857,11 @@ sub dump_yaml {
     } sort keys %$hash;
     stack_pop;
     my $yaml = join(', ', @pair);
-    return in_flow()
-      ? "{ $yaml }"
-      : $yaml;
+    return (
+      (in_flow() or $stack[-1] eq 'map')
+        ? "{ $yaml }"
+        : $yaml
+    );
   }
 }
 
