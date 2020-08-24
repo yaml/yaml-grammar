@@ -15,28 +15,48 @@ use YAML::PP;
 
 use XXX;
 
-my $ypp = YAML::PP->new();
+my $spec;
 my $comments;
-my $debug = 0;
+
+sub test_yaml_dumper {
+  my @tests = (
+    'aaa',
+    ['aaa'],
+    ['(|)', 'aaa', 'bbb'],
+    ['(|)', 'aaa', [ 'bbb', 'ccc' ]],
+    ['(|)', 'aaa', [ 'bbb', 'ccc' ], 'ddd'],
+    [[['aaa', 'bbb']]],
+    ['aaa', [ 'bbb', [ 'ccc', [ 'ddd']]]],
+  );
+
+  my $i = 1;
+  for my $test (@tests) {
+    my $data = [{
+      rule => {
+        num => sprintf("%03d", $i++),
+        name => 'test',
+        orig => "# test",
+        rule => $test,
+      },
+    }];
+    warn YAML::PP->new(footer => 1)->dump_string($test);
+    warn dump_yaml($data);
+    warn "-------------------------\n";
+  }
+
+  exit;
+}
 
 sub main {
-  my @files;
-  for (@_) {
-    /^--debug=(\d+)$/ ? $debug = $1 :
-      push @files, $_;
-  }
+  # test_yaml_dumper;
 
-  my ($spec_html, $comment_data) = read_input_files(@files);
-  $comments = $comment_data;
+  ($spec, $comments) = read_input_files(@_);
 
-  my $text = reformat_input_text($spec_html);
-  $text = make_yaml($text);
+  my $data = make_data($spec);
+  my $yaml = dump_yaml($data);
 
-  for my $comment (@{$comment_data->{'000'}}) {
-    print format_comment($comment);
-  }
+  print $yaml;
 
-  print $text;
   print "\n# vim: iskeyword=@,+,- sw=2:\n";
 }
 
@@ -44,12 +64,14 @@ sub read_input_files {
   my ($spec_file, $comment_file) = @_;
   open my $spec, $spec_file or
     die "Can't open '$spec_file' for input";
-  my $spec_html = do { local $/; <$spec> };
+  my $spec_text = do { local $/; <$spec> };
   open my $comment, $comment_file or
     die "Can't open '$comment_file' for input";
   my $comment_yaml = do { local $/, <$comment> };
-  my $comment_data = $ypp->load_string($comment_yaml);
-  return ($spec_html, $comment_data);
+  my $comment_data = YAML::PP->new->load_string($comment_yaml);
+  $spec_text = reformat_input_text($spec_text);
+
+  return ($spec_text, $comment_data);
 }
 
 sub format_comment {
@@ -151,29 +173,26 @@ sub reformat_input_text {
   return $_;
 }
 
-sub make_yaml {
+sub make_data {
   my $text = shift;
 
-  my @yaml = ();
+  my $data = [];
+
+  for my $comment (@{$comments->{'000'}}) {
+    push @$data, { comment => format_comment($comment) };
+  }
 
   while ($text =~ s/^(\S.*?)\n\n+//s) {
     my $para = $1;
     if ($para =~ /^\d/) {
-      push @yaml, make_section_comment($para);
-    }
-    elsif ($debug && $para =~ /(\d+)/) {
-      next unless $debug == $1;
-      warn make_rule($para);
-      exit;
+      push @$data, { comment => make_section_comment($para) };
     }
     else {
-      push @yaml, make_rule($para);
+      push @$data, { rule => make_rule($para) };
     }
   }
 
-  my $yaml = join "\n\n\n", @yaml;
-
-  return $yaml;
+  return $data;
 }
 
 sub make_section_comment {
@@ -182,20 +201,20 @@ sub make_section_comment {
   my $comment;
 
   if (/^\d+\.\d+\.\d+\./) {
-    return "##### $_";
+    return "##### $_\n\n\n";
   }
   else {
-    return "### $_";
+    return "### $_\n\n\n";
   }
 }
 
-my ($tokens, $num, $key);
+my ($tokens, $num, $name);
 sub make_rule {
   my $text = shift;
   my $orig = $text;
 
   $text =~ s/^\[(\d+)\]\ (\S+)\ ::=\n// or die $text;
-  ($num, $key) = ($1, $2);
+  ($num, $name) = ($1, $2);
 
   $orig =~ s/^/  /gm;
   $orig =~ s/^  //;
@@ -209,57 +228,40 @@ sub make_rule {
   if ($text =~ /t = .*<end_of_file>/) {
     $rule = special_format_case_or($tokens);
   }
-  elsif (ref($tokens->[0]) and (grep $_ eq '=>', @{$tokens->[0]})) {
+  elsif (
+    ref($tokens->[0]) eq 'ARRAY' and
+    (grep $_ eq '=>', @{$tokens->[0]})
+  ) {
     $rule = special_format($tokens);
   }
   elsif (@$tokens == 1 and not ref $tokens->[0]) {
-    $rule = $ypp->dump($tokens->[0]);
-    $rule =~ s/^--- //;
+    $rule = $tokens->[0];
   }
   else {
-    $rule = $ypp->dump($tokens);
-    $rule =~ s/^---//;
+    $rule = $tokens;
   }
 
-  $rule =~ s/- ([\w<.=+;()\/\$\\])$/- '$1'/gm;
-  $rule =~ s/^(.)$/'$1'/gm;
-  $rule =~ s/((?:block|flow)-(?:in|out|key)(?=[,\)]|\ \]))/"$1"/g;
+  $name =~ s/s-indent\(<n\)/s-indent-lt(n)/;
+  $name =~ s/s-indent\(<=n\)/s-indent-le(n)/;
 
-  $rule =~ s/<where_m_(<=?)_n>/[ ($1), [ (length), (lastMatch) ], n]/;
-  $rule =~ s/<followed_by_an_(.*)>/$1=/;
-  $rule =~ s/<not_followed_by_an_(.*)>/$1!/;
-  $rule =~ s/<an_ns-char_preceding>/ns-char<=/;
-  $rule =~ s/<end_of_file>/<end_of_stream>/g;
-  $rule =~ s{<for_some_fixed_auto-detected_m_>_0>}
-            {(set): [ m, <auto_detect_indent> ]};
-  $rule =~ s{<excluding_c-forbidden_content>}
-            {(exclude): c-forbidden};
-  $rule =~ s{<at_most_1024_characters_altogether>}
-            {(limit): 1024};
-
-  $rule =~ s{n/a}{null};
-
-  $rule =~ s/s-indent\(<n\)/s-indent-lt(n)/g;
-  $rule =~ s/s-indent\(<=n\)/s-indent-le(n)/g;
-  $key =~ s/s-indent\(<n\)/s-indent-lt(n)/;
-  $key =~ s/s-indent\(<=n\)/s-indent-le(n)/;
-
-  if ($rule =~ /\(length\), \(lastMatch\)/) {
-    $rule = "\n- (&)$rule";
-  }
-
-  my $yaml = "$key: $rule";
+  my $yaml = "$name: $rule";
   $yaml =~ s/\ +$//gm;
   $yaml = sprintf qq{:%03d: %s\n%s\n\n%s},
-    $num, $key, $orig, $yaml;
+    $num, $name, $orig, $yaml;
 
   $num = sprintf "%03d", $num;
-  if (my $comment = $comments->{$num}) {
+  my $comment = '';
+  if ($comment = $comments->{$num}) {
     $comment = format_comment($comment);
-    $yaml = "$comment$yaml";
   }
 
-  return $yaml;
+  return {
+    num => $num,
+    name => $name,
+    rule => $rule,
+    orig => $orig,
+    ($comment ? (comment => $comment) : () ),
+  };
 }
 
 sub special_format {
@@ -288,102 +290,85 @@ sub special_format {
 
 sub special_format_case {
   my ($tokens) = @_;
-  my $var = $tokens->[0][0];
-  my $out = "\n  (case):\n    var: $var\n";
-  my $l = 0;
-  for my $e (@$tokens) {
-    $_ = length $e->[2];
-    $l = $_ if $_ > $l;
-  }
-  $l += 3;
+  my $case = {
+    'var' => $tokens->[0][0],
+  };
   for my $e (@$tokens) {
     my ($s, $r) = @{$e}[2,4];
-    $out .= sprintf "    %-${l}s %s\n", qq{"$s":}, $r;
+    $case->{$s} = $r;
   }
-  return $out;
+  return { '(case)' => $case };
 }
 
 sub special_format_case_or {
   my ($tokens) = @_;
   $tokens = [ map $_->[1], @$tokens ];
-  my $var = $tokens->[0][0];
-  my $out = "\n  (case):\n    var: $var\n";
-  my $l = 0;
-  for my $e (@$tokens) {
-    $_ = length $e->[2];
-    $l = $_ if $_ > $l;
-  }
-  $l += 3;
+  my $case = {
+    'var' => $tokens->[0][0],
+  };
   for my $e (@$tokens) {
     my ($s, $r) = @{$e}[2,4];
-    $out .= sprintf "    %-${l}s %s\n", qq{"$s":}, qq{[ (|), $r, <end_of_file> ]};
+    $case->{$s} = flow([ '(|)', $r, '<end_of_stream>' ]);
   }
-  return $out;
+  return { '(case)' => $case };
 }
 
 sub special_format_switch {
   my ($tokens) = @_;
-  my $var = $tokens->[0][0];
-  my $out = "\n  (switch):\n    var: $var\n";
-  my $l = 0;
-  for my $e (@$tokens) {
-    $_ = length $e->[2];
-    $l = $_ if $_ > $l;
-  }
-  $l += 3;
+  my $switch = {
+    'var' => $tokens->[0][0],
+  };
   for my $e (@$tokens) {
     my ($s, $r) = @{$e}[2,4];
-    $out .= sprintf "    %-${l}s %s\n", qq{"$s":}, qq{"$r"};
+    $switch->{$s} = $r;
   }
-  return $out;
+  return { '(switch)' => $switch };
 }
 
 sub special_format_switch_var {
   my ($tokens) = @_;
-  my $var = $tokens->[0][0];
-  my $out = "\n  (switch):\n    var: $var\n";
-  my $l = 0;
-  for my $e (@$tokens) {
-    $_ = length $e->[2];
-    $l = $_ if $_ > $l;
-  }
-  $l += 3;
+  my $switch = {
+    'var' => $tokens->[0][0],
+  };
   for my $e (@$tokens) {
     my ($s, $v) = @{$e}[2,4];
     if ($v eq 'n-1') {
-      $v = "[ (subtract), n, 1 ]";
+      $v = flow([ '(subtract)', 'n', 1 ]);
     }
-    $out .= sprintf "    %-${l}s %s\n", qq{"$s":}, $v;
+    $switch->{$s} = $v
   }
-  return $out;
+  return { '(switch)' => $switch };
 }
 
 sub special_format_if_set {
   my ($tokens) = @_;
-  my $out = "\n- (|)\n";
+  my $if_set = [ '(|)' ];
   for my $e (@$tokens) {
-    my ($rule, $var, $val) = @{$e}[0, 2,4];
-    $rule = "'$rule'" if length $rule == 1;
-    $out .= qq{- (if):  $rule\n};
-    $out .= qq{  (set): [ $var, "$val" ]\n};
+    my ($rule, $var, $val) = @{$e}[0, 2, 4];
+    push @$if_set, {
+      '(if)' => $rule,
+      '(set)' => flow([ $var, $val ]),
+    };
   }
-  return $out;
+  return $if_set;
 }
 
 sub special_format_if_set_number {
   my ($tokens) = @_;
-  my $out = "\n- (|)\n";
+  my $if_set = [ '(|)' ];
   for my $e (@$tokens) {
-    my ($rule, $var, $val) = @{$e}[0, 2,4];
+    my ($rule, $var, $val) = @{$e}[0, 2, 4];
     if ($val eq 'ns-dec-digit') {
       $val = '[ (charToInt), (lastMatch) ]';
     } elsif ($val eq 'auto-detect()') {
       $val = '"auto-detect"';
     } else { die }
-    $out .= qq{- (if):  $rule\n};
-    $out .= qq{  (set): [ $var, $val ]\n};
+    push @$if_set, {
+      '(if)' => $rule,
+      '(set)' => flow([ $var, $val ]),
+    };
   }
-  return $out;
+  return $if_set;
 }
 
 sub make_tokens {
@@ -391,10 +376,6 @@ sub make_tokens {
   $tokens = [];
   my $insert = [$tokens];
   my @input = split /\s+/, $text;
-
-  if (@input > 1 and $input[0] =~ /^'([?*|])'$/) {
-    $input[0] = "$1";
-  }
 
   for (my $i = 0; $i < @input; $i++) {
     my $token = $input[$i];
@@ -407,6 +388,7 @@ sub make_tokens {
       @$array = ([@$array], '|');
       next;
     }
+
     if ($token eq '(') {
       my $array = [];
 
@@ -414,7 +396,8 @@ sub make_tokens {
       push @$insert, $array;
       next;
     }
-    elsif ($token =~ /^\)([\*\+\?]?)/) {
+
+    if ($token =~ /^\)([\*\+\?]?)/) {
       my $q = $1 || '';
       my $array = pop @$insert;
       if (@$array > 1 and $array->[1] =~ /^[-|]$/) {
@@ -434,8 +417,35 @@ sub make_tokens {
       }
       next;
     }
+
+    if ($token =~ /<where_m_(<=?)_n>/) {
+      my $array = $insert->[-1];
+      push @$array, flow([ "($1)", [ '(length)', '(lastMatch)' ], 'n']);
+      unshift @$array, '(&)';
+      next;
+    }
+
+    if ($token =~ /<for_some_fixed_auto-detected_m_>_0>/) {
+      my $array = $insert->[-1];
+      unshift @$array, flow({'(set)' => [ 'm', '<auto_detect_indent>' ]});
+      next;
+    }
+
+    if ($token =~ /<excluding_c-forbidden_content>/) {
+      my $array = $insert->[-1];
+      push @$array, flow({'(exclude)' => 'c-forbidden'});
+      next;
+    }
+
+    if ($token =~ /<at_most_1024_characters_altogether>/) {
+      my $array = $insert->[-1];
+      push @$array, flow({'(limit)' => 1024});
+      next;
+    }
+
     push @{$insert->[-1]}, format_token($token);
   }
+
   if (@$tokens > 1 and $tokens->[1] =~ /^[-|]$/ and $tokens->[0] ne $tokens->[1]) {
     my $operator = $tokens->[1];
     my $i = 0;
@@ -468,14 +478,16 @@ sub make_tokens {
       splice(@$tokens, 1, 0, $token);
     }
     elsif (
-      $tokens->[-1] eq '<excluding_c-forbidden_content>' or
-      $tokens->[-1] eq '<at_most_1024_characters_altogether>'
+      ref($tokens->[-1]) eq 'HASH' && (
+        $tokens->[-1]->{'(exclude)'} ||
+        $tokens->[-1]->{'(limit)'}
+      )
     ) {
       unshift @$tokens, pop @$tokens;
     }
   }
 
-  # warn $ypp->dump(["($num) $key", $text, $tokens]) if $num >= 1;
+  # warn $ypp->dump(["($num) $name", $text, $tokens]) if $num >= 1;
 }
 
 sub format_token {
@@ -490,8 +502,16 @@ sub format_token {
   elsif (/^'(.*)'/) {
     $_ = $1;
   }
-  elsif (s/\{m\}$/*/) {
-  }
+
+  s/\{m\}$/*/;
+  s/<end_of_file>/<end_of_stream>/;
+  s/((?:block|flow)-(?:in|out|key)(?=[,\)]|\ \]))/"$1"/g;
+  s/<an_ns-char_preceding>/ns-char<=/;
+  s/<followed_by_an_(.*)>/$1=/;
+  s/<not_followed_by_an_(.*)>/$1!/;
+  s/s-indent\(<n\)/s-indent-lt(n)/;
+  s/s-indent\(<=n\)/s-indent-le(n)/;
+  s{n/a}{null};
 
   $_;
 }
@@ -502,6 +522,186 @@ sub format_hex {
     $_ = "0$_"
   }
   return "x$_";
+}
+
+my @stack;
+my %flows;
+sub dump_yaml {
+  {
+    my ($data) = @_;
+
+    @stack = ('map');
+    my $yaml = '';
+
+    for my $next (@$data) {
+      if (my $comment = $next->{comment}) {
+        $yaml .= $comment;
+      }
+      elsif (my $rule = $next->{rule}) {
+        if (my $comment = $rule->{comment}) {
+          $yaml .= $comment;
+        }
+        $yaml .= sprintf ":%03d: %s\n%s\n\n%s:%s\n\n\n",
+          @{$rule}{qw<num name orig name>},
+          (dump_rule($rule->{rule}));
+      }
+      else {
+        XXX $next;
+      }
+    }
+
+    $yaml =~ s/\n+\z/\n/;
+
+    # Fix-ups:
+    $yaml =~ s/^(\w+-\w\S*: )n$/$1'n'/m;
+    $yaml =~ s/^- t$/- 't'/m;
+
+    return $yaml;
+  }
+
+  sub flow {
+    $flows{$_[0]} = 1;
+    return $_[0];
+  }
+
+  sub in_flow {
+    $stack[-1] eq 'flow' ? 1 : 0;
+  }
+
+  sub stack_push {
+    my ($kind) = @_;
+    $kind = 'flow' if in_flow();
+    push @stack, $kind;
+  }
+
+  sub stack_pop {
+    pop @stack;
+  }
+
+  sub indent_yaml {
+    my ($text) = @_;
+    return $text if
+      $stack[-1] eq 'flow' or
+      $stack[-1] eq 'seq' and
+      $stack[-2] eq 'map';
+    $text =~ s/^/  /gm;
+    $text =~ s/\A *//;
+    return $text;
+  }
+
+  sub dump_rule {
+    my ($rule) = @_;
+
+    my $dump = dump_node($rule);
+
+    ($dump =~ /\n/ ? "\n" : ' ') .
+    (ref($rule) eq 'HASH' ? '  ' : '') .
+    $dump .
+    ($dump =~ /\n/ ? '': "\n");
+  }
+
+  sub dump_node {
+    my ($node) = @_;
+    my $ref = ref $node;
+
+    if (not $ref) {
+      return dump_scalar($node);
+    }
+
+    if ($ref eq 'ARRAY') {
+      if ($flows{$node} or in_flow()) {
+        return dump_array_flow($node);
+      }
+      return dump_array_block($node);
+    }
+
+    if ($ref eq 'HASH') {
+      if ($flows{$node} or in_flow) {
+        return dump_hash_flow($node);
+      }
+      return dump_hash_block($node);
+    }
+  }
+
+  sub dump_scalar {
+    my ($scalar) = @_;
+
+    return $scalar if $scalar =~ /^([cmnt1-9])$/;
+
+    return "''''" if $scalar eq "'";
+
+    return "'$scalar'" if length($scalar) == 1;
+
+    return qq'"$scalar"' if
+      $scalar =~ /^(block|flow)-(in|out|key)$/ or
+      $scalar =~ /^(clip|keep|strip)$/;
+
+    return $scalar;
+  }
+
+  sub dump_array_block {
+    my ($array) = @_;
+
+    stack_push('seq');
+    my $yaml = '';
+    for my $next (@$array) {
+      my $dump = dump_node($next);
+      chomp $dump;
+      $yaml .= "- $dump\n";
+    }
+    $yaml = indent_yaml $yaml;
+    stack_pop;
+
+    return $yaml;
+  }
+
+  sub sort_keys {
+    return -1 if $a eq 'var';
+    return 1 if $b eq 'var';
+    return $a cmp $b;
+  }
+
+  sub dump_hash_block {
+    my ($hash) = @_;
+
+    stack_push('map');
+    my $yaml = '';
+    for my $key (sort sort_keys keys %$hash) {
+      my $value = dump_node($hash->{$key});
+      chomp $value;
+      $yaml .=
+        dump_scalar($key) .
+        ':' .
+        ($value =~ /\n/ ? "\n  " : ' ') .
+        $value .
+        "\n";
+    }
+    $yaml = indent_yaml $yaml;
+    stack_pop;
+
+    return $yaml;
+  }
+
+  sub dump_array_flow {
+    my ($array) = @_;
+    stack_push('flow');
+    my @list = map dump_node($_), @$array;
+    stack_pop;
+    return '[ ' . join(', ', @list) . ' ]';
+  }
+
+  sub dump_hash_flow {
+    my ($hash) = @_;
+    stack_push('flow');
+    my @pair = map {
+      sprintf "%s: %s", dump_scalar($_), dump_node($hash->{$_})
+    } sort keys %$hash;
+    stack_pop;
+    my $yaml = join(', ', @pair);
+    return in_flow()
+      ? "{ $yaml }"
+      : $yaml;
+  }
 }
 
 main @ARGV;

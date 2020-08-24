@@ -318,10 +318,10 @@
   "s-line-prefix(n,c)": {
     "(case)": {
       "var": "c",
-      "block-out": "s-block-line-prefix(n)",
       "block-in": "s-block-line-prefix(n)",
-      "flow-out": "s-flow-line-prefix(n)",
-      "flow-in": "s-flow-line-prefix(n)"
+      "block-out": "s-block-line-prefix(n)",
+      "flow-in": "s-flow-line-prefix(n)",
+      "flow-out": "s-flow-line-prefix(n)"
     }
   },
   ":068": "s-block-line-prefix(n)",
@@ -398,12 +398,12 @@
   "s-separate(n,c)": {
     "(case)": {
       "var": "c",
-      "block-out": "s-separate-lines(n)",
       "block-in": "s-separate-lines(n)",
-      "flow-out": "s-separate-lines(n)",
-      "flow-in": "s-separate-lines(n)",
       "block-key": "s-separate-in-line",
-      "flow-key": "s-separate-in-line"
+      "block-out": "s-separate-lines(n)",
+      "flow-in": "s-separate-lines(n)",
+      "flow-key": "s-separate-in-line",
+      "flow-out": "s-separate-lines(n)"
     }
   },
   ":081": "s-separate-lines(n)",
@@ -590,10 +590,10 @@
   "nb-double-text(n,c)": {
     "(case)": {
       "var": "c",
-      "flow-out": "nb-double-multi-line(n)",
-      "flow-in": "nb-double-multi-line(n)",
       "block-key": "nb-double-one-line",
-      "flow-key": "nb-double-one-line"
+      "flow-in": "nb-double-multi-line(n)",
+      "flow-key": "nb-double-one-line",
+      "flow-out": "nb-double-multi-line(n)"
     }
   },
   ":111": "nb-double-one-line",
@@ -672,10 +672,10 @@
   "nb-single-text(n,c)": {
     "(case)": {
       "var": "c",
-      "flow-out": "nb-single-multi-line(n)",
-      "flow-in": "nb-single-multi-line(n)",
       "block-key": "nb-single-one-line",
-      "flow-key": "nb-single-one-line"
+      "flow-in": "nb-single-multi-line(n)",
+      "flow-key": "nb-single-one-line",
+      "flow-out": "nb-single-multi-line(n)"
     }
   },
   ":122": "nb-single-one-line",
@@ -731,10 +731,10 @@
   "ns-plain-safe(c)": {
     "(case)": {
       "var": "c",
-      "flow-out": "ns-plain-safe-out",
-      "flow-in": "ns-plain-safe-in",
       "block-key": "ns-plain-safe-out",
-      "flow-key": "ns-plain-safe-in"
+      "flow-in": "ns-plain-safe-in",
+      "flow-key": "ns-plain-safe-in",
+      "flow-out": "ns-plain-safe-out"
     }
   },
   ":128": "ns-plain-safe-out",
@@ -767,10 +767,10 @@
   "ns-plain(n,c)": {
     "(case)": {
       "var": "c",
-      "flow-out": "ns-plain-multi-line(n,c)",
-      "flow-in": "ns-plain-multi-line(n,c)",
       "block-key": "ns-plain-one-line(c)",
-      "flow-key": "ns-plain-one-line(c)"
+      "flow-in": "ns-plain-multi-line(n,c)",
+      "flow-key": "ns-plain-one-line(c)",
+      "flow-out": "ns-plain-multi-line(n,c)"
     }
   },
   ":132": "nb-ns-plain-in-line(c)",
@@ -799,10 +799,10 @@
   "in-flow(c)": {
     "(switch)": {
       "var": "c",
-      "flow-out": "flow-in",
-      "flow-in": "flow-in",
       "block-key": "flow-key",
-      "flow-key": "flow-key"
+      "flow-in": "flow-in",
+      "flow-key": "flow-key",
+      "flow-out": "flow-in"
     }
   },
   ":137": "c-flow-sequence(n,c)",
@@ -1094,11 +1094,6 @@
   "b-chomped-last(t)": {
     "(case)": {
       "var": "t",
-      "strip": [
-        "(|)",
-        "b-non-content",
-        "<end_of_stream>"
-      ],
       "clip": [
         "(|)",
         "b-as-line-feed",
@@ -1108,6 +1103,11 @@
         "(|)",
         "b-as-line-feed",
         "<end_of_stream>"
+      ],
+      "strip": [
+        "(|)",
+        "b-non-content",
+        "<end_of_stream>"
       ]
     }
   },
@@ -1115,9 +1115,9 @@
   "l-chomped-empty(n,t)": {
     "(case)": {
       "var": "t",
-      "strip": "l-strip-empty(n)",
       "clip": "l-strip-empty(n)",
-      "keep": "l-keep-empty(n)"
+      "keep": "l-keep-empty(n)",
+      "strip": "l-strip-empty(n)"
     }
   },
   ":167": "l-strip-empty(n)",
@@ -1404,12 +1404,12 @@
   "seq-spaces(n,c)": {
     "(switch)": {
       "var": "c",
+      "block-in": "n",
       "block-out": [
         "(subtract)",
         "n",
         1
-      ],
-      "block-in": "n"
+      ]
     }
   },
   ":202": "l-document-prefix",

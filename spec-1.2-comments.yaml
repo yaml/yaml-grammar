@@ -1,6 +1,7 @@
 ---
 '000':
-- |
+- |+
+
   This YAML grammar was generated from https://yaml.org/spec/1.2/spec.html by:
   https://github.com/yaml/yaml-grammar/tree/master/bin/yaml-grammar-html-to-yaml
 
@@ -18,18 +19,7 @@
   definition is preceded by the original YAML 1.2 spec rule text, formatted as
   a comment.
 
-  The DSL used in this file attempts to strike a balance between the original
-  1.2 spec and a more normalized, programatic form. It errs on the side of
-  readability and human comprehension. This means that programs consuming this
-  file need to parse certain DSL constructs. All the rules, especially the ones
-  that act like functions passing arguments, could have been represented in a
-  form where things were already parsed into smaller units, but that would take
-  away from readability.
-
-  It is expected that this file can and will be mutated programatically to
-  other forms. Future versions of the YAML spec will programatically mutate
-  this grammar, so that there is an exact and definitive path of progression.
-- |2
+- |2+
 
     = Syntax Guide =
 
@@ -274,6 +264,7 @@
       This one is a doozy. It indicates a rule that must not match during any
       of the recursive sub-matches. Since it is used near the top of the
       grammar, it affects almost everything.
+
 '001': |
   This is the complete set of characters allowed in a YAML stream.
 

@@ -1,4 +1,5 @@
 #===============================================================================
+#
 # This YAML grammar was generated from https://yaml.org/spec/1.2/spec.html by:
 # https://github.com/yaml/yaml-grammar/tree/master/bin/yaml-grammar-html-to-yaml
 #
@@ -16,17 +17,6 @@
 # definition is preceded by the original YAML 1.2 spec rule text, formatted as
 # a comment.
 #
-# The DSL used in this file attempts to strike a balance between the original
-# 1.2 spec and a more normalized, programatic form. It errs on the side of
-# readability and human comprehension. This means that programs consuming this
-# file need to parse certain DSL constructs. All the rules, especially the ones
-# that act like functions passing arguments, could have been represented in a
-# form where things were already parsed into smaller units, but that would take
-# away from readability.
-#
-# It is expected that this file can and will be mutated programatically to
-# other forms. Future versions of the YAML spec will programatically mutate
-# this grammar, so that there is an exact and definitive path of progression.
 #===============================================================================
 
 #===============================================================================
@@ -274,6 +264,7 @@
 #     This one is a doozy. It indicates a rule that must not match during any
 #     of the recursive sub-matches. Since it is used near the top of the
 #     grammar, it affects almost everything.
+#
 #===============================================================================
 
 ### 5.1. Character Set
@@ -464,7 +455,7 @@ c-folded: '>'
 # c-single-quote ::=
 #   '''
 
-c-single-quote: "'"
+c-single-quote: ''''
 
 
 
@@ -522,7 +513,7 @@ c-indicator:
 - '!'
 - '|'
 - '>'
-- "'"
+- ''''
 - '"'
 - '%'
 - '@'
@@ -743,7 +734,7 @@ ns-uri-char:
 - '!'
 - '~'
 - '*'
-- "'"
+- ''''
 - '('
 - ')'
 - '['
@@ -1018,7 +1009,7 @@ s-indent(n): s-space{n}
 s-indent-lt(n):
 - (&)
 - s-space*
-- [ (<), [ (length), (lastMatch) ], n]
+- [ (<), [ (length), (lastMatch) ], n ]
 
 
 
@@ -1029,7 +1020,7 @@ s-indent-lt(n):
 s-indent-le(n):
 - (&)
 - s-space*
-- [ (<=), [ (length), (lastMatch) ], n]
+- [ (<=), [ (length), (lastMatch) ], n ]
 
 
 
@@ -1067,10 +1058,10 @@ s-separate-in-line:
 s-line-prefix(n,c):
   (case):
     var: c
+    "block-in": s-block-line-prefix(n)
     "block-out": s-block-line-prefix(n)
-    "block-in":  s-block-line-prefix(n)
-    "flow-out":  s-flow-line-prefix(n)
-    "flow-in":   s-flow-line-prefix(n)
+    "flow-in": s-flow-line-prefix(n)
+    "flow-out": s-flow-line-prefix(n)
 
 
 
@@ -1232,12 +1223,12 @@ s-l-comments:
 s-separate(n,c):
   (case):
     var: c
-    "block-out": s-separate-lines(n)
-    "block-in":  s-separate-lines(n)
-    "flow-out":  s-separate-lines(n)
-    "flow-in":   s-separate-lines(n)
+    "block-in": s-separate-lines(n)
     "block-key": s-separate-in-line
-    "flow-key":  s-separate-in-line
+    "block-out": s-separate-lines(n)
+    "flow-in": s-separate-lines(n)
+    "flow-key": s-separate-in-line
+    "flow-out": s-separate-lines(n)
 
 
 
@@ -1615,10 +1606,10 @@ c-double-quoted(n,c):
 nb-double-text(n,c):
   (case):
     var: c
-    "flow-out":  nb-double-multi-line(n)
-    "flow-in":   nb-double-multi-line(n)
     "block-key": nb-double-one-line
-    "flow-key":  nb-double-one-line
+    "flow-in": nb-double-multi-line(n)
+    "flow-key": nb-double-one-line
+    "flow-out": nb-double-multi-line(n)
 
 
 
@@ -1705,8 +1696,8 @@ nb-double-multi-line(n):
 #   ''' '''
 
 c-quoted-quote:
-- "'"
-- "'"
+- ''''
+- ''''
 
 
 
@@ -1719,7 +1710,7 @@ nb-single-char:
 - c-quoted-quote
 - - (-)
   - nb-json
-  - "'"
+  - ''''
 
 
 
@@ -1740,9 +1731,9 @@ ns-single-char:
 #   '''
 
 c-single-quoted(n,c):
-- "'"
+- ''''
 - nb-single-text(n,c)
-- "'"
+- ''''
 
 
 
@@ -1756,10 +1747,10 @@ c-single-quoted(n,c):
 nb-single-text(n,c):
   (case):
     var: c
-    "flow-out":  nb-single-multi-line(n)
-    "flow-in":   nb-single-multi-line(n)
     "block-key": nb-single-one-line
-    "flow-key":  nb-single-one-line
+    "flow-in": nb-single-multi-line(n)
+    "flow-key": nb-single-one-line
+    "flow-out": nb-single-multi-line(n)
 
 
 
@@ -1844,10 +1835,10 @@ ns-plain-first(c):
 ns-plain-safe(c):
   (case):
     var: c
-    "flow-out":  ns-plain-safe-out
-    "flow-in":   ns-plain-safe-in
     "block-key": ns-plain-safe-out
-    "flow-key":  ns-plain-safe-in
+    "flow-in": ns-plain-safe-in
+    "flow-key": ns-plain-safe-in
+    "flow-out": ns-plain-safe-out
 
 
 
@@ -1899,10 +1890,10 @@ ns-plain-char(c):
 ns-plain(n,c):
   (case):
     var: c
-    "flow-out":  ns-plain-multi-line(n,c)
-    "flow-in":   ns-plain-multi-line(n,c)
     "block-key": ns-plain-one-line(c)
-    "flow-key":  ns-plain-one-line(c)
+    "flow-in": ns-plain-multi-line(n,c)
+    "flow-key": ns-plain-one-line(c)
+    "flow-out": ns-plain-multi-line(n,c)
 
 
 
@@ -1965,10 +1956,10 @@ ns-plain-multi-line(n,c):
 in-flow(c):
   (switch):
     var: c
-    "flow-out":  "flow-in"
-    "flow-in":   "flow-in"
     "block-key": "flow-key"
-    "flow-key":  "flow-key"
+    "flow-in": "flow-in"
+    "flow-key": "flow-key"
+    "flow-out": "flow-in"
 
 
 
@@ -2367,9 +2358,9 @@ c-b-block-header(m,t):
 
 c-indentation-indicator(m):
 - (|)
-- (if):  ns-dec-digit
+- (if): ns-dec-digit
   (set): [ m, [ (charToInt), (lastMatch) ] ]
-- (if):  <empty>
+- (if): <empty>
   (set): [ m, "auto-detect" ]
 
 
@@ -2382,11 +2373,11 @@ c-indentation-indicator(m):
 
 c-chomping-indicator(t):
 - (|)
-- (if):  '-'
+- (if): '-'
   (set): [ t, "strip" ]
-- (if):  '+'
+- (if): '+'
   (set): [ t, "keep" ]
-- (if):  <empty>
+- (if): <empty>
   (set): [ t, "clip" ]
 
 
@@ -2400,9 +2391,9 @@ c-chomping-indicator(t):
 b-chomped-last(t):
   (case):
     var: t
+    "clip": [ (|), b-as-line-feed, <end_of_stream> ]
+    "keep": [ (|), b-as-line-feed, <end_of_stream> ]
     "strip": [ (|), b-non-content, <end_of_stream> ]
-    "clip":  [ (|), b-as-line-feed, <end_of_stream> ]
-    "keep":  [ (|), b-as-line-feed, <end_of_stream> ]
 
 
 
@@ -2415,9 +2406,9 @@ b-chomped-last(t):
 l-chomped-empty(n,t):
   (case):
     var: t
+    "clip": l-strip-empty(n)
+    "keep": l-keep-empty(n)
     "strip": l-strip-empty(n)
-    "clip":  l-strip-empty(n)
-    "keep":  l-keep-empty(n)
 
 
 
@@ -2642,10 +2633,10 @@ l-folded-content(n,t):
 #   <for_some_fixed_auto-detected_m_>_0>
 
 l+block-sequence(n):
-- (+)
 - (set): [ m, <auto_detect_indent> ]
-- s-indent(n+m)
-- c-l-block-seq-entry(n+m)
+- - (+)
+  - s-indent(n+m)
+  - c-l-block-seq-entry(n+m)
 
 
 
@@ -2704,10 +2695,10 @@ ns-l-compact-sequence(n):
 #   <for_some_fixed_auto-detected_m_>_0>
 
 l+block-mapping(n):
-- (+)
 - (set): [ m, <auto_detect_indent> ]
-- s-indent(n+m)
-- ns-l-block-map-entry(n+m)
+- - (+)
+  - s-indent(n+m)
+  - ns-l-block-map-entry(n+m)
 
 
 
@@ -2896,8 +2887,8 @@ s-l+block-collection(n,c):
 seq-spaces(n,c):
   (switch):
     var: c
+    "block-in": n
     "block-out": [ (subtract), n, 1 ]
-    "block-in":  n
 
 
 
