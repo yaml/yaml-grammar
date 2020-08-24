@@ -27,6 +27,7 @@ sub test_yaml_dumper {
     ['(|)', 'aaa', [ 'bbb', 'ccc' ], 'ddd'],
     [[['aaa', 'bbb']]],
     ['aaa', [ 'bbb', [ 'ccc', [ 'ddd']]]],
+    {'aaa' => [ 'bbb', 'ccc' ]},
   );
 
   my $i = 1;
@@ -53,6 +54,7 @@ sub main {
   ($spec, $comments) = read_input_files(@_);
 
   my $data = make_data($spec);
+  reformat_data($data);
   my $yaml = dump_yaml($data);
 
   print $yaml;
@@ -524,6 +526,45 @@ sub format_hex {
   return "x$_";
 }
 
+sub reformat_data {
+  my ($data) = @_;
+
+  for my $next (@$data) {
+    if ($next->{rule}) {
+      $next->{rule}{rule} = reformat_node($next->{rule}{rule});
+    }
+  }
+
+  sub reformat_node {
+    my ($node) = @_;
+    if (not ref $node) {
+      return $node;
+    }
+    if (ref($node) eq 'ARRAY') {
+      return reformat_array($node);
+    }
+    if (ref($node) eq 'HASH') {
+      return reformat_hash($node);
+    }
+  }
+
+  sub reformat_array {
+    my ($node) = @_;
+    return $node; # XXX
+    return $node if is_flow($node);
+    if ($node->[0] eq '(|)') {
+      shift @$node;
+      return { '(any)' => reformat_node($node) };
+    }
+    return [ map reformat_node($_), @$node ];
+  }
+
+  sub reformat_hash {
+    my ($node) = @_;
+    return $node;
+  }
+}
+
 my @stack;
 my %flows;
 sub dump_yaml {
@@ -560,8 +601,11 @@ sub dump_yaml {
   }
 
   sub flow {
-    $flows{$_[0]} = 1;
-    return $_[0];
+    $flows{$_[0]} = $_[0];
+  }
+
+  sub is_flow {
+    defined $flows{$_[0]};
   }
 
   sub in_flow {
@@ -609,14 +653,14 @@ sub dump_yaml {
     }
 
     if ($ref eq 'ARRAY') {
-      if ($flows{$node} or in_flow()) {
+      if (is_flow($node) or in_flow()) {
         return dump_array_flow($node);
       }
       return dump_array_block($node);
     }
 
     if ($ref eq 'HASH') {
-      if ($flows{$node} or in_flow) {
+      if (is_flow($node) or in_flow) {
         return dump_hash_flow($node);
       }
       return dump_hash_block($node);
@@ -669,12 +713,10 @@ sub dump_yaml {
     for my $key (sort sort_keys keys %$hash) {
       my $value = dump_node($hash->{$key});
       chomp $value;
-      $yaml .=
-        dump_scalar($key) .
-        ':' .
-        ($value =~ /\n/ ? "\n  " : ' ') .
-        $value .
-        "\n";
+      my $ws = $value =~ /\n/
+        ? ($value =~ /^- /) ? "\n" : "\n  "
+        : ' ';
+      $yaml .= sprintf "%s:%s%s\n", dump_scalar($key), $ws, $value;
     }
     $yaml = indent_yaml $yaml;
     stack_pop;
