@@ -1,90 +1,144 @@
 ###
 This is a parser class. It has a parse() method and parsing primitives for the
-grammar. It also calls matching methods in the receiver class, when a rule
-matches:
+grammar. It calls methods in the receiver class, when a rule matches:
 ###
+
+# Helper functions:
+name_ = (name, func, trace)->
+  if trace?
+    func.trace = trace
+  func
+
+stringify = (c)->
+  if c == "\ufeff"
+    return "\\uFEFF"
+  if typeof_(c) == 'function'
+    return "@#{c.name}"
+  return JSON.stringify(c).replace /^"(.*)"$/, '$1'
+
+typeof_ = (value)->
+  return 'null' if _.isNull value
+  return 'boolean' if _.isBoolean value
+  return 'number' if _.isNumber value
+  return 'string' if _.isString value
+  return 'function' if _.isFunction value
+  return 'array' if _.isArray value
+  return 'object' if _.isObject value
+  xxx [value, typeof(value)]
+
+die_ = (msg)->
+  die((new Error().stack) + "\n" + msg)
+
 
 require './grammar'
 
-class Parser extends Grammar
+global.Parser = class Parser extends Grammar
 
-  state: []
+  constructor: (receiver)->
+    super()
+    @receiver = receiver
+    @pos = 0
+    @len = 0
+    @stack = []
+    @trace_info = ['', '', '']
+    @trace_off = 0
 
-  constructor: (@receiver)-> super()
-
-  parse: (@input)->
+  parse: (@input, rule=@TOP, trace=false)->
     @len = @input.length
     @pos = 0
-    @level = 0
 
-    if not @call @TOP
+    @trace = @noop
+    @trace = @trace_func if trace
+
+    try ok = @call rule
+    catch err
+      @trace_flush()
+      throw err
+
+    @trace_flush()
+
+    if not ok
       throw "Parser failed"
 
     if @pos < @input.length
       throw "Parser finished before end of input"
 
-    true
+    return true
 
-  containers: ['all', 'any', 'but', 'x00', 'x01', 'x10']
+  state: ->
+    _.last(@stack) || lvl: 0
 
-  call: (func)->
+  new_state: (name)->
+    prev = @state()
+
+    name: name
+    lvl: prev.lvl + 1
+    pos: @pos
+    m: null
+
+  call: (func, type='boolean')->
     args = []
-    if _.isArray func
+    if typeof_(func) == 'array'
       [func, args...] = func
       args = _.map args, (a)=>
-        if _.isArray a
-          a[0].apply @, a[1..]
-        else
-          a
+        if typeof_(a) == 'array' then @call(a, 'any') else \
+        if typeof_(a) == 'function' then a() else \
+        a
 
-    unless typeof(func) == 'function'        # XXX
-      die "Bad call type '#{typeof func}'"
+    return func if typeof_(func) == 'number'
 
-    name = func.trace || func.name || func.toString()
+    die_ "Bad call type '#{typeof_ func}' for '#{func}'" \
+      unless typeof_(func) == 'function'
 
-    @state.push name
+    trace = func.trace || func.name or xxx func
 
-    @level++ if name in @containers
+    @stack.push @new_state(func.name)
 
-    @trace '?', name
+    @trace '?', trace, args
 
     pos = @pos
     @receive func, 'try', pos
 
-    result = func2 = func.apply(@, args)
-    while typeof(func2) == 'function' or _.isArray func2
-      result = func2 = @call func2
+    func2 = func.apply(@, args)
+    value = func2
+    while typeof_(func2) == 'function' or typeof_(func2) == 'array'
+      value = func2 = @call func2
 
-    if typeof(result) != 'boolean'  # XXX
-      die "Calling '#{name}' returned '#{typeof result}' instead of 'boolean'"
+    die_ "Calling '#{trace}' returned '#{typeof_ value}' instead of '#{type}'" \
+      if type != 'any' and typeof_(value) != type
 
-    if result
-      @trace '+', name
+    if type != 'boolean'
+      @stack.pop()
+      return value
+
+    if value
+      @trace '+', trace
       @receive func, 'got', pos
     else
-      @trace 'x', name
+      @trace 'x', trace
+      @receive func, 'not', pos
 
-    @level-- if name in @containers
+    @stack.pop()
 
-    @state.pop()
-
-    return result
+    return value
 
   receive: (func, type, pos)->
-    receiver = (func.receivers ?= @make_receivers())[type]
+    receiver = (func.receivers ?=
+      @make_receivers())[type]
+
     return unless receiver
 
     # warn receiver.name
 
     receiver.call @receiver,
       text: @input[pos..@pos-1]
-      parser: @
+      state: @state()
       start: pos
 
   make_receivers: ->
-    i = @state.length
+    i = @stack.length
     names = []
-    while i > 0 and not (n = @state[--i]).match /_/
+    while i > 0 and not (n = @stack[--i].name).match /_/
       if m = n.match /^chr\((.)\)$/
         n = 'chr_' + m[1].charCodeAt(0).toString(16)
       names.unshift n
@@ -92,18 +146,19 @@ class Parser extends Grammar
 
     try: @receiver.constructor.prototype["try__#{name}"] || false
     got: @receiver.constructor.prototype["got__#{name}"] || false
+    not: @receiver.constructor.prototype["not__#{name}"] || false
+
 
 
   # Match all subrule methods:
-  all: (fs...)->
+  all: (funcs...)->
     all = ->
       pos = @pos
-      for f in fs
-        if not f?
-          xxx '*** Missing function in @all group:', fs
-          return false
+      for func in funcs
+        if not func?
+          xxx '*** Missing function in @all group:', funcs
 
-        if not @call f
+        if not @call func
           @pos = pos
           return false
 
@@ -111,117 +166,200 @@ class Parser extends Grammar
 
   # Match any subrule method. Rules are tried in order and stops on first
   # match:
-  any: (fs...)->
+  any: (funcs...)->
     any = ->
-      for f in fs
-        if @call f
+      for func in funcs
+        if @call func
           return true
 
       return false
 
-  # Match 0 or 1 times:
-  x01: (f)->
-    x01 = ->
-      @call f
-      true
-
-  # Match 0 or more times:
-  x00: (f)->
-    x00 = ->
-      pos = @pos
-      while @call f
-        break if pos == @pos
-      true
-
-  # Match 1 or more times:
-  x10: (f)->
-    x10 = ->
-      if not @call f
-        return false
-
-      null while @call f
-
-      true
-
   # Repeat a rule a certain number of times:
-  rep: (f, m, n)->
+  rep: (min, max, func)->
     rep = ->
-      c = 0
-      p = @pos
-      c++ while @call f
-      if c >= m and (c == 0 or c <= n)
+      count = 0
+      pos = @pos
+      while @pos < @len and @call func
+        return true if min == 0 and pos == @pos
+        count++
+      if count >= min and (max == 0 or count <= max)
         true
       else
-        @pos = p
+        @pos = pos
         false
+    name_ 'rep', rep, "rep(#{min},#{max})"
 
   # Call a rule depending on state value:
-  case: (c, table)->
-    table[c] or
-      xxx "Can't find '#{c}' in:", table
+  case: (var_, map)->
+    case_ = ->
+      rule = map[var_] or
+        xxx "Can't find '#{var_}' in:", map
+      @call rule
+    name_ 'case', case_, "case(#{var_}, #{stringify map})"
+
+  # Call a rule depending on state value:
+  flip: (var_, map)->
+    value = map[var_] or
+      xxx "Can't find '#{var_}' in:", map
+    return value if typeof_(value) == 'string'
+    return @call value
 
   # Match a single char:
-  chr: (c)->
+  chr: (char)->
     chr = ->
-      if @pos >= @input.length
+      if @pos >= @len
         false
-      else if @input[@pos] == c
+      else if @input[@pos] == char
         @pos++
         true
       else
         false
+    name_ 'chr', chr, "chr(#{stringify char})"
 
-    chr.trace = "chr(#{JSON.stringify(c)[1..-2]})"
-
-    chr
+  # Match a char in a range:
+  rng: (low, high)->
+    rng = ->
+      if @pos >= @input.length
+        false
+      else if low <= @input[@pos] <= high
+        @pos++
+        true
+      else
+        false
+    name_ 'rng', rng, "rng(#{stringify(low)},#{stringify(high)})"
+    rng
 
   # Must match first rule but none of others:
-  but: (fs...)->
+  but: (funcs...)->
     but = ->
       pos1 = @pos
-      return false unless @call fs[0]
+      return false unless @call funcs[0]
       pos2 = @pos
       @pos = pos1
-      for f in fs[1..]
-        if @call f
+      for func in funcs[1..]
+        if @call func
           @pos = pos1
           return false
       @pos = pos2
       return true
 
-  # Match a char in a range:
-  rng: (x, y)->
-    rng = ->
-      if @pos >= @input.length
-        false
-      else if x <= @input[@pos] <= y
-        @pos++
-        true
-      else
-        false
+  chk: (type, expr)->
+    chk = ->
+      pos = @pos
+      @pos-- if type == '<='
+      ok = @call expr
+      @pos = pos
+      return if type == '!' then not(ok) else ok
+    name_ 'chk', chk, "chk(#{type}, #{stringify expr})"
 
-    if process.env.TRACE
-      rng.trace = "rng(#{JSON.stringify(x)[1..-2]},#{JSON.stringify(y)[1..-2]})"
+  set: (var_, expr)->
+    set = ->
+      @state()[var_] = @call expr, 'any'
+      true
 
-    rng
+  max: (max)->
+    max = ->
+      true
 
+  exclude: (rule)->
+    exclude = ->
+      true
 
-  # Trace debugging:
-  trace: (marker, name)->
-    return unless process.env.TRACE
-#     return unless marker in ['x', '+']
+  add: (x, y)->
+    add = ->
+      x + y
+    add.trace = "add(#{x},#{y})"
+    add
+
+  sub: (x, y)->
+    sub = ->
+      x - y
+
+#------------------------------------------------------------------------------
+# Trace debugging:
+#------------------------------------------------------------------------------
+  noop: ->
+  trace_func: (type, call, args=[])->
+    if type == 'report'
+      return @trace_report()
+
+    level = @state().lvl
+    indent = _.repeat ' ', level
+    if level > 0
+      l = "#{level}".length
+      indent = "#{level}" + indent[l..]
 
     input = @input[@pos..]
       .replace(/\t/g, '\\t')
       .replace(/\r/g, '\\r')
       .replace(/\n/g, '\\n')
 
-    warn sprintf(
-      "#{_.repeat ' ', @level}%s %-30s  %4d '%s'",
-      marker,
-      "#{name}_#{@level}",
+    line = sprintf(
+      "%s%s %-30s  %4d '%s'",
+      indent,
+      type,
+      @trace_format_call call, args
       @pos,
-      input
+      input,
     )
 
-global.Parser = Parser
+    trace_info = null
+    level = "#{level}_#{call}"
+    if type == '?' and @trace_off == 0
+      trace_info = [type, level, line]
+    if call in @trace_no_descend
+      @trace_off += if type == '?' then 1 else -1
+    if type != '?' and @trace_off == 0
+      trace_info = [type, level, line]
+
+    if trace_info?
+      [prev_type, prev_level, prev_line] = @trace_info
+      if prev_type == '?' and prev_level == level
+        trace_info[1] = ''
+        if line.match /^\d*\ *\+/
+          warn prev_line.replace /\?/, '='
+        else
+          warn prev_line.replace /\?/, '!'
+      else if prev_level
+        warn prev_line
+
+      @trace_info = trace_info
+
+  trace_format_call: (call, args)->
+    return call unless args.length
+    list = _.map args, (a)->
+      return a.call if typeof_(a) == 'function'
+      return 'null' if typeof_(a) == 'null'
+      return "#{a}"
+    return call + '(' + list.join(',') + ')'
+
+  trace_flush: ->
+    if line = @trace_info[2]
+      warn line
+
+  trace_no_descend: [
+#     'l_document_prefix',
+#     'l_directive_document',
+#     'l_explicit_document',
+#     's_l_block_in_block',
+#     's_separate',
+#     'c_ns_alias_node',
+#     'ns_plain',
+#     's_l_comments',
+#     'c_ns_properties',
+#     'ns_flow_pair',
+
+#     'c_printable',
+#     'b_char',
+#     'c_byte_order_mark',
+#     'nb_char',
+#     'ns_char',
+#     'c_indicator',
+#     'ns_plain_char',
+#     's_white',
+#     'c_flow_indicator',
+#     'l_comment',
+#     's_l_block_collection',
+  ]
+
+# vim: sw=2:

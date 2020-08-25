@@ -26,12 +26,12 @@ ap.addArgument ['-r', '--rule'],
 
 spec = file_read from
 
-{coffee_generator_class} = require "../lib/generate-yaml-grammar-#{to}"
+{generator_class} = require "../lib/generate-yaml-grammar-#{to}"
 
-generator = new coffee_generator_class(spec)
+generator = new generator_class(spec)
 
 try
-  generator.generate_grammar(rule)
+  generator.gen_grammar(rule)
 
 catch e
   file_write '/tmp/yaml-grammar.coffee', generator.grammar

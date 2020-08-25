@@ -1,22 +1,38 @@
 #!/usr/bin/env coffee
 
-require 'ingy-prelude'
-
+require '../lib/prelude'
 require '../lib/parser'
+require '../lib/test-receiver'
 
-require '../lib/grammar'
+main = (yaml, rule='TOP', args...)->
+  args = _.map args, (a)->
+    if a == 'null' then null
+    else if a.match /^-?[0-9]+$/ then Number a
+    else a
 
-receiver = require '../lib/test-receiver'
+  test_parse yaml, rule, args
 
-test_parse = (yaml)->
-  parser = new Parser(new receiver)
+test_parse = (yaml, rule=null, args=[])->
+  parser = new Parser(new TestReceiver)
+
+  rule ?= 'TOP'
+
+  if _.isString rule
+    rule = parser[rule]
+  if args.length > 0
+    rule = [rule, args...]
 
   pass = true
+  trace = process.env.TRACE
+  start = timer()
+
   try
-    parser.parse(yaml)
+    parser.parse(yaml, rule, trace)
   catch e
     warn e
     pass = false
+
+  time = timer(start)
 
   if yaml.match /\n./
     n = "\n"
@@ -27,12 +43,23 @@ test_parse = (yaml)->
   if pass
     say "PASS - '#{n}#{yaml}'"
     say parser.receiver.output()
+    say sprintf "Parse time %.3fs", time
     return true
   else
     say "FAIL - '#{n}#{yaml}'"
+    say parser.receiver.output()
+    say sprintf "Parse time %.3fs", time
     return false
 
-test_parse "[]"
+if process.argv.length > 2
+  if main process.argv[2..]...
+    exit 0
+  else
+    exit 1
+
+
+test_parse "[1,2 2  ,333,]"
+# test_parse "[123]"
 # test_parse "a: b"
 # test_parse ""
 # test_parse "---\n"

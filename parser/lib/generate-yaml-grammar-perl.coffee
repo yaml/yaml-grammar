@@ -1,11 +1,11 @@
 yaml = require 'yaml'
 
-class YamlGrammarCoffeeScriptGenerator
+class YamlGrammarPerlGenerator
   constructor: (spec)->
     @spec = yaml.parse spec
     @comments = @get_comments spec
 
-  num: 1
+  num: 0
   grammar: ''
   arg: false
 
@@ -24,32 +24,46 @@ class YamlGrammarCoffeeScriptGenerator
     name = @rule_name top
     """\
     ###
-    This grammar class was generated from https://yaml.org/spec/1.2/spec.html
+    # This grammar class was generated from https://yaml.org/spec/1.2/spec.html
     ###
 
-    class GrammarSpec
+    use v5.12;
+    package GrammarSpec;
+    use Prelude;
 
-      TOP: -> @#{name}
+    sub TOP {
+      my ($self) = @_;
+      $self->func('#{name}');
+    }
+    name 'TOP', \\&TOP;
     \n\n
     """
 
   gen_grammar_tail: (top)->
     """
-    global.GrammarSpec = GrammarSpec
+    1;
     """
 
   gen_rule: (name)->
-    num = "#{sprintf "%03d", @num}"
+    num = "#{sprintf "%03d", ++@num}"
     comment = @comments[num]
     rule_name = @rule_name name
     rule_args = @gen_rule_args name
+    rule_args if rule_args.match /,/
     rule_body = @indent(@gen @spec[name])
+    rule_args2 = rule_args
+      .replace /\(\$self,? ?(.*)\)$/, '($1)'
+      .replace /\ /g, ''
+      .replace /^\(\)$/, ''
 
-    @indent """\
+    """\
     #{comment}
-    @::#{rule_name}.num = #{@num++}
-    #{rule_name}: #{rule_args}->
-    #{rule_body}
+    sub #{rule_name} {
+      my #{rule_args} = @_;
+      # warn ">>> #{rule_name}#{rule_args2}\\n";
+    #{rule_body.replace /^/gm, ''};
+    }
+    name '#{rule_name}', \\&#{rule_name};
 
 
 
@@ -58,11 +72,13 @@ class YamlGrammarCoffeeScriptGenerator
 
   gen_rule_args: (name)->
     rule = @spec[name] or XXX name
-    return '' unless _.isPlainObject rule
+    return '($self)' unless _.isPlainObject rule
     @args = rule['(...)']
-    return '' unless @args?
+    return '($self)' unless @args?
     delete rule['(...)']
     @args = [ @args ] unless _.isArray @args
+    @args = _.map @args, (a)-> "$#{a}"
+    @args.unshift '$self'
     "(#{@args.join ', '})"
 
   gen: (rule)->
@@ -79,7 +95,7 @@ class YamlGrammarCoffeeScriptGenerator
       return "#{rule}"
 
     if rule == null
-      return 'null'
+      return 'undef'
 
     xxx "[#{@num}] unknown rule type", rule
 
@@ -132,38 +148,38 @@ class YamlGrammarCoffeeScriptGenerator
   gen_from_array: (rule)->
     if rule.length == 2 and rule[0].match /^x/
       [x, y] = rule
-      return "@rng(\"\\u{#{x[1..]}}\", \"\\u{#{y[1..]}}\")"
+      return "$self->rng(\"\\x{#{x[1..]}}\", \"\\x{#{y[1..]}}\")"
 
     xxx "[#{@num}] Unknown array rule type", rule
 
   gen_from_string: (rule)->
     if m = rule.match /^x([0-9A-F]+)$/
-      return "@chr(\"\\u{#{m[1]}}\")"
+      return "$self->chr(\"\\x{#{m[1]}}\")"
     if rule.match(/^(?:b|c|e|l|nb|ns|s)(?:[-+][a-z0-9]+)+$/)
-      return "@#{@rule_name rule}"
+      return "$self->func('#{@rule_name rule}')"
     if rule.length == 1
       if rule == "'"
-        return "@chr(\"'\")"
+        return "$self->chr(\"'\")"
       if rule == "\\"
-        return "@chr(\"\\\\\")"
+        return "$self->chr(\"\\\\\")"
       if @arg
         if rule in ['m', 't']
           if not(rule in @args)
-            return "@#{rule}"
-        return rule
-      return "@chr('#{rule}')"
+            return "$self->#{rule}"
+        return "$#{rule}"
+      return "$self->chr('#{rule}')"
     if rule.match(/^(flow|block)-(in|out|key)$/) or
       rule in ['auto-detect', 'strip', 'clip', 'keep']
         return '"' + rule + '"'
     if m = rule.match /^<(\w.+)>$/
-      return "@#{@rule_name m[1]}"
+      return "$self->func('#{@rule_name m[1]}')"
     if rule == '(match)'
-      return "@match"
+      return "$self->func('match')"
 
     xxx "[#{@num}] Unknown string rule type", rule
 
   gen_group: (list, kind)->
-    out = "@#{kind}(\n"
+    out = "$self->#{kind}(\n"
     for item in list
       out += @indent(@gen(item)) + ",\n"
     out += ")"
@@ -177,7 +193,10 @@ class YamlGrammarCoffeeScriptGenerator
     else
       out = " #{out}"
 
-    "@rep(#{min}, #{max},#{out})"
+    min = "$#{min}" unless _.isNumber min
+    max = "$#{max}" unless _.isNumber max
+
+    "$self->rep(#{min}, #{max},#{out})"
 
   gen_call: (call, args)->
     args = [ args ] unless _.isArray args
@@ -185,7 +204,7 @@ class YamlGrammarCoffeeScriptGenerator
     list = _.map args, (arg)=> @gen_arg arg
     list = _.join list, ', '
 
-    "[ @#{@rule_name call}, #{list} ]"
+    "[ $self->func('#{@rule_name call}'), #{list} ]"
 
   gen_arg: (arg)->
     @arg = true
@@ -194,60 +213,60 @@ class YamlGrammarCoffeeScriptGenerator
     arg
 
   gen_may: (rule)->
-    "@may(\n#{@indent @gen rule}\n)"
+    "$self->may(\n#{@indent @gen rule}\n)"
 
   gen_chk: (rule, kind)->
-    "@chk('#{kind}', #{@gen rule})"
+    "$self->chk('#{kind}', #{@gen rule})"
 
   gen_case: (obj)->
-    out = "@case(#{obj.var}, {\n"
+    out = "$self->case($#{obj.var}, {\n"
     delete obj.var
     for key, val of obj
       rule = @gen(val)
         .replace(/\s+/g, ' ')
         .replace(/,\ \)/, ' )')
-      out += @indent "'#{key}': #{rule},\n"
+      out += @indent "'#{key}' => #{rule},\n"
     out += "})"
     out
 
   gen_flip: (obj)->
-    out = "@flip(#{obj.var}, {\n"
+    out = "$self->flip($#{obj.var}, {\n"
     delete obj.var
     for key, val of obj
       rule = @gen_arg val
-      out += "  '#{key}': #{rule},\n"
+      out += "  '#{key}' => #{rule},\n"
     out += "})"
     out
 
   gen_max: (max)->
-    "@max(#{max})"
+    "$self->max(#{max})"
 
   gen_if: (cond, set)->
-    "@if(#{@gen(cond)}, #{@gen_set(set)})"
+    "$self->if(#{@gen(cond)}, #{@gen_set(set)})"
 
   gen_set: ([vari, expr])->
-    "@set('#{vari}', #{@gen(expr)})"
+    "$self->set('#{vari}', #{@gen(expr)})"
 
   gen_ord: (expr)->
-    "@ord(#{@gen expr})"
+    "$self->ord(#{@gen expr})"
 
   gen_len: (expr)->
-    "@len(#{@gen expr})"
+    "$self->len(#{@gen expr})"
 
   gen_exclude: (rule)->
-    "@exclude(#{@gen rule})"
+    "$self->exclude(#{@gen rule})"
 
   gen_add: ([x, y])->
-    "@add(#{@gen x}, #{@gen y})"
+    "$self->add(#{@gen x}, #{@gen y})"
 
   gen_sub: ([x, y])->
-    "@sub(#{@gen x}, #{@gen y})"
+    "$self->sub(#{@gen x}, #{@gen y})"
 
   gen_lt: ([x, y])->
-    "@lt(#{@gen_arg x}, #{@gen_arg y})"
+    "$self->lt(#{@gen_arg x}, #{@gen_arg y})"
 
   gen_le: ([x, y])->
-    "@le(#{@gen x}, #{@gen y})"
+    "$self->le(#{@gen x}, #{@gen y})"
 
   out: (text)->
     @grammar += text
@@ -273,6 +292,6 @@ class YamlGrammarCoffeeScriptGenerator
 
 
 module.exports =
-  generator_class: YamlGrammarCoffeeScriptGenerator
+  generator_class: YamlGrammarPerlGenerator
 
 # vim: set sw=2:
