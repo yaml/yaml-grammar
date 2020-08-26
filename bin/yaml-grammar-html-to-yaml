@@ -173,7 +173,6 @@ sub reformat_input_text {
   # Add missing parens in rule 211:
   s/(l-document-suffix\+ l-document-prefix\*\nl-any-document\?)(\n\| )(l-document-prefix\* l-explicit-document\?)/( $1 )$2( $3 )/;
 
-
   return $_;
 }
 
@@ -553,6 +552,7 @@ my $n = 1;
 sub reformat_data {
   my ($data) = @_;
 
+
   for my $next (@$data) {
     if (my $rule = $next->{rule}) {
       $rule->{rule} = reformat_node($rule->{rule});
@@ -646,6 +646,7 @@ sub reformat_data {
         return { $func => reformat_node($array) };
       }
       else {
+        $array = $array->[0] if @$array == 1;
         return { $func => reformat_node(reformatted($array)) };
       }
     }

@@ -3067,35 +3067,33 @@
         "(???)": "l-any-document"
       },
       {
-        "(***)": [
-          {
-            "(any)": [
-              {
-                "(all)": [
-                  {
-                    "(+++)": "l-document-suffix"
-                  },
-                  {
-                    "(***)": "l-document-prefix"
-                  },
-                  {
-                    "(???)": "l-any-document"
-                  }
-                ]
-              },
-              {
-                "(all)": [
-                  {
-                    "(***)": "l-document-prefix"
-                  },
-                  {
-                    "(???)": "l-explicit-document"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+        "(***)": {
+          "(any)": [
+            {
+              "(all)": [
+                {
+                  "(+++)": "l-document-suffix"
+                },
+                {
+                  "(***)": "l-document-prefix"
+                },
+                {
+                  "(???)": "l-any-document"
+                }
+              ]
+            },
+            {
+              "(all)": [
+                {
+                  "(***)": "l-document-prefix"
+                },
+                {
+                  "(???)": "l-explicit-document"
+                }
+              ]
+            }
+          ]
+        }
       }
     ]
   }

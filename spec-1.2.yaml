@@ -3332,7 +3332,7 @@ l-yaml-stream:
   - (***): l-document-prefix
   - (???): l-any-document
   - (***):
-    - (any):
+      (any):
       - (all):
         - (+++): l-document-suffix
         - (***): l-document-prefix
