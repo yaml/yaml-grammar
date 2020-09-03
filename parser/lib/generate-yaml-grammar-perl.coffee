@@ -1,5 +1,11 @@
 yaml = require 'yaml'
 
+debug = (code)->
+  if process.env.YAML_GRAMMAR_DEBUG
+    code
+  else
+    ''
+
 class YamlGrammarPerlGenerator
   constructor: (spec)->
     @spec = yaml.parse spec
@@ -56,11 +62,13 @@ class YamlGrammarPerlGenerator
       .replace /\ /g, ''
       .replace /^\(\)$/, ''
 
+    warning = "warn \">>> #{rule_name}#{rule_args2}\\n\";"
+
     """\
     #{comment}
     sub #{rule_name} {
       my #{rule_args} = @_;
-      # warn ">>> #{rule_name}#{rule_args2}\\n";
+      #{debug warning}
     #{rule_body.replace /^/gm, ''};
     }
     name '#{rule_name}', \\&#{rule_name};

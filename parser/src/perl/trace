@@ -1,3 +1,11 @@
+make[1]: Entering directory '/home/ingy/src/yaml-grammar/parser/src/perl'
+make[2]: Entering directory '/home/ingy/src/yaml-grammar/parser/src/perl'
+/home/ingy/src/yaml-grammar/parser/bin/generate-yaml-grammar \
+    --from=/home/ingy/src/yaml-grammar/spec-1.2.yaml \
+    --to=perl \
+    --rule=l-yaml-stream \
+> lib/GrammarSpec.pm
+make[2]: Leaving directory '/home/ingy/src/yaml-grammar/parser/src/perl'
 TRACE=1 perl ./test/test.pl
 1? TOP                                0 '[1,2 2  ,333,]'
 2 ? l_yaml_stream                      0 '[1,2 2  ,333,]'
@@ -97,10 +105,11 @@ TRACE=1 perl ./test/test.pl
 12          ? any                                0 '[1,2 2  ,333,]'
 13           ? s_l_block_scalar(-1,null)          0 '[1,2 2  ,333,]'
 14            ? all                                0 '[1,2 2  ,333,]'
-15             ? s_separate(94442256676105,null)     0 '[1,2 2  ,333,]'
+15             ? s_separate(94577945027313,null)     0 '[1,2 2  ,333,]'
  at ./test/test.pl line 43.
 FAIL - '[1,2 2  ,333,]'
 +STR
 +DOC
 
 Parse time 0.003ms
+make[1]: Leaving directory '/home/ingy/src/yaml-grammar/parser/src/perl'

@@ -1,3 +1,5 @@
+SHELL := bash
+
 ROOT := $(shell cd ../../..; pwd)
 GENERATOR := $(ROOT)/parser/bin/generate-yaml-grammar
 GENERATOR_LIB := $(ROOT)/parser/lib/generate-yaml-grammar-perl.coffee
@@ -14,9 +16,21 @@ test: build
 
 build: $(GRAMMAR_SPEC)
 
+.PHONY: trace
+trace:
+	make build-nodebug test TRACE=1 &> $@
+
 $(GRAMMAR_SPEC): $(YAML_SPEC_YAML) $(GENERATOR_LIB)
 	$(GENERATOR) \
 	    --from=$< \
 	    --to=perl \
 	    --rule=$(rule) \
 	> $@
+
+build-debug:
+	@touch $(GENERATOR_LIB)
+	@make build YAML_GRAMMAR_DEBUG=1
+
+build-nodebug:
+	@touch $(GENERATOR_LIB)
+	@make build

@@ -10,7 +10,7 @@ use Time::HiRes qw< gettimeofday tv_interval >;
 use XXX;
 
 our @EXPORT = qw<
-  name func_name func_trace stringify typeof func timer
+  name func_name func_trace stringify typeof func timer debug
   true false
   WWW XXX YYY ZZZ
 >;
