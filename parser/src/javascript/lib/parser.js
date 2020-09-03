@@ -4,55 +4,10 @@
   This is a parser class. It has a parse() method and parsing primitives for the
   grammar. It calls methods in the receiver class, when a rule matches:
   */
-  var Parser, die_, name_, stringify, typeof_,
+  var Parser,
     indexOf = [].indexOf;
 
-  // Helper functions:
-  name_ = function(name, func, trace) {
-    if (trace != null) {
-      func.trace = trace;
-    }
-    return func;
-  };
-
-  stringify = function(c) {
-    if (c === "\ufeff") {
-      return "\\uFEFF";
-    }
-    if (typeof_(c) === 'function') {
-      return `@${c.name}`;
-    }
-    return JSON.stringify(c).replace(/^"(.*)"$/, '$1');
-  };
-
-  typeof_ = function(value) {
-    if (_.isNull(value)) {
-      return 'null';
-    }
-    if (_.isBoolean(value)) {
-      return 'boolean';
-    }
-    if (_.isNumber(value)) {
-      return 'number';
-    }
-    if (_.isString(value)) {
-      return 'string';
-    }
-    if (_.isFunction(value)) {
-      return 'function';
-    }
-    if (_.isArray(value)) {
-      return 'array';
-    }
-    if (_.isObject(value)) {
-      return 'object';
-    }
-    return xxx([value, typeof value]);
-  };
-
-  die_ = function(msg) {
-    return die((new Error().stack) + "\n" + msg);
-  };
+  require('./prelude');
 
   require('./grammar');
 

@@ -3,33 +3,7 @@ This is a parser class. It has a parse() method and parsing primitives for the
 grammar. It calls methods in the receiver class, when a rule matches:
 ###
 
-# Helper functions:
-name_ = (name, func, trace)->
-  if trace?
-    func.trace = trace
-  func
-
-stringify = (c)->
-  if c == "\ufeff"
-    return "\\uFEFF"
-  if typeof_(c) == 'function'
-    return "@#{c.name}"
-  return JSON.stringify(c).replace /^"(.*)"$/, '$1'
-
-typeof_ = (value)->
-  return 'null' if _.isNull value
-  return 'boolean' if _.isBoolean value
-  return 'number' if _.isNumber value
-  return 'string' if _.isString value
-  return 'function' if _.isFunction value
-  return 'array' if _.isArray value
-  return 'object' if _.isObject value
-  xxx [value, typeof(value)]
-
-die_ = (msg)->
-  die((new Error().stack) + "\n" + msg)
-
-
+require './prelude'
 require './grammar'
 
 global.Parser = class Parser extends Grammar

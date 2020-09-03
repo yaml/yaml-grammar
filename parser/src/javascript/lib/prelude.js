@@ -2,6 +2,52 @@
 (function() {
   require('ingy-prelude');
 
+  global.name_ = function(name, func, trace) {
+    if (trace != null) {
+      func.trace = trace;
+    }
+    return func;
+  };
+
+  global.stringify = function(c) {
+    if (c === "\ufeff") {
+      return "\\uFEFF";
+    }
+    if (typeof_(c) === 'function') {
+      return `@${c.name}`;
+    }
+    return JSON.stringify(c).replace(/^"(.*)"$/, '$1');
+  };
+
+  global.typeof_ = function(value) {
+    if (_.isNull(value)) {
+      return 'null';
+    }
+    if (_.isBoolean(value)) {
+      return 'boolean';
+    }
+    if (_.isNumber(value)) {
+      return 'number';
+    }
+    if (_.isString(value)) {
+      return 'string';
+    }
+    if (_.isFunction(value)) {
+      return 'function';
+    }
+    if (_.isArray(value)) {
+      return 'array';
+    }
+    if (_.isObject(value)) {
+      return 'object';
+    }
+    return xxx([value, typeof value]);
+  };
+
+  global.die_ = function(msg) {
+    return die((new Error().stack) + "\n" + msg);
+  };
+
   global.timer = function(start = null) {
     var time;
     if (start != null) {
