@@ -10,7 +10,8 @@ use Time::HiRes qw< gettimeofday tv_interval >;
 use XXX;
 
 our @EXPORT = qw<
-  name func_name func_trace stringify typeof func timer debug
+  name func_name func_trace stringify typeof func timer
+  debug debug1
   carp croak cluck confess
   true false
   WWW XXX YYY ZZZ
@@ -42,7 +43,7 @@ sub func_trace {
   $trace{$_[0]};
 }
 
-my $json = JSON::PP->new->allow_unknown;
+my $json = JSON::PP->new->canonical->allow_unknown->allow_nonref;
 sub json_stringify {
   my $string;
   eval {
@@ -58,9 +59,10 @@ sub stringify {
     return "\\uFEFF";
   }
   if (typeof($c) eq 'function') {
-    return "@${name $c}";
+    return "\@$name{$c}";
   }
-  ($_ = substr(json_stringify([$c]), 2, -2)) =~ s/^"(.*)"/$1/;
+  $_ = json_stringify $c;
+  s/^"(.*)"/$1/;
   return $_;
 }
 
@@ -80,6 +82,18 @@ sub func {
   my ($self, $name) = @_;
   $self->can($name) ||
     die "Can't find parser function '$name'";
+}
+
+sub debug {
+  my ($msg) = @_;
+  warn ">>> $msg\n";
+}
+
+sub debug1 {
+  return unless $ENV{DEBUG};
+  my ($name, @args) = @_;
+  my $args = join ',', map stringify($_), @args;
+  debug "$name($args)";
 }
 
 sub timer {

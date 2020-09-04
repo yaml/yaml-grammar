@@ -5,6 +5,7 @@ use lib 'lib';
 
 use Prelude;
 use Parser;
+use DebugParser;
 use TestReceiver;
 
 sub main {
@@ -26,7 +27,13 @@ sub test_parse {
   my ($yaml, $rule, $args) = @_;
   $args //= [];
 
-  my $parser = Parser->new(TestReceiver->new);
+  my $parser;
+  if ($ENV{DEBUG}) {
+    $parser = DebugParser->new(TestReceiver->new);
+  }
+  else {
+    $parser = Parser->new(TestReceiver->new);
+  }
 
   if (not ref $rule) {
     $rule = $parser->{$rule};

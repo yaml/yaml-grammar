@@ -1,11 +1,5 @@
 yaml = require 'yaml'
 
-debug = (code)->
-  if process.env.YAML_GRAMMAR_DEBUG
-    code
-  else
-    ''
-
 class YamlGrammarPerlGenerator
   constructor: (spec)->
     @spec = yaml.parse spec
@@ -34,7 +28,7 @@ class YamlGrammarPerlGenerator
     ###
 
     use v5.12;
-    package GrammarSpec;
+    package Grammar;
     use Prelude;
 
     sub TOP {
@@ -54,22 +48,17 @@ class YamlGrammarPerlGenerator
     num = "#{sprintf "%03d", ++@num}"
     comment = @comments[num]
     rule_name = @rule_name name
+    debug_args = @gen_debug_args name
     rule_args = @gen_rule_args name
     rule_args if rule_args.match /,/
     rule_body = @indent(@gen @spec[name])
-    rule_args2 = rule_args
-      .replace /\(\$self,? ?(.*)\)$/, '($1)'
-      .replace /\ /g, ''
-      .replace /^\(\)$/, ''
-
-    warning = "warn \">>> #{rule_name}#{rule_args2}\\n\";"
 
     """\
     #{comment}
     sub #{rule_name} {
       my #{rule_args} = @_;
-      #{debug warning}
-    #{rule_body.replace /^/gm, ''};
+      debug1("#{rule_name}"#{debug_args});
+    #{rule_body};
     }
     name '#{rule_name}', \\&#{rule_name};
 
@@ -81,13 +70,25 @@ class YamlGrammarPerlGenerator
   gen_rule_args: (name)->
     rule = @spec[name] or XXX name
     return '($self)' unless _.isPlainObject rule
-    @args = rule['(...)']
-    return '($self)' unless @args?
+    args = rule['(...)']
+    return '($self)' unless args?
     delete rule['(...)']
-    @args = [ @args ] unless _.isArray @args
-    @args = _.map @args, (a)-> "$#{a}"
-    @args.unshift '$self'
-    "(#{@args.join ', '})"
+    @args = args
+    args = [ args ] unless _.isArray args
+    args = _.map args, (a)-> "$#{a}"
+    args.unshift '$self'
+    "(#{args.join ', '})"
+
+  gen_debug_args: (name)->
+    rule = @spec[name] or XXX name
+    return '' unless _.isPlainObject rule
+    args = rule['(...)']
+    return '' unless args?
+    args = [ args ] unless _.isArray args
+    args = _.map args, (a)-> "$#{a}"
+    str = ',' + args.join(', ')
+      .replace /\ /g, ''
+      .replace /^\(\)$/, ''
 
   gen: (rule)->
     if _.isPlainObject rule

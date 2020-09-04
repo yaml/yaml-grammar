@@ -5,7 +5,7 @@ GENERATOR := $(ROOT)/parser/bin/generate-yaml-grammar
 GENERATOR_LIB := $(ROOT)/parser/lib/generate-yaml-grammar-perl.coffee
 YAML_SPEC_YAML := $(ROOT)/spec-1.2.yaml
 
-GRAMMAR_SPEC := lib/GrammarSpec.pm
+GRAMMAR := lib/Grammar.pm
 
 rule ?= l-yaml-stream
 
@@ -14,9 +14,9 @@ rule ?= l-yaml-stream
 test: build
 	TRACE=$(TRACE) perl ./test/test.pl
 
-build: $(GRAMMAR_SPEC)
+build: $(GRAMMAR)
 
-$(GRAMMAR_SPEC): $(YAML_SPEC_YAML) $(GENERATOR_LIB)
+$(GRAMMAR): $(YAML_SPEC_YAML) $(GENERATOR_LIB)
 	$(GENERATOR) \
 	    --from=$< \
 	    --to=perl \
