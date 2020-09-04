@@ -25,6 +25,15 @@ global.typeof_ = (value)->
 global.die_ = (msg)->
   die((new Error().stack) + "\n" + msg)
 
+global.debug = (msg)->
+  warn ">>> #{msg}"
+
+global.debug1 = (name, args...)->
+  return unless process.env.DEBUG
+  args = _.join _.map args, (a)->
+    stringify(a)
+  , ','
+  debug "#{name}(#{args})"
 
 global.timer = (start=null)->
   if start?

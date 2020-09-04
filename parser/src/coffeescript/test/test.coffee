@@ -2,6 +2,7 @@
 
 require '../lib/prelude'
 require '../lib/parser'
+# require '../lib/debug-parser'
 require '../lib/test-receiver'
 
 main = (yaml, rule='TOP', args...)->
@@ -13,7 +14,11 @@ main = (yaml, rule='TOP', args...)->
   test_parse yaml, rule, args
 
 test_parse = (yaml, rule=null, args=[])->
-  parser = new Parser(new TestReceiver)
+  if process.env.DEBUG
+    require '../lib/debug-parser'
+    parser = new DebugParser(new TestReceiver)
+  else
+    parser = new Parser(new TestReceiver)
 
   rule ?= 'TOP'
 
@@ -69,3 +74,5 @@ test_parse "[1,2 2  ,333,]"
 # test_parse "{}"
 # test_parse "{}\n"
 # test_parse "''"
+
+# vim: sw=2:

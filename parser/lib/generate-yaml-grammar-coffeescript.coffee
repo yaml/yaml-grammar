@@ -27,21 +27,19 @@ class YamlGrammarCoffeeScriptGenerator
     This grammar class was generated from https://yaml.org/spec/1.2/spec.html
     ###
 
-    class GrammarSpec
+    global.Grammar = class Grammar
 
       TOP: -> @#{name}
     \n\n
     """
 
-  gen_grammar_tail: (top)->
-    """
-    global.GrammarSpec = GrammarSpec
-    """
+  gen_grammar_tail: ->
 
   gen_rule: (name)->
     num = "#{sprintf "%03d", @num}"
     comment = @comments[num]
     rule_name = @rule_name name
+    debug_args = @gen_debug_args name
     rule_args = @gen_rule_args name
     rule_body = @indent(@gen @spec[name])
 
@@ -49,6 +47,7 @@ class YamlGrammarCoffeeScriptGenerator
     #{comment}
     @::#{rule_name}.num = #{@num++}
     #{rule_name}: #{rule_args}->
+      debug1("#{rule_name}"#{debug_args})
     #{rule_body}
 
 
@@ -64,6 +63,17 @@ class YamlGrammarCoffeeScriptGenerator
     delete rule['(...)']
     @args = [ @args ] unless _.isArray @args
     "(#{@args.join ', '})"
+
+  gen_debug_args: (name)->
+    rule = @spec[name] or XXX name
+    return '' unless _.isPlainObject rule
+    args = rule['(...)']
+    return '' unless args?
+    args = [ args ] unless _.isArray args
+    args = _.map args, (a)-> "#{a}"
+    str = ',' + args.join(', ')
+      .replace /\ /g, ''
+      .replace /^\(\)$/, ''
 
   gen: (rule)->
     if _.isPlainObject rule

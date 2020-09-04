@@ -34,4 +34,4 @@ build-nodebug:
 .PHONY: trace
 trace:
 	make build-nodebug
-	-TRACE=1 perl test/test.pl '[1,2 2  ,333,]' &> $@
+	-TRACE=1 DEBUG=$(DEBUG) perl test/test.pl '[1,2 2  ,333,]' &> $@

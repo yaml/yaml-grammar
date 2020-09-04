@@ -39,7 +39,7 @@ class YamlGrammarPerlGenerator
     \n\n
     """
 
-  gen_grammar_tail: (top)->
+  gen_grammar_tail: ->
     """
     1;
     """
@@ -50,7 +50,6 @@ class YamlGrammarPerlGenerator
     rule_name = @rule_name name
     debug_args = @gen_debug_args name
     rule_args = @gen_rule_args name
-    rule_args if rule_args.match /,/
     rule_body = @indent(@gen @spec[name])
 
     """\

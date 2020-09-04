@@ -254,7 +254,22 @@ global.Parser = class Parser extends Grammar
   t: ->
 
 #------------------------------------------------------------------------------
-# Trace debugging:
+# Special grammar rules
+#------------------------------------------------------------------------------
+  start_of_line: ->
+    @pos == 0 or
+      @input[@pos - 1] == "\n"
+
+  end_of_stream: ->
+    @pos >= @len
+
+  empty: -> true
+
+  auto_detect_indent: ->
+    1
+
+#------------------------------------------------------------------------------
+# Trace debugging
 #------------------------------------------------------------------------------
   noop: ->
   trace_func: (type, call, args=[])->

@@ -2,7 +2,7 @@ SHELL := bash
 
 ALL_JS := \
     test/test.js \
-    lib/grammar-spec.js \
+    lib/debug-parser.js \
     lib/grammar.js \
     lib/parser.js \
     lib/prelude.js \
@@ -24,4 +24,4 @@ lib/%.js: ../coffeescript/lib/%.coffee
 
 .PHONY: trace
 trace: build
-	-TRACE=1 node test/test.js '[1,2 2  ,333,]' &> $@
+	-TRACE=1 DEBUG=$(DEBUG) node test/test.js '[1,2 2  ,333,]' &> $@

@@ -7,6 +7,7 @@
 
   require('../lib/parser');
 
+  // require '../lib/debug-parser'
   require('../lib/test-receiver');
 
   main = function(yaml, rule = 'TOP', ...args) {
@@ -24,7 +25,12 @@
 
   test_parse = function(yaml, rule = null, args = []) {
     var e, n, parser, pass, start, time, trace;
-    parser = new Parser(new TestReceiver());
+    if (process.env.DEBUG) {
+      require('../lib/debug-parser');
+      parser = new DebugParser(new TestReceiver());
+    } else {
+      parser = new Parser(new TestReceiver());
+    }
     if (rule == null) {
       rule = 'TOP';
     }
@@ -84,5 +90,7 @@
 // test_parse "{}"
 // test_parse "{}\n"
 // test_parse "''"
+
+  // vim: sw=2:
 
 }).call(this);

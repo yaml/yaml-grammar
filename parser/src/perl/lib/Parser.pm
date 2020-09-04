@@ -368,7 +368,7 @@ sub auto_detect_indent {
 name 'auto_detect_indent', \&auto_detect_indent;
 
 #------------------------------------------------------------------------------
-# Trace debugging:
+# Trace debugging
 #------------------------------------------------------------------------------
 sub noop {}
 sub trace_func {

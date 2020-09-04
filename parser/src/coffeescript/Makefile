@@ -5,7 +5,7 @@ GENERATOR := $(ROOT)/parser/bin/generate-yaml-grammar
 GENERATOR_LIB := $(ROOT)/parser/lib/generate-yaml-grammar-coffeescript.coffee
 YAML_SPEC_YAML := $(ROOT)/spec-1.2.yaml
 
-GRAMMAR_SPEC := lib/grammar-spec.coffee
+GRAMMAR := lib/grammar.coffee
 
 rule ?= l-yaml-stream
 
@@ -14,9 +14,9 @@ rule ?= l-yaml-stream
 test: build
 	TRACE=$(TRACE) coffee ./test/test.coffee
 
-build: $(GRAMMAR_SPEC)
+build: $(GRAMMAR)
 
-$(GRAMMAR_SPEC): $(YAML_SPEC_YAML) $(GENERATOR_LIB)
+$(GRAMMAR): $(YAML_SPEC_YAML) $(GENERATOR_LIB)
 	$(GENERATOR) \
 	    --from=$< \
 	    --to=coffeescript \
@@ -25,4 +25,4 @@ $(GRAMMAR_SPEC): $(YAML_SPEC_YAML) $(GENERATOR_LIB)
 
 .PHONY: trace
 trace:
-	-TRACE=1 coffee test/test.coffee '[1,2 2  ,333,]' &> $@
+	-TRACE=1 DEBUG=$(DEBUG) coffee test/test.coffee '[1,2 2  ,333,]' &> $@

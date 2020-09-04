@@ -99,3 +99,5 @@ test_parse "[1,2 2  ,333,]";
 # test_parse "{}"
 # test_parse "{}\n"
 # test_parse "''"
+
+# vim :sw=2:

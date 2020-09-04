@@ -48,6 +48,20 @@
     return die((new Error().stack) + "\n" + msg);
   };
 
+  global.debug = function(msg) {
+    return warn(`>>> ${msg}`);
+  };
+
+  global.debug1 = function(name, ...args) {
+    if (!process.env.DEBUG) {
+      return;
+    }
+    args = _.join(_.map(args, function(a) {
+      return stringify(a);
+    }, ','));
+    return debug(`${name}(${args})`);
+  };
+
   global.timer = function(start = null) {
     var time;
     if (start != null) {
