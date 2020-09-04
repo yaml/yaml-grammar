@@ -273,8 +273,7 @@ global.Parser = class Parser extends Grammar
       .replace(/\n/g, '\\n')
 
     line = sprintf(
-      "%5d %s%s %-30s  %4d '%s'",
-      @trace_num++,
+      "%s%s %-30s  %4d '%s'",
       indent,
       type,
       @trace_format_call call, args
@@ -296,11 +295,11 @@ global.Parser = class Parser extends Grammar
       if prev_type == '?' and prev_level == level
         trace_info[1] = ''
         if line.match /^\d*\ *\+/
-          warn prev_line.replace /\?/, '='
+          prev_line = prev_line.replace /\?/, '='
         else
-          warn prev_line.replace /\?/, '!'
-      else if prev_level
-        warn prev_line
+          prev_line = prev_line.replace /\?/, '!'
+      if prev_level
+        warn sprintf "%5d %s", @trace_num++, prev_line
 
       @trace_info = trace_info
 
@@ -314,7 +313,7 @@ global.Parser = class Parser extends Grammar
 
   trace_flush: ->
     if line = @trace_info[2]
-      warn line
+      warn sprintf "%5d %s", @trace_num++, line
 
   trace_no_descend: [
 #     'l_document_prefix',

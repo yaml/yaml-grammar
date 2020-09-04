@@ -366,8 +366,7 @@ sub trace_func {
   $input =~ s/\n/\\n/g;
 
   my $line = sprintf(
-    "%5d %s%s %-30s  %4d '%s'\n",
-    $self->{trace_num}++,
+    "%s%s %-30s  %4d '%s'\n",
     $indent,
     $type,
     $self->trace_format_call($call, $args),
@@ -393,19 +392,17 @@ sub trace_func {
       $trace_info->[1] = '';
       if ($line =~ /^\d*\ *\+/) {
         $prev_line =~ s/\?/=/;
-        warn $prev_line;
       }
       else {
         $prev_line =~ s/\?/!/;
-        warn $prev_line;
       }
     }
-    elsif ($prev_level) {
-      warn $prev_line;
+    if ($prev_level) {
+      warn sprintf "%5d %s", $self->{trace_num}++, $prev_line;
     }
-  }
 
-  $self->{trace_info} = $trace_info;
+    $self->{trace_info} = $trace_info;
+  }
 }
 
 sub trace_format_call {
@@ -427,8 +424,8 @@ sub trace_format_call {
 
 sub trace_flush {
   my ($self) = @_;
-  if (my $line = $self->{trace_info}->[2]) {
-    warn $line;
+  if (my $line = $self->{trace_info}[2]) {
+    warn sprintf "%5d %s", $self->{trace_num}++, $line;
   }
 }
 

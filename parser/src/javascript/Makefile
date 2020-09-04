@@ -23,5 +23,5 @@ lib/%.js: ../coffeescript/lib/%.coffee
 
 
 .PHONY: trace
-trace:
+trace: build
 	-TRACE=1 node test/test.js '[1,2 2  ,333,]' &> $@

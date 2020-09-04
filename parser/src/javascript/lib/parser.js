@@ -362,7 +362,7 @@
           indent = `${level}` + indent.slice(l);
         }
         input = this.input.slice(this.pos).replace(/\t/g, '\\t').replace(/\r/g, '\\r').replace(/\n/g, '\\n');
-        line = sprintf("%5d %s%s %-30s  %4d '%s'", this.trace_num++, indent, type, this.trace_format_call(call, args), this.pos, input);
+        line = sprintf("%s%s %-30s  %4d '%s'", indent, type, this.trace_format_call(call, args), this.pos, input);
         trace_info = null;
         level = `${level}_${call}`;
         if (type === '?' && this.trace_off === 0) {
@@ -379,12 +379,13 @@
           if (prev_type === '?' && prev_level === level) {
             trace_info[1] = '';
             if (line.match(/^\d*\ *\+/)) {
-              warn(prev_line.replace(/\?/, '='));
+              prev_line = prev_line.replace(/\?/, '=');
             } else {
-              warn(prev_line.replace(/\?/, '!'));
+              prev_line = prev_line.replace(/\?/, '!');
             }
-          } else if (prev_level) {
-            warn(prev_line);
+          }
+          if (prev_level) {
+            warn(sprintf("%5d %s", this.trace_num++, prev_line));
           }
           return this.trace_info = trace_info;
         }
@@ -410,7 +411,7 @@
       trace_flush() {
         var line;
         if (line = this.trace_info[2]) {
-          return warn(line);
+          return warn(sprintf("%5d %s", this.trace_num++, line));
         }
       }
 
