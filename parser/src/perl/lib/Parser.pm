@@ -100,7 +100,7 @@ sub call {
   my $pos = $self->{pos};
   $self->receive($func, 'try', $pos);
 
-  my $func2 = $func->($self, $args);
+  my $func2 = $func->($self, @$args);
   my $value = $func2;
   while (typeof($func2) eq 'function' or typeof($func2) eq 'array') {
     $value = $func2 = $self->call($func2);
@@ -220,9 +220,8 @@ sub rep {
 # Call a rule depending on state value:
 sub case {
   my ($self, $var, $map) = @_;
-  $self->die("$var");# + YAML::PP->new->dump([$var, $map]);
-  my $rule = $map->{var} or
-    XXX "Can't find '$var' in:"; #, $map;
+  my $rule = $map->{$var} or
+    XXX "Can't find '$var' in:", $map;
   $self->call($rule);
 }
 name 'case', \&case;
@@ -232,7 +231,7 @@ sub flip {
   my ($self, $var, $map) = @_;
   my $value = $map->{var} or
     XXX "Can't find '$var' in:", $map;
-  return $value if not ref$value;
+  return $value if not ref $value;
   return $->call($value);
 }
 name 'flip', \&flip;
