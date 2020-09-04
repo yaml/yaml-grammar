@@ -11,6 +11,7 @@ use XXX;
 
 our @EXPORT = qw<
   name func_name func_trace stringify typeof func timer debug
+  carp croak cluck confess
   true false
   WWW XXX YYY ZZZ
 >;
@@ -41,6 +42,16 @@ sub func_trace {
   $trace{$_[0]};
 }
 
+my $json = JSON::PP->new->allow_unknown;
+sub json_stringify {
+  my $string;
+  eval {
+    $string = $json->encode($_[0]);
+  };
+  confess $@ if $@;
+  return $string;
+}
+
 sub stringify {
   my ($c) = @_;
   if ($c eq "\x{feff}") {
@@ -49,7 +60,7 @@ sub stringify {
   if (typeof($c) eq 'function') {
     return "@${name $c}";
   }
-  ($_ = substr(encode_json([$c]), 2, -2)) =~ s/^"(.*)"/$1/;
+  ($_ = substr(json_stringify([$c]), 2, -2)) =~ s/^"(.*)"/$1/;
   return $_;
 }
 
