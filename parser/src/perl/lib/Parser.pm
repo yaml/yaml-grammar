@@ -220,11 +220,12 @@ sub rep {
 # Call a rule depending on state value:
 sub case {
   my ($self, $var, $map) = @_;
-  my $rule = $map->{$var} or
-    XXX "Can't find '$var' in:", $map;
-  $self->call($rule);
+  name 'case', sub {
+    my $rule = $map->{$var} or
+      XXX "Can't find '$var' in:", $map;
+    $self->call($rule);
+  }, "case($var, ${\ stringify $map})";
 }
-name 'case', \&case;
 
 # Call a rule depending on state value:
 sub flip {
