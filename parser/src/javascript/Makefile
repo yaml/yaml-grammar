@@ -1,3 +1,5 @@
+SHELL := bash
+
 ALL_JS := \
     test/test.js \
     lib/grammar-spec.js \
@@ -19,3 +21,7 @@ test/%.js: ../coffeescript/test/%.coffee
 lib/%.js: ../coffeescript/lib/%.coffee
 	coffee -cp $< > $@
 
+
+.PHONY: trace
+trace:
+	-TRACE=1 node test/test.js '[1,2 2  ,333,]' &> $@

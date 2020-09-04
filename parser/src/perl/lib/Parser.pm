@@ -16,19 +16,19 @@ sub new {
     pos => 0,
     len => 0,
     stack => [],
-    trace_info => ['', '', ''],
+    trace_num => 1,
     trace_off => 0,
+    trace_info => ['', '', ''],
   }, $class;
 }
 
 sub parse {
   my ($self, $input, $rule, $trace) = @_;
   $self->{input} = $input;
-  $rule //= $self->can('TOP') or die;
+  $rule //= $self->func('TOP');
   $trace //= false;
 
   $self->{len} = length $self->{input};
-  $self->{pos} = 0;
 
   *trace = \&noop;
   *trace = \&trace_func if $trace;
@@ -229,7 +229,7 @@ name 'case', \&case;
 # Call a rule depending on state value:
 sub flip {
   my ($self, $var, $map) = @_;
-  my $value = $map->{var} or
+  my $value = $map->{$var} or
     XXX "Can't find '$var' in:", $map;
   return $value if not ref $value;
   return $->call($value);
@@ -339,10 +339,8 @@ sub sub {
   }, "sub($x,$y)";
 }
 
-sub die {
-  my ($self, $msg) = @_;
-  Carp::croak($msg);
-}
+sub m {}
+sub t {}
 
 #------------------------------------------------------------------------------
 # Trace debugging:
@@ -368,7 +366,8 @@ sub trace_func {
   $input =~ s/\n/\\n/g;
 
   my $line = sprintf(
-    "%s%s %-30s  %4d '%s'\n",
+    "%5d %s%s %-30s  %4d '%s'\n",
+    $self->{trace_num}++,
     $indent,
     $type,
     $self->trace_format_call($call, $args),

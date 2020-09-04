@@ -43,12 +43,12 @@ test_parse = (yaml, rule=null, args=[])->
   if pass
     say "PASS - '#{n}#{yaml}'"
     say parser.receiver.output()
-    say sprintf "Parse time %.3fs", time
+    say sprintf "Parse time %.5fs", time
     return true
   else
     say "FAIL - '#{n}#{yaml}'"
     say parser.receiver.output()
-    say sprintf "Parse time %.3fs", time
+    say sprintf "Parse time %.5fs", time
     return false
 
 if process.argv.length > 2

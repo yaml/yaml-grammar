@@ -14,17 +14,18 @@ global.Parser = class Parser extends Grammar
     @pos = 0
     @len = 0
     @stack = []
-    @trace_info = ['', '', '']
+    @trace_num = 1
     @trace_off = 0
+    @trace_info = ['', '', '']
 
   parse: (@input, rule=@TOP, trace=false)->
     @len = @input.length
-    @pos = 0
 
     @trace = @noop
     @trace = @trace_func if trace
 
-    try ok = @call rule
+    try
+      ok = @call rule
     catch err
       @trace_flush()
       throw err
@@ -61,7 +62,7 @@ global.Parser = class Parser extends Grammar
 
     return func if typeof_(func) == 'number'
 
-    die_ "Bad call type '#{typeof_ func}' for '#{func}'" \
+    die "Bad call type '#{typeof_ func}' for '#{func}'" \
       unless typeof_(func) == 'function'
 
     trace = func.trace || func.name or xxx func
@@ -78,7 +79,7 @@ global.Parser = class Parser extends Grammar
     while typeof_(func2) == 'function' or typeof_(func2) == 'array'
       value = func2 = @call func2
 
-    die_ "Calling '#{trace}' returned '#{typeof_ value}' instead of '#{type}'" \
+    die "Calling '#{trace}' returned '#{typeof_ value}' instead of '#{type}'" \
       if type != 'any' and typeof_(value) != type
 
     if type != 'boolean'
@@ -249,6 +250,9 @@ global.Parser = class Parser extends Grammar
     sub = ->
       x - y
 
+  m: ->
+  t: ->
+
 #------------------------------------------------------------------------------
 # Trace debugging:
 #------------------------------------------------------------------------------
@@ -269,7 +273,8 @@ global.Parser = class Parser extends Grammar
       .replace(/\n/g, '\\n')
 
     line = sprintf(
-      "%s%s %-30s  %4d '%s'",
+      "%5d %s%s %-30s  %4d '%s'",
+      @trace_num++,
       indent,
       type,
       @trace_format_call call, args

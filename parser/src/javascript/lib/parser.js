@@ -19,15 +19,15 @@
         this.pos = 0;
         this.len = 0;
         this.stack = [];
-        this.trace_info = ['', '', ''];
+        this.trace_num = 1;
         this.trace_off = 0;
+        this.trace_info = ['', '', ''];
       }
 
       parse(input1, rule = this.TOP, trace = false) {
         var err, ok;
         this.input = input1;
         this.len = this.input.length;
-        this.pos = 0;
         this.trace = this.noop;
         if (trace) {
           this.trace = this.trace_func;
@@ -85,7 +85,7 @@
           return func;
         }
         if (typeof_(func) !== 'function') {
-          die_(`Bad call type '${typeof_(func)}' for '${func}'`);
+          die(`Bad call type '${typeof_(func)}' for '${func}'`);
         }
         trace = func.trace || func.name || xxx(func);
         this.stack.push(this.new_state(func.name));
@@ -98,7 +98,7 @@
           value = func2 = this.call(func2);
         }
         if (type !== 'any' && typeof_(value) !== type) {
-          die_(`Calling '${trace}' returned '${typeof_(value)}' instead of '${type}'`);
+          die(`Calling '${trace}' returned '${typeof_(value)}' instead of '${type}'`);
         }
         if (type !== 'boolean') {
           this.stack.pop();
@@ -341,6 +341,10 @@
         };
       }
 
+      m() {}
+
+      t() {}
+
       //------------------------------------------------------------------------------
       // Trace debugging:
       //------------------------------------------------------------------------------
@@ -358,7 +362,7 @@
           indent = `${level}` + indent.slice(l);
         }
         input = this.input.slice(this.pos).replace(/\t/g, '\\t').replace(/\r/g, '\\r').replace(/\n/g, '\\n');
-        line = sprintf("%s%s %-30s  %4d '%s'", indent, type, this.trace_format_call(call, args), this.pos, input);
+        line = sprintf("%5d %s%s %-30s  %4d '%s'", this.trace_num++, indent, type, this.trace_format_call(call, args), this.pos, input);
         trace_info = null;
         level = `${level}_${call}`;
         if (type === '?' && this.trace_off === 0) {

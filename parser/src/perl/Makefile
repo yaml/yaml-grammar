@@ -16,10 +16,6 @@ test: build
 
 build: $(GRAMMAR_SPEC)
 
-.PHONY: trace
-trace:
-	make build-nodebug test TRACE=1 &> $@
-
 $(GRAMMAR_SPEC): $(YAML_SPEC_YAML) $(GENERATOR_LIB)
 	$(GENERATOR) \
 	    --from=$< \
@@ -34,3 +30,8 @@ build-debug:
 build-nodebug:
 	@touch $(GENERATOR_LIB)
 	@make build
+
+.PHONY: trace
+trace:
+	make build-nodebug
+	-TRACE=1 perl test/test.pl '[1,2 2  ,333,]' &> $@

@@ -60,13 +60,13 @@ sub test_parse {
   if ($pass) {
     say "PASS - '$n$yaml'";
     say $parser->{receiver}->output();
-    say sprintf "Parse time %.3fms", $time;
+    say sprintf "Parse time %.5fs", $time;
     return 1
   }
   else {
     say "FAIL - '$n$yaml'";
     say $parser->{receiver}->output();
-    say sprintf "Parse time %.3fms", $time;
+    say sprintf "Parse time %.5fs", $time;
     return 0;
   }
 }

@@ -33,7 +33,7 @@ sub got__l_yaml_stream {
 }
 
 sub try__s_l_flow_in_block {
-  push @{$_[0]->{flow_start}}, true;
+  $_[0]->{flow_start} = true;
 }
 
 sub try__l_bare_document {

@@ -1,3 +1,5 @@
+SHELL := bash
+
 ROOT := $(shell cd ../../..; pwd)
 GENERATOR := $(ROOT)/parser/bin/generate-yaml-grammar
 GENERATOR_LIB := $(ROOT)/parser/lib/generate-yaml-grammar-coffeescript.coffee
@@ -20,3 +22,7 @@ $(GRAMMAR_SPEC): $(YAML_SPEC_YAML) $(GENERATOR_LIB)
 	    --to=coffeescript \
 	    --rule=$(rule) \
 	> $@
+
+.PHONY: trace
+trace:
+	-TRACE=1 coffee test/test.coffee '[1,2 2  ,333,]' &> $@
