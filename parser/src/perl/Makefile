@@ -5,6 +5,9 @@ GRAMMAR := lib/Grammar.pm
 
 include ../common.mk
 
+export PATH := $(ROOT)/parser/src/testml/bin:$(PATH)
+export TESTML_RUN := perl-tap
+
 clean:
 	rm -f diff
 

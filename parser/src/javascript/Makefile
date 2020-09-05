@@ -8,18 +8,20 @@ ALL_JS := \
     lib/prelude.js \
     lib/test-receiver.js \
 
+tests := test/*.tml
+
 .DELETE_ON_ERROR:
 
 default:
 
 build: $(ALL_JS)
 
-test: build
-	TRACE=$(TRACE) node ./test/test.js
+test: build ../testml
+	prove -v $(tests)
 
 .PHONY: trace
 trace: build
-	-TRACE=1 DEBUG=$(DEBUG) \
+	-TRACE=1 DEBUG=$(debug) \
 	    $(BIN) test/test.$(EXT) \
 	    '[1,2 2  ,333,]' \
 	    |& grep -v '^Parse' \
@@ -30,3 +32,6 @@ test/%.js: ../coffeescript/test/%.coffee
 
 lib/%.js: ../coffeescript/lib/%.coffee
 	coffee -cp $< > $@
+
+../testml:
+	git clone https://github.com/testml-lang/testml $@
