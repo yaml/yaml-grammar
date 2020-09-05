@@ -10,6 +10,8 @@ global.stringify = (c)->
     return "\\uFEFF"
   if typeof_(c) == 'function'
     return "@#{c.name}"
+  if typeof_(c) == 'object'
+    return JSON.stringify _.keys(c)
   return JSON.stringify(c).replace /^"(.*)"$/, '$1'
 
 global.typeof_ = (value)->
@@ -34,6 +36,9 @@ global.debug1 = (name, args...)->
     stringify(a)
   , ','
   debug "#{name}(#{args})"
+
+global.dump = (o)->
+  require('yaml').stringify o
 
 global.timer = (start=null)->
   if start?

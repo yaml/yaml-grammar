@@ -6,12 +6,13 @@ use Carp;
 use Exporter 'import';
 use JSON::PP;
 use Time::HiRes qw< gettimeofday tv_interval >;
+use YAML::PP::Perl;
 
 use XXX;
 
 our @EXPORT = qw<
   name func_name func_trace stringify typeof func timer
-  debug debug1
+  debug debug1 dump
   carp croak cluck confess
   true false
   WWW XXX YYY ZZZ
@@ -21,8 +22,10 @@ my %name;
 my %num;
 my %trace;
 my %sig;
+my $save = [];
 sub name {
   my ($name, $func, $trace) = @_;
+  push @$save, $func;
   $name{$func} = $name;
   if (defined $trace) {
     if ($trace =~ /^(\d+)$/) {
@@ -61,6 +64,9 @@ sub stringify {
   if (typeof($c) eq 'function') {
     return "\@$name{$c}";
   }
+  if (typeof($c) eq 'object') {
+    return json_stringify [ sort keys %$c ];
+  }
   $_ = json_stringify $c;
   s/^"(.*)"/$1/;
   return $_;
@@ -94,6 +100,10 @@ sub debug1 {
   my ($name, @args) = @_;
   my $args = join ',', map stringify($_), @args;
   debug "$name($args)";
+}
+
+sub dump {
+  YAML::PP::Perl->new->dump(@_);
 }
 
 sub timer {

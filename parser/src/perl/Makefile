@@ -5,6 +5,9 @@ GRAMMAR := lib/Grammar.pm
 
 include ../common.mk
 
+clean:
+	rm -f diff
+
 .PHONY: diff
 diff:
 	make trace

@@ -250,8 +250,8 @@ global.Parser = class Parser extends Grammar
     sub = ->
       x - y
 
-  m: ->
-  t: ->
+  m: 0
+  t: -> ''
 
 #------------------------------------------------------------------------------
 # Special grammar rules

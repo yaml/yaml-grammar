@@ -131,8 +131,8 @@ my %receivers;
 sub receive {
   my ($self, $func, $type, $pos) = @_;
 
-  my $receiver = $receivers{$func} //=
-    $self->make_receivers->{$type};
+  my $receiver = ($receivers{$func} //=
+    $self->make_receivers)->{$type};
 
   return unless $receiver;
 
@@ -297,11 +297,11 @@ sub chk {
   my ($self, $type, $expr) = @_;
   name 'chk', sub {
     my $pos = $self->{pos};
-    $pos-- if $type eq '<=';
+    $self->{pos}-- if $type eq '<=';
     my $ok = $self->call($expr);
     $self->{pos} = $pos;
     return $type eq '!' ? not($ok) : $ok;
-  }, "chk($type, ${\ stringify $expr}";
+  }, "chk($type, ${\ stringify $expr})";
 }
 
 sub set {
@@ -340,8 +340,8 @@ sub sub {
   }, "sub($x,$y)";
 }
 
-sub m {}
-sub t {}
+sub m {0}
+sub t {''}
 
 #------------------------------------------------------------------------------
 # Special grammar rules

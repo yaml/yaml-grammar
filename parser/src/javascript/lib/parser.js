@@ -341,9 +341,9 @@
         };
       }
 
-      m() {}
-
-      t() {}
+      t() {
+        return '';
+      }
 
       //------------------------------------------------------------------------------
       // Special grammar rules
@@ -435,6 +435,8 @@
       }
 
     };
+
+    Parser.prototype.m = 0;
 
     Parser.prototype.trace_no_descend = [];
 

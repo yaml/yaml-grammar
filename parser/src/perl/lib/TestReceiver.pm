@@ -59,7 +59,7 @@ sub got__c_flow_sequence__all__chr_5d {
 sub got__ns_plain {
   my ($self, $o) = @_;
   return if $self->{flow_pair};
-  push @{$self->{events}}, "=VAL :#{o.text}";
+  push @{$self->{events}}, "=VAL :${\ $o->{text}}";
 }
 
 1;

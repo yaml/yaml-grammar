@@ -16,6 +16,9 @@
     if (typeof_(c) === 'function') {
       return `@${c.name}`;
     }
+    if (typeof_(c) === 'object') {
+      return JSON.stringify(_.keys(c));
+    }
     return JSON.stringify(c).replace(/^"(.*)"$/, '$1');
   };
 
@@ -60,6 +63,10 @@
       return stringify(a);
     }, ','));
     return debug(`${name}(${args})`);
+  };
+
+  global.dump = function(o) {
+    return require('yaml').stringify(o);
   };
 
   global.timer = function(start = null) {

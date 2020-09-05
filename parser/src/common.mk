@@ -17,7 +17,11 @@ test: build
 
 .PHONY: trace
 trace: build
-	-TRACE=1 DEBUG=$(DEBUG) $(BIN) test/test.$(EXT) '[1,2 2  ,333,]' &> $@
+	-TRACE=1 DEBUG=$(DEBUG) \
+	    $(BIN) test/test.$(EXT) \
+	    '[1,2 2  ,333,]' \
+	    |& grep -v '^Parse' \
+	    > $@
 
 $(GRAMMAR): $(YAML_SPEC_YAML) $(GENERATOR_LIB)
 	$(GENERATOR) \
