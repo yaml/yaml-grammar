@@ -2382,6 +2382,4 @@
 
   }).call(this);
 
-  void 0;
-
 }).call(this);

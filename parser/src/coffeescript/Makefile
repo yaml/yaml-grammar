@@ -1,4 +1,5 @@
 LANG := coffeescript
+BIN := coffee
 EXT := coffee
 GRAMMAR := lib/grammar.coffee
 

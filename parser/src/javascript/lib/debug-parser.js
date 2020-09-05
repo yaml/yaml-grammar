@@ -23,4 +23,6 @@ ${method}: (args...)->
     bare: true
   }));
 
+  // vim: sw=2:
+
 }).call(this);

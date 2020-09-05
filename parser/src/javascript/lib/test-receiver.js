@@ -68,6 +68,6 @@
 
   };
 
-  module.exports = TestReceiver;
+  // vim: sw=2:
 
 }).call(this);

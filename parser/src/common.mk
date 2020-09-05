@@ -13,11 +13,11 @@ default:
 build: $(GRAMMAR)
 
 test: build
-	TRACE=$(TRACE) perl ./test/test.$(EXT)
+	TRACE=$(TRACE) $(BIN) ./test/test.$(EXT)
 
 .PHONY: trace
 trace: build
-	-TRACE=1 DEBUG=$(DEBUG) $(LANG) test/test.$(EXT) '[1,2 2  ,333,]' &> $@
+	-TRACE=1 DEBUG=$(DEBUG) $(BIN) test/test.$(EXT) '[1,2 2  ,333,]' &> $@
 
 $(GRAMMAR): $(YAML_SPEC_YAML) $(GENERATOR_LIB)
 	$(GENERATOR) \

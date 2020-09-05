@@ -33,7 +33,7 @@ class YamlGrammarCoffeeScriptGenerator
     \n\n
     """
 
-  gen_grammar_tail: ->
+  gen_grammar_tail: -> ''
 
   gen_rule: (name)->
     num = "#{sprintf "%03d", @num}"
