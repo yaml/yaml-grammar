@@ -1,12 +1,18 @@
 SHELL := bash
 
 ALL_JS := \
-    test/test.js \
     lib/debug-parser.js \
     lib/grammar.js \
     lib/parser.js \
     lib/prelude.js \
     lib/test-receiver.js \
+    test/test.js \
+    test/testml-bridge.js \
+
+ROOT := $(shell cd ../../..; pwd)
+
+export PATH := $(ROOT)/parser/src/testml/bin:$(PATH)
+export TESTML_RUN := node-tap
 
 tests := test/*.tml
 

@@ -5,6 +5,8 @@ GENERATOR := $(ROOT)/parser/bin/generate-yaml-grammar
 GENERATOR_LIB := $(ROOT)/parser/lib/generate-yaml-grammar-$(LANG).coffee
 YAML_SPEC_YAML := $(ROOT)/spec-1.2.yaml
 
+export PATH := $(ROOT)/parser/src/testml/bin:$(PATH)
+
 tests := test/*.tml
 
 .DELETE_ON_ERROR:
