@@ -40,5 +40,4 @@ global.TestReceiver = class TestReceiver
     return if @flow_pair
     @events.push "=VAL :#{o.text}"
 
-
-module.exports = TestReceiver
+# vim: sw=2:

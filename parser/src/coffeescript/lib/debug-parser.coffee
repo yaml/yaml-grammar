@@ -35,3 +35,5 @@ for method in methods
     """.replace /^/gm, '  '
 
 eval CoffeeScript.compile coffee, bare: true
+
+# vim: sw=2:

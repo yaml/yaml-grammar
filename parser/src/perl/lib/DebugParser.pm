@@ -36,3 +36,5 @@ sub $method {
 }
 
 1;
+
+# vim: sw=2:

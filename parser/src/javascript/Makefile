@@ -10,18 +10,19 @@ ALL_JS := \
 
 .DELETE_ON_ERROR:
 
+default:
+
+build: $(ALL_JS)
+
 test: build
 	TRACE=$(TRACE) node ./test/test.js
 
-build: $(ALL_JS)
+.PHONY: trace
+trace: build
+	-TRACE=1 DEBUG=$(DEBUG) node test/test.js '[1,2 2  ,333,]' &> $@
 
 test/%.js: ../coffeescript/test/%.coffee
 	coffee -cp $< > $@
 
 lib/%.js: ../coffeescript/lib/%.coffee
 	coffee -cp $< > $@
-
-
-.PHONY: trace
-trace: build
-	-TRACE=1 DEBUG=$(DEBUG) node test/test.js '[1,2 2  ,333,]' &> $@

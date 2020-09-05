@@ -1,6 +1,6 @@
 use v5.12;
 package TestReceiver;
-use boolean;
+use Prelude;
 
 sub new {
   my ($class) = @_;
@@ -63,3 +63,5 @@ sub got__ns_plain {
 }
 
 1;
+
+# vim: sw=2:
