@@ -5925,4 +5925,4 @@ PASS - '[1,2 2  ,333,]'
 -DOC
 -STR
 
-Parse time 0.12159s
+Parse time 0.19396s

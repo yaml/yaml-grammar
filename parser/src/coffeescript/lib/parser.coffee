@@ -119,9 +119,9 @@ global.Parser = class Parser extends Grammar
       names.unshift n
     name = [n, names...].join '__'
 
-    try: @receiver.constructor.prototype["try__#{name}"] || false
-    got: @receiver.constructor.prototype["got__#{name}"] || false
-    not: @receiver.constructor.prototype["not__#{name}"] || false
+    try: @receiver.constructor.prototype["try__#{name}"]
+    got: @receiver.constructor.prototype["got__#{name}"]
+    not: @receiver.constructor.prototype["not__#{name}"]
 
 
 

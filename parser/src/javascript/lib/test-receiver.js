@@ -2,76 +2,71 @@
 (function() {
   var TestReceiver;
 
-  global.TestReceiver = TestReceiver = (function() {
-    class TestReceiver {
-      constructor() {
-        this.flow_start = false;
+  require('./prelude');
+
+  global.TestReceiver = TestReceiver = class TestReceiver {
+    constructor() {
+      this.flow_start = false;
+      this.events = [];
+      this.flow_pair = false;
+    }
+
+    output() {
+      return [...this.events, ''].join("\n");
+    }
+
+    try__ns_flow_pair() {
+      return this.flow_pair = true;
+    }
+
+    not__ns_flow_pair() {
+      return this.flow_pair = false;
+    }
+
+    got__ns_flow_pair() {
+      return die();
+    }
+
+    try__l_yaml_stream() {
+      return this.events.push('+STR');
+    }
+
+    got__l_yaml_stream() {
+      return this.events.push('-STR');
+    }
+
+    try__s_l_flow_in_block() {
+      return this.flow_start = true;
+    }
+
+    try__l_bare_document() {
+      return this.events.push('+DOC');
+    }
+
+    got__l_bare_document() {
+      return this.events.push('-DOC');
+    }
+
+    got__c_flow_sequence__all__chr_5b() {
+      if (this.flow_start) {
+        return this.events.push('+SEQ []');
       }
+    }
 
-      output() {
-        return [...this.events, ''].join("\n");
+    got__c_flow_sequence__all__chr_5d() {
+      if (this.flow_start) {
+        return this.events.push('-SEQ');
       }
+    }
 
-      try__ns_flow_pair() {
-        return this.flow_pair = true;
+    got__ns_plain(o) {
+      if (this.flow_pair) {
+        return;
       }
+      return this.events.push(`=VAL :${o.text}`);
+    }
 
-      not__ns_flow_pair() {
-        return this.flow_pair = false;
-      }
-
-      got__ns_flow_pair() {
-        return die();
-      }
-
-      try__l_yaml_stream() {
-        return this.events.push('+STR');
-      }
-
-      got__l_yaml_stream() {
-        return this.events.push('-STR');
-      }
-
-      try__s_l_flow_in_block() {
-        return this.flow_start = true;
-      }
-
-      try__l_bare_document() {
-        return this.events.push('+DOC');
-      }
-
-      got__l_bare_document() {
-        return this.events.push('-DOC');
-      }
-
-      got__c_flow_sequence__all__chr_5b() {
-        if (this.flow_start) {
-          return this.events.push('+SEQ []');
-        }
-      }
-
-      got__c_flow_sequence__all__chr_5d() {
-        if (this.flow_start) {
-          return this.events.push('-SEQ');
-        }
-      }
-
-      got__ns_plain(o) {
-        if (this.flow_pair) {
-          return;
-        }
-        return this.events.push(`=VAL :${o.text}`);
-      }
-
-    };
-
-    TestReceiver.prototype.events = [];
-
-    TestReceiver.prototype.flow_pair = false;
-
-    return TestReceiver;
-
-  }).call(this);
+  };
 
   module.exports = TestReceiver;
 

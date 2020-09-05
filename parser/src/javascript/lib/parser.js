@@ -141,9 +141,9 @@
         }
         name = [n, ...names].join('__');
         return {
-          try: this.receiver.constructor.prototype[`try__${name}`] || false,
-          got: this.receiver.constructor.prototype[`got__${name}`] || false,
-          not: this.receiver.constructor.prototype[`not__${name}`] || false
+          try: this.receiver.constructor.prototype[`try__${name}`],
+          got: this.receiver.constructor.prototype[`got__${name}`],
+          not: this.receiver.constructor.prototype[`not__${name}`]
         };
       }
 

@@ -1,9 +1,10 @@
+require './prelude'
+
 global.TestReceiver = class TestReceiver
   constructor: ->
     @flow_start = false
-
-  events: []
-  flow_pair: false
+    @events = []
+    @flow_pair = false
 
   output: ->
     [@events..., ''].join "\n"
