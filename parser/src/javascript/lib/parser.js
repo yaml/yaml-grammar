@@ -67,7 +67,7 @@
       }
 
       call(func, type = 'boolean') {
-        var args, func2, pos, trace, value;
+        var args, func2, pos, trace_name, value;
         args = [];
         if (typeof_(func) === 'array') {
           [func, ...args] = func;
@@ -87,9 +87,9 @@
         if (typeof_(func) !== 'function') {
           die(`Bad call type '${typeof_(func)}' for '${func}'`);
         }
-        trace = func.trace || func.name || xxx(func);
-        this.stack.push(this.new_state(func.name));
-        this.trace('?', trace, args);
+        trace_name = func.trace || func.name || xxx(func);
+        this.stack.push(this.new_state(trace_name));
+        this.trace('?', trace_name, args);
         pos = this.pos;
         this.receive(func, 'try', pos);
         func2 = func.apply(this, args);
@@ -98,17 +98,17 @@
           value = func2 = this.call(func2);
         }
         if (type !== 'any' && typeof_(value) !== type) {
-          die(`Calling '${trace}' returned '${typeof_(value)}' instead of '${type}'`);
+          die(`Calling '${trace_name}' returned '${typeof_(value)}' instead of '${type}'`);
         }
         if (type !== 'boolean') {
           this.stack.pop();
           return value;
         }
         if (value) {
-          this.trace('+', trace);
+          this.trace('+', trace_name);
           this.receive(func, 'got', pos);
         } else {
-          this.trace('x', trace);
+          this.trace('x', trace_name);
           this.receive(func, 'not', pos);
         }
         this.stack.pop();
@@ -371,9 +371,6 @@
 
       trace_func(type, call, args = []) {
         var indent, input, l, level, line, prev_level, prev_line, prev_type, trace_info;
-        if (type === 'report') {
-          return this.trace_report();
-        }
         level = this.state().lvl;
         indent = _.repeat(' ', level);
         if (level > 0) {

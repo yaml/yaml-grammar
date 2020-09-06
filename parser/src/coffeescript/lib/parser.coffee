@@ -65,11 +65,11 @@ global.Parser = class Parser extends Grammar
     die "Bad call type '#{typeof_ func}' for '#{func}'" \
       unless typeof_(func) == 'function'
 
-    trace = func.trace || func.name or xxx func
+    trace_name = func.trace || func.name or xxx func
 
-    @stack.push @new_state(func.name)
+    @stack.push @new_state(trace_name)
 
-    @trace '?', trace, args
+    @trace '?', trace_name, args
 
     pos = @pos
     @receive func, 'try', pos
@@ -79,7 +79,7 @@ global.Parser = class Parser extends Grammar
     while typeof_(func2) == 'function' or typeof_(func2) == 'array'
       value = func2 = @call func2
 
-    die "Calling '#{trace}' returned '#{typeof_ value}' instead of '#{type}'" \
+    die "Calling '#{trace_name}' returned '#{typeof_ value}' instead of '#{type}'" \
       if type != 'any' and typeof_(value) != type
 
     if type != 'boolean'
@@ -87,10 +87,10 @@ global.Parser = class Parser extends Grammar
       return value
 
     if value
-      @trace '+', trace
+      @trace '+', trace_name
       @receive func, 'got', pos
     else
-      @trace 'x', trace
+      @trace 'x', trace_name
       @receive func, 'not', pos
 
     @stack.pop()
@@ -273,9 +273,6 @@ global.Parser = class Parser extends Grammar
 #------------------------------------------------------------------------------
   noop: ->
   trace_func: (type, call, args=[])->
-    if type == 'report'
-      return @trace_report()
-
     level = @state().lvl
     indent = _.repeat ' ', level
     if level > 0

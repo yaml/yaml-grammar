@@ -21,4 +21,4 @@
       "events": "+STR\n+DOC\n=VAL :foo\n-DOC\n-STR\n"},
     { "Label": "Test 5",
       "yaml": "[1,2 2  ,333,]",
-      "events": "+STR\n+DOC\n=VAL :1\n=VAL :2 2\n=VAL :333\n-DOC\n-STR\n"}]}
+      "events": "+STR\n+DOC\n+SEQ []\n=VAL :1\n=VAL :2 2\n=VAL :333\n-SEQ\n-DOC\n-STR\n"}]}

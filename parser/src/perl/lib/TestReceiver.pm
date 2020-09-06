@@ -45,7 +45,6 @@ sub got__l_bare_document {
 }
 
 sub got__c_flow_sequence__all__chr_5b {
-  XXX 42;
   if ($_[0]->{flow_start}) {
     push @{$_[0]->{events}}, '+SEQ []';
   }

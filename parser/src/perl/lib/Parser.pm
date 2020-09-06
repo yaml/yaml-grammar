@@ -91,11 +91,11 @@ sub call {
   die "Bad call type '${\ typeof $func}' for '$func'"
     unless typeof($func) eq 'function';
 
-  my $trace = func_trace($func) || func_name($func) || XXX $func;
+  my $trace_name = func_trace($func) || func_name($func) || XXX $func;
 
-  push @{$self->{stack}}, $self->new_state(func_name($func));
+  push @{$self->{stack}}, $self->new_state($trace_name);
 
-  $self->trace('?', $trace, $args);
+  $self->trace('?', $trace_name, $args);
 
   my $pos = $self->{pos};
   $self->receive($func, 'try', $pos);
@@ -106,7 +106,7 @@ sub call {
     $value = $func2 = $self->call($func2);
   }
 
-  die "Calling '$trace' returned '${\ typeof($value)}' instead of '$type'"
+  die "Calling '$trace_name' returned '${\ typeof($value)}' instead of '$type'"
     if $type ne 'any' and typeof($value) ne $type;
 
   if ($type ne 'boolean') {
@@ -115,11 +115,11 @@ sub call {
   }
 
   if ($value) {
-    $self->trace('+', $trace);
+    $self->trace('+', $trace_name);
     $self->receive($func, 'got', $pos);
   }
   else {
-    $self->trace('x', $trace);
+    $self->trace('x', $trace_name);
     $self->receive($func, 'not', $pos);
   }
 
@@ -148,7 +148,7 @@ sub make_receivers {
   my $i = @{$self->{stack}};
   my $names = [];
   my $n;
-  while ($i > 0 and not ($n = $self->{stack}[--$i]{name}) =~ /_/) {
+  while ($i > 0 and ($n = $self->{stack}[--$i]{name}) !~ /_/) {
     if ($n =~ /^chr\((.)\)$/) {
       $n = 'chr_' . sprintf("%x", ord($1));
     }
@@ -374,9 +374,6 @@ sub noop {}
 sub trace_func {
   my ($self, $type, $call, $args) = @_;
   $args //= [];
-  if ($type eq 'report') {
-    return $self->trace_report;
-  }
 
   my $level = $self->state->{lvl};
   my $indent = ' ' x $level;
