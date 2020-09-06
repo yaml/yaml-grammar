@@ -26,3 +26,5 @@ trace: $(ALL_TRACE)
 trace-%:
 	make -C $(@:trace-%=%) trace TRACE=$(TRACE) DEBUG=$(DEBUG)
 
+clean:
+	rm -fr testml test/.testml

@@ -20,9 +20,9 @@ tests := test/*.tml
 
 default:
 
-build: $(ALL_JS)
+build: build-coffee $(ALL_JS)
 
-test: build ../testml
+test: build ../testml/src/node/lib
 	prove -v $(tests)
 
 .PHONY: trace
@@ -33,11 +33,21 @@ trace: build
 	    |& grep -v '^Parse' \
 	    > $@
 
+clean:
+	rm -fr ../testml
+
+build-coffee:
+	make -C ../coffeescript build
+
 test/%.js: ../coffeescript/test/%.coffee
 	coffee -cp $< > $@
 
 lib/%.js: ../coffeescript/lib/%.coffee
 	coffee -cp $< > $@
 
+../testml/src/node/lib: ../testml
+	(cd $(@:%/lib=%); make js-files)
+
 ../testml:
 	git clone https://github.com/testml-lang/testml $@
+	#(cd $@; make work)

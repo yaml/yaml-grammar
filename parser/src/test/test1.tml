@@ -1,7 +1,7 @@
 #!/usr/bin/env testml
 
 parse(*yaml) == *events
-  :"Parse '{*yaml}'"
+  :"+ Parse '{*yaml}'"
 
 
 === Test 1
@@ -33,6 +33,17 @@ foo
 
 
 === Test 5
+--- yaml: []
+--- events
++STR
++DOC
++SEQ []
+-SEQ
+-DOC
+-STR
+
+
+=== Test 6
 --- yaml: [1,2 2  ,333,]
 --- events
 +STR
