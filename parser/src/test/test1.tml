@@ -1,17 +1,17 @@
 #!/usr/bin/env testml
 
 parse(*yaml) == *events
-  :"+ Parse '{*yaml}'"
+  :"parse('{*yaml}')"
 
 
-=== Test 1
+===
 --- yaml: ""
 --- events
 +STR
 -STR
 
 
-=== Test 2
+===
 --- yaml: foo
 --- events
 +STR
@@ -21,18 +21,61 @@ parse(*yaml) == *events
 -STR
 
 
-=== Test 3
+===
 --- yaml
 foo
 --- ^events
 
 
-=== Test 4
+===
 --- yaml: "   foo  "
 --- ^events
 
 
-=== Test 5
+===
+--- SKIP
+--- yaml(<)
+    # comment
+
+    foo
+--- ^events
+
+
+===
+--- yaml(-)
+"foo"
+--- events
++STR
++DOC
+=VAL "foo
+-DOC
+-STR
+
+
+===
+--- yaml: "'foo'"
+--- events
++STR
++DOC
+=VAL 'foo
+-DOC
+-STR
+
+
+===
+--- SKIP
+--- yaml
+|
+  foo
+--- events
++STR
++DOC
+=VAL |foo\n
+-DOC
+-STR
+
+
+===
 --- yaml: []
 --- events
 +STR
@@ -43,7 +86,7 @@ foo
 -STR
 
 
-=== Test 6
+===
 --- yaml: [1,2 2  ,333,]
 --- events
 +STR
@@ -52,6 +95,20 @@ foo
 =VAL :1
 =VAL :2 2
 =VAL :333
+-SEQ
+-DOC
+-STR
+
+
+===
+--- SKIP
+--- yaml: [[]]
+--- events
++STR
++DOC
++SEQ []
++SEQ []
+-SEQ
 -SEQ
 -DOC
 -STR

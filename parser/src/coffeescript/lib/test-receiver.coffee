@@ -29,15 +29,27 @@ global.TestReceiver = class TestReceiver
     @events.push '-DOC'
 
   got__c_flow_sequence__all__chr_5b: ->
-    if @flow_start
-      @events.push '+SEQ []'
+    return unless @flow_start
+    return if @flow_pair
+    @events.push '+SEQ []'
 
   got__c_flow_sequence__all__chr_5d: ->
-    if @flow_start
-      @events.push '-SEQ'
+    return unless @flow_start
+    return if @flow_pair
+    @events.push '-SEQ'
 
   got__ns_plain: (o)->
     return if @flow_pair
     @events.push "=VAL :#{o.text}"
+
+  got__c_single_quoted: (o)->
+    return if @flow_pair
+    value = o.text[1..-2]
+    @events.push "=VAL '#{value}"
+
+  got__c_double_quoted: (o)->
+    return if @flow_pair
+    value = o.text[1..-2]
+    @events.push "=VAL \"#{value}"
 
 # vim: sw=2:

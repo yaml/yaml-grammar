@@ -48,15 +48,23 @@
     }
 
     got__c_flow_sequence__all__chr_5b() {
-      if (this.flow_start) {
-        return this.events.push('+SEQ []');
+      if (!this.flow_start) {
+        return;
       }
+      if (this.flow_pair) {
+        return;
+      }
+      return this.events.push('+SEQ []');
     }
 
     got__c_flow_sequence__all__chr_5d() {
-      if (this.flow_start) {
-        return this.events.push('-SEQ');
+      if (!this.flow_start) {
+        return;
       }
+      if (this.flow_pair) {
+        return;
+      }
+      return this.events.push('-SEQ');
     }
 
     got__ns_plain(o) {
@@ -64,6 +72,24 @@
         return;
       }
       return this.events.push(`=VAL :${o.text}`);
+    }
+
+    got__c_single_quoted(o) {
+      var value;
+      if (this.flow_pair) {
+        return;
+      }
+      value = o.text.slice(1, -1);
+      return this.events.push(`=VAL '${value}`);
+    }
+
+    got__c_double_quoted(o) {
+      var value;
+      if (this.flow_pair) {
+        return;
+      }
+      value = o.text.slice(1, -1);
+      return this.events.push(`=VAL \"${value}`);
     }
 
   };
