@@ -5919,9 +5919,11 @@
 PASS - '[1,2 2  ,333,]'
 +STR
 +DOC
++SEQ []
 =VAL :1
 =VAL :2 2
 =VAL :333
+-SEQ
 -DOC
 -STR
 
