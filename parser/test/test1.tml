@@ -112,3 +112,31 @@ foo
 -SEQ
 -DOC
 -STR
+
+
+===
+--- yaml: {foo: 'bar'}
+--- events
++STR
++DOC
++MAP {}
+=VAL :foo
+=VAL 'bar
+-MAP
+-DOC
+-STR
+
+
+===
+--- SKIP
+--- yaml
+foo: 'bar'
+--- events
++STR
++DOC
++MAP {}
+=VAL :foo
+=VAL 'bar
+-MAP
+-DOC
+-STR

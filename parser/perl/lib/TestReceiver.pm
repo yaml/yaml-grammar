@@ -66,6 +66,20 @@ sub got__c_flow_sequence__all__chr_5d {
   push @{$self->{events}}, '-SEQ';
 }
 
+sub got__c_flow_mapping__all__chr_7b {
+  my ($self, $o) = @_;
+  return unless $self->{flow_start};
+  return if $self->{flow_pair};
+  push @{$self->{events}}, '+MAP {}';
+}
+
+sub got__c_flow_mapping__all__chr_7d {
+  my ($self, $o) = @_;
+  return unless $self->{flow_start};
+  return if $self->{flow_pair};
+  push @{$self->{events}}, '-MAP';
+}
+
 sub got__ns_plain {
   my ($self, $o) = @_;
   return if $self->{flow_pair};
@@ -85,6 +99,12 @@ sub got__c_double_quoted {
   my $value = substr($o->{text}, 1, -1);
   push @{$self->{events}}, "=VAL \"$value";
 }
+
+# sub got__e_scalar {
+#   my ($self, $o) = @_;
+#   return if $self->{flow_pair};
+#   push @{$self->{events}}, "=VAL :";
+# }
 
 1;
 

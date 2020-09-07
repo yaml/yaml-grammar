@@ -38,6 +38,16 @@ global.TestReceiver = class TestReceiver
     return if @flow_pair
     @events.push '-SEQ'
 
+  got__c_flow_mapping__all__chr_7b: ->
+    return unless @flow_start
+    return if @flow_pair
+    @events.push '+MAP {}'
+
+  got__c_flow_mapping__all__chr_7d: ->
+    return unless @flow_start
+    return if @flow_pair
+    @events.push '-MAP'
+
   got__ns_plain: (o)->
     return if @flow_pair
     @events.push "=VAL :#{o.text}"
