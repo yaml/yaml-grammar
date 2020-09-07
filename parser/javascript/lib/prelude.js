@@ -13,14 +13,28 @@
     if (c === "\ufeff") {
       return "\\uFEFF";
     }
-    if (typeof_(c) === 'function') {
+    if (isFunction(c)) {
       return `@${c.name}`;
     }
-    if (typeof_(c) === 'object') {
+    if (isObject(c)) {
       return JSON.stringify(_.keys(c));
     }
     return JSON.stringify(c).replace(/^"(.*)"$/, '$1');
   };
+
+  global.isNull = _.isNull;
+
+  global.isBoolean = _.isBoolean;
+
+  global.isNumber = _.isNumber;
+
+  global.isString = _.isString;
+
+  global.isFunction = _.isFunction;
+
+  global.isArray = _.isArray;
+
+  global.isObject = _.isObject;
 
   global.typeof_ = function(value) {
     if (_.isNull(value)) {

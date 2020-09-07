@@ -77,11 +77,11 @@ sub call {
   $type //= 'boolean';
 
   my $args = [];
-  if (typeof($func) eq 'array') {
+  if (isArray($func)) {
     ($func, @$args) = @$func;
     @$args = map {
-      typeof($_) eq 'array' ? $self->call($_, 'any') :
-      typeof($_) eq 'function' ? $_->() :
+      isArray($_) ? $self->call($_, 'any') :
+      isFunction($_) ? $_->() :
       $_;
     } @$args;
   }
@@ -89,7 +89,7 @@ sub call {
   return $func if $func eq $func + 0;
 
   die "Bad call type '${\ typeof $func}' for '$func'"
-    unless typeof($func) eq 'function';
+    unless isFunction($func);
 
   my $trace_name = func_trace($func) || func_name($func) || XXX $func;
 
@@ -102,7 +102,7 @@ sub call {
 
   my $func2 = $func->($self, @$args);
   my $value = $func2;
-  while (typeof($func2) eq 'function' or typeof($func2) eq 'array') {
+  while (isFunction($func2) or isArray($func2)) {
     $value = $func2 = $self->call($func2);
   }
 
@@ -431,7 +431,7 @@ sub trace_format_call {
   my ($self, $call, $args) = @_;
   return $call unless @$args;
   my @list = map {
-    if (typeof($_) eq 'function') {
+    if (isFunction($_)) {
       $_->();
     }
     elsif (not defined $_) {

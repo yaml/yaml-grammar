@@ -53,17 +53,17 @@ global.Parser = class Parser extends Grammar
 
   call: (func, type='boolean')->
     args = []
-    if typeof_(func) == 'array'
+    if isArray func
       [func, args...] = func
       args = _.map args, (a)=>
-        if typeof_(a) == 'array' then @call(a, 'any') else \
-        if typeof_(a) == 'function' then a() else \
+        if isArray(a) then @call(a, 'any') else \
+        if isFunction(a) then a() else \
         a
 
-    return func if typeof_(func) == 'number'
+    return func if isNumber func
 
     die "Bad call type '#{typeof_ func}' for '#{func}'" \
-      unless typeof_(func) == 'function'
+      unless isFunction func
 
     trace_name = func.trace || func.name or xxx func
 
@@ -76,7 +76,7 @@ global.Parser = class Parser extends Grammar
 
     func2 = func.apply(@, args)
     value = func2
-    while typeof_(func2) == 'function' or typeof_(func2) == 'array'
+    while isFunction(func2) or isArray(func2)
       value = func2 = @call func2
 
     die "Calling '#{trace_name}' returned '#{typeof_ value}' instead of '#{type}'" \
@@ -176,7 +176,7 @@ global.Parser = class Parser extends Grammar
   flip: (var_, map)->
     value = map[var_] or
       xxx "Can't find '#{var_}' in:", map
-    return value if typeof_(value) == 'string'
+    return value if isString value
     return @call value
 
   # Match a single char:
@@ -318,8 +318,8 @@ global.Parser = class Parser extends Grammar
   trace_format_call: (call, args)->
     return call unless args.length
     list = _.map args, (a)->
-      return a.call if typeof_(a) == 'function'
-      return 'null' if typeof_(a) == 'null'
+      return a.call if isFunction a
+      return 'null' if isNull a
       return "#{a}"
     return call + '(' + list.join(',') + ')'
 

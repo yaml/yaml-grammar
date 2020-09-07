@@ -12,6 +12,7 @@ use XXX;
 
 our @EXPORT = qw<
   name func_name func_trace stringify typeof func timer
+  isNull isBoolean isNumber isString isFunction isArray isObject
   debug debug1 dump
   carp croak cluck confess
   true false
@@ -72,15 +73,23 @@ sub stringify {
   return $_;
 }
 
+sub isNull { not defined $_[0] }
+sub isBoolean { ref($_[0]) eq 'boolean' }
+sub isNumber { not(ref $_[0]) and $_[0] =~ /^-?\d+$/ }
+sub isString { not(ref $_[0]) and $_[0] !~ /^-?\d+$/ }
+sub isFunction { ref($_[0]) eq 'CODE' }
+sub isArray { ref($_[0]) eq 'ARRAY' }
+sub isObject { ref($_[0]) eq 'HASH' }
+
 sub typeof {
   my ($value) = @_;
-  return 'null' if not defined $value;;
-  return 'boolean' if ref($value) eq 'boolean';
-  return 'number' if not(ref $value) and $value =~ /^-?\d+$/;
-  return 'string' if not(ref $value);
-  return 'function' if ref($value) eq 'CODE';
-  return 'array' if ref($value) eq 'ARRAY';
-  return 'object' if ref($value) eq 'HASH';
+  return 'null' if isNull $value;
+  return 'boolean' if isBoolean $value;
+  return 'number' if isNumber $value;
+  return 'string' if isString $value;
+  return 'function' if isFunction $value;
+  return 'array' if isArray $value;
+  return 'object' if isObject $value;
   XXX [$value, ref($value)];
 }
 

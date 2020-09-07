@@ -69,22 +69,22 @@
       call(func, type = 'boolean') {
         var args, func2, pos, trace_name, value;
         args = [];
-        if (typeof_(func) === 'array') {
+        if (isArray(func)) {
           [func, ...args] = func;
           args = _.map(args, (a) => {
-            if (typeof_(a) === 'array') {
+            if (isArray(a)) {
               return this.call(a, 'any');
-            } else if (typeof_(a) === 'function') {
+            } else if (isFunction(a)) {
               return a();
             } else {
               return a;
             }
           });
         }
-        if (typeof_(func) === 'number') {
+        if (isNumber(func)) {
           return func;
         }
-        if (typeof_(func) !== 'function') {
+        if (!isFunction(func)) {
           die(`Bad call type '${typeof_(func)}' for '${func}'`);
         }
         trace_name = func.trace || func.name || xxx(func);
@@ -94,7 +94,7 @@
         this.receive(func, 'try', pos);
         func2 = func.apply(this, args);
         value = func2;
-        while (typeof_(func2) === 'function' || typeof_(func2) === 'array') {
+        while (isFunction(func2) || isArray(func2)) {
           value = func2 = this.call(func2);
         }
         if (type !== 'any' && typeof_(value) !== type) {
@@ -221,7 +221,7 @@
       flip(var_, map) {
         var value;
         value = map[var_] || xxx(`Can't find '${var_}' in:`, map);
-        if (typeof_(value) === 'string') {
+        if (isString(value)) {
           return value;
         }
         return this.call(value);
@@ -413,10 +413,10 @@
           return call;
         }
         list = _.map(args, function(a) {
-          if (typeof_(a) === 'function') {
+          if (isFunction(a)) {
             return a.call;
           }
-          if (typeof_(a) === 'null') {
+          if (isNull(a)) {
             return 'null';
           }
           return `${a}`;
