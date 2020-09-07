@@ -3,10 +3,10 @@ SHELL := bash
 CWD := $(shell pwd)
 
 SPEC12_URL := https://yaml.org/spec/1.2/spec.html
-SPEC12_TXT := spec-1.2.txt
-SPEC12_YAML := spec-1.2.yaml
-SPEC12_JSON := spec-1.2.json
-SPEC12_COMMENTS := spec-1.2-comments.yaml
+SPEC12_TXT := yaml-spec-1.2.txt
+SPEC12_YAML := yaml-spec-1.2.yaml
+SPEC12_JSON := yaml-spec-1.2.json
+SPEC12_COMMENTS := yaml-spec-1.2-comments.yaml
 SPEC12_DSL_YAML := $(SPEC12_YAML:%.yaml=%.dsl.yaml)
 SPEC12_PCRE_YAML := $(SPEC12_YAML:%.yaml=%.pcre.yaml)
 SPEC12_PERL_YAML := $(SPEC12_YAML:%.yaml=%.perl.yaml)
