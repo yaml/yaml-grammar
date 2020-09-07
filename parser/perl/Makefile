@@ -3,7 +3,7 @@ BIN := perl
 EXT := pl
 GRAMMAR := lib/Grammar.pm
 
-include ../common.mk
+include ../.common.mk
 
 export TESTML_RUN := perl-tap
 export PERL5LIB := $(ROOT)/parser/perl5lib/lib/perl5
