@@ -1,6 +1,7 @@
 SHELL := bash
 
 ALL_JS := \
+    bin/yaml-parser \
     lib/debug-parser.js \
     lib/grammar.js \
     lib/parser.js \
@@ -39,12 +40,17 @@ clean:
 build-coffee:
 	make -C ../coffeescript build
 
-test/%.js: ../coffeescript/test/%.coffee
-	coffee -cp $< > $@
-	perl -pi -e 's{/coffee/}{/node/}' $@
+bin/%: ../coffeescript/bin/%
+	echo '#!/usr/bin/env node' > $@
+	coffee -cp $< >> $@
+	chmod +x $@
 
 lib/%.js: ../coffeescript/lib/%.coffee
 	coffee -cp $< > $@
+
+test/%.js: ../coffeescript/test/%.coffee
+	coffee -cp $< > $@
+	perl -pi -e 's{/coffee/}{/node/}' $@
 
 ../testml/src/node/lib: ../testml
 	(cd $(@:%/lib=%); make js-files)

@@ -2,10 +2,11 @@
 
 require '../lib/prelude'
 require '../lib/parser'
-# require '../lib/debug-parser'
+require '../lib/debug-parser'
 require '../lib/test-receiver'
 
-main = (yaml, rule='TOP', args...)->
+main = (yaml=file_read('-'), rule='TOP', args...)->
+
   args = _.map args, (a)->
     if a == 'null' then null
     else if a.match /^-?[0-9]+$/ then Number a
@@ -56,23 +57,9 @@ test_parse = (yaml, rule=null, args=[])->
     say sprintf "Parse time %.5fs", time
     return false
 
-if process.argv.length > 2
-  if main process.argv[2..]...
-    exit 0
-  else
-    exit 1
-
-
-test_parse "[1,2 2  ,333,]"
-# test_parse "[123]"
-# test_parse "a: b"
-# test_parse ""
-# test_parse "---\n"
-# test_parse "..."
-# test_parse "[]  # foo"
-# test_parse "[ foo ]"
-# test_parse "{}"
-# test_parse "{}\n"
-# test_parse "''"
+if main process.argv[2..]...
+  exit 0
+else
+  exit 1
 
 # vim: sw=2:

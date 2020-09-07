@@ -1,7 +1,8 @@
 #!/usr/bin/env perl
 
 use v5.12;
-use lib 'lib';
+use FindBin;
+use lib "$FindBin::Bin/../lib";
 
 use Prelude;
 use Parser;
@@ -10,6 +11,7 @@ use TestReceiver;
 
 sub main {
   my ($yaml, $rule, @args) = @_;
+  $yaml //= do { local $/; <> };
   $rule //= 'TOP';
 
   my $args = [
@@ -78,26 +80,11 @@ sub test_parse {
   }
 }
 
-if (@ARGV) {
-  if (main @ARGV) {
-    exit 0;
-  }
-  else {
-    exit 1;
-  }
+if (main @ARGV) {
+  exit 0;
+}
+else {
+  exit 1;
 }
 
-
-test_parse "[1,2 2  ,333,]";
-# test_parse "[123]"
-# test_parse "a: b"
-# test_parse ""
-# test_parse "---\n"
-# test_parse "..."
-# test_parse "[]  # foo"
-# test_parse "[ foo ]"
-# test_parse "{}"
-# test_parse "{}\n"
-# test_parse "''"
-
-# vim :sw=2:
+# vim: sw=2:
