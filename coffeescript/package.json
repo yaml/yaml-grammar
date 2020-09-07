@@ -22,7 +22,7 @@
   "_resolved": "https://registry.npmjs.org/coffeescript/-/coffeescript-2.5.1.tgz",
   "_shasum": "b2442a1f2c806139669534a54adc35010559d16a",
   "_spec": "coffeescript",
-  "_where": "/home/ingy/src/yaml-grammar/node_modules",
+  "_where": "/home/ingy/src/yaml-grammar/parser/node_modules",
   "author": {
     "name": "Jeremy Ashkenas"
   },
