@@ -12,7 +12,9 @@ ALL_JS := \
 
 ROOT := $(shell cd ../..; pwd)
 
-export PATH := $(ROOT)/parser/testml/bin:$(PATH)
+PATH := $(ROOT)/node_modules/.bin:$(PATH)
+PATH := $(ROOT)/parser/test/testml/bin:$(PATH)
+export PATH
 export TESTML_RUN := node-tap
 
 tests := test/*.tml
@@ -23,19 +25,18 @@ default:
 
 build: build-coffee $(ALL_JS)
 
-test: build ../testml/src/node/lib
+test: build ../test/testml/src/node/lib
 	prove -v $(tests)
 
 .PHONY: trace
 trace: build
 	-TRACE=1 DEBUG=$(debug) \
-	    $(BIN) test/test.$(EXT) \
+	    ./bin/yaml-parser \
 	    '[1,2 2  ,333,]' \
 	    |& grep -v '^Parse' \
 	    > $@
 
 clean:
-	rm -fr ../testml
 
 build-coffee:
 	make -C ../coffeescript build
@@ -52,9 +53,10 @@ test/%.js: ../coffeescript/test/%.coffee
 	coffee -cp $< > $@
 	perl -pi -e 's{/coffee/}{/node/}' $@
 
-../testml/src/node/lib: ../testml
-	(cd $(@:%/lib=%); make js-files)
+../test/testml/src/node/lib: ../test/testml
+	make -C $(@:%/lib=%) js-files
 
-../testml:
+../test/testml:
 	git clone https://github.com/testml-lang/testml $@
-	#(cd $@; make work)
+	make -C $@ ext/perl
+	make -C $@ src/node_modules

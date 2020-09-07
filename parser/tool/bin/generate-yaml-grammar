@@ -1,28 +1,33 @@
 #!/usr/bin/env coffee
 
+VERSION = '0.0.1'
+
 require 'ingy-prelude'
 {ArgumentParser} = require 'argparse'
 
 ap = new ArgumentParser
-  version: '0.0.1',
-  addHelp: true,
+  add_help: true,
   description: 'YAML Grammar Generator'
 
-ap.addArgument ['-f', '--from'],
+ap.add_argument '-f', '--from',
   help: "File path of 'yaml-spec-#.#.yaml"
   required: true
-  type: 'string'
+  type: 'str'
 
-ap.addArgument ['-t', '--to'],
+ap.add_argument '-t', '--to',
   help: 'Language to generate YAML parser into'
   required: true
   choices: ['coffeescript', 'perl']
 
-ap.addArgument ['-r', '--rule'],
+ap.add_argument '-r', '--rule',
   help: 'Starting rule of grammar'
   required: true
 
-{from, to, rule} = ap.parseArgs()
+ap.add_argument '--version',
+  action: 'version'
+  version: VERSION
+
+{from, to, rule} = ap.parse_args()
 
 spec = file_read from
 

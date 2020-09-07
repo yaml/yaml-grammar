@@ -1,11 +1,13 @@
 SHELL := bash
 
 ROOT := $(shell cd ../..; pwd)
-GENERATOR := $(ROOT)/parser/bin/generate-yaml-grammar
-GENERATOR_LIB := $(ROOT)/parser/lib/generate-yaml-grammar-$(LANG).coffee
 YAML_SPEC_YAML := $(ROOT)/yaml-spec-1.2.yaml
+GENERATOR := $(ROOT)/parser/tool/bin/generate-yaml-grammar
+GENERATOR_LIB := $(ROOT)/parser/tool/lib/generate-yaml-grammar-$(LANG).coffee
 
-export PATH := $(ROOT)/parser/testml/bin:$(PATH)
+PATH := $(ROOT)/node_modules/.bin:$(PATH)
+PATH := $(ROOT)/parser/test/testml/bin:$(PATH)
+export PATH
 
 tests := test/*.tml
 
@@ -13,18 +15,20 @@ tests := test/*.tml
 
 default:
 
-build: $(GRAMMAR)
+build:: $(BUILD_DEPS) $(GRAMMAR)
 
-test: build ../testml
+test:: build $(TEST_DEPS)
 	TRACE=$(trace) DEBUG=$(debug) prove -v $(tests)
 
 .PHONY: trace
-trace: build
+trace:: build
 	-TRACE=1 DEBUG=$(debug) \
-	    $(BIN) test/test.$(EXT) \
+	    ./bin/yaml-parser \
 	    '[1,2 2  ,333,]' \
 	    |& grep -v '^Parse' \
 	    > $@
+
+clean::
 
 $(GRAMMAR): $(YAML_SPEC_YAML) $(GENERATOR_LIB)
 	$(GENERATOR) \
@@ -33,5 +37,10 @@ $(GRAMMAR): $(YAML_SPEC_YAML) $(GENERATOR_LIB)
 	    --rule=l-yaml-stream \
 	> $@
 
-../testml:
+../test/testml:
 	git clone https://github.com/testml-lang/testml $@
+	make -C $@ ext/perl
+	make -C $@ src/node_modules
+
+../../node_modules:
+	make -C ../.. node_modules

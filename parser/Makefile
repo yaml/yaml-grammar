@@ -10,39 +10,30 @@ ALL := \
 ALL_BUILD := $(ALL:%=build-%)
 ALL_TEST := $(ALL:%=test-%)
 ALL_TRACE := $(ALL:%=trace-%)
-
-TEST_DEPS := \
-    node_modules \
-    perl5lib \
-    testml \
-
-export PATH := $(ROOT)/parser/node_modules/.bin:$(PATH)
+ALL_CLEAN := $(ALL:%=clean-%)
 
 default:
 
 build: $(ALL_BUILD)
 
 build-%:
-	make -C $(@:build-%=%) build TRACE=$(TRACE) DEBUG=$(DEBUG)
+	make -C $(@:build-%=%) build TRACE=$(trace) DEBUG=$(debug)
 
-test: $(TEST_DEPS) $(ALL_TEST)
+test: $(ALL_TEST)
 
 test-%:
-	make -C $(@:test-%=%) test TRACE=$(TRACE) DEBUG=$(DEBUG)
+	make -C $(@:test-%=%) test TRACE=$(trace) DEBUG=$(debug)
 
 trace: $(ALL_TRACE)
 
 trace-%:
-	make -C $(@:trace-%=%) trace TRACE=$(TRACE) DEBUG=$(DEBUG)
+	make -C $(@:trace-%=%) trace TRACE=$(trace) DEBUG=$(debug)
 
-node_modules perl5lib:
-	git worktree prune
-	git worktree add $@ $@
+clean: $(ALL_CLEAN)
+	rm -fr test/testml test/.testml
 
-testml:
-	git clone https://github.com/testml-lang/testml $@
-	make -C $@ ext/perl
-	make -C $@ src/node_modules
+clean-%:
+	make -C $(@:clean-%=%) clean
 
 docker-build:
 	docker build -t yaml-grammar-test test
@@ -53,6 +44,3 @@ docker-test: docker-build
 	    -u $$(id -u "$$USER"):$$(id -g "$$USER") \
 	    yaml-grammar-test \
 	    make -C /yaml-grammar/parser test
-
-clean:
-	rm -fr node_modules perl5lib testml test/.testml

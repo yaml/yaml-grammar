@@ -1,7 +1,12 @@
 LANG := coffeescript
 BIN := coffee
-EXT := coffee
 GRAMMAR := lib/grammar.coffee
+
+BUILD_DEPS := \
+    ../../node_modules \
+
+TEST_DEPS := \
+    ../test/testml \
 
 export TESTML_RUN := coffee-tap
 

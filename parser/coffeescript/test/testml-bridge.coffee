@@ -1,4 +1,4 @@
-require '../../testml/src/coffee/lib/testml/bridge'
+require '../../test/testml/src/coffee/lib/testml/bridge'
 require '../lib/prelude'
 require '../lib/parser'
 require '../lib/grammar'

@@ -1,15 +1,25 @@
 LANG := perl
 BIN := perl
-EXT := pl
 GRAMMAR := lib/Grammar.pm
+
+BUILD_DEPS := \
+    ../../node_modules \
+
+TEST_DEPS := \
+    ../test/testml \
+    ext/perl \
 
 include ../.common.mk
 
 export TESTML_RUN := perl-tap
-export PERL5LIB := $(ROOT)/parser/perl5lib/lib/perl5
+export PERL5LIB := $(ROOT)/parser/perl/ext/perl/lib/perl5
 
-clean:
-	rm -f diff
+ext/perl:
+	git branch --track $@ origin/$@ 2>/dev/null || true
+	git worktree add -f $@ $@
+
+clean::
+	rm -fr diff ext/
 
 .PHONY: diff
 diff:

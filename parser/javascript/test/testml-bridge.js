@@ -2,7 +2,7 @@
 (function() {
   var TestMLBridge;
 
-  require('../../testml/src/node/lib/testml/bridge');
+  require('../../test/testml/src/node/lib/testml/bridge');
 
   require('../lib/prelude');
 
