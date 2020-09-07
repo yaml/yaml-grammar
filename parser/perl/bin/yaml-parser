@@ -5,7 +5,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use lib "$FindBin::Bin/../ext/perl/lib/perl5";
 
-BEGIN { -d "$FindBin::Bin/../ext" || `make ext/perl 2>&1` }
+BEGIN { -d "$FindBin::Bin/../ext" || `cd $FindBin::Bin/.. && make ext/perl 2>&1` }
 
 use Prelude;
 use Parser;
