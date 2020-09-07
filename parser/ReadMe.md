@@ -1,4 +1,4 @@
-YAML 1,2 Parsers
+YAML 1.2 Parsers
 ================
 
 Generate YAML Parsers from the Spec
@@ -17,8 +17,8 @@ It works like this:
 * Start with the grammar productions in the online [YAML 1.2 Spec](https://yaml.org/spec/1.2/spec.html#id2770814)
 * Convert that into a [YAML 1.2 Spec as YAML](https://github.com/yaml/yaml-grammar/blob/master/yaml-spec-1.2.yaml)
 * Convert this into a machine generated parser/grammar module in every programming language:
-  * [CoffeeScript](https://github.com/yaml/yaml-grammar/tree/master/parser/coffeescript/lib/grammar.pm)
-  * [JavaScript](https://github.com/yaml/yaml-grammar/tree/master/parser/javascript/lib/grammar.pm)
+  * [CoffeeScript](https://github.com/yaml/yaml-grammar/tree/master/parser/coffeescript/lib/grammar.coffee)
+  * [JavaScript](https://github.com/yaml/yaml-grammar/tree/master/parser/javascript/lib/grammar.js)
   * [Perl](https://github.com/yaml/yaml-grammar/tree/master/parser/perl/lib/Grammar.pm)
 
 # Next Steps
