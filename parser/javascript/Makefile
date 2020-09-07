@@ -9,9 +9,9 @@ ALL_JS := \
     test/test.js \
     test/testml-bridge.js \
 
-ROOT := $(shell cd ../../..; pwd)
+ROOT := $(shell cd ../..; pwd)
 
-export PATH := $(ROOT)/parser/src/testml/bin:$(PATH)
+export PATH := $(ROOT)/parser/testml/bin:$(PATH)
 export TESTML_RUN := node-tap
 
 tests := test/*.tml
@@ -41,6 +41,7 @@ build-coffee:
 
 test/%.js: ../coffeescript/test/%.coffee
 	coffee -cp $< > $@
+	perl -pi -e 's{/coffee/}{/node/}' $@
 
 lib/%.js: ../coffeescript/lib/%.coffee
 	coffee -cp $< > $@

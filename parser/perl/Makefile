@@ -6,7 +6,7 @@ GRAMMAR := lib/Grammar.pm
 include ../common.mk
 
 export TESTML_RUN := perl-tap
-export PERL5LIB := $(ROOT)/parser/src/perl5lib/lib/perl5
+export PERL5LIB := $(ROOT)/parser/perl5lib/lib/perl5
 
 clean:
 	rm -f diff
