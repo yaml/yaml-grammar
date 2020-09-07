@@ -903,7 +903,7 @@
 
       c_l_literal(n) {
         debug1("c_l_literal", n);
-        return this.all(this.chr('|'), [this.c_b_block_header, this.m, this.t], [this.l_literal_content, this.add(n, this.m), this.t]);
+        return this.all(this.chr('|'), [this.c_b_block_header, this.m(), this.t()], [this.l_literal_content, this.add(n, this.m()), this.t()]);
       }
 
       l_nb_literal_text(n) {
@@ -923,7 +923,7 @@
 
       c_l_folded(n) {
         debug1("c_l_folded", n);
-        return this.all(this.chr('>'), [this.c_b_block_header, this.m, this.t], [this.l_folded_content, this.add(n, this.m), this.t]);
+        return this.all(this.chr('>'), [this.c_b_block_header, this.m(), this.t()], [this.l_folded_content, this.add(n, this.m()), this.t()]);
       }
 
       s_nb_folded_text(n) {
@@ -968,7 +968,7 @@
 
       l_block_sequence(n) {
         debug1("l_block_sequence", n);
-        return this.all(this.set('m', this.auto_detect_indent), this.rep(1, 0, this.all([this.s_indent, this.add(n, this.m)], [this.c_l_block_seq_entry, this.add(n, this.m)])));
+        return this.all(this.set('m', this.auto_detect_indent), this.rep(1, 0, this.all([this.s_indent, this.add(n, this.m())], [this.c_l_block_seq_entry, this.add(n, this.m())])));
       }
 
       c_l_block_seq_entry(n) {
@@ -978,7 +978,7 @@
 
       s_l_block_indented(n, c) {
         debug1("s_l_block_indented", n, c);
-        return this.any(this.all([this.s_indent, this.m], this.any([this.ns_l_compact_sequence, this.add(n, this.add(1, this.m))], [this.ns_l_compact_mapping, this.add(n, this.add(1, this.m))])), [this.s_l_block_node, n, c], this.all(this.e_node, this.s_l_comments));
+        return this.any(this.all([this.s_indent, this.m()], this.any([this.ns_l_compact_sequence, this.add(n, this.add(1, this.m()))], [this.ns_l_compact_mapping, this.add(n, this.add(1, this.m()))])), [this.s_l_block_node, n, c], this.all(this.e_node, this.s_l_comments));
       }
 
       ns_l_compact_sequence(n) {
@@ -988,7 +988,7 @@
 
       l_block_mapping(n) {
         debug1("l_block_mapping", n);
-        return this.all(this.set('m', this.auto_detect_indent), this.rep(1, 0, this.all([this.s_indent, this.add(n, this.m)], [this.ns_l_block_map_entry, this.add(n, this.m)])));
+        return this.all(this.set('m', this.auto_detect_indent), this.rep(1, 0, this.all([this.s_indent, this.add(n, this.m())], [this.ns_l_block_map_entry, this.add(n, this.m())])));
       }
 
       ns_l_block_map_entry(n) {

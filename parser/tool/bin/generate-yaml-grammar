@@ -31,7 +31,7 @@ ap.add_argument '--version',
 
 spec = file_read from
 
-{generator_class} = require "../lib/generate-yaml-grammar-#{to}"
+require "../lib/generate-yaml-grammar-#{to}"
 
 generator = new generator_class(spec)
 

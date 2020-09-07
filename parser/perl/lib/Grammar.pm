@@ -30,7 +30,7 @@ sub c_printable {
     $self->chr("\x{85}"),
     $self->rng("\x{A0}", "\x{D7FF}"),
     $self->rng("\x{E000}", "\x{FFFD}"),
-    $self->rng("\x{010000}", "\x{10FFFF}"),
+    $self->rng("\x{010000}", "\x{10FFFF}")
   );
 }
 name 'c_printable', \&c_printable;
@@ -46,7 +46,7 @@ sub nb_json {
   debug1("nb_json");
   $self->any(
     $self->chr("\x{09}"),
-    $self->rng("\x{20}", "\x{10FFFF}"),
+    $self->rng("\x{20}", "\x{10FFFF}")
   );
 }
 name 'nb_json', \&nb_json;
@@ -296,7 +296,7 @@ sub c_reserved {
   debug1("c_reserved");
   $self->any(
     $self->chr('@'),
-    $self->chr('`'),
+    $self->chr('`')
   );
 }
 name 'c_reserved', \&c_reserved;
@@ -331,7 +331,7 @@ sub c_indicator {
     $self->chr('"'),
     $self->chr('%'),
     $self->chr('@'),
-    $self->chr('`'),
+    $self->chr('`')
   );
 }
 name 'c_indicator', \&c_indicator;
@@ -350,7 +350,7 @@ sub c_flow_indicator {
     $self->chr('['),
     $self->chr(']'),
     $self->chr('{'),
-    $self->chr('}'),
+    $self->chr('}')
   );
 }
 name 'c_flow_indicator', \&c_flow_indicator;
@@ -392,7 +392,7 @@ sub b_char {
   debug1("b_char");
   $self->any(
     $self->func('b_line_feed'),
-    $self->func('b_carriage_return'),
+    $self->func('b_carriage_return')
   );
 }
 name 'b_char', \&b_char;
@@ -409,7 +409,7 @@ sub nb_char {
   $self->but(
     $self->func('c_printable'),
     $self->func('b_char'),
-    $self->func('c_byte_order_mark'),
+    $self->func('c_byte_order_mark')
   );
 }
 name 'nb_char', \&nb_char;
@@ -428,10 +428,10 @@ sub b_break {
   $self->any(
     $self->all(
       $self->func('b_carriage_return'),
-      $self->func('b_line_feed'),
+      $self->func('b_line_feed')
     ),
     $self->func('b_carriage_return'),
-    $self->func('b_line_feed'),
+    $self->func('b_line_feed')
   );
 }
 name 'b_break', \&b_break;
@@ -499,7 +499,7 @@ sub s_white {
   debug1("s_white");
   $self->any(
     $self->func('s_space'),
-    $self->func('s_tab'),
+    $self->func('s_tab')
   );
 }
 name 's_white', \&s_white;
@@ -515,7 +515,7 @@ sub ns_char {
   debug1("ns_char");
   $self->but(
     $self->func('nb_char'),
-    $self->func('s_white'),
+    $self->func('s_white')
   );
 }
 name 'ns_char', \&ns_char;
@@ -546,7 +546,7 @@ sub ns_hex_digit {
   $self->any(
     $self->func('ns_dec_digit'),
     $self->rng("\x{41}", "\x{46}"),
-    $self->rng("\x{61}", "\x{66}"),
+    $self->rng("\x{61}", "\x{66}")
   );
 }
 name 'ns_hex_digit', \&ns_hex_digit;
@@ -562,7 +562,7 @@ sub ns_ascii_letter {
   debug1("ns_ascii_letter");
   $self->any(
     $self->rng("\x{41}", "\x{5A}"),
-    $self->rng("\x{61}", "\x{7A}"),
+    $self->rng("\x{61}", "\x{7A}")
   );
 }
 name 'ns_ascii_letter', \&ns_ascii_letter;
@@ -579,7 +579,7 @@ sub ns_word_char {
   $self->any(
     $self->func('ns_dec_digit'),
     $self->func('ns_ascii_letter'),
-    $self->chr('-'),
+    $self->chr('-')
   );
 }
 name 'ns_word_char', \&ns_word_char;
@@ -599,7 +599,7 @@ sub ns_uri_char {
     $self->all(
       $self->chr('%'),
       $self->func('ns_hex_digit'),
-      $self->func('ns_hex_digit'),
+      $self->func('ns_hex_digit')
     ),
     $self->func('ns_word_char'),
     $self->chr('#'),
@@ -622,7 +622,7 @@ sub ns_uri_char {
     $self->chr('('),
     $self->chr(')'),
     $self->chr('['),
-    $self->chr(']'),
+    $self->chr(']')
   );
 }
 name 'ns_uri_char', \&ns_uri_char;
@@ -639,7 +639,7 @@ sub ns_tag_char {
   $self->but(
     $self->func('ns_uri_char'),
     $self->chr('!'),
-    $self->func('c_flow_indicator'),
+    $self->func('c_flow_indicator')
   );
 }
 name 'ns_tag_char', \&ns_tag_char;
@@ -707,7 +707,7 @@ sub ns_esc_horizontal_tab {
   debug1("ns_esc_horizontal_tab");
   $self->any(
     $self->chr('t'),
-    $self->chr("\x{09}"),
+    $self->chr("\x{09}")
   );
 }
 name 'ns_esc_horizontal_tab', \&ns_esc_horizontal_tab;
@@ -893,7 +893,7 @@ sub ns_esc_8_bit {
   debug1("ns_esc_8_bit");
   $self->all(
     $self->chr('x'),
-    $self->rep($2, $2, $self->func('ns_hex_digit')),
+    $self->rep($2, $2, $self->func('ns_hex_digit'))
   );
 }
 name 'ns_esc_8_bit', \&ns_esc_8_bit;
@@ -910,7 +910,7 @@ sub ns_esc_16_bit {
   debug1("ns_esc_16_bit");
   $self->all(
     $self->chr('u'),
-    $self->rep($4, $4, $self->func('ns_hex_digit')),
+    $self->rep($4, $4, $self->func('ns_hex_digit'))
   );
 }
 name 'ns_esc_16_bit', \&ns_esc_16_bit;
@@ -927,7 +927,7 @@ sub ns_esc_32_bit {
   debug1("ns_esc_32_bit");
   $self->all(
     $self->chr('U'),
-    $self->rep($8, $8, $self->func('ns_hex_digit')),
+    $self->rep($8, $8, $self->func('ns_hex_digit'))
   );
 }
 name 'ns_esc_32_bit', \&ns_esc_32_bit;
@@ -971,8 +971,8 @@ sub c_ns_esc_char {
       $self->func('ns_esc_paragraph_separator'),
       $self->func('ns_esc_8_bit'),
       $self->func('ns_esc_16_bit'),
-      $self->func('ns_esc_32_bit'),
-    ),
+      $self->func('ns_esc_32_bit')
+    )
   );
 }
 name 'c_ns_esc_char', \&c_ns_esc_char;
@@ -1002,7 +1002,7 @@ sub s_indent_lt {
   $self->may(
     $self->all(
       $self->rep(0, 0, $self->func('s_space')),
-      $self->lt($self->len($self->func('match')), $n),
+      $self->lt($self->len($self->func('match')), $n)
     )
   );
 }
@@ -1020,7 +1020,7 @@ sub s_indent_le {
   $self->may(
     $self->all(
       $self->rep(0, 0, $self->func('s_space')),
-      $self->le($self->len($self->func('match')), $self->chr('n')),
+      $self->le($self->len($self->func('match')), $self->chr('n'))
     )
   );
 }
@@ -1037,7 +1037,7 @@ sub s_separate_in_line {
   debug1("s_separate_in_line");
   $self->any(
     $self->rep(1, 0, $self->func('s_white')),
-    $self->func('start_of_line'),
+    $self->func('start_of_line')
   );
 }
 name 's_separate_in_line', \&s_separate_in_line;
@@ -1054,12 +1054,15 @@ name 's_separate_in_line', \&s_separate_in_line;
 sub s_line_prefix {
   my ($self, $n, $c) = @_;
   debug1("s_line_prefix",$n,$c);
-  $self->case($c, {
-    'block-in' => [ $self->func('s_block_line_prefix'), $n ],
-    'block-out' => [ $self->func('s_block_line_prefix'), $n ],
-    'flow-in' => [ $self->func('s_flow_line_prefix'), $n ],
-    'flow-out' => [ $self->func('s_flow_line_prefix'), $n ],
-  });
+  $self->case(
+    $c,
+    {
+      'block-in' => [ $self->func('s_block_line_prefix'), $n ],
+      'block-out' => [ $self->func('s_block_line_prefix'), $n ],
+      'flow-in' => [ $self->func('s_flow_line_prefix'), $n ],
+      'flow-out' => [ $self->func('s_flow_line_prefix'), $n ],
+    }
+  );
 }
 name 's_line_prefix', \&s_line_prefix;
 
@@ -1088,7 +1091,7 @@ sub s_flow_line_prefix {
   debug1("s_flow_line_prefix",$n);
   $self->all(
     [ $self->func('s_indent'), $n ],
-    $self->rep(0, 1, $self->func('s_separate_in_line')),
+    $self->rep(0, 1, $self->func('s_separate_in_line'))
   );
 }
 name 's_flow_line_prefix', \&s_flow_line_prefix;
@@ -1106,9 +1109,9 @@ sub l_empty {
   $self->all(
     $self->any(
       [ $self->func('s_line_prefix'), $n, $c ],
-      [ $self->func('s_indent_lt'), $n ],
+      [ $self->func('s_indent_lt'), $n ]
     ),
-    $self->func('b_as_line_feed'),
+    $self->func('b_as_line_feed')
   );
 }
 name 'l_empty', \&l_empty;
@@ -1124,7 +1127,7 @@ sub b_l_trimmed {
   debug1("b_l_trimmed",$n,$c);
   $self->all(
     $self->func('b_non_content'),
-    $self->rep(1, 0, [ $self->func('l_empty'), $n, $c ]),
+    $self->rep(1, 0, [ $self->func('l_empty'), $n, $c ])
   );
 }
 name 'b_l_trimmed', \&b_l_trimmed;
@@ -1153,7 +1156,7 @@ sub b_l_folded {
   debug1("b_l_folded",$n,$c);
   $self->any(
     [ $self->func('b_l_trimmed'), $n, $c ],
-    $self->func('b_as_space'),
+    $self->func('b_as_space')
   );
 }
 name 'b_l_folded', \&b_l_folded;
@@ -1172,7 +1175,7 @@ sub s_flow_folded {
   $self->all(
     $self->rep(0, 1, $self->func('s_separate_in_line')),
     [ $self->func('b_l_folded'), $n, "flow-in" ],
-    [ $self->func('s_flow_line_prefix'), $n ],
+    [ $self->func('s_flow_line_prefix'), $n ]
   );
 }
 name 's_flow_folded', \&s_flow_folded;
@@ -1188,7 +1191,7 @@ sub c_nb_comment_text {
   debug1("c_nb_comment_text");
   $self->all(
     $self->chr('#'),
-    $self->rep(0, 0, $self->func('nb_char')),
+    $self->rep(0, 0, $self->func('nb_char'))
   );
 }
 name 'c_nb_comment_text', \&c_nb_comment_text;
@@ -1204,7 +1207,7 @@ sub b_comment {
   debug1("b_comment");
   $self->any(
     $self->func('b_non_content'),
-    $self->func('end_of_stream'),
+    $self->func('end_of_stream')
   );
 }
 name 'b_comment', \&b_comment;
@@ -1224,9 +1227,9 @@ sub s_b_comment {
     $self->rep(0, 1,
       $self->all(
         $self->func('s_separate_in_line'),
-        $self->rep(0, 1, $self->func('c_nb_comment_text')),
+        $self->rep(0, 1, $self->func('c_nb_comment_text'))
       )),
-    $self->func('b_comment'),
+    $self->func('b_comment')
   );
 }
 name 's_b_comment', \&s_b_comment;
@@ -1244,7 +1247,7 @@ sub l_comment {
   $self->all(
     $self->func('s_separate_in_line'),
     $self->rep(0, 1, $self->func('c_nb_comment_text')),
-    $self->func('b_comment'),
+    $self->func('b_comment')
   );
 }
 name 'l_comment', \&l_comment;
@@ -1262,9 +1265,9 @@ sub s_l_comments {
   $self->all(
     $self->any(
       $self->func('s_b_comment'),
-      $self->func('start_of_line'),
+      $self->func('start_of_line')
     ),
-    $self->rep(0, 0, $self->func('l_comment')),
+    $self->rep(0, 0, $self->func('l_comment'))
   );
 }
 name 's_l_comments', \&s_l_comments;
@@ -1283,14 +1286,17 @@ name 's_l_comments', \&s_l_comments;
 sub s_separate {
   my ($self, $n, $c) = @_;
   debug1("s_separate",$n,$c);
-  $self->case($c, {
-    'block-in' => [ $self->func('s_separate_lines'), $n ],
-    'block-key' => $self->func('s_separate_in_line'),
-    'block-out' => [ $self->func('s_separate_lines'), $n ],
-    'flow-in' => [ $self->func('s_separate_lines'), $n ],
-    'flow-key' => $self->func('s_separate_in_line'),
-    'flow-out' => [ $self->func('s_separate_lines'), $n ],
-  });
+  $self->case(
+    $c,
+    {
+      'block-in' => [ $self->func('s_separate_lines'), $n ],
+      'block-key' => $self->func('s_separate_in_line'),
+      'block-out' => [ $self->func('s_separate_lines'), $n ],
+      'flow-in' => [ $self->func('s_separate_lines'), $n ],
+      'flow-key' => $self->func('s_separate_in_line'),
+      'flow-out' => [ $self->func('s_separate_lines'), $n ],
+    }
+  );
 }
 name 's_separate', \&s_separate;
 
@@ -1308,9 +1314,9 @@ sub s_separate_lines {
   $self->any(
     $self->all(
       $self->func('s_l_comments'),
-      [ $self->func('s_flow_line_prefix'), $n ],
+      [ $self->func('s_flow_line_prefix'), $n ]
     ),
-    $self->func('s_separate_in_line'),
+    $self->func('s_separate_in_line')
   );
 }
 name 's_separate_lines', \&s_separate_lines;
@@ -1333,9 +1339,9 @@ sub l_directive {
     $self->any(
       $self->func('ns_yaml_directive'),
       $self->func('ns_tag_directive'),
-      $self->func('ns_reserved_directive'),
+      $self->func('ns_reserved_directive')
     ),
-    $self->func('s_l_comments'),
+    $self->func('s_l_comments')
   );
 }
 name 'l_directive', \&l_directive;
@@ -1355,8 +1361,8 @@ sub ns_reserved_directive {
     $self->rep(0, 0,
       $self->all(
         $self->func('s_separate_in_line'),
-        $self->func('ns_directive_parameter'),
-      )),
+        $self->func('ns_directive_parameter')
+      ))
   );
 }
 name 'ns_reserved_directive', \&ns_reserved_directive;
@@ -1403,7 +1409,7 @@ sub ns_yaml_directive {
     $self->chr('M'),
     $self->chr('L'),
     $self->func('s_separate_in_line'),
-    $self->func('ns_yaml_version'),
+    $self->func('ns_yaml_version')
   );
 }
 name 'ns_yaml_directive', \&ns_yaml_directive;
@@ -1420,7 +1426,7 @@ sub ns_yaml_version {
   $self->all(
     $self->rep(1, 0, $self->func('ns_dec_digit')),
     $self->chr('.'),
-    $self->rep(1, 0, $self->func('ns_dec_digit')),
+    $self->rep(1, 0, $self->func('ns_dec_digit'))
   );
 }
 name 'ns_yaml_version', \&ns_yaml_version;
@@ -1443,7 +1449,7 @@ sub ns_tag_directive {
     $self->func('s_separate_in_line'),
     $self->func('c_tag_handle'),
     $self->func('s_separate_in_line'),
-    $self->func('ns_tag_prefix'),
+    $self->func('ns_tag_prefix')
   );
 }
 name 'ns_tag_directive', \&ns_tag_directive;
@@ -1462,7 +1468,7 @@ sub c_tag_handle {
   $self->any(
     $self->func('c_named_tag_handle'),
     $self->func('c_secondary_tag_handle'),
-    $self->func('c_primary_tag_handle'),
+    $self->func('c_primary_tag_handle')
   );
 }
 name 'c_tag_handle', \&c_tag_handle;
@@ -1491,7 +1497,7 @@ sub c_secondary_tag_handle {
   debug1("c_secondary_tag_handle");
   $self->all(
     $self->chr('!'),
-    $self->chr('!'),
+    $self->chr('!')
   );
 }
 name 'c_secondary_tag_handle', \&c_secondary_tag_handle;
@@ -1508,7 +1514,7 @@ sub c_named_tag_handle {
   $self->all(
     $self->chr('!'),
     $self->rep(1, 0, $self->func('ns_word_char')),
-    $self->chr('!'),
+    $self->chr('!')
   );
 }
 name 'c_named_tag_handle', \&c_named_tag_handle;
@@ -1524,7 +1530,7 @@ sub ns_tag_prefix {
   debug1("ns_tag_prefix");
   $self->any(
     $self->func('c_ns_local_tag_prefix'),
-    $self->func('ns_global_tag_prefix'),
+    $self->func('ns_global_tag_prefix')
   );
 }
 name 'ns_tag_prefix', \&ns_tag_prefix;
@@ -1540,7 +1546,7 @@ sub c_ns_local_tag_prefix {
   debug1("c_ns_local_tag_prefix");
   $self->all(
     $self->chr('!'),
-    $self->rep(0, 0, $self->func('ns_uri_char')),
+    $self->rep(0, 0, $self->func('ns_uri_char'))
   );
 }
 name 'c_ns_local_tag_prefix', \&c_ns_local_tag_prefix;
@@ -1556,7 +1562,7 @@ sub ns_global_tag_prefix {
   debug1("ns_global_tag_prefix");
   $self->all(
     $self->func('ns_tag_char'),
-    $self->rep(0, 0, $self->func('ns_uri_char')),
+    $self->rep(0, 0, $self->func('ns_uri_char'))
   );
 }
 name 'ns_global_tag_prefix', \&ns_global_tag_prefix;
@@ -1579,17 +1585,17 @@ sub c_ns_properties {
       $self->rep(0, 1,
         $self->all(
           [ $self->func('s_separate'), $n, $c ],
-          $self->func('c_ns_anchor_property'),
-        )),
+          $self->func('c_ns_anchor_property')
+        ))
     ),
     $self->all(
       $self->func('c_ns_anchor_property'),
       $self->rep(0, 1,
         $self->all(
           [ $self->func('s_separate'), $n, $c ],
-          $self->func('c_ns_tag_property'),
-        )),
-    ),
+          $self->func('c_ns_tag_property')
+        ))
+    )
   );
 }
 name 'c_ns_properties', \&c_ns_properties;
@@ -1608,7 +1614,7 @@ sub c_ns_tag_property {
   $self->any(
     $self->func('c_verbatim_tag'),
     $self->func('c_ns_shorthand_tag'),
-    $self->func('c_non_specific_tag'),
+    $self->func('c_non_specific_tag')
   );
 }
 name 'c_ns_tag_property', \&c_ns_tag_property;
@@ -1626,7 +1632,7 @@ sub c_verbatim_tag {
     $self->chr('!'),
     $self->chr('<'),
     $self->rep(1, 0, $self->func('ns_uri_char')),
-    $self->chr('>'),
+    $self->chr('>')
   );
 }
 name 'c_verbatim_tag', \&c_verbatim_tag;
@@ -1642,7 +1648,7 @@ sub c_ns_shorthand_tag {
   debug1("c_ns_shorthand_tag");
   $self->all(
     $self->func('c_tag_handle'),
-    $self->rep(1, 0, $self->func('ns_tag_char')),
+    $self->rep(1, 0, $self->func('ns_tag_char'))
   );
 }
 name 'c_ns_shorthand_tag', \&c_ns_shorthand_tag;
@@ -1671,7 +1677,7 @@ sub c_ns_anchor_property {
   debug1("c_ns_anchor_property");
   $self->all(
     $self->chr('&'),
-    $self->func('ns_anchor_name'),
+    $self->func('ns_anchor_name')
   );
 }
 name 'c_ns_anchor_property', \&c_ns_anchor_property;
@@ -1687,7 +1693,7 @@ sub ns_anchor_char {
   debug1("ns_anchor_char");
   $self->but(
     $self->func('ns_char'),
-    $self->func('c_flow_indicator'),
+    $self->func('c_flow_indicator')
   );
 }
 name 'ns_anchor_char', \&ns_anchor_char;
@@ -1716,7 +1722,7 @@ sub c_ns_alias_node {
   debug1("c_ns_alias_node");
   $self->all(
     $self->chr('*'),
-    $self->func('ns_anchor_name'),
+    $self->func('ns_anchor_name')
   );
 }
 name 'c_ns_alias_node', \&c_ns_alias_node;
@@ -1761,8 +1767,8 @@ sub nb_double_char {
     $self->but(
       $self->func('nb_json'),
       $self->chr("\\"),
-      $self->chr('"'),
-    ),
+      $self->chr('"')
+    )
   );
 }
 name 'nb_double_char', \&nb_double_char;
@@ -1778,7 +1784,7 @@ sub ns_double_char {
   debug1("ns_double_char");
   $self->but(
     $self->func('nb_double_char'),
-    $self->func('s_white'),
+    $self->func('s_white')
   );
 }
 name 'ns_double_char', \&ns_double_char;
@@ -1796,7 +1802,7 @@ sub c_double_quoted {
   $self->all(
     $self->chr('"'),
     [ $self->func('nb_double_text'), $n, $c ],
-    $self->chr('"'),
+    $self->chr('"')
   );
 }
 name 'c_double_quoted', \&c_double_quoted;
@@ -1813,12 +1819,15 @@ name 'c_double_quoted', \&c_double_quoted;
 sub nb_double_text {
   my ($self, $n, $c) = @_;
   debug1("nb_double_text",$n,$c);
-  $self->case($c, {
-    'block-key' => $self->func('nb_double_one_line'),
-    'flow-in' => [ $self->func('nb_double_multi_line'), $n ],
-    'flow-key' => $self->func('nb_double_one_line'),
-    'flow-out' => [ $self->func('nb_double_multi_line'), $n ],
-  });
+  $self->case(
+    $c,
+    {
+      'block-key' => $self->func('nb_double_one_line'),
+      'flow-in' => [ $self->func('nb_double_multi_line'), $n ],
+      'flow-key' => $self->func('nb_double_one_line'),
+      'flow-out' => [ $self->func('nb_double_multi_line'), $n ],
+    }
+  );
 }
 name 'nb_double_text', \&nb_double_text;
 
@@ -1851,7 +1860,7 @@ sub s_double_escaped {
     $self->chr("\\"),
     $self->func('b_non_content'),
     $self->rep(0, 0, [ $self->func('l_empty'), $n, "flow-in" ]),
-    [ $self->func('s_flow_line_prefix'), $n ],
+    [ $self->func('s_flow_line_prefix'), $n ]
   );
 }
 name 's_double_escaped', \&s_double_escaped;
@@ -1867,7 +1876,7 @@ sub s_double_break {
   debug1("s_double_break",$n);
   $self->any(
     [ $self->func('s_double_escaped'), $n ],
-    [ $self->func('s_flow_folded'), $n ],
+    [ $self->func('s_flow_folded'), $n ]
   );
 }
 name 's_double_break', \&s_double_break;
@@ -1884,7 +1893,7 @@ sub nb_ns_double_in_line {
   $self->rep(0, 0,
     $self->all(
       $self->rep(0, 0, $self->func('s_white')),
-      $self->func('ns_double_char'),
+      $self->func('ns_double_char')
     ));
 }
 name 'nb_ns_double_in_line', \&nb_ns_double_in_line;
@@ -1908,9 +1917,9 @@ sub s_double_next_line {
         $self->func('nb_ns_double_in_line'),
         $self->any(
           [ $self->func('s_double_next_line'), $n ],
-          $self->rep(0, 0, $self->func('s_white')),
-        ),
-      )),
+          $self->rep(0, 0, $self->func('s_white'))
+        )
+      ))
   );
 }
 name 's_double_next_line', \&s_double_next_line;
@@ -1929,8 +1938,8 @@ sub nb_double_multi_line {
     $self->func('nb_ns_double_in_line'),
     $self->any(
       [ $self->func('s_double_next_line'), $n ],
-      $self->rep(0, 0, $self->func('s_white')),
-    ),
+      $self->rep(0, 0, $self->func('s_white'))
+    )
   );
 }
 name 'nb_double_multi_line', \&nb_double_multi_line;
@@ -1946,7 +1955,7 @@ sub c_quoted_quote {
   debug1("c_quoted_quote");
   $self->all(
     $self->chr("'"),
-    $self->chr("'"),
+    $self->chr("'")
   );
 }
 name 'c_quoted_quote', \&c_quoted_quote;
@@ -1964,8 +1973,8 @@ sub nb_single_char {
     $self->func('c_quoted_quote'),
     $self->but(
       $self->func('nb_json'),
-      $self->chr("'"),
-    ),
+      $self->chr("'")
+    )
   );
 }
 name 'nb_single_char', \&nb_single_char;
@@ -1981,7 +1990,7 @@ sub ns_single_char {
   debug1("ns_single_char");
   $self->but(
     $self->func('nb_single_char'),
-    $self->func('s_white'),
+    $self->func('s_white')
   );
 }
 name 'ns_single_char', \&ns_single_char;
@@ -1999,7 +2008,7 @@ sub c_single_quoted {
   $self->all(
     $self->chr("'"),
     [ $self->func('nb_single_text'), $n, $c ],
-    $self->chr("'"),
+    $self->chr("'")
   );
 }
 name 'c_single_quoted', \&c_single_quoted;
@@ -2016,12 +2025,15 @@ name 'c_single_quoted', \&c_single_quoted;
 sub nb_single_text {
   my ($self, $n, $c) = @_;
   debug1("nb_single_text",$n,$c);
-  $self->case($c, {
-    'block-key' => $self->func('nb_single_one_line'),
-    'flow-in' => [ $self->func('nb_single_multi_line'), $n ],
-    'flow-key' => $self->func('nb_single_one_line'),
-    'flow-out' => [ $self->func('nb_single_multi_line'), $n ],
-  });
+  $self->case(
+    $c,
+    {
+      'block-key' => $self->func('nb_single_one_line'),
+      'flow-in' => [ $self->func('nb_single_multi_line'), $n ],
+      'flow-key' => $self->func('nb_single_one_line'),
+      'flow-out' => [ $self->func('nb_single_multi_line'), $n ],
+    }
+  );
 }
 name 'nb_single_text', \&nb_single_text;
 
@@ -2050,7 +2062,7 @@ sub nb_ns_single_in_line {
   $self->rep(0, 0,
     $self->all(
       $self->rep(0, 0, $self->func('s_white')),
-      $self->func('ns_single_char'),
+      $self->func('ns_single_char')
     ));
 }
 name 'nb_ns_single_in_line', \&nb_ns_single_in_line;
@@ -2074,9 +2086,9 @@ sub s_single_next_line {
         $self->func('nb_ns_single_in_line'),
         $self->any(
           [ $self->func('s_single_next_line'), $n ],
-          $self->rep(0, 0, $self->func('s_white')),
-        ),
-      )),
+          $self->rep(0, 0, $self->func('s_white'))
+        )
+      ))
   );
 }
 name 's_single_next_line', \&s_single_next_line;
@@ -2095,8 +2107,8 @@ sub nb_single_multi_line {
     $self->func('nb_ns_single_in_line'),
     $self->any(
       [ $self->func('s_single_next_line'), $n ],
-      $self->rep(0, 0, $self->func('s_white')),
-    ),
+      $self->rep(0, 0, $self->func('s_white'))
+    )
   );
 }
 name 'nb_single_multi_line', \&nb_single_multi_line;
@@ -2115,16 +2127,16 @@ sub ns_plain_first {
   $self->any(
     $self->but(
       $self->func('ns_char'),
-      $self->func('c_indicator'),
+      $self->func('c_indicator')
     ),
     $self->all(
       $self->any(
         $self->chr('?'),
         $self->chr(':'),
-        $self->chr('-'),
+        $self->chr('-')
       ),
-      $self->chk('=', [ $self->func('ns_plain_safe'), $c ]),
-    ),
+      $self->chk('=', [ $self->func('ns_plain_safe'), $c ])
+    )
   );
 }
 name 'ns_plain_first', \&ns_plain_first;
@@ -2141,12 +2153,15 @@ name 'ns_plain_first', \&ns_plain_first;
 sub ns_plain_safe {
   my ($self, $c) = @_;
   debug1("ns_plain_safe",$c);
-  $self->case($c, {
-    'block-key' => $self->func('ns_plain_safe_out'),
-    'flow-in' => $self->func('ns_plain_safe_in'),
-    'flow-key' => $self->func('ns_plain_safe_in'),
-    'flow-out' => $self->func('ns_plain_safe_out'),
-  });
+  $self->case(
+    $c,
+    {
+      'block-key' => $self->func('ns_plain_safe_out'),
+      'flow-in' => $self->func('ns_plain_safe_in'),
+      'flow-key' => $self->func('ns_plain_safe_in'),
+      'flow-out' => $self->func('ns_plain_safe_out'),
+    }
+  );
 }
 name 'ns_plain_safe', \&ns_plain_safe;
 
@@ -2174,7 +2189,7 @@ sub ns_plain_safe_in {
   debug1("ns_plain_safe_in");
   $self->but(
     $self->func('ns_char'),
-    $self->func('c_flow_indicator'),
+    $self->func('c_flow_indicator')
   );
 }
 name 'ns_plain_safe_in', \&ns_plain_safe_in;
@@ -2194,16 +2209,16 @@ sub ns_plain_char {
     $self->but(
       [ $self->func('ns_plain_safe'), $c ],
       $self->chr(':'),
-      $self->chr('#'),
+      $self->chr('#')
     ),
     $self->all(
       $self->chk('<=', $self->func('ns_char')),
-      $self->chr('#'),
+      $self->chr('#')
     ),
     $self->all(
       $self->chr(':'),
-      $self->chk('=', [ $self->func('ns_plain_safe'), $c ]),
-    ),
+      $self->chk('=', [ $self->func('ns_plain_safe'), $c ])
+    )
   );
 }
 name 'ns_plain_char', \&ns_plain_char;
@@ -2220,12 +2235,15 @@ name 'ns_plain_char', \&ns_plain_char;
 sub ns_plain {
   my ($self, $n, $c) = @_;
   debug1("ns_plain",$n,$c);
-  $self->case($c, {
-    'block-key' => [ $self->func('ns_plain_one_line'), $c ],
-    'flow-in' => [ $self->func('ns_plain_multi_line'), $n, $c ],
-    'flow-key' => [ $self->func('ns_plain_one_line'), $c ],
-    'flow-out' => [ $self->func('ns_plain_multi_line'), $n, $c ],
-  });
+  $self->case(
+    $c,
+    {
+      'block-key' => [ $self->func('ns_plain_one_line'), $c ],
+      'flow-in' => [ $self->func('ns_plain_multi_line'), $n, $c ],
+      'flow-key' => [ $self->func('ns_plain_one_line'), $c ],
+      'flow-out' => [ $self->func('ns_plain_multi_line'), $n, $c ],
+    }
+  );
 }
 name 'ns_plain', \&ns_plain;
 
@@ -2242,7 +2260,7 @@ sub nb_ns_plain_in_line {
   $self->rep(0, 0,
     $self->all(
       $self->rep(0, 0, $self->func('s_white')),
-      [ $self->func('ns_plain_char'), $c ],
+      [ $self->func('ns_plain_char'), $c ]
     ));
 }
 name 'nb_ns_plain_in_line', \&nb_ns_plain_in_line;
@@ -2259,7 +2277,7 @@ sub ns_plain_one_line {
   debug1("ns_plain_one_line",$c);
   $self->all(
     [ $self->func('ns_plain_first'), $c ],
-    [ $self->func('nb_ns_plain_in_line'), $c ],
+    [ $self->func('nb_ns_plain_in_line'), $c ]
   );
 }
 name 'ns_plain_one_line', \&ns_plain_one_line;
@@ -2277,7 +2295,7 @@ sub s_ns_plain_next_line {
   $self->all(
     [ $self->func('s_flow_folded'), $n ],
     [ $self->func('ns_plain_char'), $c ],
-    [ $self->func('nb_ns_plain_in_line'), $c ],
+    [ $self->func('nb_ns_plain_in_line'), $c ]
   );
 }
 name 's_ns_plain_next_line', \&s_ns_plain_next_line;
@@ -2294,7 +2312,7 @@ sub ns_plain_multi_line {
   debug1("ns_plain_multi_line",$n,$c);
   $self->all(
     [ $self->func('ns_plain_one_line'), $c ],
-    $self->rep(0, 0, [ $self->func('s_ns_plain_next_line'), $n, $c ]),
+    $self->rep(0, 0, [ $self->func('s_ns_plain_next_line'), $n, $c ])
   );
 }
 name 'ns_plain_multi_line', \&ns_plain_multi_line;
@@ -2311,12 +2329,15 @@ name 'ns_plain_multi_line', \&ns_plain_multi_line;
 sub in_flow {
   my ($self, $c) = @_;
   debug1("in_flow",$c);
-  $self->flip($c, {
-    'block-key' => "flow-key",
-    'flow-in' => "flow-in",
-    'flow-key' => "flow-key",
-    'flow-out' => "flow-in",
-  });
+  $self->flip(
+    $c,
+    {
+      'block-key' => "flow-key",
+      'flow-in' => "flow-in",
+      'flow-key' => "flow-key",
+      'flow-out' => "flow-in",
+    }
+  );
 }
 name 'in_flow', \&in_flow;
 
@@ -2334,7 +2355,7 @@ sub c_flow_sequence {
     $self->chr('['),
     $self->rep(0, 1, [ $self->func('s_separate'), $n, $c ]),
     $self->rep(0, 1, [ $self->func('ns_s_flow_seq_entries'), $n, [ $self->func('in_flow'), $c ] ]),
-    $self->chr(']'),
+    $self->chr(']')
   );
 }
 name 'c_flow_sequence', \&c_flow_sequence;
@@ -2358,8 +2379,8 @@ sub ns_s_flow_seq_entries {
       $self->all(
         $self->chr(','),
         $self->rep(0, 1, [ $self->func('s_separate'), $n, $c ]),
-        $self->rep(0, 1, [ $self->func('ns_s_flow_seq_entries'), $n, $c ]),
-      )),
+        $self->rep(0, 1, [ $self->func('ns_s_flow_seq_entries'), $n, $c ])
+      ))
   );
 }
 name 'ns_s_flow_seq_entries', \&ns_s_flow_seq_entries;
@@ -2375,7 +2396,7 @@ sub ns_flow_seq_entry {
   debug1("ns_flow_seq_entry",$n,$c);
   $self->any(
     [ $self->func('ns_flow_pair'), $n, $c ],
-    [ $self->func('ns_flow_node'), $n, $c ],
+    [ $self->func('ns_flow_node'), $n, $c ]
   );
 }
 name 'ns_flow_seq_entry', \&ns_flow_seq_entry;
@@ -2394,7 +2415,7 @@ sub c_flow_mapping {
     $self->chr('{'),
     $self->rep(0, 1, [ $self->func('s_separate'), $n, $c ]),
     $self->rep(0, 1, [ $self->func('ns_s_flow_map_entries'), $n, [ $self->func('in_flow'), $c ] ]),
-    $self->chr('}'),
+    $self->chr('}')
   );
 }
 name 'c_flow_mapping', \&c_flow_mapping;
@@ -2418,8 +2439,8 @@ sub ns_s_flow_map_entries {
       $self->all(
         $self->chr(','),
         $self->rep(0, 1, [ $self->func('s_separate'), $n, $c ]),
-        $self->rep(0, 1, [ $self->func('ns_s_flow_map_entries'), $n, $c ]),
-      )),
+        $self->rep(0, 1, [ $self->func('ns_s_flow_map_entries'), $n, $c ])
+      ))
   );
 }
 name 'ns_s_flow_map_entries', \&ns_s_flow_map_entries;
@@ -2439,9 +2460,9 @@ sub ns_flow_map_entry {
     $self->all(
       $self->chr('?'),
       [ $self->func('s_separate'), $n, $c ],
-      [ $self->func('ns_flow_map_explicit_entry'), $n, $c ],
+      [ $self->func('ns_flow_map_explicit_entry'), $n, $c ]
     ),
-    [ $self->func('ns_flow_map_implicit_entry'), $n, $c ],
+    [ $self->func('ns_flow_map_implicit_entry'), $n, $c ]
   );
 }
 name 'ns_flow_map_entry', \&ns_flow_map_entry;
@@ -2461,8 +2482,8 @@ sub ns_flow_map_explicit_entry {
     [ $self->func('ns_flow_map_implicit_entry'), $n, $c ],
     $self->all(
       $self->func('e_node'),
-      $self->func('e_node'),
-    ),
+      $self->func('e_node')
+    )
   );
 }
 name 'ns_flow_map_explicit_entry', \&ns_flow_map_explicit_entry;
@@ -2481,7 +2502,7 @@ sub ns_flow_map_implicit_entry {
   $self->any(
     [ $self->func('ns_flow_map_yaml_key_entry'), $n, $c ],
     [ $self->func('c_ns_flow_map_empty_key_entry'), $n, $c ],
-    [ $self->func('c_ns_flow_map_json_key_entry'), $n, $c ],
+    [ $self->func('c_ns_flow_map_json_key_entry'), $n, $c ]
   );
 }
 name 'ns_flow_map_implicit_entry', \&ns_flow_map_implicit_entry;
@@ -2503,10 +2524,10 @@ sub ns_flow_map_yaml_key_entry {
     $self->any(
       $self->all(
         $self->rep(0, 1, [ $self->func('s_separate'), $n, $c ]),
-        [ $self->func('c_ns_flow_map_separate_value'), $n, $c ],
+        [ $self->func('c_ns_flow_map_separate_value'), $n, $c ]
       ),
-      $self->func('e_node'),
-    ),
+      $self->func('e_node')
+    )
   );
 }
 name 'ns_flow_map_yaml_key_entry', \&ns_flow_map_yaml_key_entry;
@@ -2523,7 +2544,7 @@ sub c_ns_flow_map_empty_key_entry {
   debug1("c_ns_flow_map_empty_key_entry",$n,$c);
   $self->all(
     $self->func('e_node'),
-    [ $self->func('c_ns_flow_map_separate_value'), $n, $c ],
+    [ $self->func('c_ns_flow_map_separate_value'), $n, $c ]
   );
 }
 name 'c_ns_flow_map_empty_key_entry', \&c_ns_flow_map_empty_key_entry;
@@ -2545,10 +2566,10 @@ sub c_ns_flow_map_separate_value {
     $self->any(
       $self->all(
         [ $self->func('s_separate'), $n, $c ],
-        [ $self->func('ns_flow_node'), $n, $c ],
+        [ $self->func('ns_flow_node'), $n, $c ]
       ),
-      $self->func('e_node'),
-    ),
+      $self->func('e_node')
+    )
   );
 }
 name 'c_ns_flow_map_separate_value', \&c_ns_flow_map_separate_value;
@@ -2570,10 +2591,10 @@ sub c_ns_flow_map_json_key_entry {
     $self->any(
       $self->all(
         $self->rep(0, 1, [ $self->func('s_separate'), $n, $c ]),
-        [ $self->func('c_ns_flow_map_adjacent_value'), $n, $c ],
+        [ $self->func('c_ns_flow_map_adjacent_value'), $n, $c ]
       ),
-      $self->func('e_node'),
-    ),
+      $self->func('e_node')
+    )
   );
 }
 name 'c_ns_flow_map_json_key_entry', \&c_ns_flow_map_json_key_entry;
@@ -2595,10 +2616,10 @@ sub c_ns_flow_map_adjacent_value {
     $self->any(
       $self->all(
         $self->rep(0, 1, [ $self->func('s_separate'), $n, $c ]),
-        [ $self->func('ns_flow_node'), $n, $c ],
+        [ $self->func('ns_flow_node'), $n, $c ]
       ),
-      $self->func('e_node'),
-    ),
+      $self->func('e_node')
+    )
   );
 }
 name 'c_ns_flow_map_adjacent_value', \&c_ns_flow_map_adjacent_value;
@@ -2618,9 +2639,9 @@ sub ns_flow_pair {
     $self->all(
       $self->chr('?'),
       [ $self->func('s_separate'), $n, $c ],
-      [ $self->func('ns_flow_map_explicit_entry'), $n, $c ],
+      [ $self->func('ns_flow_map_explicit_entry'), $n, $c ]
     ),
-    [ $self->func('ns_flow_pair_entry'), $n, $c ],
+    [ $self->func('ns_flow_pair_entry'), $n, $c ]
   );
 }
 name 'ns_flow_pair', \&ns_flow_pair;
@@ -2639,7 +2660,7 @@ sub ns_flow_pair_entry {
   $self->any(
     [ $self->func('ns_flow_pair_yaml_key_entry'), $n, $c ],
     [ $self->func('c_ns_flow_map_empty_key_entry'), $n, $c ],
-    [ $self->func('c_ns_flow_pair_json_key_entry'), $n, $c ],
+    [ $self->func('c_ns_flow_pair_json_key_entry'), $n, $c ]
   );
 }
 name 'ns_flow_pair_entry', \&ns_flow_pair_entry;
@@ -2656,7 +2677,7 @@ sub ns_flow_pair_yaml_key_entry {
   debug1("ns_flow_pair_yaml_key_entry",$n,$c);
   $self->all(
     [ $self->func('ns_s_implicit_yaml_key'), "flow-key" ],
-    [ $self->func('c_ns_flow_map_separate_value'), $n, $c ],
+    [ $self->func('c_ns_flow_map_separate_value'), $n, $c ]
   );
 }
 name 'ns_flow_pair_yaml_key_entry', \&ns_flow_pair_yaml_key_entry;
@@ -2673,7 +2694,7 @@ sub c_ns_flow_pair_json_key_entry {
   debug1("c_ns_flow_pair_json_key_entry",$n,$c);
   $self->all(
     [ $self->func('c_s_implicit_json_key'), "flow-key" ],
-    [ $self->func('c_ns_flow_map_adjacent_value'), $n, $c ],
+    [ $self->func('c_ns_flow_map_adjacent_value'), $n, $c ]
   );
 }
 name 'c_ns_flow_pair_json_key_entry', \&c_ns_flow_pair_json_key_entry;
@@ -2692,7 +2713,7 @@ sub ns_s_implicit_yaml_key {
   $self->all(
     $self->max(1024),
     [ $self->func('ns_flow_yaml_node'), undef, $c ],
-    $self->rep(0, 1, $self->func('s_separate_in_line')),
+    $self->rep(0, 1, $self->func('s_separate_in_line'))
   );
 }
 name 'ns_s_implicit_yaml_key', \&ns_s_implicit_yaml_key;
@@ -2711,7 +2732,7 @@ sub c_s_implicit_json_key {
   $self->all(
     $self->max(1024),
     [ $self->func('c_flow_json_node'), undef, $c ],
-    $self->rep(0, 1, $self->func('s_separate_in_line')),
+    $self->rep(0, 1, $self->func('s_separate_in_line'))
   );
 }
 name 'c_s_implicit_json_key', \&c_s_implicit_json_key;
@@ -2743,7 +2764,7 @@ sub c_flow_json_content {
     [ $self->func('c_flow_sequence'), $n, $c ],
     [ $self->func('c_flow_mapping'), $n, $c ],
     [ $self->func('c_single_quoted'), $n, $c ],
-    [ $self->func('c_double_quoted'), $n, $c ],
+    [ $self->func('c_double_quoted'), $n, $c ]
   );
 }
 name 'c_flow_json_content', \&c_flow_json_content;
@@ -2759,7 +2780,7 @@ sub ns_flow_content {
   debug1("ns_flow_content",$n,$c);
   $self->any(
     [ $self->func('ns_flow_yaml_content'), $n, $c ],
-    [ $self->func('c_flow_json_content'), $n, $c ],
+    [ $self->func('c_flow_json_content'), $n, $c ]
   );
 }
 name 'ns_flow_content', \&ns_flow_content;
@@ -2786,11 +2807,11 @@ sub ns_flow_yaml_node {
       $self->any(
         $self->all(
           [ $self->func('s_separate'), $n, $c ],
-          [ $self->func('ns_flow_yaml_content'), $n, $c ],
+          [ $self->func('ns_flow_yaml_content'), $n, $c ]
         ),
-        $self->func('e_scalar'),
-      ),
-    ),
+        $self->func('e_scalar')
+      )
+    )
   );
 }
 name 'ns_flow_yaml_node', \&ns_flow_yaml_node;
@@ -2810,9 +2831,9 @@ sub c_flow_json_node {
     $self->rep(0, 1,
       $self->all(
         [ $self->func('c_ns_properties'), $n, $c ],
-        [ $self->func('s_separate'), $n, $c ],
+        [ $self->func('s_separate'), $n, $c ]
       )),
-    [ $self->func('c_flow_json_content'), $n, $c ],
+    [ $self->func('c_flow_json_content'), $n, $c ]
   );
 }
 name 'c_flow_json_node', \&c_flow_json_node;
@@ -2839,11 +2860,11 @@ sub ns_flow_node {
       $self->any(
         $self->all(
           [ $self->func('s_separate'), $n, $c ],
-          [ $self->func('ns_flow_content'), $n, $c ],
+          [ $self->func('ns_flow_content'), $n, $c ]
         ),
-        $self->func('e_scalar'),
-      ),
-    ),
+        $self->func('e_scalar')
+      )
+    )
   );
 }
 name 'ns_flow_node', \&ns_flow_node;
@@ -2865,14 +2886,14 @@ sub c_b_block_header {
     $self->any(
       $self->all(
         [ $self->func('c_indentation_indicator'), $m ],
-        [ $self->func('c_chomping_indicator'), $t ],
+        [ $self->func('c_chomping_indicator'), $t ]
       ),
       $self->all(
         [ $self->func('c_chomping_indicator'), $t ],
-        [ $self->func('c_indentation_indicator'), $m ],
-      ),
+        [ $self->func('c_indentation_indicator'), $m ]
+      )
     ),
-    $self->func('s_b_comment'),
+    $self->func('s_b_comment')
   );
 }
 name 'c_b_block_header', \&c_b_block_header;
@@ -2889,7 +2910,7 @@ sub c_indentation_indicator {
   debug1("c_indentation_indicator",$m);
   $self->any(
     $self->if($self->func('ns_dec_digit'), $self->set('m', $self->ord($self->func('match')))),
-    $self->if($self->func('empty'), $self->set('m', "auto-detect")),
+    $self->if($self->func('empty'), $self->set('m', "auto-detect"))
   );
 }
 name 'c_indentation_indicator', \&c_indentation_indicator;
@@ -2908,7 +2929,7 @@ sub c_chomping_indicator {
   $self->any(
     $self->if($self->chr('-'), $self->set('t', "strip")),
     $self->if($self->chr('+'), $self->set('t', "keep")),
-    $self->if($self->func('empty'), $self->set('t', "clip")),
+    $self->if($self->func('empty'), $self->set('t', "clip"))
   );
 }
 name 'c_chomping_indicator', \&c_chomping_indicator;
@@ -2924,11 +2945,14 @@ name 'c_chomping_indicator', \&c_chomping_indicator;
 sub b_chomped_last {
   my ($self, $t) = @_;
   debug1("b_chomped_last",$t);
-  $self->case($t, {
-    'clip' => $self->any( $self->func('b_as_line_feed'), $self->func('end_of_stream') ),
-    'keep' => $self->any( $self->func('b_as_line_feed'), $self->func('end_of_stream') ),
-    'strip' => $self->any( $self->func('b_non_content'), $self->func('end_of_stream') ),
-  });
+  $self->case(
+    $t,
+    {
+      'clip' => $self->any( $self->func('b_as_line_feed'), $self->func('end_of_stream') ),
+      'keep' => $self->any( $self->func('b_as_line_feed'), $self->func('end_of_stream') ),
+      'strip' => $self->any( $self->func('b_non_content'), $self->func('end_of_stream') ),
+    }
+  );
 }
 name 'b_chomped_last', \&b_chomped_last;
 
@@ -2943,11 +2967,14 @@ name 'b_chomped_last', \&b_chomped_last;
 sub l_chomped_empty {
   my ($self, $n, $t) = @_;
   debug1("l_chomped_empty",$n,$t);
-  $self->case($t, {
-    'clip' => [ $self->func('l_strip_empty'), $n ],
-    'keep' => [ $self->func('l_keep_empty'), $n ],
-    'strip' => [ $self->func('l_strip_empty'), $n ],
-  });
+  $self->case(
+    $t,
+    {
+      'clip' => [ $self->func('l_strip_empty'), $n ],
+      'keep' => [ $self->func('l_keep_empty'), $n ],
+      'strip' => [ $self->func('l_strip_empty'), $n ],
+    }
+  );
 }
 name 'l_chomped_empty', \&l_chomped_empty;
 
@@ -2965,9 +2992,9 @@ sub l_strip_empty {
     $self->rep(0, 0,
       $self->all(
         [ $self->func('s_indent_le'), $n ],
-        $self->func('b_non_content'),
+        $self->func('b_non_content')
       )),
-    $self->rep(0, 1, [ $self->func('l_trail_comments'), $n ]),
+    $self->rep(0, 1, [ $self->func('l_trail_comments'), $n ])
   );
 }
 name 'l_strip_empty', \&l_strip_empty;
@@ -2984,7 +3011,7 @@ sub l_keep_empty {
   debug1("l_keep_empty",$n);
   $self->all(
     $self->rep(0, 0, [ $self->func('l_empty'), $n, "block-in" ]),
-    $self->rep(0, 1, [ $self->func('l_trail_comments'), $n ]),
+    $self->rep(0, 1, [ $self->func('l_trail_comments'), $n ])
   );
 }
 name 'l_keep_empty', \&l_keep_empty;
@@ -3004,7 +3031,7 @@ sub l_trail_comments {
     [ $self->func('s_indent_lt'), $n ],
     $self->func('c_nb_comment_text'),
     $self->func('b_comment'),
-    $self->rep(0, 0, $self->func('l_comment')),
+    $self->rep(0, 0, $self->func('l_comment'))
   );
 }
 name 'l_trail_comments', \&l_trail_comments;
@@ -3021,8 +3048,8 @@ sub c_l_literal {
   debug1("c_l_literal",$n);
   $self->all(
     $self->chr('|'),
-    [ $self->func('c_b_block_header'), $self->m, $self->t ],
-    [ $self->func('l_literal_content'), $self->add($n, $self->m), $self->t ],
+    [ $self->func('c_b_block_header'), $self->m(), $self->t() ],
+    [ $self->func('l_literal_content'), $self->add($n, $self->m()), $self->t() ]
   );
 }
 name 'c_l_literal', \&c_l_literal;
@@ -3040,7 +3067,7 @@ sub l_nb_literal_text {
   $self->all(
     $self->rep(0, 0, [ $self->func('l_empty'), $n, "block-in" ]),
     [ $self->func('s_indent'), $n ],
-    $self->rep(1, 0, $self->func('nb_char')),
+    $self->rep(1, 0, $self->func('nb_char'))
   );
 }
 name 'l_nb_literal_text', \&l_nb_literal_text;
@@ -3057,7 +3084,7 @@ sub b_nb_literal_next {
   debug1("b_nb_literal_next",$n);
   $self->all(
     $self->func('b_as_line_feed'),
-    [ $self->func('l_nb_literal_text'), $n ],
+    [ $self->func('l_nb_literal_text'), $n ]
   );
 }
 name 'b_nb_literal_next', \&b_nb_literal_next;
@@ -3079,9 +3106,9 @@ sub l_literal_content {
       $self->all(
         [ $self->func('l_nb_literal_text'), $n ],
         $self->rep(0, 0, [ $self->func('b_nb_literal_next'), $n ]),
-        [ $self->func('b_chomped_last'), $t ],
+        [ $self->func('b_chomped_last'), $t ]
       )),
-    [ $self->func('l_chomped_empty'), $n, $t ],
+    [ $self->func('l_chomped_empty'), $n, $t ]
   );
 }
 name 'l_literal_content', \&l_literal_content;
@@ -3098,8 +3125,8 @@ sub c_l_folded {
   debug1("c_l_folded",$n);
   $self->all(
     $self->chr('>'),
-    [ $self->func('c_b_block_header'), $self->m, $self->t ],
-    [ $self->func('l_folded_content'), $self->add($n, $self->m), $self->t ],
+    [ $self->func('c_b_block_header'), $self->m(), $self->t() ],
+    [ $self->func('l_folded_content'), $self->add($n, $self->m()), $self->t() ]
   );
 }
 name 'c_l_folded', \&c_l_folded;
@@ -3117,7 +3144,7 @@ sub s_nb_folded_text {
   $self->all(
     [ $self->func('s_indent'), $n ],
     $self->func('ns_char'),
-    $self->rep(0, 0, $self->func('nb_char')),
+    $self->rep(0, 0, $self->func('nb_char'))
   );
 }
 name 's_nb_folded_text', \&s_nb_folded_text;
@@ -3137,8 +3164,8 @@ sub l_nb_folded_lines {
     $self->rep(0, 0,
       $self->all(
         [ $self->func('b_l_folded'), $n, "block-in" ],
-        [ $self->func('s_nb_folded_text'), $n ],
-      )),
+        [ $self->func('s_nb_folded_text'), $n ]
+      ))
   );
 }
 name 'l_nb_folded_lines', \&l_nb_folded_lines;
@@ -3156,7 +3183,7 @@ sub s_nb_spaced_text {
   $self->all(
     [ $self->func('s_indent'), $n ],
     $self->func('s_white'),
-    $self->rep(0, 0, $self->func('nb_char')),
+    $self->rep(0, 0, $self->func('nb_char'))
   );
 }
 name 's_nb_spaced_text', \&s_nb_spaced_text;
@@ -3173,7 +3200,7 @@ sub b_l_spaced {
   debug1("b_l_spaced",$n);
   $self->all(
     $self->func('b_as_line_feed'),
-    $self->rep(0, 0, [ $self->func('l_empty'), $n, "block-in" ]),
+    $self->rep(0, 0, [ $self->func('l_empty'), $n, "block-in" ])
   );
 }
 name 'b_l_spaced', \&b_l_spaced;
@@ -3193,8 +3220,8 @@ sub l_nb_spaced_lines {
     $self->rep(0, 0,
       $self->all(
         [ $self->func('b_l_spaced'), $n ],
-        [ $self->func('s_nb_spaced_text'), $n ],
-      )),
+        [ $self->func('s_nb_spaced_text'), $n ]
+      ))
   );
 }
 name 'l_nb_spaced_lines', \&l_nb_spaced_lines;
@@ -3213,8 +3240,8 @@ sub l_nb_same_lines {
     $self->rep(0, 0, [ $self->func('l_empty'), $n, "block-in" ]),
     $self->any(
       [ $self->func('l_nb_folded_lines'), $n ],
-      [ $self->func('l_nb_spaced_lines'), $n ],
-    ),
+      [ $self->func('l_nb_spaced_lines'), $n ]
+    )
   );
 }
 name 'l_nb_same_lines', \&l_nb_same_lines;
@@ -3234,8 +3261,8 @@ sub l_nb_diff_lines {
     $self->rep(0, 0,
       $self->all(
         $self->func('b_as_line_feed'),
-        [ $self->func('l_nb_same_lines'), $n ],
-      )),
+        [ $self->func('l_nb_same_lines'), $n ]
+      ))
   );
 }
 name 'l_nb_diff_lines', \&l_nb_diff_lines;
@@ -3255,9 +3282,9 @@ sub l_folded_content {
     $self->rep(0, 1,
       $self->all(
         [ $self->func('l_nb_diff_lines'), $n ],
-        [ $self->func('b_chomped_last'), $t ],
+        [ $self->func('b_chomped_last'), $t ]
       )),
-    [ $self->func('l_chomped_empty'), $n, $t ],
+    [ $self->func('l_chomped_empty'), $n, $t ]
   );
 }
 name 'l_folded_content', \&l_folded_content;
@@ -3277,9 +3304,9 @@ sub l_block_sequence {
     $self->set('m', $self->func('auto_detect_indent')),
     $self->rep(1, 0,
       $self->all(
-        [ $self->func('s_indent'), $self->add($n, $self->m) ],
-        [ $self->func('c_l_block_seq_entry'), $self->add($n, $self->m) ],
-      )),
+        [ $self->func('s_indent'), $self->add($n, $self->m()) ],
+        [ $self->func('c_l_block_seq_entry'), $self->add($n, $self->m()) ]
+      ))
   );
 }
 name 'l_block_sequence', \&l_block_sequence;
@@ -3297,7 +3324,7 @@ sub c_l_block_seq_entry {
   $self->all(
     $self->chr('-'),
     $self->chk('!', $self->func('ns_char')),
-    [ $self->func('s_l_block_indented'), $n, "block-in" ],
+    [ $self->func('s_l_block_indented'), $n, "block-in" ]
   );
 }
 name 'c_l_block_seq_entry', \&c_l_block_seq_entry;
@@ -3317,17 +3344,17 @@ sub s_l_block_indented {
   debug1("s_l_block_indented",$n,$c);
   $self->any(
     $self->all(
-      [ $self->func('s_indent'), $self->m ],
+      [ $self->func('s_indent'), $self->m() ],
       $self->any(
-        [ $self->func('ns_l_compact_sequence'), $self->add($n, $self->add(1, $self->m)) ],
-        [ $self->func('ns_l_compact_mapping'), $self->add($n, $self->add(1, $self->m)) ],
-      ),
+        [ $self->func('ns_l_compact_sequence'), $self->add($n, $self->add(1, $self->m())) ],
+        [ $self->func('ns_l_compact_mapping'), $self->add($n, $self->add(1, $self->m())) ]
+      )
     ),
     [ $self->func('s_l_block_node'), $n, $c ],
     $self->all(
       $self->func('e_node'),
-      $self->func('s_l_comments'),
-    ),
+      $self->func('s_l_comments')
+    )
   );
 }
 name 's_l_block_indented', \&s_l_block_indented;
@@ -3347,8 +3374,8 @@ sub ns_l_compact_sequence {
     $self->rep(0, 0,
       $self->all(
         [ $self->func('s_indent'), $n ],
-        [ $self->func('c_l_block_seq_entry'), $n ],
-      )),
+        [ $self->func('c_l_block_seq_entry'), $n ]
+      ))
   );
 }
 name 'ns_l_compact_sequence', \&ns_l_compact_sequence;
@@ -3368,9 +3395,9 @@ sub l_block_mapping {
     $self->set('m', $self->func('auto_detect_indent')),
     $self->rep(1, 0,
       $self->all(
-        [ $self->func('s_indent'), $self->add($n, $self->m) ],
-        [ $self->func('ns_l_block_map_entry'), $self->add($n, $self->m) ],
-      )),
+        [ $self->func('s_indent'), $self->add($n, $self->m()) ],
+        [ $self->func('ns_l_block_map_entry'), $self->add($n, $self->m()) ]
+      ))
   );
 }
 name 'l_block_mapping', \&l_block_mapping;
@@ -3387,7 +3414,7 @@ sub ns_l_block_map_entry {
   debug1("ns_l_block_map_entry",$n);
   $self->any(
     [ $self->func('c_l_block_map_explicit_entry'), $n ],
-    [ $self->func('ns_l_block_map_implicit_entry'), $n ],
+    [ $self->func('ns_l_block_map_implicit_entry'), $n ]
   );
 }
 name 'ns_l_block_map_entry', \&ns_l_block_map_entry;
@@ -3407,8 +3434,8 @@ sub c_l_block_map_explicit_entry {
     [ $self->func('c_l_block_map_explicit_key'), $n ],
     $self->any(
       [ $self->func('l_block_map_explicit_value'), $n ],
-      $self->func('e_node'),
-    ),
+      $self->func('e_node')
+    )
   );
 }
 name 'c_l_block_map_explicit_entry', \&c_l_block_map_explicit_entry;
@@ -3425,7 +3452,7 @@ sub c_l_block_map_explicit_key {
   debug1("c_l_block_map_explicit_key",$n);
   $self->all(
     $self->chr('?'),
-    [ $self->func('s_l_block_indented'), $n, "block-out" ],
+    [ $self->func('s_l_block_indented'), $n, "block-out" ]
   );
 }
 name 'c_l_block_map_explicit_key', \&c_l_block_map_explicit_key;
@@ -3443,7 +3470,7 @@ sub l_block_map_explicit_value {
   $self->all(
     [ $self->func('s_indent'), $n ],
     $self->chr(':'),
-    [ $self->func('s_l_block_indented'), $n, "block-out" ],
+    [ $self->func('s_l_block_indented'), $n, "block-out" ]
   );
 }
 name 'l_block_map_explicit_value', \&l_block_map_explicit_value;
@@ -3463,9 +3490,9 @@ sub ns_l_block_map_implicit_entry {
   $self->all(
     $self->any(
       $self->func('ns_s_block_map_implicit_key'),
-      $self->func('e_node'),
+      $self->func('e_node')
     ),
-    [ $self->func('c_l_block_map_implicit_value'), $n ],
+    [ $self->func('c_l_block_map_implicit_value'), $n ]
   );
 }
 name 'ns_l_block_map_implicit_entry', \&ns_l_block_map_implicit_entry;
@@ -3482,7 +3509,7 @@ sub ns_s_block_map_implicit_key {
   debug1("ns_s_block_map_implicit_key");
   $self->any(
     [ $self->func('c_s_implicit_json_key'), "block-key" ],
-    [ $self->func('ns_s_implicit_yaml_key'), "block-key" ],
+    [ $self->func('ns_s_implicit_yaml_key'), "block-key" ]
   );
 }
 name 'ns_s_block_map_implicit_key', \&ns_s_block_map_implicit_key;
@@ -3504,9 +3531,9 @@ sub c_l_block_map_implicit_value {
       [ $self->func('s_l_block_node'), $n, "block-out" ],
       $self->all(
         $self->func('e_node'),
-        $self->func('s_l_comments'),
-      ),
-    ),
+        $self->func('s_l_comments')
+      )
+    )
   );
 }
 name 'c_l_block_map_implicit_value', \&c_l_block_map_implicit_value;
@@ -3526,8 +3553,8 @@ sub ns_l_compact_mapping {
     $self->rep(0, 0,
       $self->all(
         [ $self->func('s_indent'), $n ],
-        [ $self->func('ns_l_block_map_entry'), $n ],
-      )),
+        [ $self->func('ns_l_block_map_entry'), $n ]
+      ))
   );
 }
 name 'ns_l_compact_mapping', \&ns_l_compact_mapping;
@@ -3543,7 +3570,7 @@ sub s_l_block_node {
   debug1("s_l_block_node",$n,$c);
   $self->any(
     [ $self->func('s_l_block_in_block'), $n, $c ],
-    [ $self->func('s_l_flow_in_block'), $n ],
+    [ $self->func('s_l_flow_in_block'), $n ]
   );
 }
 name 's_l_block_node', \&s_l_block_node;
@@ -3561,7 +3588,7 @@ sub s_l_flow_in_block {
   $self->all(
     [ $self->func('s_separate'), $self->add($n, 1), "flow-out" ],
     [ $self->func('ns_flow_node'), $self->add($n, 1), "flow-out" ],
-    $self->func('s_l_comments'),
+    $self->func('s_l_comments')
   );
 }
 name 's_l_flow_in_block', \&s_l_flow_in_block;
@@ -3577,7 +3604,7 @@ sub s_l_block_in_block {
   debug1("s_l_block_in_block",$n,$c);
   $self->any(
     [ $self->func('s_l_block_scalar'), $n, $c ],
-    [ $self->func('s_l_block_collection'), $n, $c ],
+    [ $self->func('s_l_block_collection'), $n, $c ]
   );
 }
 name 's_l_block_in_block', \&s_l_block_in_block;
@@ -3598,12 +3625,12 @@ sub s_l_block_scalar {
     $self->rep(0, 1,
       $self->all(
         [ $self->func('c_ns_properties'), $self->add($n, 1), $c ],
-        [ $self->func('s_separate'), $self->add($n, 1), $c ],
+        [ $self->func('s_separate'), $self->add($n, 1), $c ]
       )),
     $self->any(
       [ $self->func('c_l_literal'), $n ],
-      [ $self->func('c_l_folded'), $n ],
-    ),
+      [ $self->func('c_l_folded'), $n ]
+    )
   );
 }
 name 's_l_block_scalar', \&s_l_block_scalar;
@@ -3625,13 +3652,13 @@ sub s_l_block_collection {
     $self->rep(0, 1,
       $self->all(
         [ $self->func('s_separate'), $self->add($n, 1), $c ],
-        [ $self->func('c_ns_properties'), $self->add($n, 1), $c ],
+        [ $self->func('c_ns_properties'), $self->add($n, 1), $c ]
       )),
     $self->func('s_l_comments'),
     $self->any(
       [ $self->func('l_block_sequence'), [ $self->func('seq_spaces'), $n, $c ] ],
-      [ $self->func('l_block_mapping'), $n ],
-    ),
+      [ $self->func('l_block_mapping'), $n ]
+    )
   );
 }
 name 's_l_block_collection', \&s_l_block_collection;
@@ -3646,10 +3673,13 @@ name 's_l_block_collection', \&s_l_block_collection;
 sub seq_spaces {
   my ($self, $n, $c) = @_;
   debug1("seq_spaces",$n,$c);
-  $self->flip($c, {
-    'block-in' => $n,
-    'block-out' => $self->sub($n, 1),
-  });
+  $self->flip(
+    $c,
+    {
+      'block-in' => $n,
+      'block-out' => $self->sub($n, 1),
+    }
+  );
 }
 name 'seq_spaces', \&seq_spaces;
 
@@ -3664,7 +3694,7 @@ sub l_document_prefix {
   debug1("l_document_prefix");
   $self->all(
     $self->rep(0, 1, $self->func('c_byte_order_mark')),
-    $self->rep(0, 0, $self->func('l_comment')),
+    $self->rep(0, 0, $self->func('l_comment'))
   );
 }
 name 'l_document_prefix', \&l_document_prefix;
@@ -3681,7 +3711,7 @@ sub c_directives_end {
   $self->all(
     $self->chr('-'),
     $self->chr('-'),
-    $self->chr('-'),
+    $self->chr('-')
   );
 }
 name 'c_directives_end', \&c_directives_end;
@@ -3698,7 +3728,7 @@ sub c_document_end {
   $self->all(
     $self->chr('.'),
     $self->chr('.'),
-    $self->chr('.'),
+    $self->chr('.')
   );
 }
 name 'c_document_end', \&c_document_end;
@@ -3714,7 +3744,7 @@ sub l_document_suffix {
   debug1("l_document_suffix");
   $self->all(
     $self->func('c_document_end'),
-    $self->func('s_l_comments'),
+    $self->func('s_l_comments')
   );
 }
 name 'l_document_suffix', \&l_document_suffix;
@@ -3734,13 +3764,13 @@ sub c_forbidden {
     $self->func('start_of_line'),
     $self->any(
       $self->func('c_directives_end'),
-      $self->func('c_document_end'),
+      $self->func('c_document_end')
     ),
     $self->any(
       $self->func('b_char'),
       $self->func('s_white'),
-      $self->func('end_of_stream'),
-    ),
+      $self->func('end_of_stream')
+    )
   );
 }
 name 'c_forbidden', \&c_forbidden;
@@ -3757,7 +3787,7 @@ sub l_bare_document {
   debug1("l_bare_document");
   $self->all(
     $self->exclude($self->func('c_forbidden')),
-    [ $self->func('s_l_block_node'), -1, "block-in" ],
+    [ $self->func('s_l_block_node'), -1, "block-in" ]
   );
 }
 name 'l_bare_document', \&l_bare_document;
@@ -3779,9 +3809,9 @@ sub l_explicit_document {
       $self->func('l_bare_document'),
       $self->all(
         $self->func('e_node'),
-        $self->func('s_l_comments'),
-      ),
-    ),
+        $self->func('s_l_comments')
+      )
+    )
   );
 }
 name 'l_explicit_document', \&l_explicit_document;
@@ -3798,7 +3828,7 @@ sub l_directive_document {
   debug1("l_directive_document");
   $self->all(
     $self->rep(1, 0, $self->func('l_directive')),
-    $self->func('l_explicit_document'),
+    $self->func('l_explicit_document')
   );
 }
 name 'l_directive_document', \&l_directive_document;
@@ -3817,7 +3847,7 @@ sub l_any_document {
   $self->any(
     $self->func('l_directive_document'),
     $self->func('l_explicit_document'),
-    $self->func('l_bare_document'),
+    $self->func('l_bare_document')
   );
 }
 name 'l_any_document', \&l_any_document;
@@ -3842,13 +3872,13 @@ sub l_yaml_stream {
         $self->all(
           $self->rep(1, 0, $self->func('l_document_suffix')),
           $self->rep(0, 0, $self->func('l_document_prefix')),
-          $self->rep(0, 1, $self->func('l_any_document')),
+          $self->rep(0, 1, $self->func('l_any_document'))
         ),
         $self->all(
           $self->rep(0, 0, $self->func('l_document_prefix')),
-          $self->rep(0, 1, $self->func('l_explicit_document')),
-        ),
-      )),
+          $self->rep(0, 1, $self->func('l_explicit_document'))
+        )
+      ))
   );
 }
 name 'l_yaml_stream', \&l_yaml_stream;

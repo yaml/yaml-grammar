@@ -24,7 +24,7 @@ global.Grammar = class Grammar
       @chr("\u{85}"),
       @rng("\u{A0}", "\u{D7FF}"),
       @rng("\u{E000}", "\u{FFFD}"),
-      @rng("\u{010000}", "\u{10FFFF}"),
+      @rng("\u{010000}", "\u{10FFFF}")
     )
 
 
@@ -38,7 +38,7 @@ global.Grammar = class Grammar
     debug1("nb_json")
     @any(
       @chr("\u{09}"),
-      @rng("\u{20}", "\u{10FFFF}"),
+      @rng("\u{20}", "\u{10FFFF}")
     )
 
 
@@ -250,7 +250,7 @@ global.Grammar = class Grammar
     debug1("c_reserved")
     @any(
       @chr('@'),
-      @chr('`'),
+      @chr('`')
     )
 
 
@@ -283,7 +283,7 @@ global.Grammar = class Grammar
       @chr('"'),
       @chr('%'),
       @chr('@'),
-      @chr('`'),
+      @chr('`')
     )
 
 
@@ -300,7 +300,7 @@ global.Grammar = class Grammar
       @chr('['),
       @chr(']'),
       @chr('{'),
-      @chr('}'),
+      @chr('}')
     )
 
 
@@ -336,7 +336,7 @@ global.Grammar = class Grammar
     debug1("b_char")
     @any(
       @b_line_feed,
-      @b_carriage_return,
+      @b_carriage_return
     )
 
 
@@ -351,7 +351,7 @@ global.Grammar = class Grammar
     @but(
       @c_printable,
       @b_char,
-      @c_byte_order_mark,
+      @c_byte_order_mark
     )
 
 
@@ -368,10 +368,10 @@ global.Grammar = class Grammar
     @any(
       @all(
         @b_carriage_return,
-        @b_line_feed,
+        @b_line_feed
       ),
       @b_carriage_return,
-      @b_line_feed,
+      @b_line_feed
     )
 
 
@@ -429,7 +429,7 @@ global.Grammar = class Grammar
     debug1("s_white")
     @any(
       @s_space,
-      @s_tab,
+      @s_tab
     )
 
 
@@ -443,7 +443,7 @@ global.Grammar = class Grammar
     debug1("ns_char")
     @but(
       @nb_char,
-      @s_white,
+      @s_white
     )
 
 
@@ -470,7 +470,7 @@ global.Grammar = class Grammar
     @any(
       @ns_dec_digit,
       @rng("\u{41}", "\u{46}"),
-      @rng("\u{61}", "\u{66}"),
+      @rng("\u{61}", "\u{66}")
     )
 
 
@@ -484,7 +484,7 @@ global.Grammar = class Grammar
     debug1("ns_ascii_letter")
     @any(
       @rng("\u{41}", "\u{5A}"),
-      @rng("\u{61}", "\u{7A}"),
+      @rng("\u{61}", "\u{7A}")
     )
 
 
@@ -499,7 +499,7 @@ global.Grammar = class Grammar
     @any(
       @ns_dec_digit,
       @ns_ascii_letter,
-      @chr('-'),
+      @chr('-')
     )
 
 
@@ -517,7 +517,7 @@ global.Grammar = class Grammar
       @all(
         @chr('%'),
         @ns_hex_digit,
-        @ns_hex_digit,
+        @ns_hex_digit
       ),
       @ns_word_char,
       @chr('#'),
@@ -540,7 +540,7 @@ global.Grammar = class Grammar
       @chr('('),
       @chr(')'),
       @chr('['),
-      @chr(']'),
+      @chr(']')
     )
 
 
@@ -555,7 +555,7 @@ global.Grammar = class Grammar
     @but(
       @ns_uri_char,
       @chr('!'),
-      @c_flow_indicator,
+      @c_flow_indicator
     )
 
 
@@ -613,7 +613,7 @@ global.Grammar = class Grammar
     debug1("ns_esc_horizontal_tab")
     @any(
       @chr('t'),
-      @chr("\u{09}"),
+      @chr("\u{09}")
     )
 
 
@@ -771,7 +771,7 @@ global.Grammar = class Grammar
     debug1("ns_esc_8_bit")
     @all(
       @chr('x'),
-      @rep(2, 2, @ns_hex_digit),
+      @rep(2, 2, @ns_hex_digit)
     )
 
 
@@ -786,7 +786,7 @@ global.Grammar = class Grammar
     debug1("ns_esc_16_bit")
     @all(
       @chr('u'),
-      @rep(4, 4, @ns_hex_digit),
+      @rep(4, 4, @ns_hex_digit)
     )
 
 
@@ -801,7 +801,7 @@ global.Grammar = class Grammar
     debug1("ns_esc_32_bit")
     @all(
       @chr('U'),
-      @rep(8, 8, @ns_hex_digit),
+      @rep(8, 8, @ns_hex_digit)
     )
 
 
@@ -843,8 +843,8 @@ global.Grammar = class Grammar
         @ns_esc_paragraph_separator,
         @ns_esc_8_bit,
         @ns_esc_16_bit,
-        @ns_esc_32_bit,
-      ),
+        @ns_esc_32_bit
+      )
     )
 
 
@@ -870,7 +870,7 @@ global.Grammar = class Grammar
     @may(
       @all(
         @rep(0, 0, @s_space),
-        @lt(@len(@match), n),
+        @lt(@len(@match), n)
       )
     )
 
@@ -886,7 +886,7 @@ global.Grammar = class Grammar
     @may(
       @all(
         @rep(0, 0, @s_space),
-        @le(@len(@match), @chr('n')),
+        @le(@len(@match), @chr('n'))
       )
     )
 
@@ -901,7 +901,7 @@ global.Grammar = class Grammar
     debug1("s_separate_in_line")
     @any(
       @rep(1, 0, @s_white),
-      @start_of_line,
+      @start_of_line
     )
 
 
@@ -916,12 +916,15 @@ global.Grammar = class Grammar
   @::s_line_prefix.num = 67
   s_line_prefix: (n, c)->
     debug1("s_line_prefix",n,c)
-    @case(c, {
-      'block-in': [ @s_block_line_prefix, n ],
-      'block-out': [ @s_block_line_prefix, n ],
-      'flow-in': [ @s_flow_line_prefix, n ],
-      'flow-out': [ @s_flow_line_prefix, n ],
-    })
+    @case(
+      c,
+      {
+        'block-in': [ @s_block_line_prefix, n ],
+        'block-out': [ @s_block_line_prefix, n ],
+        'flow-in': [ @s_flow_line_prefix, n ],
+        'flow-out': [ @s_flow_line_prefix, n ],
+      }
+    )
 
 
 
@@ -946,7 +949,7 @@ global.Grammar = class Grammar
     debug1("s_flow_line_prefix",n)
     @all(
       [ @s_indent, n ],
-      @rep(0, 1, @s_separate_in_line),
+      @rep(0, 1, @s_separate_in_line)
     )
 
 
@@ -962,9 +965,9 @@ global.Grammar = class Grammar
     @all(
       @any(
         [ @s_line_prefix, n, c ],
-        [ @s_indent_lt, n ],
+        [ @s_indent_lt, n ]
       ),
-      @b_as_line_feed,
+      @b_as_line_feed
     )
 
 
@@ -978,7 +981,7 @@ global.Grammar = class Grammar
     debug1("b_l_trimmed",n,c)
     @all(
       @b_non_content,
-      @rep(1, 0, [ @l_empty, n, c ]),
+      @rep(1, 0, [ @l_empty, n, c ])
     )
 
 
@@ -1003,7 +1006,7 @@ global.Grammar = class Grammar
     debug1("b_l_folded",n,c)
     @any(
       [ @b_l_trimmed, n, c ],
-      @b_as_space,
+      @b_as_space
     )
 
 
@@ -1020,7 +1023,7 @@ global.Grammar = class Grammar
     @all(
       @rep(0, 1, @s_separate_in_line),
       [ @b_l_folded, n, "flow-in" ],
-      [ @s_flow_line_prefix, n ],
+      [ @s_flow_line_prefix, n ]
     )
 
 
@@ -1034,7 +1037,7 @@ global.Grammar = class Grammar
     debug1("c_nb_comment_text")
     @all(
       @chr('#'),
-      @rep(0, 0, @nb_char),
+      @rep(0, 0, @nb_char)
     )
 
 
@@ -1048,7 +1051,7 @@ global.Grammar = class Grammar
     debug1("b_comment")
     @any(
       @b_non_content,
-      @end_of_stream,
+      @end_of_stream
     )
 
 
@@ -1066,9 +1069,9 @@ global.Grammar = class Grammar
       @rep(0, 1,
         @all(
           @s_separate_in_line,
-          @rep(0, 1, @c_nb_comment_text),
+          @rep(0, 1, @c_nb_comment_text)
         )),
-      @b_comment,
+      @b_comment
     )
 
 
@@ -1084,7 +1087,7 @@ global.Grammar = class Grammar
     @all(
       @s_separate_in_line,
       @rep(0, 1, @c_nb_comment_text),
-      @b_comment,
+      @b_comment
     )
 
 
@@ -1100,9 +1103,9 @@ global.Grammar = class Grammar
     @all(
       @any(
         @s_b_comment,
-        @start_of_line,
+        @start_of_line
       ),
-      @rep(0, 0, @l_comment),
+      @rep(0, 0, @l_comment)
     )
 
 
@@ -1119,14 +1122,17 @@ global.Grammar = class Grammar
   @::s_separate.num = 80
   s_separate: (n, c)->
     debug1("s_separate",n,c)
-    @case(c, {
-      'block-in': [ @s_separate_lines, n ],
-      'block-key': @s_separate_in_line,
-      'block-out': [ @s_separate_lines, n ],
-      'flow-in': [ @s_separate_lines, n ],
-      'flow-key': @s_separate_in_line,
-      'flow-out': [ @s_separate_lines, n ],
-    })
+    @case(
+      c,
+      {
+        'block-in': [ @s_separate_lines, n ],
+        'block-key': @s_separate_in_line,
+        'block-out': [ @s_separate_lines, n ],
+        'flow-in': [ @s_separate_lines, n ],
+        'flow-key': @s_separate_in_line,
+        'flow-out': [ @s_separate_lines, n ],
+      }
+    )
 
 
 
@@ -1142,9 +1148,9 @@ global.Grammar = class Grammar
     @any(
       @all(
         @s_l_comments,
-        [ @s_flow_line_prefix, n ],
+        [ @s_flow_line_prefix, n ]
       ),
-      @s_separate_in_line,
+      @s_separate_in_line
     )
 
 
@@ -1165,9 +1171,9 @@ global.Grammar = class Grammar
       @any(
         @ns_yaml_directive,
         @ns_tag_directive,
-        @ns_reserved_directive,
+        @ns_reserved_directive
       ),
-      @s_l_comments,
+      @s_l_comments
     )
 
 
@@ -1185,8 +1191,8 @@ global.Grammar = class Grammar
       @rep(0, 0,
         @all(
           @s_separate_in_line,
-          @ns_directive_parameter,
-        )),
+          @ns_directive_parameter
+        ))
     )
 
 
@@ -1227,7 +1233,7 @@ global.Grammar = class Grammar
       @chr('M'),
       @chr('L'),
       @s_separate_in_line,
-      @ns_yaml_version,
+      @ns_yaml_version
     )
 
 
@@ -1242,7 +1248,7 @@ global.Grammar = class Grammar
     @all(
       @rep(1, 0, @ns_dec_digit),
       @chr('.'),
-      @rep(1, 0, @ns_dec_digit),
+      @rep(1, 0, @ns_dec_digit)
     )
 
 
@@ -1263,7 +1269,7 @@ global.Grammar = class Grammar
       @s_separate_in_line,
       @c_tag_handle,
       @s_separate_in_line,
-      @ns_tag_prefix,
+      @ns_tag_prefix
     )
 
 
@@ -1280,7 +1286,7 @@ global.Grammar = class Grammar
     @any(
       @c_named_tag_handle,
       @c_secondary_tag_handle,
-      @c_primary_tag_handle,
+      @c_primary_tag_handle
     )
 
 
@@ -1305,7 +1311,7 @@ global.Grammar = class Grammar
     debug1("c_secondary_tag_handle")
     @all(
       @chr('!'),
-      @chr('!'),
+      @chr('!')
     )
 
 
@@ -1320,7 +1326,7 @@ global.Grammar = class Grammar
     @all(
       @chr('!'),
       @rep(1, 0, @ns_word_char),
-      @chr('!'),
+      @chr('!')
     )
 
 
@@ -1334,7 +1340,7 @@ global.Grammar = class Grammar
     debug1("ns_tag_prefix")
     @any(
       @c_ns_local_tag_prefix,
-      @ns_global_tag_prefix,
+      @ns_global_tag_prefix
     )
 
 
@@ -1348,7 +1354,7 @@ global.Grammar = class Grammar
     debug1("c_ns_local_tag_prefix")
     @all(
       @chr('!'),
-      @rep(0, 0, @ns_uri_char),
+      @rep(0, 0, @ns_uri_char)
     )
 
 
@@ -1362,7 +1368,7 @@ global.Grammar = class Grammar
     debug1("ns_global_tag_prefix")
     @all(
       @ns_tag_char,
-      @rep(0, 0, @ns_uri_char),
+      @rep(0, 0, @ns_uri_char)
     )
 
 
@@ -1383,17 +1389,17 @@ global.Grammar = class Grammar
         @rep(0, 1,
           @all(
             [ @s_separate, n, c ],
-            @c_ns_anchor_property,
-          )),
+            @c_ns_anchor_property
+          ))
       ),
       @all(
         @c_ns_anchor_property,
         @rep(0, 1,
           @all(
             [ @s_separate, n, c ],
-            @c_ns_tag_property,
-          )),
-      ),
+            @c_ns_tag_property
+          ))
+      )
     )
 
 
@@ -1410,7 +1416,7 @@ global.Grammar = class Grammar
     @any(
       @c_verbatim_tag,
       @c_ns_shorthand_tag,
-      @c_non_specific_tag,
+      @c_non_specific_tag
     )
 
 
@@ -1426,7 +1432,7 @@ global.Grammar = class Grammar
       @chr('!'),
       @chr('<'),
       @rep(1, 0, @ns_uri_char),
-      @chr('>'),
+      @chr('>')
     )
 
 
@@ -1440,7 +1446,7 @@ global.Grammar = class Grammar
     debug1("c_ns_shorthand_tag")
     @all(
       @c_tag_handle,
-      @rep(1, 0, @ns_tag_char),
+      @rep(1, 0, @ns_tag_char)
     )
 
 
@@ -1465,7 +1471,7 @@ global.Grammar = class Grammar
     debug1("c_ns_anchor_property")
     @all(
       @chr('&'),
-      @ns_anchor_name,
+      @ns_anchor_name
     )
 
 
@@ -1479,7 +1485,7 @@ global.Grammar = class Grammar
     debug1("ns_anchor_char")
     @but(
       @ns_char,
-      @c_flow_indicator,
+      @c_flow_indicator
     )
 
 
@@ -1504,7 +1510,7 @@ global.Grammar = class Grammar
     debug1("c_ns_alias_node")
     @all(
       @chr('*'),
-      @ns_anchor_name,
+      @ns_anchor_name
     )
 
 
@@ -1543,8 +1549,8 @@ global.Grammar = class Grammar
       @but(
         @nb_json,
         @chr("\\"),
-        @chr('"'),
-      ),
+        @chr('"')
+      )
     )
 
 
@@ -1558,7 +1564,7 @@ global.Grammar = class Grammar
     debug1("ns_double_char")
     @but(
       @nb_double_char,
-      @s_white,
+      @s_white
     )
 
 
@@ -1574,7 +1580,7 @@ global.Grammar = class Grammar
     @all(
       @chr('"'),
       [ @nb_double_text, n, c ],
-      @chr('"'),
+      @chr('"')
     )
 
 
@@ -1589,12 +1595,15 @@ global.Grammar = class Grammar
   @::nb_double_text.num = 110
   nb_double_text: (n, c)->
     debug1("nb_double_text",n,c)
-    @case(c, {
-      'block-key': @nb_double_one_line,
-      'flow-in': [ @nb_double_multi_line, n ],
-      'flow-key': @nb_double_one_line,
-      'flow-out': [ @nb_double_multi_line, n ],
-    })
+    @case(
+      c,
+      {
+        'block-key': @nb_double_one_line,
+        'flow-in': [ @nb_double_multi_line, n ],
+        'flow-key': @nb_double_one_line,
+        'flow-out': [ @nb_double_multi_line, n ],
+      }
+    )
 
 
 
@@ -1623,7 +1632,7 @@ global.Grammar = class Grammar
       @chr("\\"),
       @b_non_content,
       @rep(0, 0, [ @l_empty, n, "flow-in" ]),
-      [ @s_flow_line_prefix, n ],
+      [ @s_flow_line_prefix, n ]
     )
 
 
@@ -1637,7 +1646,7 @@ global.Grammar = class Grammar
     debug1("s_double_break",n)
     @any(
       [ @s_double_escaped, n ],
-      [ @s_flow_folded, n ],
+      [ @s_flow_folded, n ]
     )
 
 
@@ -1652,7 +1661,7 @@ global.Grammar = class Grammar
     @rep(0, 0,
       @all(
         @rep(0, 0, @s_white),
-        @ns_double_char,
+        @ns_double_char
       ))
 
 
@@ -1674,9 +1683,9 @@ global.Grammar = class Grammar
           @nb_ns_double_in_line,
           @any(
             [ @s_double_next_line, n ],
-            @rep(0, 0, @s_white),
-          ),
-        )),
+            @rep(0, 0, @s_white)
+          )
+        ))
     )
 
 
@@ -1693,8 +1702,8 @@ global.Grammar = class Grammar
       @nb_ns_double_in_line,
       @any(
         [ @s_double_next_line, n ],
-        @rep(0, 0, @s_white),
-      ),
+        @rep(0, 0, @s_white)
+      )
     )
 
 
@@ -1708,7 +1717,7 @@ global.Grammar = class Grammar
     debug1("c_quoted_quote")
     @all(
       @chr("'"),
-      @chr("'"),
+      @chr("'")
     )
 
 
@@ -1724,8 +1733,8 @@ global.Grammar = class Grammar
       @c_quoted_quote,
       @but(
         @nb_json,
-        @chr("'"),
-      ),
+        @chr("'")
+      )
     )
 
 
@@ -1739,7 +1748,7 @@ global.Grammar = class Grammar
     debug1("ns_single_char")
     @but(
       @nb_single_char,
-      @s_white,
+      @s_white
     )
 
 
@@ -1755,7 +1764,7 @@ global.Grammar = class Grammar
     @all(
       @chr("'"),
       [ @nb_single_text, n, c ],
-      @chr("'"),
+      @chr("'")
     )
 
 
@@ -1770,12 +1779,15 @@ global.Grammar = class Grammar
   @::nb_single_text.num = 121
   nb_single_text: (n, c)->
     debug1("nb_single_text",n,c)
-    @case(c, {
-      'block-key': @nb_single_one_line,
-      'flow-in': [ @nb_single_multi_line, n ],
-      'flow-key': @nb_single_one_line,
-      'flow-out': [ @nb_single_multi_line, n ],
-    })
+    @case(
+      c,
+      {
+        'block-key': @nb_single_one_line,
+        'flow-in': [ @nb_single_multi_line, n ],
+        'flow-key': @nb_single_one_line,
+        'flow-out': [ @nb_single_multi_line, n ],
+      }
+    )
 
 
 
@@ -1800,7 +1812,7 @@ global.Grammar = class Grammar
     @rep(0, 0,
       @all(
         @rep(0, 0, @s_white),
-        @ns_single_char,
+        @ns_single_char
       ))
 
 
@@ -1822,9 +1834,9 @@ global.Grammar = class Grammar
           @nb_ns_single_in_line,
           @any(
             [ @s_single_next_line, n ],
-            @rep(0, 0, @s_white),
-          ),
-        )),
+            @rep(0, 0, @s_white)
+          )
+        ))
     )
 
 
@@ -1841,8 +1853,8 @@ global.Grammar = class Grammar
       @nb_ns_single_in_line,
       @any(
         [ @s_single_next_line, n ],
-        @rep(0, 0, @s_white),
-      ),
+        @rep(0, 0, @s_white)
+      )
     )
 
 
@@ -1859,16 +1871,16 @@ global.Grammar = class Grammar
     @any(
       @but(
         @ns_char,
-        @c_indicator,
+        @c_indicator
       ),
       @all(
         @any(
           @chr('?'),
           @chr(':'),
-          @chr('-'),
+          @chr('-')
         ),
-        @chk('=', [ @ns_plain_safe, c ]),
-      ),
+        @chk('=', [ @ns_plain_safe, c ])
+      )
     )
 
 
@@ -1883,12 +1895,15 @@ global.Grammar = class Grammar
   @::ns_plain_safe.num = 127
   ns_plain_safe: (c)->
     debug1("ns_plain_safe",c)
-    @case(c, {
-      'block-key': @ns_plain_safe_out,
-      'flow-in': @ns_plain_safe_in,
-      'flow-key': @ns_plain_safe_in,
-      'flow-out': @ns_plain_safe_out,
-    })
+    @case(
+      c,
+      {
+        'block-key': @ns_plain_safe_out,
+        'flow-in': @ns_plain_safe_in,
+        'flow-key': @ns_plain_safe_in,
+        'flow-out': @ns_plain_safe_out,
+      }
+    )
 
 
 
@@ -1912,7 +1927,7 @@ global.Grammar = class Grammar
     debug1("ns_plain_safe_in")
     @but(
       @ns_char,
-      @c_flow_indicator,
+      @c_flow_indicator
     )
 
 
@@ -1930,16 +1945,16 @@ global.Grammar = class Grammar
       @but(
         [ @ns_plain_safe, c ],
         @chr(':'),
-        @chr('#'),
+        @chr('#')
       ),
       @all(
         @chk('<=', @ns_char),
-        @chr('#'),
+        @chr('#')
       ),
       @all(
         @chr(':'),
-        @chk('=', [ @ns_plain_safe, c ]),
-      ),
+        @chk('=', [ @ns_plain_safe, c ])
+      )
     )
 
 
@@ -1954,12 +1969,15 @@ global.Grammar = class Grammar
   @::ns_plain.num = 131
   ns_plain: (n, c)->
     debug1("ns_plain",n,c)
-    @case(c, {
-      'block-key': [ @ns_plain_one_line, c ],
-      'flow-in': [ @ns_plain_multi_line, n, c ],
-      'flow-key': [ @ns_plain_one_line, c ],
-      'flow-out': [ @ns_plain_multi_line, n, c ],
-    })
+    @case(
+      c,
+      {
+        'block-key': [ @ns_plain_one_line, c ],
+        'flow-in': [ @ns_plain_multi_line, n, c ],
+        'flow-key': [ @ns_plain_one_line, c ],
+        'flow-out': [ @ns_plain_multi_line, n, c ],
+      }
+    )
 
 
 
@@ -1974,7 +1992,7 @@ global.Grammar = class Grammar
     @rep(0, 0,
       @all(
         @rep(0, 0, @s_white),
-        [ @ns_plain_char, c ],
+        [ @ns_plain_char, c ]
       ))
 
 
@@ -1989,7 +2007,7 @@ global.Grammar = class Grammar
     debug1("ns_plain_one_line",c)
     @all(
       [ @ns_plain_first, c ],
-      [ @nb_ns_plain_in_line, c ],
+      [ @nb_ns_plain_in_line, c ]
     )
 
 
@@ -2005,7 +2023,7 @@ global.Grammar = class Grammar
     @all(
       [ @s_flow_folded, n ],
       [ @ns_plain_char, c ],
-      [ @nb_ns_plain_in_line, c ],
+      [ @nb_ns_plain_in_line, c ]
     )
 
 
@@ -2020,7 +2038,7 @@ global.Grammar = class Grammar
     debug1("ns_plain_multi_line",n,c)
     @all(
       [ @ns_plain_one_line, c ],
-      @rep(0, 0, [ @s_ns_plain_next_line, n, c ]),
+      @rep(0, 0, [ @s_ns_plain_next_line, n, c ])
     )
 
 
@@ -2035,12 +2053,15 @@ global.Grammar = class Grammar
   @::in_flow.num = 136
   in_flow: (c)->
     debug1("in_flow",c)
-    @flip(c, {
-      'block-key': "flow-key",
-      'flow-in': "flow-in",
-      'flow-key': "flow-key",
-      'flow-out': "flow-in",
-    })
+    @flip(
+      c,
+      {
+        'block-key': "flow-key",
+        'flow-in': "flow-in",
+        'flow-key': "flow-key",
+        'flow-out': "flow-in",
+      }
+    )
 
 
 
@@ -2056,7 +2077,7 @@ global.Grammar = class Grammar
       @chr('['),
       @rep(0, 1, [ @s_separate, n, c ]),
       @rep(0, 1, [ @ns_s_flow_seq_entries, n, [ @in_flow, c ] ]),
-      @chr(']'),
+      @chr(']')
     )
 
 
@@ -2078,8 +2099,8 @@ global.Grammar = class Grammar
         @all(
           @chr(','),
           @rep(0, 1, [ @s_separate, n, c ]),
-          @rep(0, 1, [ @ns_s_flow_seq_entries, n, c ]),
-        )),
+          @rep(0, 1, [ @ns_s_flow_seq_entries, n, c ])
+        ))
     )
 
 
@@ -2093,7 +2114,7 @@ global.Grammar = class Grammar
     debug1("ns_flow_seq_entry",n,c)
     @any(
       [ @ns_flow_pair, n, c ],
-      [ @ns_flow_node, n, c ],
+      [ @ns_flow_node, n, c ]
     )
 
 
@@ -2110,7 +2131,7 @@ global.Grammar = class Grammar
       @chr('{'),
       @rep(0, 1, [ @s_separate, n, c ]),
       @rep(0, 1, [ @ns_s_flow_map_entries, n, [ @in_flow, c ] ]),
-      @chr('}'),
+      @chr('}')
     )
 
 
@@ -2132,8 +2153,8 @@ global.Grammar = class Grammar
         @all(
           @chr(','),
           @rep(0, 1, [ @s_separate, n, c ]),
-          @rep(0, 1, [ @ns_s_flow_map_entries, n, c ]),
-        )),
+          @rep(0, 1, [ @ns_s_flow_map_entries, n, c ])
+        ))
     )
 
 
@@ -2151,9 +2172,9 @@ global.Grammar = class Grammar
       @all(
         @chr('?'),
         [ @s_separate, n, c ],
-        [ @ns_flow_map_explicit_entry, n, c ],
+        [ @ns_flow_map_explicit_entry, n, c ]
       ),
-      [ @ns_flow_map_implicit_entry, n, c ],
+      [ @ns_flow_map_implicit_entry, n, c ]
     )
 
 
@@ -2171,8 +2192,8 @@ global.Grammar = class Grammar
       [ @ns_flow_map_implicit_entry, n, c ],
       @all(
         @e_node,
-        @e_node,
-      ),
+        @e_node
+      )
     )
 
 
@@ -2189,7 +2210,7 @@ global.Grammar = class Grammar
     @any(
       [ @ns_flow_map_yaml_key_entry, n, c ],
       [ @c_ns_flow_map_empty_key_entry, n, c ],
-      [ @c_ns_flow_map_json_key_entry, n, c ],
+      [ @c_ns_flow_map_json_key_entry, n, c ]
     )
 
 
@@ -2209,10 +2230,10 @@ global.Grammar = class Grammar
       @any(
         @all(
           @rep(0, 1, [ @s_separate, n, c ]),
-          [ @c_ns_flow_map_separate_value, n, c ],
+          [ @c_ns_flow_map_separate_value, n, c ]
         ),
-        @e_node,
-      ),
+        @e_node
+      )
     )
 
 
@@ -2227,7 +2248,7 @@ global.Grammar = class Grammar
     debug1("c_ns_flow_map_empty_key_entry",n,c)
     @all(
       @e_node,
-      [ @c_ns_flow_map_separate_value, n, c ],
+      [ @c_ns_flow_map_separate_value, n, c ]
     )
 
 
@@ -2247,10 +2268,10 @@ global.Grammar = class Grammar
       @any(
         @all(
           [ @s_separate, n, c ],
-          [ @ns_flow_node, n, c ],
+          [ @ns_flow_node, n, c ]
         ),
-        @e_node,
-      ),
+        @e_node
+      )
     )
 
 
@@ -2270,10 +2291,10 @@ global.Grammar = class Grammar
       @any(
         @all(
           @rep(0, 1, [ @s_separate, n, c ]),
-          [ @c_ns_flow_map_adjacent_value, n, c ],
+          [ @c_ns_flow_map_adjacent_value, n, c ]
         ),
-        @e_node,
-      ),
+        @e_node
+      )
     )
 
 
@@ -2293,10 +2314,10 @@ global.Grammar = class Grammar
       @any(
         @all(
           @rep(0, 1, [ @s_separate, n, c ]),
-          [ @ns_flow_node, n, c ],
+          [ @ns_flow_node, n, c ]
         ),
-        @e_node,
-      ),
+        @e_node
+      )
     )
 
 
@@ -2314,9 +2335,9 @@ global.Grammar = class Grammar
       @all(
         @chr('?'),
         [ @s_separate, n, c ],
-        [ @ns_flow_map_explicit_entry, n, c ],
+        [ @ns_flow_map_explicit_entry, n, c ]
       ),
-      [ @ns_flow_pair_entry, n, c ],
+      [ @ns_flow_pair_entry, n, c ]
     )
 
 
@@ -2333,7 +2354,7 @@ global.Grammar = class Grammar
     @any(
       [ @ns_flow_pair_yaml_key_entry, n, c ],
       [ @c_ns_flow_map_empty_key_entry, n, c ],
-      [ @c_ns_flow_pair_json_key_entry, n, c ],
+      [ @c_ns_flow_pair_json_key_entry, n, c ]
     )
 
 
@@ -2348,7 +2369,7 @@ global.Grammar = class Grammar
     debug1("ns_flow_pair_yaml_key_entry",n,c)
     @all(
       [ @ns_s_implicit_yaml_key, "flow-key" ],
-      [ @c_ns_flow_map_separate_value, n, c ],
+      [ @c_ns_flow_map_separate_value, n, c ]
     )
 
 
@@ -2363,7 +2384,7 @@ global.Grammar = class Grammar
     debug1("c_ns_flow_pair_json_key_entry",n,c)
     @all(
       [ @c_s_implicit_json_key, "flow-key" ],
-      [ @c_ns_flow_map_adjacent_value, n, c ],
+      [ @c_ns_flow_map_adjacent_value, n, c ]
     )
 
 
@@ -2380,7 +2401,7 @@ global.Grammar = class Grammar
     @all(
       @max(1024),
       [ @ns_flow_yaml_node, null, c ],
-      @rep(0, 1, @s_separate_in_line),
+      @rep(0, 1, @s_separate_in_line)
     )
 
 
@@ -2397,7 +2418,7 @@ global.Grammar = class Grammar
     @all(
       @max(1024),
       [ @c_flow_json_node, null, c ],
-      @rep(0, 1, @s_separate_in_line),
+      @rep(0, 1, @s_separate_in_line)
     )
 
 
@@ -2425,7 +2446,7 @@ global.Grammar = class Grammar
       [ @c_flow_sequence, n, c ],
       [ @c_flow_mapping, n, c ],
       [ @c_single_quoted, n, c ],
-      [ @c_double_quoted, n, c ],
+      [ @c_double_quoted, n, c ]
     )
 
 
@@ -2439,7 +2460,7 @@ global.Grammar = class Grammar
     debug1("ns_flow_content",n,c)
     @any(
       [ @ns_flow_yaml_content, n, c ],
-      [ @c_flow_json_content, n, c ],
+      [ @c_flow_json_content, n, c ]
     )
 
 
@@ -2464,11 +2485,11 @@ global.Grammar = class Grammar
         @any(
           @all(
             [ @s_separate, n, c ],
-            [ @ns_flow_yaml_content, n, c ],
+            [ @ns_flow_yaml_content, n, c ]
           ),
-          @e_scalar,
-        ),
-      ),
+          @e_scalar
+        )
+      )
     )
 
 
@@ -2486,9 +2507,9 @@ global.Grammar = class Grammar
       @rep(0, 1,
         @all(
           [ @c_ns_properties, n, c ],
-          [ @s_separate, n, c ],
+          [ @s_separate, n, c ]
         )),
-      [ @c_flow_json_content, n, c ],
+      [ @c_flow_json_content, n, c ]
     )
 
 
@@ -2513,11 +2534,11 @@ global.Grammar = class Grammar
         @any(
           @all(
             [ @s_separate, n, c ],
-            [ @ns_flow_content, n, c ],
+            [ @ns_flow_content, n, c ]
           ),
-          @e_scalar,
-        ),
-      ),
+          @e_scalar
+        )
+      )
     )
 
 
@@ -2537,14 +2558,14 @@ global.Grammar = class Grammar
       @any(
         @all(
           [ @c_indentation_indicator, m ],
-          [ @c_chomping_indicator, t ],
+          [ @c_chomping_indicator, t ]
         ),
         @all(
           [ @c_chomping_indicator, t ],
-          [ @c_indentation_indicator, m ],
-        ),
+          [ @c_indentation_indicator, m ]
+        )
       ),
-      @s_b_comment,
+      @s_b_comment
     )
 
 
@@ -2559,7 +2580,7 @@ global.Grammar = class Grammar
     debug1("c_indentation_indicator",m)
     @any(
       @if(@ns_dec_digit, @set('m', @ord(@match))),
-      @if(@empty, @set('m', "auto-detect")),
+      @if(@empty, @set('m', "auto-detect"))
     )
 
 
@@ -2576,7 +2597,7 @@ global.Grammar = class Grammar
     @any(
       @if(@chr('-'), @set('t', "strip")),
       @if(@chr('+'), @set('t', "keep")),
-      @if(@empty, @set('t', "clip")),
+      @if(@empty, @set('t', "clip"))
     )
 
 
@@ -2590,11 +2611,14 @@ global.Grammar = class Grammar
   @::b_chomped_last.num = 165
   b_chomped_last: (t)->
     debug1("b_chomped_last",t)
-    @case(t, {
-      'clip': @any( @b_as_line_feed, @end_of_stream ),
-      'keep': @any( @b_as_line_feed, @end_of_stream ),
-      'strip': @any( @b_non_content, @end_of_stream ),
-    })
+    @case(
+      t,
+      {
+        'clip': @any( @b_as_line_feed, @end_of_stream ),
+        'keep': @any( @b_as_line_feed, @end_of_stream ),
+        'strip': @any( @b_non_content, @end_of_stream ),
+      }
+    )
 
 
 
@@ -2607,11 +2631,14 @@ global.Grammar = class Grammar
   @::l_chomped_empty.num = 166
   l_chomped_empty: (n, t)->
     debug1("l_chomped_empty",n,t)
-    @case(t, {
-      'clip': [ @l_strip_empty, n ],
-      'keep': [ @l_keep_empty, n ],
-      'strip': [ @l_strip_empty, n ],
-    })
+    @case(
+      t,
+      {
+        'clip': [ @l_strip_empty, n ],
+        'keep': [ @l_keep_empty, n ],
+        'strip': [ @l_strip_empty, n ],
+      }
+    )
 
 
 
@@ -2627,9 +2654,9 @@ global.Grammar = class Grammar
       @rep(0, 0,
         @all(
           [ @s_indent_le, n ],
-          @b_non_content,
+          @b_non_content
         )),
-      @rep(0, 1, [ @l_trail_comments, n ]),
+      @rep(0, 1, [ @l_trail_comments, n ])
     )
 
 
@@ -2644,7 +2671,7 @@ global.Grammar = class Grammar
     debug1("l_keep_empty",n)
     @all(
       @rep(0, 0, [ @l_empty, n, "block-in" ]),
-      @rep(0, 1, [ @l_trail_comments, n ]),
+      @rep(0, 1, [ @l_trail_comments, n ])
     )
 
 
@@ -2662,7 +2689,7 @@ global.Grammar = class Grammar
       [ @s_indent_lt, n ],
       @c_nb_comment_text,
       @b_comment,
-      @rep(0, 0, @l_comment),
+      @rep(0, 0, @l_comment)
     )
 
 
@@ -2677,8 +2704,8 @@ global.Grammar = class Grammar
     debug1("c_l_literal",n)
     @all(
       @chr('|'),
-      [ @c_b_block_header, @m, @t ],
-      [ @l_literal_content, @add(n, @m), @t ],
+      [ @c_b_block_header, @m(), @t() ],
+      [ @l_literal_content, @add(n, @m()), @t() ]
     )
 
 
@@ -2694,7 +2721,7 @@ global.Grammar = class Grammar
     @all(
       @rep(0, 0, [ @l_empty, n, "block-in" ]),
       [ @s_indent, n ],
-      @rep(1, 0, @nb_char),
+      @rep(1, 0, @nb_char)
     )
 
 
@@ -2709,7 +2736,7 @@ global.Grammar = class Grammar
     debug1("b_nb_literal_next",n)
     @all(
       @b_as_line_feed,
-      [ @l_nb_literal_text, n ],
+      [ @l_nb_literal_text, n ]
     )
 
 
@@ -2729,9 +2756,9 @@ global.Grammar = class Grammar
         @all(
           [ @l_nb_literal_text, n ],
           @rep(0, 0, [ @b_nb_literal_next, n ]),
-          [ @b_chomped_last, t ],
+          [ @b_chomped_last, t ]
         )),
-      [ @l_chomped_empty, n, t ],
+      [ @l_chomped_empty, n, t ]
     )
 
 
@@ -2746,8 +2773,8 @@ global.Grammar = class Grammar
     debug1("c_l_folded",n)
     @all(
       @chr('>'),
-      [ @c_b_block_header, @m, @t ],
-      [ @l_folded_content, @add(n, @m), @t ],
+      [ @c_b_block_header, @m(), @t() ],
+      [ @l_folded_content, @add(n, @m()), @t() ]
     )
 
 
@@ -2763,7 +2790,7 @@ global.Grammar = class Grammar
     @all(
       [ @s_indent, n ],
       @ns_char,
-      @rep(0, 0, @nb_char),
+      @rep(0, 0, @nb_char)
     )
 
 
@@ -2781,8 +2808,8 @@ global.Grammar = class Grammar
       @rep(0, 0,
         @all(
           [ @b_l_folded, n, "block-in" ],
-          [ @s_nb_folded_text, n ],
-        )),
+          [ @s_nb_folded_text, n ]
+        ))
     )
 
 
@@ -2798,7 +2825,7 @@ global.Grammar = class Grammar
     @all(
       [ @s_indent, n ],
       @s_white,
-      @rep(0, 0, @nb_char),
+      @rep(0, 0, @nb_char)
     )
 
 
@@ -2813,7 +2840,7 @@ global.Grammar = class Grammar
     debug1("b_l_spaced",n)
     @all(
       @b_as_line_feed,
-      @rep(0, 0, [ @l_empty, n, "block-in" ]),
+      @rep(0, 0, [ @l_empty, n, "block-in" ])
     )
 
 
@@ -2831,8 +2858,8 @@ global.Grammar = class Grammar
       @rep(0, 0,
         @all(
           [ @b_l_spaced, n ],
-          [ @s_nb_spaced_text, n ],
-        )),
+          [ @s_nb_spaced_text, n ]
+        ))
     )
 
 
@@ -2849,8 +2876,8 @@ global.Grammar = class Grammar
       @rep(0, 0, [ @l_empty, n, "block-in" ]),
       @any(
         [ @l_nb_folded_lines, n ],
-        [ @l_nb_spaced_lines, n ],
-      ),
+        [ @l_nb_spaced_lines, n ]
+      )
     )
 
 
@@ -2868,8 +2895,8 @@ global.Grammar = class Grammar
       @rep(0, 0,
         @all(
           @b_as_line_feed,
-          [ @l_nb_same_lines, n ],
-        )),
+          [ @l_nb_same_lines, n ]
+        ))
     )
 
 
@@ -2887,9 +2914,9 @@ global.Grammar = class Grammar
       @rep(0, 1,
         @all(
           [ @l_nb_diff_lines, n ],
-          [ @b_chomped_last, t ],
+          [ @b_chomped_last, t ]
         )),
-      [ @l_chomped_empty, n, t ],
+      [ @l_chomped_empty, n, t ]
     )
 
 
@@ -2907,9 +2934,9 @@ global.Grammar = class Grammar
       @set('m', @auto_detect_indent),
       @rep(1, 0,
         @all(
-          [ @s_indent, @add(n, @m) ],
-          [ @c_l_block_seq_entry, @add(n, @m) ],
-        )),
+          [ @s_indent, @add(n, @m()) ],
+          [ @c_l_block_seq_entry, @add(n, @m()) ]
+        ))
     )
 
 
@@ -2925,7 +2952,7 @@ global.Grammar = class Grammar
     @all(
       @chr('-'),
       @chk('!', @ns_char),
-      [ @s_l_block_indented, n, "block-in" ],
+      [ @s_l_block_indented, n, "block-in" ]
     )
 
 
@@ -2943,17 +2970,17 @@ global.Grammar = class Grammar
     debug1("s_l_block_indented",n,c)
     @any(
       @all(
-        [ @s_indent, @m ],
+        [ @s_indent, @m() ],
         @any(
-          [ @ns_l_compact_sequence, @add(n, @add(1, @m)) ],
-          [ @ns_l_compact_mapping, @add(n, @add(1, @m)) ],
-        ),
+          [ @ns_l_compact_sequence, @add(n, @add(1, @m())) ],
+          [ @ns_l_compact_mapping, @add(n, @add(1, @m())) ]
+        )
       ),
       [ @s_l_block_node, n, c ],
       @all(
         @e_node,
-        @s_l_comments,
-      ),
+        @s_l_comments
+      )
     )
 
 
@@ -2971,8 +2998,8 @@ global.Grammar = class Grammar
       @rep(0, 0,
         @all(
           [ @s_indent, n ],
-          [ @c_l_block_seq_entry, n ],
-        )),
+          [ @c_l_block_seq_entry, n ]
+        ))
     )
 
 
@@ -2990,9 +3017,9 @@ global.Grammar = class Grammar
       @set('m', @auto_detect_indent),
       @rep(1, 0,
         @all(
-          [ @s_indent, @add(n, @m) ],
-          [ @ns_l_block_map_entry, @add(n, @m) ],
-        )),
+          [ @s_indent, @add(n, @m()) ],
+          [ @ns_l_block_map_entry, @add(n, @m()) ]
+        ))
     )
 
 
@@ -3007,7 +3034,7 @@ global.Grammar = class Grammar
     debug1("ns_l_block_map_entry",n)
     @any(
       [ @c_l_block_map_explicit_entry, n ],
-      [ @ns_l_block_map_implicit_entry, n ],
+      [ @ns_l_block_map_implicit_entry, n ]
     )
 
 
@@ -3025,8 +3052,8 @@ global.Grammar = class Grammar
       [ @c_l_block_map_explicit_key, n ],
       @any(
         [ @l_block_map_explicit_value, n ],
-        @e_node,
-      ),
+        @e_node
+      )
     )
 
 
@@ -3041,7 +3068,7 @@ global.Grammar = class Grammar
     debug1("c_l_block_map_explicit_key",n)
     @all(
       @chr('?'),
-      [ @s_l_block_indented, n, "block-out" ],
+      [ @s_l_block_indented, n, "block-out" ]
     )
 
 
@@ -3057,7 +3084,7 @@ global.Grammar = class Grammar
     @all(
       [ @s_indent, n ],
       @chr(':'),
-      [ @s_l_block_indented, n, "block-out" ],
+      [ @s_l_block_indented, n, "block-out" ]
     )
 
 
@@ -3075,9 +3102,9 @@ global.Grammar = class Grammar
     @all(
       @any(
         @ns_s_block_map_implicit_key,
-        @e_node,
+        @e_node
       ),
-      [ @c_l_block_map_implicit_value, n ],
+      [ @c_l_block_map_implicit_value, n ]
     )
 
 
@@ -3092,7 +3119,7 @@ global.Grammar = class Grammar
     debug1("ns_s_block_map_implicit_key")
     @any(
       [ @c_s_implicit_json_key, "block-key" ],
-      [ @ns_s_implicit_yaml_key, "block-key" ],
+      [ @ns_s_implicit_yaml_key, "block-key" ]
     )
 
 
@@ -3112,9 +3139,9 @@ global.Grammar = class Grammar
         [ @s_l_block_node, n, "block-out" ],
         @all(
           @e_node,
-          @s_l_comments,
-        ),
-      ),
+          @s_l_comments
+        )
+      )
     )
 
 
@@ -3132,8 +3159,8 @@ global.Grammar = class Grammar
       @rep(0, 0,
         @all(
           [ @s_indent, n ],
-          [ @ns_l_block_map_entry, n ],
-        )),
+          [ @ns_l_block_map_entry, n ]
+        ))
     )
 
 
@@ -3147,7 +3174,7 @@ global.Grammar = class Grammar
     debug1("s_l_block_node",n,c)
     @any(
       [ @s_l_block_in_block, n, c ],
-      [ @s_l_flow_in_block, n ],
+      [ @s_l_flow_in_block, n ]
     )
 
 
@@ -3163,7 +3190,7 @@ global.Grammar = class Grammar
     @all(
       [ @s_separate, @add(n, 1), "flow-out" ],
       [ @ns_flow_node, @add(n, 1), "flow-out" ],
-      @s_l_comments,
+      @s_l_comments
     )
 
 
@@ -3177,7 +3204,7 @@ global.Grammar = class Grammar
     debug1("s_l_block_in_block",n,c)
     @any(
       [ @s_l_block_scalar, n, c ],
-      [ @s_l_block_collection, n, c ],
+      [ @s_l_block_collection, n, c ]
     )
 
 
@@ -3196,12 +3223,12 @@ global.Grammar = class Grammar
       @rep(0, 1,
         @all(
           [ @c_ns_properties, @add(n, 1), c ],
-          [ @s_separate, @add(n, 1), c ],
+          [ @s_separate, @add(n, 1), c ]
         )),
       @any(
         [ @c_l_literal, n ],
-        [ @c_l_folded, n ],
-      ),
+        [ @c_l_folded, n ]
+      )
     )
 
 
@@ -3221,13 +3248,13 @@ global.Grammar = class Grammar
       @rep(0, 1,
         @all(
           [ @s_separate, @add(n, 1), c ],
-          [ @c_ns_properties, @add(n, 1), c ],
+          [ @c_ns_properties, @add(n, 1), c ]
         )),
       @s_l_comments,
       @any(
         [ @l_block_sequence, [ @seq_spaces, n, c ] ],
-        [ @l_block_mapping, n ],
-      ),
+        [ @l_block_mapping, n ]
+      )
     )
 
 
@@ -3240,10 +3267,13 @@ global.Grammar = class Grammar
   @::seq_spaces.num = 201
   seq_spaces: (n, c)->
     debug1("seq_spaces",n,c)
-    @flip(c, {
-      'block-in': n,
-      'block-out': @sub(n, 1),
-    })
+    @flip(
+      c,
+      {
+        'block-in': n,
+        'block-out': @sub(n, 1),
+      }
+    )
 
 
 
@@ -3256,7 +3286,7 @@ global.Grammar = class Grammar
     debug1("l_document_prefix")
     @all(
       @rep(0, 1, @c_byte_order_mark),
-      @rep(0, 0, @l_comment),
+      @rep(0, 0, @l_comment)
     )
 
 
@@ -3271,7 +3301,7 @@ global.Grammar = class Grammar
     @all(
       @chr('-'),
       @chr('-'),
-      @chr('-'),
+      @chr('-')
     )
 
 
@@ -3286,7 +3316,7 @@ global.Grammar = class Grammar
     @all(
       @chr('.'),
       @chr('.'),
-      @chr('.'),
+      @chr('.')
     )
 
 
@@ -3300,7 +3330,7 @@ global.Grammar = class Grammar
     debug1("l_document_suffix")
     @all(
       @c_document_end,
-      @s_l_comments,
+      @s_l_comments
     )
 
 
@@ -3318,13 +3348,13 @@ global.Grammar = class Grammar
       @start_of_line,
       @any(
         @c_directives_end,
-        @c_document_end,
+        @c_document_end
       ),
       @any(
         @b_char,
         @s_white,
-        @end_of_stream,
-      ),
+        @end_of_stream
+      )
     )
 
 
@@ -3339,7 +3369,7 @@ global.Grammar = class Grammar
     debug1("l_bare_document")
     @all(
       @exclude(@c_forbidden),
-      [ @s_l_block_node, -1, "block-in" ],
+      [ @s_l_block_node, -1, "block-in" ]
     )
 
 
@@ -3359,9 +3389,9 @@ global.Grammar = class Grammar
         @l_bare_document,
         @all(
           @e_node,
-          @s_l_comments,
-        ),
-      ),
+          @s_l_comments
+        )
+      )
     )
 
 
@@ -3376,7 +3406,7 @@ global.Grammar = class Grammar
     debug1("l_directive_document")
     @all(
       @rep(1, 0, @l_directive),
-      @l_explicit_document,
+      @l_explicit_document
     )
 
 
@@ -3393,7 +3423,7 @@ global.Grammar = class Grammar
     @any(
       @l_directive_document,
       @l_explicit_document,
-      @l_bare_document,
+      @l_bare_document
     )
 
 
@@ -3416,13 +3446,13 @@ global.Grammar = class Grammar
           @all(
             @rep(1, 0, @l_document_suffix),
             @rep(0, 0, @l_document_prefix),
-            @rep(0, 1, @l_any_document),
+            @rep(0, 1, @l_any_document)
           ),
           @all(
             @rep(0, 0, @l_document_prefix),
-            @rep(0, 1, @l_explicit_document),
-          ),
-        )),
+            @rep(0, 1, @l_explicit_document)
+          )
+        ))
     )
 
 

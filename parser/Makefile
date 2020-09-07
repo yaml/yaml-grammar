@@ -30,7 +30,8 @@ trace-%:
 	make -C $(@:trace-%=%) trace TRACE=$(trace) DEBUG=$(debug)
 
 clean: $(ALL_CLEAN)
-	rm -fr test/testml test/.testml
+	rm -fr test/testml
+	rm -fr test/.testml
 
 clean-%:
 	make -C $(@:clean-%=%) clean
