@@ -135,7 +135,7 @@
         names = [];
         while (i > 0 && !(n = this.stack[--i].name).match(/_/)) {
           if (m = n.match(/^chr\((.)\)$/)) {
-            n = 'chr_' + m[1].charCodeAt(0).toString(16);
+            n = 'x' + m[1].charCodeAt(0).toString(16);
           }
           names.unshift(n);
         }

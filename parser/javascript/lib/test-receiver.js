@@ -47,7 +47,7 @@
       return this.events.push('-DOC');
     }
 
-    got__c_flow_sequence__all__chr_5b() {
+    got__c_flow_sequence__all__x5b() {
       if (!this.flow_start) {
         return;
       }
@@ -57,7 +57,7 @@
       return this.events.push('+SEQ []');
     }
 
-    got__c_flow_sequence__all__chr_5d() {
+    got__c_flow_sequence__all__x5d() {
       if (!this.flow_start) {
         return;
       }
@@ -67,7 +67,7 @@
       return this.events.push('-SEQ');
     }
 
-    got__c_flow_mapping__all__chr_7b() {
+    got__c_flow_mapping__all__x7b() {
       if (!this.flow_start) {
         return;
       }
@@ -77,7 +77,7 @@
       return this.events.push('+MAP {}');
     }
 
-    got__c_flow_mapping__all__chr_7d() {
+    got__c_flow_mapping__all__x7d() {
       if (!this.flow_start) {
         return;
       }

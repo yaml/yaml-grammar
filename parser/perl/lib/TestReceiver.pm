@@ -52,28 +52,28 @@ sub got__l_bare_document {
   push @{$self->{events}}, '-DOC';
 }
 
-sub got__c_flow_sequence__all__chr_5b {
+sub got__c_flow_sequence__all__x5b {
   my ($self, $o) = @_;
   return unless $self->{flow_start};
   return if $self->{flow_pair};
   push @{$self->{events}}, '+SEQ []';
 }
 
-sub got__c_flow_sequence__all__chr_5d {
+sub got__c_flow_sequence__all__x5d {
   my ($self, $o) = @_;
   return unless $self->{flow_start};
   return if $self->{flow_pair};
   push @{$self->{events}}, '-SEQ';
 }
 
-sub got__c_flow_mapping__all__chr_7b {
+sub got__c_flow_mapping__all__x7b {
   my ($self, $o) = @_;
   return unless $self->{flow_start};
   return if $self->{flow_pair};
   push @{$self->{events}}, '+MAP {}';
 }
 
-sub got__c_flow_mapping__all__chr_7d {
+sub got__c_flow_mapping__all__x7d {
   my ($self, $o) = @_;
   return unless $self->{flow_start};
   return if $self->{flow_pair};

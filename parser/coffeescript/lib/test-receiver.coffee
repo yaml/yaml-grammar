@@ -28,22 +28,22 @@ global.TestReceiver = class TestReceiver
   got__l_bare_document: ->
     @events.push '-DOC'
 
-  got__c_flow_sequence__all__chr_5b: ->
+  got__c_flow_sequence__all__x5b: ->
     return unless @flow_start
     return if @flow_pair
     @events.push '+SEQ []'
 
-  got__c_flow_sequence__all__chr_5d: ->
+  got__c_flow_sequence__all__x5d: ->
     return unless @flow_start
     return if @flow_pair
     @events.push '-SEQ'
 
-  got__c_flow_mapping__all__chr_7b: ->
+  got__c_flow_mapping__all__x7b: ->
     return unless @flow_start
     return if @flow_pair
     @events.push '+MAP {}'
 
-  got__c_flow_mapping__all__chr_7d: ->
+  got__c_flow_mapping__all__x7d: ->
     return unless @flow_start
     return if @flow_pair
     @events.push '-MAP'

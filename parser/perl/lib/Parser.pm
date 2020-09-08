@@ -150,7 +150,7 @@ sub make_receivers {
   my $n;
   while ($i > 0 and ($n = $self->{stack}[--$i]{name}) !~ /_/) {
     if ($n =~ /^chr\((.)\)$/) {
-      $n = 'chr_' . sprintf("%x", ord($1));
+      $n = sprintf "x%x", ord($1);
     }
     unshift @$names, $n;
   }

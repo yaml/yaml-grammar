@@ -115,7 +115,7 @@ global.Parser = class Parser extends Grammar
     names = []
     while i > 0 and not (n = @stack[--i].name).match /_/
       if m = n.match /^chr\((.)\)$/
-        n = 'chr_' + m[1].charCodeAt(0).toString(16)
+        n = 'x' + m[1].charCodeAt(0).toString(16)
       names.unshift n
     name = [n, names...].join '__'
 
