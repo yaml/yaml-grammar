@@ -6,110 +6,119 @@
 
   global.TestReceiver = TestReceiver = class TestReceiver {
     constructor() {
-      this.flow_start = false;
-      this.events = [];
-      this.flow_pair = false;
+      this.event = [];
+      this.pools = [];
+    }
+
+    add(event) {
+      if (this.pools.length) {
+        return _.last(this.pools).push(event);
+      } else {
+        return this.send(event);
+      }
+    }
+
+    pool_up() {
+      return this.pools.push([]);
+    }
+
+    pool_down() {
+      var e, events, i, len, results;
+      events = this.pools.pop() || xxxxx(this);
+      results = [];
+      for (i = 0, len = events.length; i < len; i++) {
+        e = events[i];
+        results.push(this.add(e));
+      }
+      return results;
+    }
+
+    pool_drop() {
+      return this.pools.pop() || xxxxx(this);
+    }
+
+    send(event) {
+      return this.event.push(event);
     }
 
     output() {
-      return [...this.events, ''].join("\n");
-    }
-
-    try__ns_flow_pair() {
-      return this.flow_pair = true;
-    }
-
-    not__ns_flow_pair() {
-      return this.flow_pair = false;
-    }
-
-    got__ns_flow_pair() {
-      return die();
+      return [...this.event, ''].join("\n");
     }
 
     try__l_yaml_stream() {
-      return this.events.push('+STR');
+      return this.add('+STR');
     }
 
     got__l_yaml_stream() {
-      return this.events.push('-STR');
-    }
-
-    try__s_l_flow_in_block() {
-      return this.flow_start = true;
+      return this.add('-STR');
     }
 
     try__l_bare_document() {
-      return this.events.push('+DOC');
+      return this.add('+DOC');
     }
 
     got__l_bare_document() {
-      return this.events.push('-DOC');
+      return this.add('-DOC');
     }
 
     got__c_flow_sequence__all__x5b() {
-      if (!this.flow_start) {
-        return;
-      }
-      if (this.flow_pair) {
-        return;
-      }
-      return this.events.push('+SEQ []');
+      return this.add('+SEQ []');
     }
 
     got__c_flow_sequence__all__x5d() {
-      if (!this.flow_start) {
-        return;
-      }
-      if (this.flow_pair) {
-        return;
-      }
-      return this.events.push('-SEQ');
+      return this.add('-SEQ');
     }
 
     got__c_flow_mapping__all__x7b() {
-      if (!this.flow_start) {
-        return;
-      }
-      if (this.flow_pair) {
-        return;
-      }
-      return this.events.push('+MAP {}');
+      return this.add('+MAP {}');
     }
 
     got__c_flow_mapping__all__x7d() {
-      if (!this.flow_start) {
-        return;
-      }
-      if (this.flow_pair) {
-        return;
-      }
-      return this.events.push('-MAP');
+      return this.add('-MAP');
     }
 
     got__ns_plain(o) {
-      if (this.flow_pair) {
-        return;
-      }
-      return this.events.push(`=VAL :${o.text}`);
+      return this.add(`=VAL :${o.text}`);
     }
 
     got__c_single_quoted(o) {
       var value;
-      if (this.flow_pair) {
-        return;
-      }
       value = o.text.slice(1, -1);
-      return this.events.push(`=VAL '${value}`);
+      return this.add(`=VAL '${value}`);
     }
 
     got__c_double_quoted(o) {
       var value;
-      if (this.flow_pair) {
-        return;
-      }
       value = o.text.slice(1, -1);
-      return this.events.push(`=VAL \"${value}`);
+      return this.add(`=VAL \"${value}`);
+    }
+
+    got__e_scalar() {
+      return this.add("=VAL :");
+    }
+
+    try__ns_flow_pair() {
+      return this.pool_up();
+    }
+
+    got__ns_flow_pair() {
+      return xxxxx(this);
+    }
+
+    not__ns_flow_pair() {
+      return this.pool_drop();
+    }
+
+    try__c_ns_flow_map_empty_key_entry() {
+      return this.pool_up();
+    }
+
+    got__c_ns_flow_map_empty_key_entry() {
+      return xxxxx(this);
+    }
+
+    not__c_ns_flow_map_empty_key_entry() {
+      return this.pool_drop();
     }
 
   };

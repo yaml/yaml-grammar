@@ -85,7 +85,7 @@
           return func;
         }
         if (!isFunction(func)) {
-          die(`Bad call type '${typeof_(func)}' for '${func}'`);
+          xxxxx(`Bad call type '${typeof_(func)}' for '${func}'`);
         }
         trace_name = func.trace || func.name || xxx(func);
         this.stack.push(this.new_state(trace_name));
@@ -98,7 +98,7 @@
           value = func2 = this.call(func2);
         }
         if (type !== 'any' && typeof_(value) !== type) {
-          die(`Calling '${trace_name}' returned '${typeof_(value)}' instead of '${type}'`);
+          xxxxx(`Calling '${trace_name}' returned '${typeof_(value)}' instead of '${type}'`);
         }
         if (type !== 'boolean') {
           this.stack.pop();
@@ -156,7 +156,7 @@
           for (j = 0, len = funcs.length; j < len; j++) {
             func = funcs[j];
             if (func == null) {
-              xxx('*** Missing function in @all group:', funcs);
+              xxxxx('*** Missing function in @all group:', funcs);
             }
             if (!this.call(func)) {
               this.pos = pos;
@@ -211,7 +211,7 @@
         var case_;
         case_ = function() {
           var rule;
-          rule = map[var_] || xxx(`Can't find '${var_}' in:`, map);
+          rule = map[var_] || xxxxx(`Can't find '${var_}' in:`, map);
           return this.call(rule);
         };
         return name_('case', case_, `case(${var_}, ${stringify(map)})`);
@@ -220,7 +220,7 @@
       // Call a rule depending on state value:
       flip(var_, map) {
         var value;
-        value = map[var_] || xxx(`Can't find '${var_}' in:`, map);
+        value = map[var_] || xxxxx(`Can't find '${var_}' in:`, map);
         if (isString(value)) {
           return value;
         }
@@ -375,6 +375,12 @@
 
       trace_func(type, call, args = []) {
         var indent, input, l, level, line, prev_level, prev_line, prev_type, trace_info;
+        if (this.trace_start) {
+          if (call !== this.trace_start) {
+            return;
+          }
+          this.trace_start = '';
+        }
         level = this.state().lvl;
         indent = _.repeat(' ', level);
         if (level > 0) {
@@ -388,7 +394,7 @@
         if (type === '?' && this.trace_off === 0) {
           trace_info = [type, level, line];
         }
-        if (indexOf.call(this.trace_no_descend, call) >= 0) {
+        if (indexOf.call(this.trace_quiet, call) >= 0) {
           this.trace_off += type === '?' ? 1 : -1;
         }
         if (type !== '?' && this.trace_off === 0) {
@@ -437,34 +443,35 @@
 
     };
 
-    Parser.prototype.trace_no_descend = [];
+    Parser.prototype.trace_start = process.env.TRACE_START;
+
+    //     'b_char',
+    //     'c_byte_order_mark',
+    //     'c_flow_indicator',
+    //     'c_indicator',
+    //     'c_ns_alias_node',
+    //     'c_ns_properties',
+    //     'c_printable',
+    //     'l_comment',
+    //     'l_directive_document',
+    //     'l_document_prefix',
+    //     'l_explicit_document',
+    //     'nb_char',
+    //     'ns_char',
+    //     'ns_flow_pair',
+    //     'ns_plain',
+    //     'ns_plain_char',
+    //     's_l_block_collection',
+    //     's_l_block_in_block',
+    //     's_l_comments',
+    //     's_separate',
+    //     's_white',
+    Parser.prototype.trace_quiet = [].concat((process.env.TRACE_QUIET || '').split(','));
 
     return Parser;
 
   }).call(this);
 
   // vim: sw=2:
-  //     'l_document_prefix',
-//     'l_directive_document',
-//     'l_explicit_document',
-//     's_l_block_in_block',
-//     's_separate',
-//     'c_ns_alias_node',
-//     'ns_plain',
-//     's_l_comments',
-//     'c_ns_properties',
-//     'ns_flow_pair',
-
-  //     'c_printable',
-//     'b_char',
-//     'c_byte_order_mark',
-//     'nb_char',
-//     'ns_char',
-//     'c_indicator',
-//     'ns_plain_char',
-//     's_white',
-//     'c_flow_indicator',
-//     'l_comment',
-//     's_l_block_collection',
 
 }).call(this);

@@ -48,6 +48,10 @@ global.debug1 = (name, args...)->
 global.dump = (o)->
   require('yaml').stringify o
 
+global.xxxxx = (o...)->
+  WWW o
+  die 'xxxxx'
+
 global.timer = (start=null)->
   if start?
     time = process.hrtime(start)

@@ -12,7 +12,7 @@ class TestMLBridge extends TestML.Bridge
 
     error = ''
     try
-      parser.parse yaml
+      parser.parse yaml, undefined, process.env.TRACE
     catch e
       error = String e
 

@@ -17,6 +17,7 @@ our @EXPORT = qw<
   carp croak cluck confess
   true false
   WWW XXX YYY ZZZ
+  xxxxx
 >;
 
 my %name;
@@ -113,6 +114,10 @@ sub debug1 {
 
 sub dump {
   YAML::PP::Perl->new->dump(@_);
+}
+
+sub xxxxx {
+  confess @_;
 }
 
 sub timer {

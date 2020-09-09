@@ -18,11 +18,12 @@ default:
 build:: $(BUILD_DEPS) $(GRAMMAR)
 
 test:: build $(TEST_DEPS)
-	TRACE=$(trace) DEBUG=$(debug) prove -v $(tests)
+	TRACE=$(TRACE) TRACE_QUIET=$(TRACE_QUIET) DEBUG=$(DEBUG) \
+	    prove -v $(tests)
 
 .PHONY: trace
 trace:: build
-	-TRACE=1 DEBUG=$(debug) \
+	-TRACE=1 DEBUG=$(DEBUG) \
 	    ./bin/yaml-parser \
 	    '[1,2 2  ,333,]' \
 	    |& grep -v '^Parse' \

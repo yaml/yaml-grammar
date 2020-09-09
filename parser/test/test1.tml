@@ -101,7 +101,6 @@ foo
 
 
 ===
---- SKIP
 --- yaml: [[]]
 --- events
 +STR
@@ -122,6 +121,86 @@ foo
 +MAP {}
 =VAL :foo
 =VAL 'bar
+-MAP
+-DOC
+-STR
+
+
+===
+--- yaml: {foo: 'bar', baz: 42}
+--- events
++STR
++DOC
++MAP {}
+=VAL :foo
+=VAL 'bar
+=VAL :baz
+=VAL :42
+-MAP
+-DOC
+-STR
+
+
+===
+--- yaml: {foo:}
+--- events
++STR
++DOC
++MAP {}
+=VAL :foo
+=VAL :
+-MAP
+-DOC
+-STR
+
+
+===
+--- yaml: {? foo:}
+--- events
++STR
++DOC
++MAP {}
+=VAL :foo
+=VAL :
+-MAP
+-DOC
+-STR
+
+
+===
+--- yaml: {?foo:}
+--- events
++STR
++DOC
++MAP {}
+=VAL :?foo
+=VAL :
+-MAP
+-DOC
+-STR
+
+
+===
+--- yaml: {http://example.com}
+--- events
++STR
++DOC
++MAP {}
+=VAL :http://example.com
+=VAL :
+-MAP
+-DOC
+-STR
+
+
+===
+--- yaml: {"http"://example.com}
+--- events
++STR
++DOC
++MAP {}
+=VAL "http
+=VAL ://example.com
 -MAP
 -DOC
 -STR

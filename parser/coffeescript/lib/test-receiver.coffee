@@ -2,64 +2,75 @@ require './prelude'
 
 global.TestReceiver = class TestReceiver
   constructor: ->
-    @flow_start = false
-    @events = []
-    @flow_pair = false
+    @event = []
+    @pools = []
+
+  add: (event)->
+    if @pools.length
+      _.last(@pools).push event
+    else
+      @send event
+
+  pool_up: ->
+    @pools.push []
+
+  pool_down: ->
+    events = @pools.pop() or xxxxx @
+    @add e for e in events
+
+  pool_drop: ->
+    @pools.pop() or xxxxx @
+
+  send: (event)->
+    @event.push event
 
   output: ->
-    [@events..., ''].join "\n"
-
-  try__ns_flow_pair: -> @flow_pair = true
-  not__ns_flow_pair: -> @flow_pair = false
-  got__ns_flow_pair: -> die()
+    [@event..., ''].join "\n"
 
   try__l_yaml_stream: ->
-    @events.push '+STR'
+    @add '+STR'
 
   got__l_yaml_stream: ->
-    @events.push '-STR'
-
-  try__s_l_flow_in_block: ->
-    @flow_start = true
+    @add '-STR'
 
   try__l_bare_document: ->
-    @events.push '+DOC'
+    @add '+DOC'
 
   got__l_bare_document: ->
-    @events.push '-DOC'
+    @add '-DOC'
 
   got__c_flow_sequence__all__x5b: ->
-    return unless @flow_start
-    return if @flow_pair
-    @events.push '+SEQ []'
+    @add '+SEQ []'
 
   got__c_flow_sequence__all__x5d: ->
-    return unless @flow_start
-    return if @flow_pair
-    @events.push '-SEQ'
+    @add '-SEQ'
 
   got__c_flow_mapping__all__x7b: ->
-    return unless @flow_start
-    return if @flow_pair
-    @events.push '+MAP {}'
+    @add '+MAP {}'
 
   got__c_flow_mapping__all__x7d: ->
-    return unless @flow_start
-    return if @flow_pair
-    @events.push '-MAP'
+    @add '-MAP'
 
   got__ns_plain: (o)->
-    return if @flow_pair
-    @events.push "=VAL :#{o.text}"
+    @add "=VAL :#{o.text}"
 
   got__c_single_quoted: (o)->
-    return if @flow_pair
     value = o.text[1..-2]
-    @events.push "=VAL '#{value}"
+    @add "=VAL '#{value}"
 
   got__c_double_quoted: (o)->
-    return if @flow_pair
     value = o.text[1..-2]
-    @events.push "=VAL \"#{value}"
+    @add "=VAL \"#{value}"
+
+  got__e_scalar: ->
+    @add "=VAL :"
+
+  try__ns_flow_pair: -> @pool_up()
+  got__ns_flow_pair: -> xxxxx @
+  not__ns_flow_pair: -> @pool_drop()
+
+  try__c_ns_flow_map_empty_key_entry: -> @pool_up()
+  got__c_ns_flow_map_empty_key_entry: -> xxxxx @
+  not__c_ns_flow_map_empty_key_entry: -> @pool_drop()
 
 # vim: sw=2:

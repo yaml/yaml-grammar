@@ -62,7 +62,7 @@ global.Parser = class Parser extends Grammar
 
     return func if isNumber func
 
-    die "Bad call type '#{typeof_ func}' for '#{func}'" \
+    xxxxx "Bad call type '#{typeof_ func}' for '#{func}'" \
       unless isFunction func
 
     trace_name = func.trace || func.name or xxx func
@@ -79,7 +79,7 @@ global.Parser = class Parser extends Grammar
     while isFunction(func2) or isArray(func2)
       value = func2 = @call func2
 
-    die "Calling '#{trace_name}' returned '#{typeof_ value}' instead of '#{type}'" \
+    xxxxx "Calling '#{trace_name}' returned '#{typeof_ value}' instead of '#{type}'" \
       if type != 'any' and typeof_(value) != type
 
     if type != 'boolean'
@@ -130,8 +130,8 @@ global.Parser = class Parser extends Grammar
     all = ->
       pos = @pos
       for func in funcs
-        if not func?
-          xxx '*** Missing function in @all group:', funcs
+        xxxxx '*** Missing function in @all group:', funcs \
+          if not func?
 
         if not @call func
           @pos = pos
@@ -168,14 +168,14 @@ global.Parser = class Parser extends Grammar
   case: (var_, map)->
     case_ = ->
       rule = map[var_] or
-        xxx "Can't find '#{var_}' in:", map
+        xxxxx "Can't find '#{var_}' in:", map
       @call rule
     name_ 'case', case_, "case(#{var_}, #{stringify map})"
 
   # Call a rule depending on state value:
   flip: (var_, map)->
     value = map[var_] or
-      xxx "Can't find '#{var_}' in:", map
+      xxxxx "Can't find '#{var_}' in:", map
     return value if isString value
     return @call value
 
@@ -272,7 +272,37 @@ global.Parser = class Parser extends Grammar
 # Trace debugging
 #------------------------------------------------------------------------------
   noop: ->
+
+  trace_start: process.env.TRACE_START
+  trace_quiet: [
+#     'b_char',
+#     'c_byte_order_mark',
+#     'c_flow_indicator',
+#     'c_indicator',
+#     'c_ns_alias_node',
+#     'c_ns_properties',
+#     'c_printable',
+#     'l_comment',
+#     'l_directive_document',
+#     'l_document_prefix',
+#     'l_explicit_document',
+#     'nb_char',
+#     'ns_char',
+#     'ns_flow_pair',
+#     'ns_plain',
+#     'ns_plain_char',
+#     's_l_block_collection',
+#     's_l_block_in_block',
+#     's_l_comments',
+#     's_separate',
+#     's_white',
+  ].concat((process.env.TRACE_QUIET || '').split ',')
+
   trace_func: (type, call, args=[])->
+    if @trace_start
+      return unless call == @trace_start
+      @trace_start = ''
+
     level = @state().lvl
     indent = _.repeat ' ', level
     if level > 0
@@ -297,7 +327,7 @@ global.Parser = class Parser extends Grammar
     level = "#{level}_#{call}"
     if type == '?' and @trace_off == 0
       trace_info = [type, level, line]
-    if call in @trace_no_descend
+    if call in @trace_quiet
       @trace_off += if type == '?' then 1 else -1
     if type != '?' and @trace_off == 0
       trace_info = [type, level, line]
@@ -326,30 +356,5 @@ global.Parser = class Parser extends Grammar
   trace_flush: ->
     if line = @trace_info[2]
       warn sprintf "%5d %s", @trace_num++, line
-
-  trace_no_descend: [
-#     'l_document_prefix',
-#     'l_directive_document',
-#     'l_explicit_document',
-#     's_l_block_in_block',
-#     's_separate',
-#     'c_ns_alias_node',
-#     'ns_plain',
-#     's_l_comments',
-#     'c_ns_properties',
-#     'ns_flow_pair',
-
-#     'c_printable',
-#     'b_char',
-#     'c_byte_order_mark',
-#     'nb_char',
-#     'ns_char',
-#     'c_indicator',
-#     'ns_plain_char',
-#     's_white',
-#     'c_flow_indicator',
-#     'l_comment',
-#     's_l_block_collection',
-  ]
 
 # vim: sw=2:

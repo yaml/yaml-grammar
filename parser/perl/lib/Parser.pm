@@ -88,10 +88,11 @@ sub call {
 
   return $func if $func eq $func + 0;
 
-  die "Bad call type '${\ typeof $func}' for '$func'"
+  xxxxx "Bad call type '${\ typeof $func}' for '$func'"
     unless isFunction($func);
 
-  my $trace_name = func_trace($func) || func_name($func) || XXX $func;
+  my $trace_name = func_trace($func) || func_name($func);
+  xxxxx $func unless $func;
 
   push @{$self->{stack}}, $self->new_state($trace_name);
 
@@ -106,7 +107,7 @@ sub call {
     $value = $func2 = $self->call($func2);
   }
 
-  die "Calling '$trace_name' returned '${\ typeof($value)}' instead of '$type'"
+  xxxxx "Calling '$trace_name' returned '${\ typeof($value)}' instead of '$type'"
     if $type ne 'any' and typeof($value) ne $type;
 
   if ($type ne 'boolean') {
@@ -169,9 +170,8 @@ sub all {
   name 'all', sub {
     my $pos = $self->{pos};
     for my $func (@funcs) {
-      if (not defined $func) {
-        XXX '*** Missing function in @all group:', \@funcs;
-      }
+      xxxxx '*** Missing function in @all group:', \@funcs
+        unless defined $func;
 
       if (not $self->call($func)) {
         $self->{pos} = $pos;
@@ -222,7 +222,7 @@ sub case {
   my ($self, $var, $map) = @_;
   name 'case', sub {
     my $rule = $map->{$var} or
-      XXX "Can't find '$var' in:", $map;
+      xxxxx "Can't find '$var' in:", $map;
     $self->call($rule);
   }, "case($var, ${\ stringify $map})";
 }
@@ -231,7 +231,7 @@ sub case {
 sub flip {
   my ($self, $var, $map) = @_;
   my $value = $map->{$var} or
-    XXX "Can't find '$var' in:", $map;
+    xxxxx "Can't find '$var' in:", $map;
   return $value if not ref $value;
   return $->call($value);
 }
@@ -371,9 +371,40 @@ name 'auto_detect_indent', \&auto_detect_indent;
 # Trace debugging
 #------------------------------------------------------------------------------
 sub noop {}
+my $trace_start = "$ENV{TRACE_START}";
+my @trace_quiet = (
+#     'b_char',
+#     'c_byte_order_mark',
+#     'c_flow_indicator',
+#     'c_indicator',
+#     'c_ns_alias_node',
+#     'c_ns_properties',
+#     'c_printable',
+#     'l_comment',
+#     'l_directive_document',
+#     'l_document_prefix',
+#     'l_explicit_document',
+#     'nb_char',
+#     'ns_char',
+#     'ns_flow_pair',
+#     'ns_plain',
+#     'ns_plain_char',
+#     's_l_block_collection',
+#     's_l_block_in_block',
+#     's_l_comments',
+#     's_separate',
+#     's_white',
+);
+push @trace_quiet, split ',', $ENV{TRACE_QUIET} if $ENV{TRACE_QUIET};
+
 sub trace_func {
   my ($self, $type, $call, $args) = @_;
   $args //= [];
+
+  if ($trace_start) {
+    return unless $call eq $trace_start;
+    $trace_start = '';
+  }
 
   my $level = $self->state->{lvl};
   my $indent = ' ' x $level;
@@ -401,7 +432,7 @@ sub trace_func {
   if ($type eq '?' and not $self->{trace_off}) {
     $trace_info = [$type, $level, $line];
   }
-  if (grep $_ eq $call, @{$self->trace_no_descend}) {
+  if (grep $_ eq $call, @trace_quiet) {
     $self->{trace_off} += $type eq '?' ? 1 : -1;
   }
   if ($type ne '?' and not $self->{trace_off}) {
@@ -449,33 +480,6 @@ sub trace_flush {
   if (my $line = $self->{trace_info}[2]) {
     warn sprintf "%5d %s", $self->{trace_num}++, $line;
   }
-}
-
-sub trace_no_descend {
-  [
-#     'l_document_prefix',
-#     'l_directive_document',
-#     'l_explicit_document',
-#     's_l_block_in_block',
-#     's_separate',
-#     'c_ns_alias_node',
-#     'ns_plain',
-#     's_l_comments',
-#     'c_ns_properties',
-#     'ns_flow_pair',
-
-#     'c_printable',
-#     'b_char',
-#     'c_byte_order_mark',
-#     'nb_char',
-#     'ns_char',
-#     'c_indicator',
-#     'ns_plain_char',
-#     's_white',
-#     'c_flow_indicator',
-#     'l_comment',
-#     's_l_block_collection',
-  ];
 }
 
 1;
