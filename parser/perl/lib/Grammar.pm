@@ -6,11 +6,12 @@ use v5.12;
 package Grammar;
 use Prelude;
 
-sub TOP {
+use constant DEBUG => $ENV{DEBUG};
+
+rule '000', TOP => sub {
   my ($self) = @_;
   $self->func('l_yaml_stream');
-}
-name 'TOP', \&TOP;
+};
 
 
 # [001]
@@ -19,9 +20,9 @@ name 'TOP', \&TOP;
 #   | x:85 | [x:A0-x:D7FF] | [x:E000-x:FFFD]
 #   | [x:10000-x:10FFFF]
 
-sub c_printable {
+rule '001', c_printable => sub {
   my ($self) = @_;
-  debug1("c_printable");
+  debug_rule("c_printable") if DEBUG;
   $self->any(
     $self->chr("\x{09}"),
     $self->chr("\x{0A}"),
@@ -32,8 +33,7 @@ sub c_printable {
     $self->rng("\x{E000}", "\x{FFFD}"),
     $self->rng("\x{010000}", "\x{10FFFF}")
   );
-}
-name 'c_printable', \&c_printable;
+};
 
 
 
@@ -41,15 +41,14 @@ name 'c_printable', \&c_printable;
 # nb-json ::=
 #   x:9 | [x:20-x:10FFFF]
 
-sub nb_json {
+rule '002', nb_json => sub {
   my ($self) = @_;
-  debug1("nb_json");
+  debug_rule("nb_json") if DEBUG;
   $self->any(
     $self->chr("\x{09}"),
     $self->rng("\x{20}", "\x{10FFFF}")
   );
-}
-name 'nb_json', \&nb_json;
+};
 
 
 
@@ -57,12 +56,11 @@ name 'nb_json', \&nb_json;
 # c-byte-order-mark ::=
 #   x:FEFF
 
-sub c_byte_order_mark {
+rule '003', c_byte_order_mark => sub {
   my ($self) = @_;
-  debug1("c_byte_order_mark");
+  debug_rule("c_byte_order_mark") if DEBUG;
   $self->chr("\x{FEFF}");
-}
-name 'c_byte_order_mark', \&c_byte_order_mark;
+};
 
 
 
@@ -70,12 +68,11 @@ name 'c_byte_order_mark', \&c_byte_order_mark;
 # c-sequence-entry ::=
 #   '-'
 
-sub c_sequence_entry {
+rule '004', c_sequence_entry => sub {
   my ($self) = @_;
-  debug1("c_sequence_entry");
+  debug_rule("c_sequence_entry") if DEBUG;
   $self->chr('-');
-}
-name 'c_sequence_entry', \&c_sequence_entry;
+};
 
 
 
@@ -83,12 +80,11 @@ name 'c_sequence_entry', \&c_sequence_entry;
 # c-mapping-key ::=
 #   '?'
 
-sub c_mapping_key {
+rule '005', c_mapping_key => sub {
   my ($self) = @_;
-  debug1("c_mapping_key");
+  debug_rule("c_mapping_key") if DEBUG;
   $self->chr('?');
-}
-name 'c_mapping_key', \&c_mapping_key;
+};
 
 
 
@@ -96,12 +92,11 @@ name 'c_mapping_key', \&c_mapping_key;
 # c-mapping-value ::=
 #   ':'
 
-sub c_mapping_value {
+rule '006', c_mapping_value => sub {
   my ($self) = @_;
-  debug1("c_mapping_value");
+  debug_rule("c_mapping_value") if DEBUG;
   $self->chr(':');
-}
-name 'c_mapping_value', \&c_mapping_value;
+};
 
 
 
@@ -109,12 +104,11 @@ name 'c_mapping_value', \&c_mapping_value;
 # c-collect-entry ::=
 #   ','
 
-sub c_collect_entry {
+rule '007', c_collect_entry => sub {
   my ($self) = @_;
-  debug1("c_collect_entry");
+  debug_rule("c_collect_entry") if DEBUG;
   $self->chr(',');
-}
-name 'c_collect_entry', \&c_collect_entry;
+};
 
 
 
@@ -122,12 +116,11 @@ name 'c_collect_entry', \&c_collect_entry;
 # c-sequence-start ::=
 #   '['
 
-sub c_sequence_start {
+rule '008', c_sequence_start => sub {
   my ($self) = @_;
-  debug1("c_sequence_start");
+  debug_rule("c_sequence_start") if DEBUG;
   $self->chr('[');
-}
-name 'c_sequence_start', \&c_sequence_start;
+};
 
 
 
@@ -135,12 +128,11 @@ name 'c_sequence_start', \&c_sequence_start;
 # c-sequence-end ::=
 #   ']'
 
-sub c_sequence_end {
+rule '009', c_sequence_end => sub {
   my ($self) = @_;
-  debug1("c_sequence_end");
+  debug_rule("c_sequence_end") if DEBUG;
   $self->chr(']');
-}
-name 'c_sequence_end', \&c_sequence_end;
+};
 
 
 
@@ -148,12 +140,11 @@ name 'c_sequence_end', \&c_sequence_end;
 # c-mapping-start ::=
 #   '{'
 
-sub c_mapping_start {
+rule '010', c_mapping_start => sub {
   my ($self) = @_;
-  debug1("c_mapping_start");
+  debug_rule("c_mapping_start") if DEBUG;
   $self->chr('{');
-}
-name 'c_mapping_start', \&c_mapping_start;
+};
 
 
 
@@ -161,12 +152,11 @@ name 'c_mapping_start', \&c_mapping_start;
 # c-mapping-end ::=
 #   '}'
 
-sub c_mapping_end {
+rule '011', c_mapping_end => sub {
   my ($self) = @_;
-  debug1("c_mapping_end");
+  debug_rule("c_mapping_end") if DEBUG;
   $self->chr('}');
-}
-name 'c_mapping_end', \&c_mapping_end;
+};
 
 
 
@@ -174,12 +164,11 @@ name 'c_mapping_end', \&c_mapping_end;
 # c-comment ::=
 #   '#'
 
-sub c_comment {
+rule '012', c_comment => sub {
   my ($self) = @_;
-  debug1("c_comment");
+  debug_rule("c_comment") if DEBUG;
   $self->chr('#');
-}
-name 'c_comment', \&c_comment;
+};
 
 
 
@@ -187,12 +176,11 @@ name 'c_comment', \&c_comment;
 # c-anchor ::=
 #   '&'
 
-sub c_anchor {
+rule '013', c_anchor => sub {
   my ($self) = @_;
-  debug1("c_anchor");
+  debug_rule("c_anchor") if DEBUG;
   $self->chr('&');
-}
-name 'c_anchor', \&c_anchor;
+};
 
 
 
@@ -200,12 +188,11 @@ name 'c_anchor', \&c_anchor;
 # c-alias ::=
 #   '*'
 
-sub c_alias {
+rule '014', c_alias => sub {
   my ($self) = @_;
-  debug1("c_alias");
+  debug_rule("c_alias") if DEBUG;
   $self->chr('*');
-}
-name 'c_alias', \&c_alias;
+};
 
 
 
@@ -213,12 +200,11 @@ name 'c_alias', \&c_alias;
 # c-tag ::=
 #   '!'
 
-sub c_tag {
+rule '015', c_tag => sub {
   my ($self) = @_;
-  debug1("c_tag");
+  debug_rule("c_tag") if DEBUG;
   $self->chr('!');
-}
-name 'c_tag', \&c_tag;
+};
 
 
 
@@ -226,12 +212,11 @@ name 'c_tag', \&c_tag;
 # c-literal ::=
 #   '|'
 
-sub c_literal {
+rule '016', c_literal => sub {
   my ($self) = @_;
-  debug1("c_literal");
+  debug_rule("c_literal") if DEBUG;
   $self->chr('|');
-}
-name 'c_literal', \&c_literal;
+};
 
 
 
@@ -239,12 +224,11 @@ name 'c_literal', \&c_literal;
 # c-folded ::=
 #   '>'
 
-sub c_folded {
+rule '017', c_folded => sub {
   my ($self) = @_;
-  debug1("c_folded");
+  debug_rule("c_folded") if DEBUG;
   $self->chr('>');
-}
-name 'c_folded', \&c_folded;
+};
 
 
 
@@ -252,12 +236,11 @@ name 'c_folded', \&c_folded;
 # c-single-quote ::=
 #   '''
 
-sub c_single_quote {
+rule '018', c_single_quote => sub {
   my ($self) = @_;
-  debug1("c_single_quote");
+  debug_rule("c_single_quote") if DEBUG;
   $self->chr("'");
-}
-name 'c_single_quote', \&c_single_quote;
+};
 
 
 
@@ -265,12 +248,11 @@ name 'c_single_quote', \&c_single_quote;
 # c-double-quote ::=
 #   '"'
 
-sub c_double_quote {
+rule '019', c_double_quote => sub {
   my ($self) = @_;
-  debug1("c_double_quote");
+  debug_rule("c_double_quote") if DEBUG;
   $self->chr('"');
-}
-name 'c_double_quote', \&c_double_quote;
+};
 
 
 
@@ -278,12 +260,11 @@ name 'c_double_quote', \&c_double_quote;
 # c-directive ::=
 #   '%'
 
-sub c_directive {
+rule '020', c_directive => sub {
   my ($self) = @_;
-  debug1("c_directive");
+  debug_rule("c_directive") if DEBUG;
   $self->chr('%');
-}
-name 'c_directive', \&c_directive;
+};
 
 
 
@@ -291,15 +272,14 @@ name 'c_directive', \&c_directive;
 # c-reserved ::=
 #   '@' | '`'
 
-sub c_reserved {
+rule '021', c_reserved => sub {
   my ($self) = @_;
-  debug1("c_reserved");
+  debug_rule("c_reserved") if DEBUG;
   $self->any(
     $self->chr('@'),
     $self->chr('`')
   );
-}
-name 'c_reserved', \&c_reserved;
+};
 
 
 
@@ -309,9 +289,9 @@ name 'c_reserved', \&c_reserved;
 #   | '#' | '&' | '*' | '!' | '|' | '>' | ''' | '"'
 #   | '%' | '@' | '`'
 
-sub c_indicator {
+rule '022', c_indicator => sub {
   my ($self) = @_;
-  debug1("c_indicator");
+  debug_rule("c_indicator") if DEBUG;
   $self->any(
     $self->chr('-'),
     $self->chr('?'),
@@ -333,8 +313,7 @@ sub c_indicator {
     $self->chr('@'),
     $self->chr('`')
   );
-}
-name 'c_indicator', \&c_indicator;
+};
 
 
 
@@ -342,9 +321,9 @@ name 'c_indicator', \&c_indicator;
 # c-flow-indicator ::=
 #   ',' | '[' | ']' | '{' | '}'
 
-sub c_flow_indicator {
+rule '023', c_flow_indicator => sub {
   my ($self) = @_;
-  debug1("c_flow_indicator");
+  debug_rule("c_flow_indicator") if DEBUG;
   $self->any(
     $self->chr(','),
     $self->chr('['),
@@ -352,8 +331,7 @@ sub c_flow_indicator {
     $self->chr('{'),
     $self->chr('}')
   );
-}
-name 'c_flow_indicator', \&c_flow_indicator;
+};
 
 
 
@@ -361,12 +339,11 @@ name 'c_flow_indicator', \&c_flow_indicator;
 # b-line-feed ::=
 #   x:A
 
-sub b_line_feed {
+rule '024', b_line_feed => sub {
   my ($self) = @_;
-  debug1("b_line_feed");
+  debug_rule("b_line_feed") if DEBUG;
   $self->chr("\x{0A}");
-}
-name 'b_line_feed', \&b_line_feed;
+};
 
 
 
@@ -374,12 +351,11 @@ name 'b_line_feed', \&b_line_feed;
 # b-carriage-return ::=
 #   x:D
 
-sub b_carriage_return {
+rule '025', b_carriage_return => sub {
   my ($self) = @_;
-  debug1("b_carriage_return");
+  debug_rule("b_carriage_return") if DEBUG;
   $self->chr("\x{0D}");
-}
-name 'b_carriage_return', \&b_carriage_return;
+};
 
 
 
@@ -387,15 +363,14 @@ name 'b_carriage_return', \&b_carriage_return;
 # b-char ::=
 #   b-line-feed | b-carriage-return
 
-sub b_char {
+rule '026', b_char => sub {
   my ($self) = @_;
-  debug1("b_char");
+  debug_rule("b_char") if DEBUG;
   $self->any(
     $self->func('b_line_feed'),
     $self->func('b_carriage_return')
   );
-}
-name 'b_char', \&b_char;
+};
 
 
 
@@ -403,16 +378,15 @@ name 'b_char', \&b_char;
 # nb-char ::=
 #   c-printable - b-char - c-byte-order-mark
 
-sub nb_char {
+rule '027', nb_char => sub {
   my ($self) = @_;
-  debug1("nb_char");
+  debug_rule("nb_char") if DEBUG;
   $self->but(
     $self->func('c_printable'),
     $self->func('b_char'),
     $self->func('c_byte_order_mark')
   );
-}
-name 'nb_char', \&nb_char;
+};
 
 
 
@@ -422,9 +396,9 @@ name 'nb_char', \&nb_char;
 #   | b-carriage-return
 #   | b-line-feed
 
-sub b_break {
+rule '028', b_break => sub {
   my ($self) = @_;
-  debug1("b_break");
+  debug_rule("b_break") if DEBUG;
   $self->any(
     $self->all(
       $self->func('b_carriage_return'),
@@ -433,8 +407,7 @@ sub b_break {
     $self->func('b_carriage_return'),
     $self->func('b_line_feed')
   );
-}
-name 'b_break', \&b_break;
+};
 
 
 
@@ -442,12 +415,11 @@ name 'b_break', \&b_break;
 # b-as-line-feed ::=
 #   b-break
 
-sub b_as_line_feed {
+rule '029', b_as_line_feed => sub {
   my ($self) = @_;
-  debug1("b_as_line_feed");
+  debug_rule("b_as_line_feed") if DEBUG;
   $self->func('b_break');
-}
-name 'b_as_line_feed', \&b_as_line_feed;
+};
 
 
 
@@ -455,12 +427,11 @@ name 'b_as_line_feed', \&b_as_line_feed;
 # b-non-content ::=
 #   b-break
 
-sub b_non_content {
+rule '030', b_non_content => sub {
   my ($self) = @_;
-  debug1("b_non_content");
+  debug_rule("b_non_content") if DEBUG;
   $self->func('b_break');
-}
-name 'b_non_content', \&b_non_content;
+};
 
 
 
@@ -468,12 +439,11 @@ name 'b_non_content', \&b_non_content;
 # s-space ::=
 #   x:20
 
-sub s_space {
+rule '031', s_space => sub {
   my ($self) = @_;
-  debug1("s_space");
+  debug_rule("s_space") if DEBUG;
   $self->chr("\x{20}");
-}
-name 's_space', \&s_space;
+};
 
 
 
@@ -481,12 +451,11 @@ name 's_space', \&s_space;
 # s-tab ::=
 #   x:9
 
-sub s_tab {
+rule '032', s_tab => sub {
   my ($self) = @_;
-  debug1("s_tab");
+  debug_rule("s_tab") if DEBUG;
   $self->chr("\x{09}");
-}
-name 's_tab', \&s_tab;
+};
 
 
 
@@ -494,15 +463,14 @@ name 's_tab', \&s_tab;
 # s-white ::=
 #   s-space | s-tab
 
-sub s_white {
+rule '033', s_white => sub {
   my ($self) = @_;
-  debug1("s_white");
+  debug_rule("s_white") if DEBUG;
   $self->any(
     $self->func('s_space'),
     $self->func('s_tab')
   );
-}
-name 's_white', \&s_white;
+};
 
 
 
@@ -510,15 +478,14 @@ name 's_white', \&s_white;
 # ns-char ::=
 #   nb-char - s-white
 
-sub ns_char {
+rule '034', ns_char => sub {
   my ($self) = @_;
-  debug1("ns_char");
+  debug_rule("ns_char") if DEBUG;
   $self->but(
     $self->func('nb_char'),
     $self->func('s_white')
   );
-}
-name 'ns_char', \&ns_char;
+};
 
 
 
@@ -526,12 +493,11 @@ name 'ns_char', \&ns_char;
 # ns-dec-digit ::=
 #   [x:30-x:39]
 
-sub ns_dec_digit {
+rule '035', ns_dec_digit => sub {
   my ($self) = @_;
-  debug1("ns_dec_digit");
+  debug_rule("ns_dec_digit") if DEBUG;
   $self->rng("\x{30}", "\x{39}");
-}
-name 'ns_dec_digit', \&ns_dec_digit;
+};
 
 
 
@@ -540,16 +506,15 @@ name 'ns_dec_digit', \&ns_dec_digit;
 #   ns-dec-digit
 #   | [x:41-x:46] | [x:61-x:66]
 
-sub ns_hex_digit {
+rule '036', ns_hex_digit => sub {
   my ($self) = @_;
-  debug1("ns_hex_digit");
+  debug_rule("ns_hex_digit") if DEBUG;
   $self->any(
     $self->func('ns_dec_digit'),
     $self->rng("\x{41}", "\x{46}"),
     $self->rng("\x{61}", "\x{66}")
   );
-}
-name 'ns_hex_digit', \&ns_hex_digit;
+};
 
 
 
@@ -557,15 +522,14 @@ name 'ns_hex_digit', \&ns_hex_digit;
 # ns-ascii-letter ::=
 #   [x:41-x:5A] | [x:61-x:7A]
 
-sub ns_ascii_letter {
+rule '037', ns_ascii_letter => sub {
   my ($self) = @_;
-  debug1("ns_ascii_letter");
+  debug_rule("ns_ascii_letter") if DEBUG;
   $self->any(
     $self->rng("\x{41}", "\x{5A}"),
     $self->rng("\x{61}", "\x{7A}")
   );
-}
-name 'ns_ascii_letter', \&ns_ascii_letter;
+};
 
 
 
@@ -573,16 +537,15 @@ name 'ns_ascii_letter', \&ns_ascii_letter;
 # ns-word-char ::=
 #   ns-dec-digit | ns-ascii-letter | '-'
 
-sub ns_word_char {
+rule '038', ns_word_char => sub {
   my ($self) = @_;
-  debug1("ns_word_char");
+  debug_rule("ns_word_char") if DEBUG;
   $self->any(
     $self->func('ns_dec_digit'),
     $self->func('ns_ascii_letter'),
     $self->chr('-')
   );
-}
-name 'ns_word_char', \&ns_word_char;
+};
 
 
 
@@ -592,9 +555,9 @@ name 'ns_word_char', \&ns_word_char;
 #   | ';' | '/' | '?' | ':' | '@' | '&' | '=' | '+' | '$' | ','
 #   | '_' | '.' | '!' | '~' | '*' | ''' | '(' | ')' | '[' | ']'
 
-sub ns_uri_char {
+rule '039', ns_uri_char => sub {
   my ($self) = @_;
-  debug1("ns_uri_char");
+  debug_rule("ns_uri_char") if DEBUG;
   $self->any(
     $self->all(
       $self->chr('%'),
@@ -624,8 +587,7 @@ sub ns_uri_char {
     $self->chr('['),
     $self->chr(']')
   );
-}
-name 'ns_uri_char', \&ns_uri_char;
+};
 
 
 
@@ -633,16 +595,15 @@ name 'ns_uri_char', \&ns_uri_char;
 # ns-tag-char ::=
 #   ns-uri-char - '!' - c-flow-indicator
 
-sub ns_tag_char {
+rule '040', ns_tag_char => sub {
   my ($self) = @_;
-  debug1("ns_tag_char");
+  debug_rule("ns_tag_char") if DEBUG;
   $self->but(
     $self->func('ns_uri_char'),
     $self->chr('!'),
     $self->func('c_flow_indicator')
   );
-}
-name 'ns_tag_char', \&ns_tag_char;
+};
 
 
 
@@ -650,12 +611,11 @@ name 'ns_tag_char', \&ns_tag_char;
 # c-escape ::=
 #   '\'
 
-sub c_escape {
+rule '041', c_escape => sub {
   my ($self) = @_;
-  debug1("c_escape");
+  debug_rule("c_escape") if DEBUG;
   $self->chr("\\");
-}
-name 'c_escape', \&c_escape;
+};
 
 
 
@@ -663,12 +623,11 @@ name 'c_escape', \&c_escape;
 # ns-esc-null ::=
 #   '0'
 
-sub ns_esc_null {
+rule '042', ns_esc_null => sub {
   my ($self) = @_;
-  debug1("ns_esc_null");
+  debug_rule("ns_esc_null") if DEBUG;
   $self->chr('0');
-}
-name 'ns_esc_null', \&ns_esc_null;
+};
 
 
 
@@ -676,12 +635,11 @@ name 'ns_esc_null', \&ns_esc_null;
 # ns-esc-bell ::=
 #   'a'
 
-sub ns_esc_bell {
+rule '043', ns_esc_bell => sub {
   my ($self) = @_;
-  debug1("ns_esc_bell");
+  debug_rule("ns_esc_bell") if DEBUG;
   $self->chr('a');
-}
-name 'ns_esc_bell', \&ns_esc_bell;
+};
 
 
 
@@ -689,12 +647,11 @@ name 'ns_esc_bell', \&ns_esc_bell;
 # ns-esc-backspace ::=
 #   'b'
 
-sub ns_esc_backspace {
+rule '044', ns_esc_backspace => sub {
   my ($self) = @_;
-  debug1("ns_esc_backspace");
+  debug_rule("ns_esc_backspace") if DEBUG;
   $self->chr('b');
-}
-name 'ns_esc_backspace', \&ns_esc_backspace;
+};
 
 
 
@@ -702,15 +659,14 @@ name 'ns_esc_backspace', \&ns_esc_backspace;
 # ns-esc-horizontal-tab ::=
 #   't' | x:9
 
-sub ns_esc_horizontal_tab {
+rule '045', ns_esc_horizontal_tab => sub {
   my ($self) = @_;
-  debug1("ns_esc_horizontal_tab");
+  debug_rule("ns_esc_horizontal_tab") if DEBUG;
   $self->any(
     $self->chr('t'),
     $self->chr("\x{09}")
   );
-}
-name 'ns_esc_horizontal_tab', \&ns_esc_horizontal_tab;
+};
 
 
 
@@ -718,12 +674,11 @@ name 'ns_esc_horizontal_tab', \&ns_esc_horizontal_tab;
 # ns-esc-line-feed ::=
 #   'n'
 
-sub ns_esc_line_feed {
+rule '046', ns_esc_line_feed => sub {
   my ($self) = @_;
-  debug1("ns_esc_line_feed");
+  debug_rule("ns_esc_line_feed") if DEBUG;
   $self->chr('n');
-}
-name 'ns_esc_line_feed', \&ns_esc_line_feed;
+};
 
 
 
@@ -731,12 +686,11 @@ name 'ns_esc_line_feed', \&ns_esc_line_feed;
 # ns-esc-vertical-tab ::=
 #   'v'
 
-sub ns_esc_vertical_tab {
+rule '047', ns_esc_vertical_tab => sub {
   my ($self) = @_;
-  debug1("ns_esc_vertical_tab");
+  debug_rule("ns_esc_vertical_tab") if DEBUG;
   $self->chr('v');
-}
-name 'ns_esc_vertical_tab', \&ns_esc_vertical_tab;
+};
 
 
 
@@ -744,12 +698,11 @@ name 'ns_esc_vertical_tab', \&ns_esc_vertical_tab;
 # ns-esc-form-feed ::=
 #   'f'
 
-sub ns_esc_form_feed {
+rule '048', ns_esc_form_feed => sub {
   my ($self) = @_;
-  debug1("ns_esc_form_feed");
+  debug_rule("ns_esc_form_feed") if DEBUG;
   $self->chr('f');
-}
-name 'ns_esc_form_feed', \&ns_esc_form_feed;
+};
 
 
 
@@ -757,12 +710,11 @@ name 'ns_esc_form_feed', \&ns_esc_form_feed;
 # ns-esc-carriage-return ::=
 #   'r'
 
-sub ns_esc_carriage_return {
+rule '049', ns_esc_carriage_return => sub {
   my ($self) = @_;
-  debug1("ns_esc_carriage_return");
+  debug_rule("ns_esc_carriage_return") if DEBUG;
   $self->chr('r');
-}
-name 'ns_esc_carriage_return', \&ns_esc_carriage_return;
+};
 
 
 
@@ -770,12 +722,11 @@ name 'ns_esc_carriage_return', \&ns_esc_carriage_return;
 # ns-esc-escape ::=
 #   'e'
 
-sub ns_esc_escape {
+rule '050', ns_esc_escape => sub {
   my ($self) = @_;
-  debug1("ns_esc_escape");
+  debug_rule("ns_esc_escape") if DEBUG;
   $self->chr('e');
-}
-name 'ns_esc_escape', \&ns_esc_escape;
+};
 
 
 
@@ -783,12 +734,11 @@ name 'ns_esc_escape', \&ns_esc_escape;
 # ns-esc-space ::=
 #   x:20
 
-sub ns_esc_space {
+rule '051', ns_esc_space => sub {
   my ($self) = @_;
-  debug1("ns_esc_space");
+  debug_rule("ns_esc_space") if DEBUG;
   $self->chr("\x{20}");
-}
-name 'ns_esc_space', \&ns_esc_space;
+};
 
 
 
@@ -796,12 +746,11 @@ name 'ns_esc_space', \&ns_esc_space;
 # ns-esc-double-quote ::=
 #   '"'
 
-sub ns_esc_double_quote {
+rule '052', ns_esc_double_quote => sub {
   my ($self) = @_;
-  debug1("ns_esc_double_quote");
+  debug_rule("ns_esc_double_quote") if DEBUG;
   $self->chr('"');
-}
-name 'ns_esc_double_quote', \&ns_esc_double_quote;
+};
 
 
 
@@ -809,12 +758,11 @@ name 'ns_esc_double_quote', \&ns_esc_double_quote;
 # ns-esc-slash ::=
 #   '/'
 
-sub ns_esc_slash {
+rule '053', ns_esc_slash => sub {
   my ($self) = @_;
-  debug1("ns_esc_slash");
+  debug_rule("ns_esc_slash") if DEBUG;
   $self->chr('/');
-}
-name 'ns_esc_slash', \&ns_esc_slash;
+};
 
 
 
@@ -822,12 +770,11 @@ name 'ns_esc_slash', \&ns_esc_slash;
 # ns-esc-backslash ::=
 #   '\'
 
-sub ns_esc_backslash {
+rule '054', ns_esc_backslash => sub {
   my ($self) = @_;
-  debug1("ns_esc_backslash");
+  debug_rule("ns_esc_backslash") if DEBUG;
   $self->chr("\\");
-}
-name 'ns_esc_backslash', \&ns_esc_backslash;
+};
 
 
 
@@ -835,12 +782,11 @@ name 'ns_esc_backslash', \&ns_esc_backslash;
 # ns-esc-next-line ::=
 #   'N'
 
-sub ns_esc_next_line {
+rule '055', ns_esc_next_line => sub {
   my ($self) = @_;
-  debug1("ns_esc_next_line");
+  debug_rule("ns_esc_next_line") if DEBUG;
   $self->chr('N');
-}
-name 'ns_esc_next_line', \&ns_esc_next_line;
+};
 
 
 
@@ -848,12 +794,11 @@ name 'ns_esc_next_line', \&ns_esc_next_line;
 # ns-esc-non-breaking-space ::=
 #   '_'
 
-sub ns_esc_non_breaking_space {
+rule '056', ns_esc_non_breaking_space => sub {
   my ($self) = @_;
-  debug1("ns_esc_non_breaking_space");
+  debug_rule("ns_esc_non_breaking_space") if DEBUG;
   $self->chr('_');
-}
-name 'ns_esc_non_breaking_space', \&ns_esc_non_breaking_space;
+};
 
 
 
@@ -861,12 +806,11 @@ name 'ns_esc_non_breaking_space', \&ns_esc_non_breaking_space;
 # ns-esc-line-separator ::=
 #   'L'
 
-sub ns_esc_line_separator {
+rule '057', ns_esc_line_separator => sub {
   my ($self) = @_;
-  debug1("ns_esc_line_separator");
+  debug_rule("ns_esc_line_separator") if DEBUG;
   $self->chr('L');
-}
-name 'ns_esc_line_separator', \&ns_esc_line_separator;
+};
 
 
 
@@ -874,12 +818,11 @@ name 'ns_esc_line_separator', \&ns_esc_line_separator;
 # ns-esc-paragraph-separator ::=
 #   'P'
 
-sub ns_esc_paragraph_separator {
+rule '058', ns_esc_paragraph_separator => sub {
   my ($self) = @_;
-  debug1("ns_esc_paragraph_separator");
+  debug_rule("ns_esc_paragraph_separator") if DEBUG;
   $self->chr('P');
-}
-name 'ns_esc_paragraph_separator', \&ns_esc_paragraph_separator;
+};
 
 
 
@@ -888,15 +831,14 @@ name 'ns_esc_paragraph_separator', \&ns_esc_paragraph_separator;
 #   'x'
 #   ( ns-hex-digit{2} )
 
-sub ns_esc_8_bit {
+rule '059', ns_esc_8_bit => sub {
   my ($self) = @_;
-  debug1("ns_esc_8_bit");
+  debug_rule("ns_esc_8_bit") if DEBUG;
   $self->all(
     $self->chr('x'),
     $self->rep($2, $2, $self->func('ns_hex_digit'))
   );
-}
-name 'ns_esc_8_bit', \&ns_esc_8_bit;
+};
 
 
 
@@ -905,15 +847,14 @@ name 'ns_esc_8_bit', \&ns_esc_8_bit;
 #   'u'
 #   ( ns-hex-digit{4} )
 
-sub ns_esc_16_bit {
+rule '060', ns_esc_16_bit => sub {
   my ($self) = @_;
-  debug1("ns_esc_16_bit");
+  debug_rule("ns_esc_16_bit") if DEBUG;
   $self->all(
     $self->chr('u'),
     $self->rep($4, $4, $self->func('ns_hex_digit'))
   );
-}
-name 'ns_esc_16_bit', \&ns_esc_16_bit;
+};
 
 
 
@@ -922,15 +863,14 @@ name 'ns_esc_16_bit', \&ns_esc_16_bit;
 #   'U'
 #   ( ns-hex-digit{8} )
 
-sub ns_esc_32_bit {
+rule '061', ns_esc_32_bit => sub {
   my ($self) = @_;
-  debug1("ns_esc_32_bit");
+  debug_rule("ns_esc_32_bit") if DEBUG;
   $self->all(
     $self->chr('U'),
     $self->rep($8, $8, $self->func('ns_hex_digit'))
   );
-}
-name 'ns_esc_32_bit', \&ns_esc_32_bit;
+};
 
 
 
@@ -946,9 +886,9 @@ name 'ns_esc_32_bit', \&ns_esc_32_bit;
 #   | ns-esc-line-separator | ns-esc-paragraph-separator
 #   | ns-esc-8-bit | ns-esc-16-bit | ns-esc-32-bit )
 
-sub c_ns_esc_char {
+rule '062', c_ns_esc_char => sub {
   my ($self) = @_;
-  debug1("c_ns_esc_char");
+  debug_rule("c_ns_esc_char") if DEBUG;
   $self->all(
     $self->chr("\\"),
     $self->any(
@@ -974,8 +914,7 @@ sub c_ns_esc_char {
       $self->func('ns_esc_32_bit')
     )
   );
-}
-name 'c_ns_esc_char', \&c_ns_esc_char;
+};
 
 
 
@@ -983,12 +922,11 @@ name 'c_ns_esc_char', \&c_ns_esc_char;
 # s-indent(n) ::=
 #   s-space{n}
 
-sub s_indent {
+rule '063', s_indent => sub {
   my ($self, $n) = @_;
-  debug1("s_indent",$n);
+  debug_rule("s_indent",$n) if DEBUG;
   $self->rep($n, $n, $self->func('s_space'));
-}
-name 's_indent', \&s_indent;
+};
 
 
 
@@ -996,17 +934,16 @@ name 's_indent', \&s_indent;
 # s-indent(<n) ::=
 #   s-space{m} <where_m_<_n>
 
-sub s_indent_lt {
+rule '064', s_indent_lt => sub {
   my ($self, $n) = @_;
-  debug1("s_indent_lt",$n);
+  debug_rule("s_indent_lt",$n) if DEBUG;
   $self->may(
     $self->all(
       $self->rep(0, 0, $self->func('s_space')),
       $self->lt($self->len($self->func('match')), $n)
     )
   );
-}
-name 's_indent_lt', \&s_indent_lt;
+};
 
 
 
@@ -1014,17 +951,16 @@ name 's_indent_lt', \&s_indent_lt;
 # s-indent(<=n) ::=
 #   s-space{m} <where_m_<=_n>
 
-sub s_indent_le {
+rule '065', s_indent_le => sub {
   my ($self, $n) = @_;
-  debug1("s_indent_le",$n);
+  debug_rule("s_indent_le",$n) if DEBUG;
   $self->may(
     $self->all(
       $self->rep(0, 0, $self->func('s_space')),
       $self->le($self->len($self->func('match')), $self->chr('n'))
     )
   );
-}
-name 's_indent_le', \&s_indent_le;
+};
 
 
 
@@ -1032,15 +968,14 @@ name 's_indent_le', \&s_indent_le;
 # s-separate-in-line ::=
 #   s-white+ | <start_of_line>
 
-sub s_separate_in_line {
+rule '066', s_separate_in_line => sub {
   my ($self) = @_;
-  debug1("s_separate_in_line");
+  debug_rule("s_separate_in_line") if DEBUG;
   $self->any(
     $self->rep(1, 0, $self->func('s_white')),
     $self->func('start_of_line')
   );
-}
-name 's_separate_in_line', \&s_separate_in_line;
+};
 
 
 
@@ -1051,9 +986,9 @@ name 's_separate_in_line', \&s_separate_in_line;
 #   ( c = flow-out => s-flow-line-prefix(n) )
 #   ( c = flow-in => s-flow-line-prefix(n) )
 
-sub s_line_prefix {
+rule '067', s_line_prefix => sub {
   my ($self, $n, $c) = @_;
-  debug1("s_line_prefix",$n,$c);
+  debug_rule("s_line_prefix",$n,$c) if DEBUG;
   $self->case(
     $c,
     {
@@ -1063,8 +998,7 @@ sub s_line_prefix {
       'flow-out' => [ $self->func('s_flow_line_prefix'), $n ],
     }
   );
-}
-name 's_line_prefix', \&s_line_prefix;
+};
 
 
 
@@ -1072,12 +1006,11 @@ name 's_line_prefix', \&s_line_prefix;
 # s-block-line-prefix(n) ::=
 #   s-indent(n)
 
-sub s_block_line_prefix {
+rule '068', s_block_line_prefix => sub {
   my ($self, $n) = @_;
-  debug1("s_block_line_prefix",$n);
+  debug_rule("s_block_line_prefix",$n) if DEBUG;
   [ $self->func('s_indent'), $n ];
-}
-name 's_block_line_prefix', \&s_block_line_prefix;
+};
 
 
 
@@ -1086,15 +1019,14 @@ name 's_block_line_prefix', \&s_block_line_prefix;
 #   s-indent(n)
 #   s-separate-in-line?
 
-sub s_flow_line_prefix {
+rule '069', s_flow_line_prefix => sub {
   my ($self, $n) = @_;
-  debug1("s_flow_line_prefix",$n);
+  debug_rule("s_flow_line_prefix",$n) if DEBUG;
   $self->all(
     [ $self->func('s_indent'), $n ],
     $self->rep(0, 1, $self->func('s_separate_in_line'))
   );
-}
-name 's_flow_line_prefix', \&s_flow_line_prefix;
+};
 
 
 
@@ -1103,9 +1035,9 @@ name 's_flow_line_prefix', \&s_flow_line_prefix;
 #   ( s-line-prefix(n,c) | s-indent(<n) )
 #   b-as-line-feed
 
-sub l_empty {
+rule '070', l_empty => sub {
   my ($self, $n, $c) = @_;
-  debug1("l_empty",$n,$c);
+  debug_rule("l_empty",$n,$c) if DEBUG;
   $self->all(
     $self->any(
       [ $self->func('s_line_prefix'), $n, $c ],
@@ -1113,8 +1045,7 @@ sub l_empty {
     ),
     $self->func('b_as_line_feed')
   );
-}
-name 'l_empty', \&l_empty;
+};
 
 
 
@@ -1122,15 +1053,14 @@ name 'l_empty', \&l_empty;
 # b-l-trimmed(n,c) ::=
 #   b-non-content l-empty(n,c)+
 
-sub b_l_trimmed {
+rule '071', b_l_trimmed => sub {
   my ($self, $n, $c) = @_;
-  debug1("b_l_trimmed",$n,$c);
+  debug_rule("b_l_trimmed",$n,$c) if DEBUG;
   $self->all(
     $self->func('b_non_content'),
     $self->rep(1, 0, [ $self->func('l_empty'), $n, $c ])
   );
-}
-name 'b_l_trimmed', \&b_l_trimmed;
+};
 
 
 
@@ -1138,12 +1068,11 @@ name 'b_l_trimmed', \&b_l_trimmed;
 # b-as-space ::=
 #   b-break
 
-sub b_as_space {
+rule '072', b_as_space => sub {
   my ($self) = @_;
-  debug1("b_as_space");
+  debug_rule("b_as_space") if DEBUG;
   $self->func('b_break');
-}
-name 'b_as_space', \&b_as_space;
+};
 
 
 
@@ -1151,15 +1080,14 @@ name 'b_as_space', \&b_as_space;
 # b-l-folded(n,c) ::=
 #   b-l-trimmed(n,c) | b-as-space
 
-sub b_l_folded {
+rule '073', b_l_folded => sub {
   my ($self, $n, $c) = @_;
-  debug1("b_l_folded",$n,$c);
+  debug_rule("b_l_folded",$n,$c) if DEBUG;
   $self->any(
     [ $self->func('b_l_trimmed'), $n, $c ],
     $self->func('b_as_space')
   );
-}
-name 'b_l_folded', \&b_l_folded;
+};
 
 
 
@@ -1169,16 +1097,15 @@ name 'b_l_folded', \&b_l_folded;
 #   b-l-folded(n,flow-in)
 #   s-flow-line-prefix(n)
 
-sub s_flow_folded {
+rule '074', s_flow_folded => sub {
   my ($self, $n) = @_;
-  debug1("s_flow_folded",$n);
+  debug_rule("s_flow_folded",$n) if DEBUG;
   $self->all(
     $self->rep(0, 1, $self->func('s_separate_in_line')),
     [ $self->func('b_l_folded'), $n, "flow-in" ],
     [ $self->func('s_flow_line_prefix'), $n ]
   );
-}
-name 's_flow_folded', \&s_flow_folded;
+};
 
 
 
@@ -1186,15 +1113,14 @@ name 's_flow_folded', \&s_flow_folded;
 # c-nb-comment-text ::=
 #   '#' nb-char*
 
-sub c_nb_comment_text {
+rule '075', c_nb_comment_text => sub {
   my ($self) = @_;
-  debug1("c_nb_comment_text");
+  debug_rule("c_nb_comment_text") if DEBUG;
   $self->all(
     $self->chr('#'),
     $self->rep(0, 0, $self->func('nb_char'))
   );
-}
-name 'c_nb_comment_text', \&c_nb_comment_text;
+};
 
 
 
@@ -1202,15 +1128,14 @@ name 'c_nb_comment_text', \&c_nb_comment_text;
 # b-comment ::=
 #   b-non-content | <end_of_file>
 
-sub b_comment {
+rule '076', b_comment => sub {
   my ($self) = @_;
-  debug1("b_comment");
+  debug_rule("b_comment") if DEBUG;
   $self->any(
     $self->func('b_non_content'),
     $self->func('end_of_stream')
   );
-}
-name 'b_comment', \&b_comment;
+};
 
 
 
@@ -1220,9 +1145,9 @@ name 'b_comment', \&b_comment;
 #   c-nb-comment-text? )?
 #   b-comment
 
-sub s_b_comment {
+rule '077', s_b_comment => sub {
   my ($self) = @_;
-  debug1("s_b_comment");
+  debug_rule("s_b_comment") if DEBUG;
   $self->all(
     $self->rep(0, 1,
       $self->all(
@@ -1231,8 +1156,7 @@ sub s_b_comment {
       )),
     $self->func('b_comment')
   );
-}
-name 's_b_comment', \&s_b_comment;
+};
 
 
 
@@ -1241,16 +1165,15 @@ name 's_b_comment', \&s_b_comment;
 #   s-separate-in-line c-nb-comment-text?
 #   b-comment
 
-sub l_comment {
+rule '078', l_comment => sub {
   my ($self) = @_;
-  debug1("l_comment");
+  debug_rule("l_comment") if DEBUG;
   $self->all(
     $self->func('s_separate_in_line'),
     $self->rep(0, 1, $self->func('c_nb_comment_text')),
     $self->func('b_comment')
   );
-}
-name 'l_comment', \&l_comment;
+};
 
 
 
@@ -1259,9 +1182,9 @@ name 'l_comment', \&l_comment;
 #   ( s-b-comment | <start_of_line> )
 #   l-comment*
 
-sub s_l_comments {
+rule '079', s_l_comments => sub {
   my ($self) = @_;
-  debug1("s_l_comments");
+  debug_rule("s_l_comments") if DEBUG;
   $self->all(
     $self->any(
       $self->func('s_b_comment'),
@@ -1269,8 +1192,7 @@ sub s_l_comments {
     ),
     $self->rep(0, 0, $self->func('l_comment'))
   );
-}
-name 's_l_comments', \&s_l_comments;
+};
 
 
 
@@ -1283,9 +1205,9 @@ name 's_l_comments', \&s_l_comments;
 #   ( c = block-key => s-separate-in-line )
 #   ( c = flow-key => s-separate-in-line )
 
-sub s_separate {
+rule '080', s_separate => sub {
   my ($self, $n, $c) = @_;
-  debug1("s_separate",$n,$c);
+  debug_rule("s_separate",$n,$c) if DEBUG;
   $self->case(
     $c,
     {
@@ -1297,8 +1219,7 @@ sub s_separate {
       'flow-out' => [ $self->func('s_separate_lines'), $n ],
     }
   );
-}
-name 's_separate', \&s_separate;
+};
 
 
 
@@ -1308,9 +1229,9 @@ name 's_separate', \&s_separate;
 #   s-flow-line-prefix(n) )
 #   | s-separate-in-line
 
-sub s_separate_lines {
+rule '081', s_separate_lines => sub {
   my ($self, $n) = @_;
-  debug1("s_separate_lines",$n);
+  debug_rule("s_separate_lines",$n) if DEBUG;
   $self->any(
     $self->all(
       $self->func('s_l_comments'),
@@ -1318,8 +1239,7 @@ sub s_separate_lines {
     ),
     $self->func('s_separate_in_line')
   );
-}
-name 's_separate_lines', \&s_separate_lines;
+};
 
 
 
@@ -1331,9 +1251,9 @@ name 's_separate_lines', \&s_separate_lines;
 #   | ns-reserved-directive )
 #   s-l-comments
 
-sub l_directive {
+rule '082', l_directive => sub {
   my ($self) = @_;
-  debug1("l_directive");
+  debug_rule("l_directive") if DEBUG;
   $self->all(
     $self->chr('%'),
     $self->any(
@@ -1343,8 +1263,7 @@ sub l_directive {
     ),
     $self->func('s_l_comments')
   );
-}
-name 'l_directive', \&l_directive;
+};
 
 
 
@@ -1353,9 +1272,9 @@ name 'l_directive', \&l_directive;
 #   ns-directive-name
 #   ( s-separate-in-line ns-directive-parameter )*
 
-sub ns_reserved_directive {
+rule '083', ns_reserved_directive => sub {
   my ($self) = @_;
-  debug1("ns_reserved_directive");
+  debug_rule("ns_reserved_directive") if DEBUG;
   $self->all(
     $self->func('ns_directive_name'),
     $self->rep(0, 0,
@@ -1364,8 +1283,7 @@ sub ns_reserved_directive {
         $self->func('ns_directive_parameter')
       ))
   );
-}
-name 'ns_reserved_directive', \&ns_reserved_directive;
+};
 
 
 
@@ -1373,12 +1291,11 @@ name 'ns_reserved_directive', \&ns_reserved_directive;
 # ns-directive-name ::=
 #   ns-char+
 
-sub ns_directive_name {
+rule '084', ns_directive_name => sub {
   my ($self) = @_;
-  debug1("ns_directive_name");
+  debug_rule("ns_directive_name") if DEBUG;
   $self->rep(1, 0, $self->func('ns_char'));
-}
-name 'ns_directive_name', \&ns_directive_name;
+};
 
 
 
@@ -1386,12 +1303,11 @@ name 'ns_directive_name', \&ns_directive_name;
 # ns-directive-parameter ::=
 #   ns-char+
 
-sub ns_directive_parameter {
+rule '085', ns_directive_parameter => sub {
   my ($self) = @_;
-  debug1("ns_directive_parameter");
+  debug_rule("ns_directive_parameter") if DEBUG;
   $self->rep(1, 0, $self->func('ns_char'));
-}
-name 'ns_directive_parameter', \&ns_directive_parameter;
+};
 
 
 
@@ -1400,9 +1316,9 @@ name 'ns_directive_parameter', \&ns_directive_parameter;
 #   'Y' 'A' 'M' 'L'
 #   s-separate-in-line ns-yaml-version
 
-sub ns_yaml_directive {
+rule '086', ns_yaml_directive => sub {
   my ($self) = @_;
-  debug1("ns_yaml_directive");
+  debug_rule("ns_yaml_directive") if DEBUG;
   $self->all(
     $self->chr('Y'),
     $self->chr('A'),
@@ -1411,8 +1327,7 @@ sub ns_yaml_directive {
     $self->func('s_separate_in_line'),
     $self->func('ns_yaml_version')
   );
-}
-name 'ns_yaml_directive', \&ns_yaml_directive;
+};
 
 
 
@@ -1420,16 +1335,15 @@ name 'ns_yaml_directive', \&ns_yaml_directive;
 # ns-yaml-version ::=
 #   ns-dec-digit+ '.' ns-dec-digit+
 
-sub ns_yaml_version {
+rule '087', ns_yaml_version => sub {
   my ($self) = @_;
-  debug1("ns_yaml_version");
+  debug_rule("ns_yaml_version") if DEBUG;
   $self->all(
     $self->rep(1, 0, $self->func('ns_dec_digit')),
     $self->chr('.'),
     $self->rep(1, 0, $self->func('ns_dec_digit'))
   );
-}
-name 'ns_yaml_version', \&ns_yaml_version;
+};
 
 
 
@@ -1439,9 +1353,9 @@ name 'ns_yaml_version', \&ns_yaml_version;
 #   s-separate-in-line c-tag-handle
 #   s-separate-in-line ns-tag-prefix
 
-sub ns_tag_directive {
+rule '088', ns_tag_directive => sub {
   my ($self) = @_;
-  debug1("ns_tag_directive");
+  debug_rule("ns_tag_directive") if DEBUG;
   $self->all(
     $self->chr('T'),
     $self->chr('A'),
@@ -1451,8 +1365,7 @@ sub ns_tag_directive {
     $self->func('s_separate_in_line'),
     $self->func('ns_tag_prefix')
   );
-}
-name 'ns_tag_directive', \&ns_tag_directive;
+};
 
 
 
@@ -1462,16 +1375,15 @@ name 'ns_tag_directive', \&ns_tag_directive;
 #   | c-secondary-tag-handle
 #   | c-primary-tag-handle
 
-sub c_tag_handle {
+rule '089', c_tag_handle => sub {
   my ($self) = @_;
-  debug1("c_tag_handle");
+  debug_rule("c_tag_handle") if DEBUG;
   $self->any(
     $self->func('c_named_tag_handle'),
     $self->func('c_secondary_tag_handle'),
     $self->func('c_primary_tag_handle')
   );
-}
-name 'c_tag_handle', \&c_tag_handle;
+};
 
 
 
@@ -1479,12 +1391,11 @@ name 'c_tag_handle', \&c_tag_handle;
 # c-primary-tag-handle ::=
 #   '!'
 
-sub c_primary_tag_handle {
+rule '090', c_primary_tag_handle => sub {
   my ($self) = @_;
-  debug1("c_primary_tag_handle");
+  debug_rule("c_primary_tag_handle") if DEBUG;
   $self->chr('!');
-}
-name 'c_primary_tag_handle', \&c_primary_tag_handle;
+};
 
 
 
@@ -1492,15 +1403,14 @@ name 'c_primary_tag_handle', \&c_primary_tag_handle;
 # c-secondary-tag-handle ::=
 #   '!' '!'
 
-sub c_secondary_tag_handle {
+rule '091', c_secondary_tag_handle => sub {
   my ($self) = @_;
-  debug1("c_secondary_tag_handle");
+  debug_rule("c_secondary_tag_handle") if DEBUG;
   $self->all(
     $self->chr('!'),
     $self->chr('!')
   );
-}
-name 'c_secondary_tag_handle', \&c_secondary_tag_handle;
+};
 
 
 
@@ -1508,16 +1418,15 @@ name 'c_secondary_tag_handle', \&c_secondary_tag_handle;
 # c-named-tag-handle ::=
 #   '!' ns-word-char+ '!'
 
-sub c_named_tag_handle {
+rule '092', c_named_tag_handle => sub {
   my ($self) = @_;
-  debug1("c_named_tag_handle");
+  debug_rule("c_named_tag_handle") if DEBUG;
   $self->all(
     $self->chr('!'),
     $self->rep(1, 0, $self->func('ns_word_char')),
     $self->chr('!')
   );
-}
-name 'c_named_tag_handle', \&c_named_tag_handle;
+};
 
 
 
@@ -1525,15 +1434,14 @@ name 'c_named_tag_handle', \&c_named_tag_handle;
 # ns-tag-prefix ::=
 #   c-ns-local-tag-prefix | ns-global-tag-prefix
 
-sub ns_tag_prefix {
+rule '093', ns_tag_prefix => sub {
   my ($self) = @_;
-  debug1("ns_tag_prefix");
+  debug_rule("ns_tag_prefix") if DEBUG;
   $self->any(
     $self->func('c_ns_local_tag_prefix'),
     $self->func('ns_global_tag_prefix')
   );
-}
-name 'ns_tag_prefix', \&ns_tag_prefix;
+};
 
 
 
@@ -1541,15 +1449,14 @@ name 'ns_tag_prefix', \&ns_tag_prefix;
 # c-ns-local-tag-prefix ::=
 #   '!' ns-uri-char*
 
-sub c_ns_local_tag_prefix {
+rule '094', c_ns_local_tag_prefix => sub {
   my ($self) = @_;
-  debug1("c_ns_local_tag_prefix");
+  debug_rule("c_ns_local_tag_prefix") if DEBUG;
   $self->all(
     $self->chr('!'),
     $self->rep(0, 0, $self->func('ns_uri_char'))
   );
-}
-name 'c_ns_local_tag_prefix', \&c_ns_local_tag_prefix;
+};
 
 
 
@@ -1557,15 +1464,14 @@ name 'c_ns_local_tag_prefix', \&c_ns_local_tag_prefix;
 # ns-global-tag-prefix ::=
 #   ns-tag-char ns-uri-char*
 
-sub ns_global_tag_prefix {
+rule '095', ns_global_tag_prefix => sub {
   my ($self) = @_;
-  debug1("ns_global_tag_prefix");
+  debug_rule("ns_global_tag_prefix") if DEBUG;
   $self->all(
     $self->func('ns_tag_char'),
     $self->rep(0, 0, $self->func('ns_uri_char'))
   );
-}
-name 'ns_global_tag_prefix', \&ns_global_tag_prefix;
+};
 
 
 
@@ -1576,9 +1482,9 @@ name 'ns_global_tag_prefix', \&ns_global_tag_prefix;
 #   | ( c-ns-anchor-property
 #   ( s-separate(n,c) c-ns-tag-property )? )
 
-sub c_ns_properties {
+rule '096', c_ns_properties => sub {
   my ($self, $n, $c) = @_;
-  debug1("c_ns_properties",$n,$c);
+  debug_rule("c_ns_properties",$n,$c) if DEBUG;
   $self->any(
     $self->all(
       $self->func('c_ns_tag_property'),
@@ -1597,8 +1503,7 @@ sub c_ns_properties {
         ))
     )
   );
-}
-name 'c_ns_properties', \&c_ns_properties;
+};
 
 
 
@@ -1608,16 +1513,15 @@ name 'c_ns_properties', \&c_ns_properties;
 #   | c-ns-shorthand-tag
 #   | c-non-specific-tag
 
-sub c_ns_tag_property {
+rule '097', c_ns_tag_property => sub {
   my ($self) = @_;
-  debug1("c_ns_tag_property");
+  debug_rule("c_ns_tag_property") if DEBUG;
   $self->any(
     $self->func('c_verbatim_tag'),
     $self->func('c_ns_shorthand_tag'),
     $self->func('c_non_specific_tag')
   );
-}
-name 'c_ns_tag_property', \&c_ns_tag_property;
+};
 
 
 
@@ -1625,17 +1529,16 @@ name 'c_ns_tag_property', \&c_ns_tag_property;
 # c-verbatim-tag ::=
 #   '!' '<' ns-uri-char+ '>'
 
-sub c_verbatim_tag {
+rule '098', c_verbatim_tag => sub {
   my ($self) = @_;
-  debug1("c_verbatim_tag");
+  debug_rule("c_verbatim_tag") if DEBUG;
   $self->all(
     $self->chr('!'),
     $self->chr('<'),
     $self->rep(1, 0, $self->func('ns_uri_char')),
     $self->chr('>')
   );
-}
-name 'c_verbatim_tag', \&c_verbatim_tag;
+};
 
 
 
@@ -1643,15 +1546,14 @@ name 'c_verbatim_tag', \&c_verbatim_tag;
 # c-ns-shorthand-tag ::=
 #   c-tag-handle ns-tag-char+
 
-sub c_ns_shorthand_tag {
+rule '099', c_ns_shorthand_tag => sub {
   my ($self) = @_;
-  debug1("c_ns_shorthand_tag");
+  debug_rule("c_ns_shorthand_tag") if DEBUG;
   $self->all(
     $self->func('c_tag_handle'),
     $self->rep(1, 0, $self->func('ns_tag_char'))
   );
-}
-name 'c_ns_shorthand_tag', \&c_ns_shorthand_tag;
+};
 
 
 
@@ -1659,12 +1561,11 @@ name 'c_ns_shorthand_tag', \&c_ns_shorthand_tag;
 # c-non-specific-tag ::=
 #   '!'
 
-sub c_non_specific_tag {
+rule '100', c_non_specific_tag => sub {
   my ($self) = @_;
-  debug1("c_non_specific_tag");
+  debug_rule("c_non_specific_tag") if DEBUG;
   $self->chr('!');
-}
-name 'c_non_specific_tag', \&c_non_specific_tag;
+};
 
 
 
@@ -1672,15 +1573,14 @@ name 'c_non_specific_tag', \&c_non_specific_tag;
 # c-ns-anchor-property ::=
 #   '&' ns-anchor-name
 
-sub c_ns_anchor_property {
+rule '101', c_ns_anchor_property => sub {
   my ($self) = @_;
-  debug1("c_ns_anchor_property");
+  debug_rule("c_ns_anchor_property") if DEBUG;
   $self->all(
     $self->chr('&'),
     $self->func('ns_anchor_name')
   );
-}
-name 'c_ns_anchor_property', \&c_ns_anchor_property;
+};
 
 
 
@@ -1688,15 +1588,14 @@ name 'c_ns_anchor_property', \&c_ns_anchor_property;
 # ns-anchor-char ::=
 #   ns-char - c-flow-indicator
 
-sub ns_anchor_char {
+rule '102', ns_anchor_char => sub {
   my ($self) = @_;
-  debug1("ns_anchor_char");
+  debug_rule("ns_anchor_char") if DEBUG;
   $self->but(
     $self->func('ns_char'),
     $self->func('c_flow_indicator')
   );
-}
-name 'ns_anchor_char', \&ns_anchor_char;
+};
 
 
 
@@ -1704,12 +1603,11 @@ name 'ns_anchor_char', \&ns_anchor_char;
 # ns-anchor-name ::=
 #   ns-anchor-char+
 
-sub ns_anchor_name {
+rule '103', ns_anchor_name => sub {
   my ($self) = @_;
-  debug1("ns_anchor_name");
+  debug_rule("ns_anchor_name") if DEBUG;
   $self->rep(1, 0, $self->func('ns_anchor_char'));
-}
-name 'ns_anchor_name', \&ns_anchor_name;
+};
 
 
 
@@ -1717,15 +1615,14 @@ name 'ns_anchor_name', \&ns_anchor_name;
 # c-ns-alias-node ::=
 #   '*' ns-anchor-name
 
-sub c_ns_alias_node {
+rule '104', c_ns_alias_node => sub {
   my ($self) = @_;
-  debug1("c_ns_alias_node");
+  debug_rule("c_ns_alias_node") if DEBUG;
   $self->all(
     $self->chr('*'),
     $self->func('ns_anchor_name')
   );
-}
-name 'c_ns_alias_node', \&c_ns_alias_node;
+};
 
 
 
@@ -1733,12 +1630,11 @@ name 'c_ns_alias_node', \&c_ns_alias_node;
 # e-scalar ::=
 #   <empty>
 
-sub e_scalar {
+rule '105', e_scalar => sub {
   my ($self) = @_;
-  debug1("e_scalar");
+  debug_rule("e_scalar") if DEBUG;
   $self->func('empty');
-}
-name 'e_scalar', \&e_scalar;
+};
 
 
 
@@ -1746,12 +1642,11 @@ name 'e_scalar', \&e_scalar;
 # e-node ::=
 #   e-scalar
 
-sub e_node {
+rule '106', e_node => sub {
   my ($self) = @_;
-  debug1("e_node");
+  debug_rule("e_node") if DEBUG;
   $self->func('e_scalar');
-}
-name 'e_node', \&e_node;
+};
 
 
 
@@ -1759,9 +1654,9 @@ name 'e_node', \&e_node;
 # nb-double-char ::=
 #   c-ns-esc-char | ( nb-json - '\' - '"' )
 
-sub nb_double_char {
+rule '107', nb_double_char => sub {
   my ($self) = @_;
-  debug1("nb_double_char");
+  debug_rule("nb_double_char") if DEBUG;
   $self->any(
     $self->func('c_ns_esc_char'),
     $self->but(
@@ -1770,8 +1665,7 @@ sub nb_double_char {
       $self->chr('"')
     )
   );
-}
-name 'nb_double_char', \&nb_double_char;
+};
 
 
 
@@ -1779,15 +1673,14 @@ name 'nb_double_char', \&nb_double_char;
 # ns-double-char ::=
 #   nb-double-char - s-white
 
-sub ns_double_char {
+rule '108', ns_double_char => sub {
   my ($self) = @_;
-  debug1("ns_double_char");
+  debug_rule("ns_double_char") if DEBUG;
   $self->but(
     $self->func('nb_double_char'),
     $self->func('s_white')
   );
-}
-name 'ns_double_char', \&ns_double_char;
+};
 
 
 
@@ -1796,16 +1689,15 @@ name 'ns_double_char', \&ns_double_char;
 #   '"' nb-double-text(n,c)
 #   '"'
 
-sub c_double_quoted {
+rule '109', c_double_quoted => sub {
   my ($self, $n, $c) = @_;
-  debug1("c_double_quoted",$n,$c);
+  debug_rule("c_double_quoted",$n,$c) if DEBUG;
   $self->all(
     $self->chr('"'),
     [ $self->func('nb_double_text'), $n, $c ],
     $self->chr('"')
   );
-}
-name 'c_double_quoted', \&c_double_quoted;
+};
 
 
 
@@ -1816,9 +1708,9 @@ name 'c_double_quoted', \&c_double_quoted;
 #   ( c = block-key => nb-double-one-line )
 #   ( c = flow-key => nb-double-one-line )
 
-sub nb_double_text {
+rule '110', nb_double_text => sub {
   my ($self, $n, $c) = @_;
-  debug1("nb_double_text",$n,$c);
+  debug_rule("nb_double_text",$n,$c) if DEBUG;
   $self->case(
     $c,
     {
@@ -1828,8 +1720,7 @@ sub nb_double_text {
       'flow-out' => [ $self->func('nb_double_multi_line'), $n ],
     }
   );
-}
-name 'nb_double_text', \&nb_double_text;
+};
 
 
 
@@ -1837,12 +1728,11 @@ name 'nb_double_text', \&nb_double_text;
 # nb-double-one-line ::=
 #   nb-double-char*
 
-sub nb_double_one_line {
+rule '111', nb_double_one_line => sub {
   my ($self) = @_;
-  debug1("nb_double_one_line");
+  debug_rule("nb_double_one_line") if DEBUG;
   $self->rep(0, 0, $self->func('nb_double_char'));
-}
-name 'nb_double_one_line', \&nb_double_one_line;
+};
 
 
 
@@ -1852,9 +1742,9 @@ name 'nb_double_one_line', \&nb_double_one_line;
 #   b-non-content
 #   l-empty(n,flow-in)* s-flow-line-prefix(n)
 
-sub s_double_escaped {
+rule '112', s_double_escaped => sub {
   my ($self, $n) = @_;
-  debug1("s_double_escaped",$n);
+  debug_rule("s_double_escaped",$n) if DEBUG;
   $self->all(
     $self->rep(0, 0, $self->func('s_white')),
     $self->chr("\\"),
@@ -1862,8 +1752,7 @@ sub s_double_escaped {
     $self->rep(0, 0, [ $self->func('l_empty'), $n, "flow-in" ]),
     [ $self->func('s_flow_line_prefix'), $n ]
   );
-}
-name 's_double_escaped', \&s_double_escaped;
+};
 
 
 
@@ -1871,15 +1760,14 @@ name 's_double_escaped', \&s_double_escaped;
 # s-double-break(n) ::=
 #   s-double-escaped(n) | s-flow-folded(n)
 
-sub s_double_break {
+rule '113', s_double_break => sub {
   my ($self, $n) = @_;
-  debug1("s_double_break",$n);
+  debug_rule("s_double_break",$n) if DEBUG;
   $self->any(
     [ $self->func('s_double_escaped'), $n ],
     [ $self->func('s_flow_folded'), $n ]
   );
-}
-name 's_double_break', \&s_double_break;
+};
 
 
 
@@ -1887,16 +1775,15 @@ name 's_double_break', \&s_double_break;
 # nb-ns-double-in-line ::=
 #   ( s-white* ns-double-char )*
 
-sub nb_ns_double_in_line {
+rule '114', nb_ns_double_in_line => sub {
   my ($self) = @_;
-  debug1("nb_ns_double_in_line");
+  debug_rule("nb_ns_double_in_line") if DEBUG;
   $self->rep(0, 0,
     $self->all(
       $self->rep(0, 0, $self->func('s_white')),
       $self->func('ns_double_char')
     ));
-}
-name 'nb_ns_double_in_line', \&nb_ns_double_in_line;
+};
 
 
 
@@ -1906,9 +1793,9 @@ name 'nb_ns_double_in_line', \&nb_ns_double_in_line;
 #   ( ns-double-char nb-ns-double-in-line
 #   ( s-double-next-line(n) | s-white* ) )?
 
-sub s_double_next_line {
+rule '115', s_double_next_line => sub {
   my ($self, $n) = @_;
-  debug1("s_double_next_line",$n);
+  debug_rule("s_double_next_line",$n) if DEBUG;
   $self->all(
     [ $self->func('s_double_break'), $n ],
     $self->rep(0, 1,
@@ -1921,8 +1808,7 @@ sub s_double_next_line {
         )
       ))
   );
-}
-name 's_double_next_line', \&s_double_next_line;
+};
 
 
 
@@ -1931,9 +1817,9 @@ name 's_double_next_line', \&s_double_next_line;
 #   nb-ns-double-in-line
 #   ( s-double-next-line(n) | s-white* )
 
-sub nb_double_multi_line {
+rule '116', nb_double_multi_line => sub {
   my ($self, $n) = @_;
-  debug1("nb_double_multi_line",$n);
+  debug_rule("nb_double_multi_line",$n) if DEBUG;
   $self->all(
     $self->func('nb_ns_double_in_line'),
     $self->any(
@@ -1941,8 +1827,7 @@ sub nb_double_multi_line {
       $self->rep(0, 0, $self->func('s_white'))
     )
   );
-}
-name 'nb_double_multi_line', \&nb_double_multi_line;
+};
 
 
 
@@ -1950,15 +1835,14 @@ name 'nb_double_multi_line', \&nb_double_multi_line;
 # c-quoted-quote ::=
 #   ''' '''
 
-sub c_quoted_quote {
+rule '117', c_quoted_quote => sub {
   my ($self) = @_;
-  debug1("c_quoted_quote");
+  debug_rule("c_quoted_quote") if DEBUG;
   $self->all(
     $self->chr("'"),
     $self->chr("'")
   );
-}
-name 'c_quoted_quote', \&c_quoted_quote;
+};
 
 
 
@@ -1966,9 +1850,9 @@ name 'c_quoted_quote', \&c_quoted_quote;
 # nb-single-char ::=
 #   c-quoted-quote | ( nb-json - ''' )
 
-sub nb_single_char {
+rule '118', nb_single_char => sub {
   my ($self) = @_;
-  debug1("nb_single_char");
+  debug_rule("nb_single_char") if DEBUG;
   $self->any(
     $self->func('c_quoted_quote'),
     $self->but(
@@ -1976,8 +1860,7 @@ sub nb_single_char {
       $self->chr("'")
     )
   );
-}
-name 'nb_single_char', \&nb_single_char;
+};
 
 
 
@@ -1985,15 +1868,14 @@ name 'nb_single_char', \&nb_single_char;
 # ns-single-char ::=
 #   nb-single-char - s-white
 
-sub ns_single_char {
+rule '119', ns_single_char => sub {
   my ($self) = @_;
-  debug1("ns_single_char");
+  debug_rule("ns_single_char") if DEBUG;
   $self->but(
     $self->func('nb_single_char'),
     $self->func('s_white')
   );
-}
-name 'ns_single_char', \&ns_single_char;
+};
 
 
 
@@ -2002,16 +1884,15 @@ name 'ns_single_char', \&ns_single_char;
 #   ''' nb-single-text(n,c)
 #   '''
 
-sub c_single_quoted {
+rule '120', c_single_quoted => sub {
   my ($self, $n, $c) = @_;
-  debug1("c_single_quoted",$n,$c);
+  debug_rule("c_single_quoted",$n,$c) if DEBUG;
   $self->all(
     $self->chr("'"),
     [ $self->func('nb_single_text'), $n, $c ],
     $self->chr("'")
   );
-}
-name 'c_single_quoted', \&c_single_quoted;
+};
 
 
 
@@ -2022,9 +1903,9 @@ name 'c_single_quoted', \&c_single_quoted;
 #   ( c = block-key => nb-single-one-line )
 #   ( c = flow-key => nb-single-one-line )
 
-sub nb_single_text {
+rule '121', nb_single_text => sub {
   my ($self, $n, $c) = @_;
-  debug1("nb_single_text",$n,$c);
+  debug_rule("nb_single_text",$n,$c) if DEBUG;
   $self->case(
     $c,
     {
@@ -2034,8 +1915,7 @@ sub nb_single_text {
       'flow-out' => [ $self->func('nb_single_multi_line'), $n ],
     }
   );
-}
-name 'nb_single_text', \&nb_single_text;
+};
 
 
 
@@ -2043,12 +1923,11 @@ name 'nb_single_text', \&nb_single_text;
 # nb-single-one-line ::=
 #   nb-single-char*
 
-sub nb_single_one_line {
+rule '122', nb_single_one_line => sub {
   my ($self) = @_;
-  debug1("nb_single_one_line");
+  debug_rule("nb_single_one_line") if DEBUG;
   $self->rep(0, 0, $self->func('nb_single_char'));
-}
-name 'nb_single_one_line', \&nb_single_one_line;
+};
 
 
 
@@ -2056,16 +1935,15 @@ name 'nb_single_one_line', \&nb_single_one_line;
 # nb-ns-single-in-line ::=
 #   ( s-white* ns-single-char )*
 
-sub nb_ns_single_in_line {
+rule '123', nb_ns_single_in_line => sub {
   my ($self) = @_;
-  debug1("nb_ns_single_in_line");
+  debug_rule("nb_ns_single_in_line") if DEBUG;
   $self->rep(0, 0,
     $self->all(
       $self->rep(0, 0, $self->func('s_white')),
       $self->func('ns_single_char')
     ));
-}
-name 'nb_ns_single_in_line', \&nb_ns_single_in_line;
+};
 
 
 
@@ -2075,9 +1953,9 @@ name 'nb_ns_single_in_line', \&nb_ns_single_in_line;
 #   ( ns-single-char nb-ns-single-in-line
 #   ( s-single-next-line(n) | s-white* ) )?
 
-sub s_single_next_line {
+rule '124', s_single_next_line => sub {
   my ($self, $n) = @_;
-  debug1("s_single_next_line",$n);
+  debug_rule("s_single_next_line",$n) if DEBUG;
   $self->all(
     [ $self->func('s_flow_folded'), $n ],
     $self->rep(0, 1,
@@ -2090,8 +1968,7 @@ sub s_single_next_line {
         )
       ))
   );
-}
-name 's_single_next_line', \&s_single_next_line;
+};
 
 
 
@@ -2100,9 +1977,9 @@ name 's_single_next_line', \&s_single_next_line;
 #   nb-ns-single-in-line
 #   ( s-single-next-line(n) | s-white* )
 
-sub nb_single_multi_line {
+rule '125', nb_single_multi_line => sub {
   my ($self, $n) = @_;
-  debug1("nb_single_multi_line",$n);
+  debug_rule("nb_single_multi_line",$n) if DEBUG;
   $self->all(
     $self->func('nb_ns_single_in_line'),
     $self->any(
@@ -2110,8 +1987,7 @@ sub nb_single_multi_line {
       $self->rep(0, 0, $self->func('s_white'))
     )
   );
-}
-name 'nb_single_multi_line', \&nb_single_multi_line;
+};
 
 
 
@@ -2121,9 +1997,9 @@ name 'nb_single_multi_line', \&nb_single_multi_line;
 #   | ( ( '?' | ':' | '-' )
 #   <followed_by_an_ns-plain-safe(c)> )
 
-sub ns_plain_first {
+rule '126', ns_plain_first => sub {
   my ($self, $c) = @_;
-  debug1("ns_plain_first",$c);
+  debug_rule("ns_plain_first",$c) if DEBUG;
   $self->any(
     $self->but(
       $self->func('ns_char'),
@@ -2138,8 +2014,7 @@ sub ns_plain_first {
       $self->chk('=', [ $self->func('ns_plain_safe'), $c ])
     )
   );
-}
-name 'ns_plain_first', \&ns_plain_first;
+};
 
 
 
@@ -2150,9 +2025,9 @@ name 'ns_plain_first', \&ns_plain_first;
 #   ( c = block-key => ns-plain-safe-out )
 #   ( c = flow-key => ns-plain-safe-in )
 
-sub ns_plain_safe {
+rule '127', ns_plain_safe => sub {
   my ($self, $c) = @_;
-  debug1("ns_plain_safe",$c);
+  debug_rule("ns_plain_safe",$c) if DEBUG;
   $self->case(
     $c,
     {
@@ -2162,8 +2037,7 @@ sub ns_plain_safe {
       'flow-out' => $self->func('ns_plain_safe_out'),
     }
   );
-}
-name 'ns_plain_safe', \&ns_plain_safe;
+};
 
 
 
@@ -2171,12 +2045,11 @@ name 'ns_plain_safe', \&ns_plain_safe;
 # ns-plain-safe-out ::=
 #   ns-char
 
-sub ns_plain_safe_out {
+rule '128', ns_plain_safe_out => sub {
   my ($self) = @_;
-  debug1("ns_plain_safe_out");
+  debug_rule("ns_plain_safe_out") if DEBUG;
   $self->func('ns_char');
-}
-name 'ns_plain_safe_out', \&ns_plain_safe_out;
+};
 
 
 
@@ -2184,15 +2057,14 @@ name 'ns_plain_safe_out', \&ns_plain_safe_out;
 # ns-plain-safe-in ::=
 #   ns-char - c-flow-indicator
 
-sub ns_plain_safe_in {
+rule '129', ns_plain_safe_in => sub {
   my ($self) = @_;
-  debug1("ns_plain_safe_in");
+  debug_rule("ns_plain_safe_in") if DEBUG;
   $self->but(
     $self->func('ns_char'),
     $self->func('c_flow_indicator')
   );
-}
-name 'ns_plain_safe_in', \&ns_plain_safe_in;
+};
 
 
 
@@ -2202,9 +2074,9 @@ name 'ns_plain_safe_in', \&ns_plain_safe_in;
 #   | ( <an_ns-char_preceding> '#' )
 #   | ( ':' <followed_by_an_ns-plain-safe(c)> )
 
-sub ns_plain_char {
+rule '130', ns_plain_char => sub {
   my ($self, $c) = @_;
-  debug1("ns_plain_char",$c);
+  debug_rule("ns_plain_char",$c) if DEBUG;
   $self->any(
     $self->but(
       [ $self->func('ns_plain_safe'), $c ],
@@ -2220,8 +2092,7 @@ sub ns_plain_char {
       $self->chk('=', [ $self->func('ns_plain_safe'), $c ])
     )
   );
-}
-name 'ns_plain_char', \&ns_plain_char;
+};
 
 
 
@@ -2232,9 +2103,9 @@ name 'ns_plain_char', \&ns_plain_char;
 #   ( c = block-key => ns-plain-one-line(c) )
 #   ( c = flow-key => ns-plain-one-line(c) )
 
-sub ns_plain {
+rule '131', ns_plain => sub {
   my ($self, $n, $c) = @_;
-  debug1("ns_plain",$n,$c);
+  debug_rule("ns_plain",$n,$c) if DEBUG;
   $self->case(
     $c,
     {
@@ -2244,8 +2115,7 @@ sub ns_plain {
       'flow-out' => [ $self->func('ns_plain_multi_line'), $n, $c ],
     }
   );
-}
-name 'ns_plain', \&ns_plain;
+};
 
 
 
@@ -2254,16 +2124,15 @@ name 'ns_plain', \&ns_plain;
 #   ( s-white*
 #   ns-plain-char(c) )*
 
-sub nb_ns_plain_in_line {
+rule '132', nb_ns_plain_in_line => sub {
   my ($self, $c) = @_;
-  debug1("nb_ns_plain_in_line",$c);
+  debug_rule("nb_ns_plain_in_line",$c) if DEBUG;
   $self->rep(0, 0,
     $self->all(
       $self->rep(0, 0, $self->func('s_white')),
       [ $self->func('ns_plain_char'), $c ]
     ));
-}
-name 'nb_ns_plain_in_line', \&nb_ns_plain_in_line;
+};
 
 
 
@@ -2272,15 +2141,14 @@ name 'nb_ns_plain_in_line', \&nb_ns_plain_in_line;
 #   ns-plain-first(c)
 #   nb-ns-plain-in-line(c)
 
-sub ns_plain_one_line {
+rule '133', ns_plain_one_line => sub {
   my ($self, $c) = @_;
-  debug1("ns_plain_one_line",$c);
+  debug_rule("ns_plain_one_line",$c) if DEBUG;
   $self->all(
     [ $self->func('ns_plain_first'), $c ],
     [ $self->func('nb_ns_plain_in_line'), $c ]
   );
-}
-name 'ns_plain_one_line', \&ns_plain_one_line;
+};
 
 
 
@@ -2289,16 +2157,15 @@ name 'ns_plain_one_line', \&ns_plain_one_line;
 #   s-flow-folded(n)
 #   ns-plain-char(c) nb-ns-plain-in-line(c)
 
-sub s_ns_plain_next_line {
+rule '134', s_ns_plain_next_line => sub {
   my ($self, $n, $c) = @_;
-  debug1("s_ns_plain_next_line",$n,$c);
+  debug_rule("s_ns_plain_next_line",$n,$c) if DEBUG;
   $self->all(
     [ $self->func('s_flow_folded'), $n ],
     [ $self->func('ns_plain_char'), $c ],
     [ $self->func('nb_ns_plain_in_line'), $c ]
   );
-}
-name 's_ns_plain_next_line', \&s_ns_plain_next_line;
+};
 
 
 
@@ -2307,15 +2174,14 @@ name 's_ns_plain_next_line', \&s_ns_plain_next_line;
 #   ns-plain-one-line(c)
 #   s-ns-plain-next-line(n,c)*
 
-sub ns_plain_multi_line {
+rule '135', ns_plain_multi_line => sub {
   my ($self, $n, $c) = @_;
-  debug1("ns_plain_multi_line",$n,$c);
+  debug_rule("ns_plain_multi_line",$n,$c) if DEBUG;
   $self->all(
     [ $self->func('ns_plain_one_line'), $c ],
     $self->rep(0, 0, [ $self->func('s_ns_plain_next_line'), $n, $c ])
   );
-}
-name 'ns_plain_multi_line', \&ns_plain_multi_line;
+};
 
 
 
@@ -2326,9 +2192,9 @@ name 'ns_plain_multi_line', \&ns_plain_multi_line;
 #   ( c = block-key => flow-key )
 #   ( c = flow-key => flow-key )
 
-sub in_flow {
+rule '136', in_flow => sub {
   my ($self, $c) = @_;
-  debug1("in_flow",$c);
+  debug_rule("in_flow",$c) if DEBUG;
   $self->flip(
     $c,
     {
@@ -2338,8 +2204,7 @@ sub in_flow {
       'flow-out' => "flow-in",
     }
   );
-}
-name 'in_flow', \&in_flow;
+};
 
 
 
@@ -2348,17 +2213,16 @@ name 'in_flow', \&in_flow;
 #   '[' s-separate(n,c)?
 #   ns-s-flow-seq-entries(n,in-flow(c))? ']'
 
-sub c_flow_sequence {
+rule '137', c_flow_sequence => sub {
   my ($self, $n, $c) = @_;
-  debug1("c_flow_sequence",$n,$c);
+  debug_rule("c_flow_sequence",$n,$c) if DEBUG;
   $self->all(
     $self->chr('['),
     $self->rep(0, 1, [ $self->func('s_separate'), $n, $c ]),
     $self->rep(0, 1, [ $self->func('ns_s_flow_seq_entries'), $n, [ $self->func('in_flow'), $c ] ]),
     $self->chr(']')
   );
-}
-name 'c_flow_sequence', \&c_flow_sequence;
+};
 
 
 
@@ -2369,9 +2233,9 @@ name 'c_flow_sequence', \&c_flow_sequence;
 #   ( ',' s-separate(n,c)?
 #   ns-s-flow-seq-entries(n,c)? )?
 
-sub ns_s_flow_seq_entries {
+rule '138', ns_s_flow_seq_entries => sub {
   my ($self, $n, $c) = @_;
-  debug1("ns_s_flow_seq_entries",$n,$c);
+  debug_rule("ns_s_flow_seq_entries",$n,$c) if DEBUG;
   $self->all(
     [ $self->func('ns_flow_seq_entry'), $n, $c ],
     $self->rep(0, 1, [ $self->func('s_separate'), $n, $c ]),
@@ -2382,8 +2246,7 @@ sub ns_s_flow_seq_entries {
         $self->rep(0, 1, [ $self->func('ns_s_flow_seq_entries'), $n, $c ])
       ))
   );
-}
-name 'ns_s_flow_seq_entries', \&ns_s_flow_seq_entries;
+};
 
 
 
@@ -2391,15 +2254,14 @@ name 'ns_s_flow_seq_entries', \&ns_s_flow_seq_entries;
 # ns-flow-seq-entry(n,c) ::=
 #   ns-flow-pair(n,c) | ns-flow-node(n,c)
 
-sub ns_flow_seq_entry {
+rule '139', ns_flow_seq_entry => sub {
   my ($self, $n, $c) = @_;
-  debug1("ns_flow_seq_entry",$n,$c);
+  debug_rule("ns_flow_seq_entry",$n,$c) if DEBUG;
   $self->any(
     [ $self->func('ns_flow_pair'), $n, $c ],
     [ $self->func('ns_flow_node'), $n, $c ]
   );
-}
-name 'ns_flow_seq_entry', \&ns_flow_seq_entry;
+};
 
 
 
@@ -2408,17 +2270,16 @@ name 'ns_flow_seq_entry', \&ns_flow_seq_entry;
 #   '{' s-separate(n,c)?
 #   ns-s-flow-map-entries(n,in-flow(c))? '}'
 
-sub c_flow_mapping {
+rule '140', c_flow_mapping => sub {
   my ($self, $n, $c) = @_;
-  debug1("c_flow_mapping",$n,$c);
+  debug_rule("c_flow_mapping",$n,$c) if DEBUG;
   $self->all(
     $self->chr('{'),
     $self->rep(0, 1, [ $self->func('s_separate'), $n, $c ]),
     $self->rep(0, 1, [ $self->func('ns_s_flow_map_entries'), $n, [ $self->func('in_flow'), $c ] ]),
     $self->chr('}')
   );
-}
-name 'c_flow_mapping', \&c_flow_mapping;
+};
 
 
 
@@ -2429,9 +2290,9 @@ name 'c_flow_mapping', \&c_flow_mapping;
 #   ( ',' s-separate(n,c)?
 #   ns-s-flow-map-entries(n,c)? )?
 
-sub ns_s_flow_map_entries {
+rule '141', ns_s_flow_map_entries => sub {
   my ($self, $n, $c) = @_;
-  debug1("ns_s_flow_map_entries",$n,$c);
+  debug_rule("ns_s_flow_map_entries",$n,$c) if DEBUG;
   $self->all(
     [ $self->func('ns_flow_map_entry'), $n, $c ],
     $self->rep(0, 1, [ $self->func('s_separate'), $n, $c ]),
@@ -2442,8 +2303,7 @@ sub ns_s_flow_map_entries {
         $self->rep(0, 1, [ $self->func('ns_s_flow_map_entries'), $n, $c ])
       ))
   );
-}
-name 'ns_s_flow_map_entries', \&ns_s_flow_map_entries;
+};
 
 
 
@@ -2453,9 +2313,9 @@ name 'ns_s_flow_map_entries', \&ns_s_flow_map_entries;
 #   ns-flow-map-explicit-entry(n,c) )
 #   | ns-flow-map-implicit-entry(n,c)
 
-sub ns_flow_map_entry {
+rule '142', ns_flow_map_entry => sub {
   my ($self, $n, $c) = @_;
-  debug1("ns_flow_map_entry",$n,$c);
+  debug_rule("ns_flow_map_entry",$n,$c) if DEBUG;
   $self->any(
     $self->all(
       $self->chr('?'),
@@ -2464,8 +2324,7 @@ sub ns_flow_map_entry {
     ),
     [ $self->func('ns_flow_map_implicit_entry'), $n, $c ]
   );
-}
-name 'ns_flow_map_entry', \&ns_flow_map_entry;
+};
 
 
 
@@ -2475,9 +2334,9 @@ name 'ns_flow_map_entry', \&ns_flow_map_entry;
 #   | ( e-node
 #   e-node )
 
-sub ns_flow_map_explicit_entry {
+rule '143', ns_flow_map_explicit_entry => sub {
   my ($self, $n, $c) = @_;
-  debug1("ns_flow_map_explicit_entry",$n,$c);
+  debug_rule("ns_flow_map_explicit_entry",$n,$c) if DEBUG;
   $self->any(
     [ $self->func('ns_flow_map_implicit_entry'), $n, $c ],
     $self->all(
@@ -2485,8 +2344,7 @@ sub ns_flow_map_explicit_entry {
       $self->func('e_node')
     )
   );
-}
-name 'ns_flow_map_explicit_entry', \&ns_flow_map_explicit_entry;
+};
 
 
 
@@ -2496,16 +2354,15 @@ name 'ns_flow_map_explicit_entry', \&ns_flow_map_explicit_entry;
 #   | c-ns-flow-map-empty-key-entry(n,c)
 #   | c-ns-flow-map-json-key-entry(n,c)
 
-sub ns_flow_map_implicit_entry {
+rule '144', ns_flow_map_implicit_entry => sub {
   my ($self, $n, $c) = @_;
-  debug1("ns_flow_map_implicit_entry",$n,$c);
+  debug_rule("ns_flow_map_implicit_entry",$n,$c) if DEBUG;
   $self->any(
     [ $self->func('ns_flow_map_yaml_key_entry'), $n, $c ],
     [ $self->func('c_ns_flow_map_empty_key_entry'), $n, $c ],
     [ $self->func('c_ns_flow_map_json_key_entry'), $n, $c ]
   );
-}
-name 'ns_flow_map_implicit_entry', \&ns_flow_map_implicit_entry;
+};
 
 
 
@@ -2516,9 +2373,9 @@ name 'ns_flow_map_implicit_entry', \&ns_flow_map_implicit_entry;
 #   c-ns-flow-map-separate-value(n,c) )
 #   | e-node )
 
-sub ns_flow_map_yaml_key_entry {
+rule '145', ns_flow_map_yaml_key_entry => sub {
   my ($self, $n, $c) = @_;
-  debug1("ns_flow_map_yaml_key_entry",$n,$c);
+  debug_rule("ns_flow_map_yaml_key_entry",$n,$c) if DEBUG;
   $self->all(
     [ $self->func('ns_flow_yaml_node'), $n, $c ],
     $self->any(
@@ -2529,8 +2386,7 @@ sub ns_flow_map_yaml_key_entry {
       $self->func('e_node')
     )
   );
-}
-name 'ns_flow_map_yaml_key_entry', \&ns_flow_map_yaml_key_entry;
+};
 
 
 
@@ -2539,15 +2395,14 @@ name 'ns_flow_map_yaml_key_entry', \&ns_flow_map_yaml_key_entry;
 #   e-node
 #   c-ns-flow-map-separate-value(n,c)
 
-sub c_ns_flow_map_empty_key_entry {
+rule '146', c_ns_flow_map_empty_key_entry => sub {
   my ($self, $n, $c) = @_;
-  debug1("c_ns_flow_map_empty_key_entry",$n,$c);
+  debug_rule("c_ns_flow_map_empty_key_entry",$n,$c) if DEBUG;
   $self->all(
     $self->func('e_node'),
     [ $self->func('c_ns_flow_map_separate_value'), $n, $c ]
   );
-}
-name 'c_ns_flow_map_empty_key_entry', \&c_ns_flow_map_empty_key_entry;
+};
 
 
 
@@ -2557,9 +2412,9 @@ name 'c_ns_flow_map_empty_key_entry', \&c_ns_flow_map_empty_key_entry;
 #   ( ( s-separate(n,c) ns-flow-node(n,c) )
 #   | e-node )
 
-sub c_ns_flow_map_separate_value {
+rule '147', c_ns_flow_map_separate_value => sub {
   my ($self, $n, $c) = @_;
-  debug1("c_ns_flow_map_separate_value",$n,$c);
+  debug_rule("c_ns_flow_map_separate_value",$n,$c) if DEBUG;
   $self->all(
     $self->chr(':'),
     $self->chk('!', [ $self->func('ns_plain_safe'), $c ]),
@@ -2571,8 +2426,7 @@ sub c_ns_flow_map_separate_value {
       $self->func('e_node')
     )
   );
-}
-name 'c_ns_flow_map_separate_value', \&c_ns_flow_map_separate_value;
+};
 
 
 
@@ -2583,9 +2437,9 @@ name 'c_ns_flow_map_separate_value', \&c_ns_flow_map_separate_value;
 #   c-ns-flow-map-adjacent-value(n,c) )
 #   | e-node )
 
-sub c_ns_flow_map_json_key_entry {
+rule '148', c_ns_flow_map_json_key_entry => sub {
   my ($self, $n, $c) = @_;
-  debug1("c_ns_flow_map_json_key_entry",$n,$c);
+  debug_rule("c_ns_flow_map_json_key_entry",$n,$c) if DEBUG;
   $self->all(
     [ $self->func('c_flow_json_node'), $n, $c ],
     $self->any(
@@ -2596,8 +2450,7 @@ sub c_ns_flow_map_json_key_entry {
       $self->func('e_node')
     )
   );
-}
-name 'c_ns_flow_map_json_key_entry', \&c_ns_flow_map_json_key_entry;
+};
 
 
 
@@ -2608,9 +2461,9 @@ name 'c_ns_flow_map_json_key_entry', \&c_ns_flow_map_json_key_entry;
 #   ns-flow-node(n,c) )
 #   | e-node )
 
-sub c_ns_flow_map_adjacent_value {
+rule '149', c_ns_flow_map_adjacent_value => sub {
   my ($self, $n, $c) = @_;
-  debug1("c_ns_flow_map_adjacent_value",$n,$c);
+  debug_rule("c_ns_flow_map_adjacent_value",$n,$c) if DEBUG;
   $self->all(
     $self->chr(':'),
     $self->any(
@@ -2621,8 +2474,7 @@ sub c_ns_flow_map_adjacent_value {
       $self->func('e_node')
     )
   );
-}
-name 'c_ns_flow_map_adjacent_value', \&c_ns_flow_map_adjacent_value;
+};
 
 
 
@@ -2632,9 +2484,9 @@ name 'c_ns_flow_map_adjacent_value', \&c_ns_flow_map_adjacent_value;
 #   ns-flow-map-explicit-entry(n,c) )
 #   | ns-flow-pair-entry(n,c)
 
-sub ns_flow_pair {
+rule '150', ns_flow_pair => sub {
   my ($self, $n, $c) = @_;
-  debug1("ns_flow_pair",$n,$c);
+  debug_rule("ns_flow_pair",$n,$c) if DEBUG;
   $self->any(
     $self->all(
       $self->chr('?'),
@@ -2643,8 +2495,7 @@ sub ns_flow_pair {
     ),
     [ $self->func('ns_flow_pair_entry'), $n, $c ]
   );
-}
-name 'ns_flow_pair', \&ns_flow_pair;
+};
 
 
 
@@ -2654,16 +2505,15 @@ name 'ns_flow_pair', \&ns_flow_pair;
 #   | c-ns-flow-map-empty-key-entry(n,c)
 #   | c-ns-flow-pair-json-key-entry(n,c)
 
-sub ns_flow_pair_entry {
+rule '151', ns_flow_pair_entry => sub {
   my ($self, $n, $c) = @_;
-  debug1("ns_flow_pair_entry",$n,$c);
+  debug_rule("ns_flow_pair_entry",$n,$c) if DEBUG;
   $self->any(
     [ $self->func('ns_flow_pair_yaml_key_entry'), $n, $c ],
     [ $self->func('c_ns_flow_map_empty_key_entry'), $n, $c ],
     [ $self->func('c_ns_flow_pair_json_key_entry'), $n, $c ]
   );
-}
-name 'ns_flow_pair_entry', \&ns_flow_pair_entry;
+};
 
 
 
@@ -2672,15 +2522,14 @@ name 'ns_flow_pair_entry', \&ns_flow_pair_entry;
 #   ns-s-implicit-yaml-key(flow-key)
 #   c-ns-flow-map-separate-value(n,c)
 
-sub ns_flow_pair_yaml_key_entry {
+rule '152', ns_flow_pair_yaml_key_entry => sub {
   my ($self, $n, $c) = @_;
-  debug1("ns_flow_pair_yaml_key_entry",$n,$c);
+  debug_rule("ns_flow_pair_yaml_key_entry",$n,$c) if DEBUG;
   $self->all(
     [ $self->func('ns_s_implicit_yaml_key'), "flow-key" ],
     [ $self->func('c_ns_flow_map_separate_value'), $n, $c ]
   );
-}
-name 'ns_flow_pair_yaml_key_entry', \&ns_flow_pair_yaml_key_entry;
+};
 
 
 
@@ -2689,15 +2538,14 @@ name 'ns_flow_pair_yaml_key_entry', \&ns_flow_pair_yaml_key_entry;
 #   c-s-implicit-json-key(flow-key)
 #   c-ns-flow-map-adjacent-value(n,c)
 
-sub c_ns_flow_pair_json_key_entry {
+rule '153', c_ns_flow_pair_json_key_entry => sub {
   my ($self, $n, $c) = @_;
-  debug1("c_ns_flow_pair_json_key_entry",$n,$c);
+  debug_rule("c_ns_flow_pair_json_key_entry",$n,$c) if DEBUG;
   $self->all(
     [ $self->func('c_s_implicit_json_key'), "flow-key" ],
     [ $self->func('c_ns_flow_map_adjacent_value'), $n, $c ]
   );
-}
-name 'c_ns_flow_pair_json_key_entry', \&c_ns_flow_pair_json_key_entry;
+};
 
 
 
@@ -2707,16 +2555,15 @@ name 'c_ns_flow_pair_json_key_entry', \&c_ns_flow_pair_json_key_entry;
 #   s-separate-in-line?
 #   <at_most_1024_characters_altogether>
 
-sub ns_s_implicit_yaml_key {
+rule '154', ns_s_implicit_yaml_key => sub {
   my ($self, $c) = @_;
-  debug1("ns_s_implicit_yaml_key",$c);
+  debug_rule("ns_s_implicit_yaml_key",$c) if DEBUG;
   $self->all(
     $self->max(1024),
     [ $self->func('ns_flow_yaml_node'), undef, $c ],
     $self->rep(0, 1, $self->func('s_separate_in_line'))
   );
-}
-name 'ns_s_implicit_yaml_key', \&ns_s_implicit_yaml_key;
+};
 
 
 
@@ -2726,16 +2573,15 @@ name 'ns_s_implicit_yaml_key', \&ns_s_implicit_yaml_key;
 #   s-separate-in-line?
 #   <at_most_1024_characters_altogether>
 
-sub c_s_implicit_json_key {
+rule '155', c_s_implicit_json_key => sub {
   my ($self, $c) = @_;
-  debug1("c_s_implicit_json_key",$c);
+  debug_rule("c_s_implicit_json_key",$c) if DEBUG;
   $self->all(
     $self->max(1024),
     [ $self->func('c_flow_json_node'), undef, $c ],
     $self->rep(0, 1, $self->func('s_separate_in_line'))
   );
-}
-name 'c_s_implicit_json_key', \&c_s_implicit_json_key;
+};
 
 
 
@@ -2743,12 +2589,11 @@ name 'c_s_implicit_json_key', \&c_s_implicit_json_key;
 # ns-flow-yaml-content(n,c) ::=
 #   ns-plain(n,c)
 
-sub ns_flow_yaml_content {
+rule '156', ns_flow_yaml_content => sub {
   my ($self, $n, $c) = @_;
-  debug1("ns_flow_yaml_content",$n,$c);
+  debug_rule("ns_flow_yaml_content",$n,$c) if DEBUG;
   [ $self->func('ns_plain'), $n, $c ];
-}
-name 'ns_flow_yaml_content', \&ns_flow_yaml_content;
+};
 
 
 
@@ -2757,17 +2602,16 @@ name 'ns_flow_yaml_content', \&ns_flow_yaml_content;
 #   c-flow-sequence(n,c) | c-flow-mapping(n,c)
 #   | c-single-quoted(n,c) | c-double-quoted(n,c)
 
-sub c_flow_json_content {
+rule '157', c_flow_json_content => sub {
   my ($self, $n, $c) = @_;
-  debug1("c_flow_json_content",$n,$c);
+  debug_rule("c_flow_json_content",$n,$c) if DEBUG;
   $self->any(
     [ $self->func('c_flow_sequence'), $n, $c ],
     [ $self->func('c_flow_mapping'), $n, $c ],
     [ $self->func('c_single_quoted'), $n, $c ],
     [ $self->func('c_double_quoted'), $n, $c ]
   );
-}
-name 'c_flow_json_content', \&c_flow_json_content;
+};
 
 
 
@@ -2775,15 +2619,14 @@ name 'c_flow_json_content', \&c_flow_json_content;
 # ns-flow-content(n,c) ::=
 #   ns-flow-yaml-content(n,c) | c-flow-json-content(n,c)
 
-sub ns_flow_content {
+rule '158', ns_flow_content => sub {
   my ($self, $n, $c) = @_;
-  debug1("ns_flow_content",$n,$c);
+  debug_rule("ns_flow_content",$n,$c) if DEBUG;
   $self->any(
     [ $self->func('ns_flow_yaml_content'), $n, $c ],
     [ $self->func('c_flow_json_content'), $n, $c ]
   );
-}
-name 'ns_flow_content', \&ns_flow_content;
+};
 
 
 
@@ -2796,9 +2639,9 @@ name 'ns_flow_content', \&ns_flow_content;
 #   ns-flow-yaml-content(n,c) )
 #   | e-scalar ) )
 
-sub ns_flow_yaml_node {
+rule '159', ns_flow_yaml_node => sub {
   my ($self, $n, $c) = @_;
-  debug1("ns_flow_yaml_node",$n,$c);
+  debug_rule("ns_flow_yaml_node",$n,$c) if DEBUG;
   $self->any(
     $self->func('c_ns_alias_node'),
     [ $self->func('ns_flow_yaml_content'), $n, $c ],
@@ -2813,8 +2656,7 @@ sub ns_flow_yaml_node {
       )
     )
   );
-}
-name 'ns_flow_yaml_node', \&ns_flow_yaml_node;
+};
 
 
 
@@ -2824,9 +2666,9 @@ name 'ns_flow_yaml_node', \&ns_flow_yaml_node;
 #   s-separate(n,c) )?
 #   c-flow-json-content(n,c)
 
-sub c_flow_json_node {
+rule '160', c_flow_json_node => sub {
   my ($self, $n, $c) = @_;
-  debug1("c_flow_json_node",$n,$c);
+  debug_rule("c_flow_json_node",$n,$c) if DEBUG;
   $self->all(
     $self->rep(0, 1,
       $self->all(
@@ -2835,8 +2677,7 @@ sub c_flow_json_node {
       )),
     [ $self->func('c_flow_json_content'), $n, $c ]
   );
-}
-name 'c_flow_json_node', \&c_flow_json_node;
+};
 
 
 
@@ -2849,9 +2690,9 @@ name 'c_flow_json_node', \&c_flow_json_node;
 #   ns-flow-content(n,c) )
 #   | e-scalar ) )
 
-sub ns_flow_node {
+rule '161', ns_flow_node => sub {
   my ($self, $n, $c) = @_;
-  debug1("ns_flow_node",$n,$c);
+  debug_rule("ns_flow_node",$n,$c) if DEBUG;
   $self->any(
     $self->func('c_ns_alias_node'),
     [ $self->func('ns_flow_content'), $n, $c ],
@@ -2866,8 +2707,7 @@ sub ns_flow_node {
       )
     )
   );
-}
-name 'ns_flow_node', \&ns_flow_node;
+};
 
 
 
@@ -2879,9 +2719,9 @@ name 'ns_flow_node', \&ns_flow_node;
 #   c-indentation-indicator(m) ) )
 #   s-b-comment
 
-sub c_b_block_header {
+rule '162', c_b_block_header => sub {
   my ($self, $m, $t) = @_;
-  debug1("c_b_block_header",$m,$t);
+  debug_rule("c_b_block_header",$m,$t) if DEBUG;
   $self->all(
     $self->any(
       $self->all(
@@ -2895,8 +2735,7 @@ sub c_b_block_header {
     ),
     $self->func('s_b_comment')
   );
-}
-name 'c_b_block_header', \&c_b_block_header;
+};
 
 
 
@@ -2905,15 +2744,14 @@ name 'c_b_block_header', \&c_b_block_header;
 #   ( ns-dec-digit => m = ns-dec-digit - x:30 )
 #   ( <empty> => m = auto-detect() )
 
-sub c_indentation_indicator {
+rule '163', c_indentation_indicator => sub {
   my ($self, $m) = @_;
-  debug1("c_indentation_indicator",$m);
+  debug_rule("c_indentation_indicator",$m) if DEBUG;
   $self->any(
     $self->if($self->func('ns_dec_digit'), $self->set('m', $self->ord($self->func('match')))),
     $self->if($self->func('empty'), $self->set('m', "auto-detect"))
   );
-}
-name 'c_indentation_indicator', \&c_indentation_indicator;
+};
 
 
 
@@ -2923,16 +2761,15 @@ name 'c_indentation_indicator', \&c_indentation_indicator;
 #   ( '+' => t = keep )
 #   ( <empty> => t = clip )
 
-sub c_chomping_indicator {
+rule '164', c_chomping_indicator => sub {
   my ($self, $t) = @_;
-  debug1("c_chomping_indicator",$t);
+  debug_rule("c_chomping_indicator",$t) if DEBUG;
   $self->any(
     $self->if($self->chr('-'), $self->set('t', "strip")),
     $self->if($self->chr('+'), $self->set('t', "keep")),
     $self->if($self->func('empty'), $self->set('t', "clip"))
   );
-}
-name 'c_chomping_indicator', \&c_chomping_indicator;
+};
 
 
 
@@ -2942,9 +2779,9 @@ name 'c_chomping_indicator', \&c_chomping_indicator;
 #   ( t = clip => b-as-line-feed | <end_of_file> )
 #   ( t = keep => b-as-line-feed | <end_of_file> )
 
-sub b_chomped_last {
+rule '165', b_chomped_last => sub {
   my ($self, $t) = @_;
-  debug1("b_chomped_last",$t);
+  debug_rule("b_chomped_last",$t) if DEBUG;
   $self->case(
     $t,
     {
@@ -2953,8 +2790,7 @@ sub b_chomped_last {
       'strip' => $self->any( $self->func('b_non_content'), $self->func('end_of_stream') ),
     }
   );
-}
-name 'b_chomped_last', \&b_chomped_last;
+};
 
 
 
@@ -2964,9 +2800,9 @@ name 'b_chomped_last', \&b_chomped_last;
 #   ( t = clip => l-strip-empty(n) )
 #   ( t = keep => l-keep-empty(n) )
 
-sub l_chomped_empty {
+rule '166', l_chomped_empty => sub {
   my ($self, $n, $t) = @_;
-  debug1("l_chomped_empty",$n,$t);
+  debug_rule("l_chomped_empty",$n,$t) if DEBUG;
   $self->case(
     $t,
     {
@@ -2975,8 +2811,7 @@ sub l_chomped_empty {
       'strip' => [ $self->func('l_strip_empty'), $n ],
     }
   );
-}
-name 'l_chomped_empty', \&l_chomped_empty;
+};
 
 
 
@@ -2985,9 +2820,9 @@ name 'l_chomped_empty', \&l_chomped_empty;
 #   ( s-indent(<=n) b-non-content )*
 #   l-trail-comments(n)?
 
-sub l_strip_empty {
+rule '167', l_strip_empty => sub {
   my ($self, $n) = @_;
-  debug1("l_strip_empty",$n);
+  debug_rule("l_strip_empty",$n) if DEBUG;
   $self->all(
     $self->rep(0, 0,
       $self->all(
@@ -2996,8 +2831,7 @@ sub l_strip_empty {
       )),
     $self->rep(0, 1, [ $self->func('l_trail_comments'), $n ])
   );
-}
-name 'l_strip_empty', \&l_strip_empty;
+};
 
 
 
@@ -3006,15 +2840,14 @@ name 'l_strip_empty', \&l_strip_empty;
 #   l-empty(n,block-in)*
 #   l-trail-comments(n)?
 
-sub l_keep_empty {
+rule '168', l_keep_empty => sub {
   my ($self, $n) = @_;
-  debug1("l_keep_empty",$n);
+  debug_rule("l_keep_empty",$n) if DEBUG;
   $self->all(
     $self->rep(0, 0, [ $self->func('l_empty'), $n, "block-in" ]),
     $self->rep(0, 1, [ $self->func('l_trail_comments'), $n ])
   );
-}
-name 'l_keep_empty', \&l_keep_empty;
+};
 
 
 
@@ -3024,17 +2857,16 @@ name 'l_keep_empty', \&l_keep_empty;
 #   c-nb-comment-text b-comment
 #   l-comment*
 
-sub l_trail_comments {
+rule '169', l_trail_comments => sub {
   my ($self, $n) = @_;
-  debug1("l_trail_comments",$n);
+  debug_rule("l_trail_comments",$n) if DEBUG;
   $self->all(
     [ $self->func('s_indent_lt'), $n ],
     $self->func('c_nb_comment_text'),
     $self->func('b_comment'),
     $self->rep(0, 0, $self->func('l_comment'))
   );
-}
-name 'l_trail_comments', \&l_trail_comments;
+};
 
 
 
@@ -3043,16 +2875,15 @@ name 'l_trail_comments', \&l_trail_comments;
 #   '|' c-b-block-header(m,t)
 #   l-literal-content(n+m,t)
 
-sub c_l_literal {
+rule '170', c_l_literal => sub {
   my ($self, $n) = @_;
-  debug1("c_l_literal",$n);
+  debug_rule("c_l_literal",$n) if DEBUG;
   $self->all(
     $self->chr('|'),
     [ $self->func('c_b_block_header'), $self->m(), $self->t() ],
     [ $self->func('l_literal_content'), $self->add($n, $self->m()), $self->t() ]
   );
-}
-name 'c_l_literal', \&c_l_literal;
+};
 
 
 
@@ -3061,16 +2892,15 @@ name 'c_l_literal', \&c_l_literal;
 #   l-empty(n,block-in)*
 #   s-indent(n) nb-char+
 
-sub l_nb_literal_text {
+rule '171', l_nb_literal_text => sub {
   my ($self, $n) = @_;
-  debug1("l_nb_literal_text",$n);
+  debug_rule("l_nb_literal_text",$n) if DEBUG;
   $self->all(
     $self->rep(0, 0, [ $self->func('l_empty'), $n, "block-in" ]),
     [ $self->func('s_indent'), $n ],
     $self->rep(1, 0, $self->func('nb_char'))
   );
-}
-name 'l_nb_literal_text', \&l_nb_literal_text;
+};
 
 
 
@@ -3079,15 +2909,14 @@ name 'l_nb_literal_text', \&l_nb_literal_text;
 #   b-as-line-feed
 #   l-nb-literal-text(n)
 
-sub b_nb_literal_next {
+rule '172', b_nb_literal_next => sub {
   my ($self, $n) = @_;
-  debug1("b_nb_literal_next",$n);
+  debug_rule("b_nb_literal_next",$n) if DEBUG;
   $self->all(
     $self->func('b_as_line_feed'),
     [ $self->func('l_nb_literal_text'), $n ]
   );
-}
-name 'b_nb_literal_next', \&b_nb_literal_next;
+};
 
 
 
@@ -3098,9 +2927,9 @@ name 'b_nb_literal_next', \&b_nb_literal_next;
 #   b-chomped-last(t) )?
 #   l-chomped-empty(n,t)
 
-sub l_literal_content {
+rule '173', l_literal_content => sub {
   my ($self, $n, $t) = @_;
-  debug1("l_literal_content",$n,$t);
+  debug_rule("l_literal_content",$n,$t) if DEBUG;
   $self->all(
     $self->rep(0, 1,
       $self->all(
@@ -3110,8 +2939,7 @@ sub l_literal_content {
       )),
     [ $self->func('l_chomped_empty'), $n, $t ]
   );
-}
-name 'l_literal_content', \&l_literal_content;
+};
 
 
 
@@ -3120,16 +2948,15 @@ name 'l_literal_content', \&l_literal_content;
 #   '>' c-b-block-header(m,t)
 #   l-folded-content(n+m,t)
 
-sub c_l_folded {
+rule '174', c_l_folded => sub {
   my ($self, $n) = @_;
-  debug1("c_l_folded",$n);
+  debug_rule("c_l_folded",$n) if DEBUG;
   $self->all(
     $self->chr('>'),
     [ $self->func('c_b_block_header'), $self->m(), $self->t() ],
     [ $self->func('l_folded_content'), $self->add($n, $self->m()), $self->t() ]
   );
-}
-name 'c_l_folded', \&c_l_folded;
+};
 
 
 
@@ -3138,16 +2965,15 @@ name 'c_l_folded', \&c_l_folded;
 #   s-indent(n) ns-char
 #   nb-char*
 
-sub s_nb_folded_text {
+rule '175', s_nb_folded_text => sub {
   my ($self, $n) = @_;
-  debug1("s_nb_folded_text",$n);
+  debug_rule("s_nb_folded_text",$n) if DEBUG;
   $self->all(
     [ $self->func('s_indent'), $n ],
     $self->func('ns_char'),
     $self->rep(0, 0, $self->func('nb_char'))
   );
-}
-name 's_nb_folded_text', \&s_nb_folded_text;
+};
 
 
 
@@ -3156,9 +2982,9 @@ name 's_nb_folded_text', \&s_nb_folded_text;
 #   s-nb-folded-text(n)
 #   ( b-l-folded(n,block-in) s-nb-folded-text(n) )*
 
-sub l_nb_folded_lines {
+rule '176', l_nb_folded_lines => sub {
   my ($self, $n) = @_;
-  debug1("l_nb_folded_lines",$n);
+  debug_rule("l_nb_folded_lines",$n) if DEBUG;
   $self->all(
     [ $self->func('s_nb_folded_text'), $n ],
     $self->rep(0, 0,
@@ -3167,8 +2993,7 @@ sub l_nb_folded_lines {
         [ $self->func('s_nb_folded_text'), $n ]
       ))
   );
-}
-name 'l_nb_folded_lines', \&l_nb_folded_lines;
+};
 
 
 
@@ -3177,16 +3002,15 @@ name 'l_nb_folded_lines', \&l_nb_folded_lines;
 #   s-indent(n) s-white
 #   nb-char*
 
-sub s_nb_spaced_text {
+rule '177', s_nb_spaced_text => sub {
   my ($self, $n) = @_;
-  debug1("s_nb_spaced_text",$n);
+  debug_rule("s_nb_spaced_text",$n) if DEBUG;
   $self->all(
     [ $self->func('s_indent'), $n ],
     $self->func('s_white'),
     $self->rep(0, 0, $self->func('nb_char'))
   );
-}
-name 's_nb_spaced_text', \&s_nb_spaced_text;
+};
 
 
 
@@ -3195,15 +3019,14 @@ name 's_nb_spaced_text', \&s_nb_spaced_text;
 #   b-as-line-feed
 #   l-empty(n,block-in)*
 
-sub b_l_spaced {
+rule '178', b_l_spaced => sub {
   my ($self, $n) = @_;
-  debug1("b_l_spaced",$n);
+  debug_rule("b_l_spaced",$n) if DEBUG;
   $self->all(
     $self->func('b_as_line_feed'),
     $self->rep(0, 0, [ $self->func('l_empty'), $n, "block-in" ])
   );
-}
-name 'b_l_spaced', \&b_l_spaced;
+};
 
 
 
@@ -3212,9 +3035,9 @@ name 'b_l_spaced', \&b_l_spaced;
 #   s-nb-spaced-text(n)
 #   ( b-l-spaced(n) s-nb-spaced-text(n) )*
 
-sub l_nb_spaced_lines {
+rule '179', l_nb_spaced_lines => sub {
   my ($self, $n) = @_;
-  debug1("l_nb_spaced_lines",$n);
+  debug_rule("l_nb_spaced_lines",$n) if DEBUG;
   $self->all(
     [ $self->func('s_nb_spaced_text'), $n ],
     $self->rep(0, 0,
@@ -3223,8 +3046,7 @@ sub l_nb_spaced_lines {
         [ $self->func('s_nb_spaced_text'), $n ]
       ))
   );
-}
-name 'l_nb_spaced_lines', \&l_nb_spaced_lines;
+};
 
 
 
@@ -3233,9 +3055,9 @@ name 'l_nb_spaced_lines', \&l_nb_spaced_lines;
 #   l-empty(n,block-in)*
 #   ( l-nb-folded-lines(n) | l-nb-spaced-lines(n) )
 
-sub l_nb_same_lines {
+rule '180', l_nb_same_lines => sub {
   my ($self, $n) = @_;
-  debug1("l_nb_same_lines",$n);
+  debug_rule("l_nb_same_lines",$n) if DEBUG;
   $self->all(
     $self->rep(0, 0, [ $self->func('l_empty'), $n, "block-in" ]),
     $self->any(
@@ -3243,8 +3065,7 @@ sub l_nb_same_lines {
       [ $self->func('l_nb_spaced_lines'), $n ]
     )
   );
-}
-name 'l_nb_same_lines', \&l_nb_same_lines;
+};
 
 
 
@@ -3253,9 +3074,9 @@ name 'l_nb_same_lines', \&l_nb_same_lines;
 #   l-nb-same-lines(n)
 #   ( b-as-line-feed l-nb-same-lines(n) )*
 
-sub l_nb_diff_lines {
+rule '181', l_nb_diff_lines => sub {
   my ($self, $n) = @_;
-  debug1("l_nb_diff_lines",$n);
+  debug_rule("l_nb_diff_lines",$n) if DEBUG;
   $self->all(
     [ $self->func('l_nb_same_lines'), $n ],
     $self->rep(0, 0,
@@ -3264,8 +3085,7 @@ sub l_nb_diff_lines {
         [ $self->func('l_nb_same_lines'), $n ]
       ))
   );
-}
-name 'l_nb_diff_lines', \&l_nb_diff_lines;
+};
 
 
 
@@ -3275,9 +3095,9 @@ name 'l_nb_diff_lines', \&l_nb_diff_lines;
 #   b-chomped-last(t) )?
 #   l-chomped-empty(n,t)
 
-sub l_folded_content {
+rule '182', l_folded_content => sub {
   my ($self, $n, $t) = @_;
-  debug1("l_folded_content",$n,$t);
+  debug_rule("l_folded_content",$n,$t) if DEBUG;
   $self->all(
     $self->rep(0, 1,
       $self->all(
@@ -3286,8 +3106,7 @@ sub l_folded_content {
       )),
     [ $self->func('l_chomped_empty'), $n, $t ]
   );
-}
-name 'l_folded_content', \&l_folded_content;
+};
 
 
 
@@ -3297,9 +3116,9 @@ name 'l_folded_content', \&l_folded_content;
 #   c-l-block-seq-entry(n+m) )+
 #   <for_some_fixed_auto-detected_m_>_0>
 
-sub l_block_sequence {
+rule '183', l_block_sequence => sub {
   my ($self, $n) = @_;
-  debug1("l_block_sequence",$n);
+  debug_rule("l_block_sequence",$n) if DEBUG;
   $self->all(
     $self->set('m', $self->func('auto_detect_indent')),
     $self->rep(1, 0,
@@ -3308,8 +3127,7 @@ sub l_block_sequence {
         [ $self->func('c_l_block_seq_entry'), $self->add($n, $self->m()) ]
       ))
   );
-}
-name 'l_block_sequence', \&l_block_sequence;
+};
 
 
 
@@ -3318,16 +3136,15 @@ name 'l_block_sequence', \&l_block_sequence;
 #   '-' <not_followed_by_an_ns-char>
 #   s-l+block-indented(n,block-in)
 
-sub c_l_block_seq_entry {
+rule '184', c_l_block_seq_entry => sub {
   my ($self, $n) = @_;
-  debug1("c_l_block_seq_entry",$n);
+  debug_rule("c_l_block_seq_entry",$n) if DEBUG;
   $self->all(
     $self->chr('-'),
     $self->chk('!', $self->func('ns_char')),
     [ $self->func('s_l_block_indented'), $n, "block-in" ]
   );
-}
-name 'c_l_block_seq_entry', \&c_l_block_seq_entry;
+};
 
 
 
@@ -3339,9 +3156,9 @@ name 'c_l_block_seq_entry', \&c_l_block_seq_entry;
 #   | s-l+block-node(n,c)
 #   | ( e-node s-l-comments )
 
-sub s_l_block_indented {
+rule '185', s_l_block_indented => sub {
   my ($self, $n, $c) = @_;
-  debug1("s_l_block_indented",$n,$c);
+  debug_rule("s_l_block_indented",$n,$c) if DEBUG;
   $self->any(
     $self->all(
       [ $self->func('s_indent'), $self->m() ],
@@ -3356,8 +3173,7 @@ sub s_l_block_indented {
       $self->func('s_l_comments')
     )
   );
-}
-name 's_l_block_indented', \&s_l_block_indented;
+};
 
 
 
@@ -3366,9 +3182,9 @@ name 's_l_block_indented', \&s_l_block_indented;
 #   c-l-block-seq-entry(n)
 #   ( s-indent(n) c-l-block-seq-entry(n) )*
 
-sub ns_l_compact_sequence {
+rule '186', ns_l_compact_sequence => sub {
   my ($self, $n) = @_;
-  debug1("ns_l_compact_sequence",$n);
+  debug_rule("ns_l_compact_sequence",$n) if DEBUG;
   $self->all(
     [ $self->func('c_l_block_seq_entry'), $n ],
     $self->rep(0, 0,
@@ -3377,8 +3193,7 @@ sub ns_l_compact_sequence {
         [ $self->func('c_l_block_seq_entry'), $n ]
       ))
   );
-}
-name 'ns_l_compact_sequence', \&ns_l_compact_sequence;
+};
 
 
 
@@ -3388,9 +3203,9 @@ name 'ns_l_compact_sequence', \&ns_l_compact_sequence;
 #   ns-l-block-map-entry(n+m) )+
 #   <for_some_fixed_auto-detected_m_>_0>
 
-sub l_block_mapping {
+rule '187', l_block_mapping => sub {
   my ($self, $n) = @_;
-  debug1("l_block_mapping",$n);
+  debug_rule("l_block_mapping",$n) if DEBUG;
   $self->all(
     $self->set('m', $self->func('auto_detect_indent')),
     $self->rep(1, 0,
@@ -3399,8 +3214,7 @@ sub l_block_mapping {
         [ $self->func('ns_l_block_map_entry'), $self->add($n, $self->m()) ]
       ))
   );
-}
-name 'l_block_mapping', \&l_block_mapping;
+};
 
 
 
@@ -3409,15 +3223,14 @@ name 'l_block_mapping', \&l_block_mapping;
 #   c-l-block-map-explicit-entry(n)
 #   | ns-l-block-map-implicit-entry(n)
 
-sub ns_l_block_map_entry {
+rule '188', ns_l_block_map_entry => sub {
   my ($self, $n) = @_;
-  debug1("ns_l_block_map_entry",$n);
+  debug_rule("ns_l_block_map_entry",$n) if DEBUG;
   $self->any(
     [ $self->func('c_l_block_map_explicit_entry'), $n ],
     [ $self->func('ns_l_block_map_implicit_entry'), $n ]
   );
-}
-name 'ns_l_block_map_entry', \&ns_l_block_map_entry;
+};
 
 
 
@@ -3427,9 +3240,9 @@ name 'ns_l_block_map_entry', \&ns_l_block_map_entry;
 #   ( l-block-map-explicit-value(n)
 #   | e-node )
 
-sub c_l_block_map_explicit_entry {
+rule '189', c_l_block_map_explicit_entry => sub {
   my ($self, $n) = @_;
-  debug1("c_l_block_map_explicit_entry",$n);
+  debug_rule("c_l_block_map_explicit_entry",$n) if DEBUG;
   $self->all(
     [ $self->func('c_l_block_map_explicit_key'), $n ],
     $self->any(
@@ -3437,8 +3250,7 @@ sub c_l_block_map_explicit_entry {
       $self->func('e_node')
     )
   );
-}
-name 'c_l_block_map_explicit_entry', \&c_l_block_map_explicit_entry;
+};
 
 
 
@@ -3447,15 +3259,14 @@ name 'c_l_block_map_explicit_entry', \&c_l_block_map_explicit_entry;
 #   '?'
 #   s-l+block-indented(n,block-out)
 
-sub c_l_block_map_explicit_key {
+rule '190', c_l_block_map_explicit_key => sub {
   my ($self, $n) = @_;
-  debug1("c_l_block_map_explicit_key",$n);
+  debug_rule("c_l_block_map_explicit_key",$n) if DEBUG;
   $self->all(
     $self->chr('?'),
     [ $self->func('s_l_block_indented'), $n, "block-out" ]
   );
-}
-name 'c_l_block_map_explicit_key', \&c_l_block_map_explicit_key;
+};
 
 
 
@@ -3464,16 +3275,15 @@ name 'c_l_block_map_explicit_key', \&c_l_block_map_explicit_key;
 #   s-indent(n)
 #   ':' s-l+block-indented(n,block-out)
 
-sub l_block_map_explicit_value {
+rule '191', l_block_map_explicit_value => sub {
   my ($self, $n) = @_;
-  debug1("l_block_map_explicit_value",$n);
+  debug_rule("l_block_map_explicit_value",$n) if DEBUG;
   $self->all(
     [ $self->func('s_indent'), $n ],
     $self->chr(':'),
     [ $self->func('s_l_block_indented'), $n, "block-out" ]
   );
-}
-name 'l_block_map_explicit_value', \&l_block_map_explicit_value;
+};
 
 
 
@@ -3484,9 +3294,9 @@ name 'l_block_map_explicit_value', \&l_block_map_explicit_value;
 #   | e-node )
 #   c-l-block-map-implicit-value(n)
 
-sub ns_l_block_map_implicit_entry {
+rule '192', ns_l_block_map_implicit_entry => sub {
   my ($self, $n) = @_;
-  debug1("ns_l_block_map_implicit_entry",$n);
+  debug_rule("ns_l_block_map_implicit_entry",$n) if DEBUG;
   $self->all(
     $self->any(
       $self->func('ns_s_block_map_implicit_key'),
@@ -3494,8 +3304,7 @@ sub ns_l_block_map_implicit_entry {
     ),
     [ $self->func('c_l_block_map_implicit_value'), $n ]
   );
-}
-name 'ns_l_block_map_implicit_entry', \&ns_l_block_map_implicit_entry;
+};
 
 
 
@@ -3504,15 +3313,14 @@ name 'ns_l_block_map_implicit_entry', \&ns_l_block_map_implicit_entry;
 #   c-s-implicit-json-key(block-key)
 #   | ns-s-implicit-yaml-key(block-key)
 
-sub ns_s_block_map_implicit_key {
+rule '193', ns_s_block_map_implicit_key => sub {
   my ($self) = @_;
-  debug1("ns_s_block_map_implicit_key");
+  debug_rule("ns_s_block_map_implicit_key") if DEBUG;
   $self->any(
     [ $self->func('c_s_implicit_json_key'), "block-key" ],
     [ $self->func('ns_s_implicit_yaml_key'), "block-key" ]
   );
-}
-name 'ns_s_block_map_implicit_key', \&ns_s_block_map_implicit_key;
+};
 
 
 
@@ -3522,9 +3330,9 @@ name 'ns_s_block_map_implicit_key', \&ns_s_block_map_implicit_key;
 #   s-l+block-node(n,block-out)
 #   | ( e-node s-l-comments ) )
 
-sub c_l_block_map_implicit_value {
+rule '194', c_l_block_map_implicit_value => sub {
   my ($self, $n) = @_;
-  debug1("c_l_block_map_implicit_value",$n);
+  debug_rule("c_l_block_map_implicit_value",$n) if DEBUG;
   $self->all(
     $self->chr(':'),
     $self->any(
@@ -3535,8 +3343,7 @@ sub c_l_block_map_implicit_value {
       )
     )
   );
-}
-name 'c_l_block_map_implicit_value', \&c_l_block_map_implicit_value;
+};
 
 
 
@@ -3545,9 +3352,9 @@ name 'c_l_block_map_implicit_value', \&c_l_block_map_implicit_value;
 #   ns-l-block-map-entry(n)
 #   ( s-indent(n) ns-l-block-map-entry(n) )*
 
-sub ns_l_compact_mapping {
+rule '195', ns_l_compact_mapping => sub {
   my ($self, $n) = @_;
-  debug1("ns_l_compact_mapping",$n);
+  debug_rule("ns_l_compact_mapping",$n) if DEBUG;
   $self->all(
     [ $self->func('ns_l_block_map_entry'), $n ],
     $self->rep(0, 0,
@@ -3556,8 +3363,7 @@ sub ns_l_compact_mapping {
         [ $self->func('ns_l_block_map_entry'), $n ]
       ))
   );
-}
-name 'ns_l_compact_mapping', \&ns_l_compact_mapping;
+};
 
 
 
@@ -3565,15 +3371,14 @@ name 'ns_l_compact_mapping', \&ns_l_compact_mapping;
 # s-l+block-node(n,c) ::=
 #   s-l+block-in-block(n,c) | s-l+flow-in-block(n)
 
-sub s_l_block_node {
+rule '196', s_l_block_node => sub {
   my ($self, $n, $c) = @_;
-  debug1("s_l_block_node",$n,$c);
+  debug_rule("s_l_block_node",$n,$c) if DEBUG;
   $self->any(
     [ $self->func('s_l_block_in_block'), $n, $c ],
     [ $self->func('s_l_flow_in_block'), $n ]
   );
-}
-name 's_l_block_node', \&s_l_block_node;
+};
 
 
 
@@ -3582,16 +3387,15 @@ name 's_l_block_node', \&s_l_block_node;
 #   s-separate(n+1,flow-out)
 #   ns-flow-node(n+1,flow-out) s-l-comments
 
-sub s_l_flow_in_block {
+rule '197', s_l_flow_in_block => sub {
   my ($self, $n) = @_;
-  debug1("s_l_flow_in_block",$n);
+  debug_rule("s_l_flow_in_block",$n) if DEBUG;
   $self->all(
     [ $self->func('s_separate'), $self->add($n, 1), "flow-out" ],
     [ $self->func('ns_flow_node'), $self->add($n, 1), "flow-out" ],
     $self->func('s_l_comments')
   );
-}
-name 's_l_flow_in_block', \&s_l_flow_in_block;
+};
 
 
 
@@ -3599,15 +3403,14 @@ name 's_l_flow_in_block', \&s_l_flow_in_block;
 # s-l+block-in-block(n,c) ::=
 #   s-l+block-scalar(n,c) | s-l+block-collection(n,c)
 
-sub s_l_block_in_block {
+rule '198', s_l_block_in_block => sub {
   my ($self, $n, $c) = @_;
-  debug1("s_l_block_in_block",$n,$c);
+  debug_rule("s_l_block_in_block",$n,$c) if DEBUG;
   $self->any(
     [ $self->func('s_l_block_scalar'), $n, $c ],
     [ $self->func('s_l_block_collection'), $n, $c ]
   );
-}
-name 's_l_block_in_block', \&s_l_block_in_block;
+};
 
 
 
@@ -3617,9 +3420,9 @@ name 's_l_block_in_block', \&s_l_block_in_block;
 #   ( c-ns-properties(n+1,c) s-separate(n+1,c) )?
 #   ( c-l+literal(n) | c-l+folded(n) )
 
-sub s_l_block_scalar {
+rule '199', s_l_block_scalar => sub {
   my ($self, $n, $c) = @_;
-  debug1("s_l_block_scalar",$n,$c);
+  debug_rule("s_l_block_scalar",$n,$c) if DEBUG;
   $self->all(
     [ $self->func('s_separate'), $self->add($n, 1), $c ],
     $self->rep(0, 1,
@@ -3632,8 +3435,7 @@ sub s_l_block_scalar {
       [ $self->func('c_l_folded'), $n ]
     )
   );
-}
-name 's_l_block_scalar', \&s_l_block_scalar;
+};
 
 
 
@@ -3645,9 +3447,9 @@ name 's_l_block_scalar', \&s_l_block_scalar;
 #   ( l+block-sequence(seq-spaces(n,c))
 #   | l+block-mapping(n) )
 
-sub s_l_block_collection {
+rule '200', s_l_block_collection => sub {
   my ($self, $n, $c) = @_;
-  debug1("s_l_block_collection",$n,$c);
+  debug_rule("s_l_block_collection",$n,$c) if DEBUG;
   $self->all(
     $self->rep(0, 1,
       $self->all(
@@ -3660,8 +3462,7 @@ sub s_l_block_collection {
       [ $self->func('l_block_mapping'), $n ]
     )
   );
-}
-name 's_l_block_collection', \&s_l_block_collection;
+};
 
 
 
@@ -3670,9 +3471,9 @@ name 's_l_block_collection', \&s_l_block_collection;
 #   ( c = block-out => n-1 )
 #   ( c = block-in => n )
 
-sub seq_spaces {
+rule '201', seq_spaces => sub {
   my ($self, $n, $c) = @_;
-  debug1("seq_spaces",$n,$c);
+  debug_rule("seq_spaces",$n,$c) if DEBUG;
   $self->flip(
     $c,
     {
@@ -3680,8 +3481,7 @@ sub seq_spaces {
       'block-out' => $self->sub($n, 1),
     }
   );
-}
-name 'seq_spaces', \&seq_spaces;
+};
 
 
 
@@ -3689,15 +3489,14 @@ name 'seq_spaces', \&seq_spaces;
 # l-document-prefix ::=
 #   c-byte-order-mark? l-comment*
 
-sub l_document_prefix {
+rule '202', l_document_prefix => sub {
   my ($self) = @_;
-  debug1("l_document_prefix");
+  debug_rule("l_document_prefix") if DEBUG;
   $self->all(
     $self->rep(0, 1, $self->func('c_byte_order_mark')),
     $self->rep(0, 0, $self->func('l_comment'))
   );
-}
-name 'l_document_prefix', \&l_document_prefix;
+};
 
 
 
@@ -3705,16 +3504,15 @@ name 'l_document_prefix', \&l_document_prefix;
 # c-directives-end ::=
 #   '-' '-' '-'
 
-sub c_directives_end {
+rule '203', c_directives_end => sub {
   my ($self) = @_;
-  debug1("c_directives_end");
+  debug_rule("c_directives_end") if DEBUG;
   $self->all(
     $self->chr('-'),
     $self->chr('-'),
     $self->chr('-')
   );
-}
-name 'c_directives_end', \&c_directives_end;
+};
 
 
 
@@ -3722,16 +3520,15 @@ name 'c_directives_end', \&c_directives_end;
 # c-document-end ::=
 #   '.' '.' '.'
 
-sub c_document_end {
+rule '204', c_document_end => sub {
   my ($self) = @_;
-  debug1("c_document_end");
+  debug_rule("c_document_end") if DEBUG;
   $self->all(
     $self->chr('.'),
     $self->chr('.'),
     $self->chr('.')
   );
-}
-name 'c_document_end', \&c_document_end;
+};
 
 
 
@@ -3739,15 +3536,14 @@ name 'c_document_end', \&c_document_end;
 # l-document-suffix ::=
 #   c-document-end s-l-comments
 
-sub l_document_suffix {
+rule '205', l_document_suffix => sub {
   my ($self) = @_;
-  debug1("l_document_suffix");
+  debug_rule("l_document_suffix") if DEBUG;
   $self->all(
     $self->func('c_document_end'),
     $self->func('s_l_comments')
   );
-}
-name 'l_document_suffix', \&l_document_suffix;
+};
 
 
 
@@ -3757,9 +3553,9 @@ name 'l_document_suffix', \&l_document_suffix;
 #   ( c-directives-end | c-document-end )
 #   ( b-char | s-white | <end_of_file> )
 
-sub c_forbidden {
+rule '206', c_forbidden => sub {
   my ($self) = @_;
-  debug1("c_forbidden");
+  debug_rule("c_forbidden") if DEBUG;
   $self->all(
     $self->func('start_of_line'),
     $self->any(
@@ -3772,8 +3568,7 @@ sub c_forbidden {
       $self->func('end_of_stream')
     )
   );
-}
-name 'c_forbidden', \&c_forbidden;
+};
 
 
 
@@ -3782,15 +3577,14 @@ name 'c_forbidden', \&c_forbidden;
 #   s-l+block-node(-1,block-in)
 #   <excluding_c-forbidden_content>
 
-sub l_bare_document {
+rule '207', l_bare_document => sub {
   my ($self) = @_;
-  debug1("l_bare_document");
+  debug_rule("l_bare_document") if DEBUG;
   $self->all(
     $self->exclude($self->func('c_forbidden')),
     [ $self->func('s_l_block_node'), -1, "block-in" ]
   );
-}
-name 'l_bare_document', \&l_bare_document;
+};
 
 
 
@@ -3800,9 +3594,9 @@ name 'l_bare_document', \&l_bare_document;
 #   ( l-bare-document
 #   | ( e-node s-l-comments ) )
 
-sub l_explicit_document {
+rule '208', l_explicit_document => sub {
   my ($self) = @_;
-  debug1("l_explicit_document");
+  debug_rule("l_explicit_document") if DEBUG;
   $self->all(
     $self->func('c_directives_end'),
     $self->any(
@@ -3813,8 +3607,7 @@ sub l_explicit_document {
       )
     )
   );
-}
-name 'l_explicit_document', \&l_explicit_document;
+};
 
 
 
@@ -3823,15 +3616,14 @@ name 'l_explicit_document', \&l_explicit_document;
 #   l-directive+
 #   l-explicit-document
 
-sub l_directive_document {
+rule '209', l_directive_document => sub {
   my ($self) = @_;
-  debug1("l_directive_document");
+  debug_rule("l_directive_document") if DEBUG;
   $self->all(
     $self->rep(1, 0, $self->func('l_directive')),
     $self->func('l_explicit_document')
   );
-}
-name 'l_directive_document', \&l_directive_document;
+};
 
 
 
@@ -3841,16 +3633,15 @@ name 'l_directive_document', \&l_directive_document;
 #   | l-explicit-document
 #   | l-bare-document
 
-sub l_any_document {
+rule '210', l_any_document => sub {
   my ($self) = @_;
-  debug1("l_any_document");
+  debug_rule("l_any_document") if DEBUG;
   $self->any(
     $self->func('l_directive_document'),
     $self->func('l_explicit_document'),
     $self->func('l_bare_document')
   );
-}
-name 'l_any_document', \&l_any_document;
+};
 
 
 
@@ -3861,9 +3652,9 @@ name 'l_any_document', \&l_any_document;
 #   l-any-document? )
 #   | ( l-document-prefix* l-explicit-document? ) )*
 
-sub l_yaml_stream {
+rule '211', l_yaml_stream => sub {
   my ($self) = @_;
-  debug1("l_yaml_stream");
+  debug_rule("l_yaml_stream") if DEBUG;
   $self->all(
     $self->rep(0, 0, $self->func('l_document_prefix')),
     $self->rep(0, 1, $self->func('l_any_document')),
@@ -3880,8 +3671,7 @@ sub l_yaml_stream {
         )
       ))
   );
-}
-name 'l_yaml_stream', \&l_yaml_stream;
+};
 
 
 

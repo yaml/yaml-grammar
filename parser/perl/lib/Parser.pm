@@ -81,18 +81,17 @@ sub call {
     ($func, @$args) = @$func;
     @$args = map {
       isArray($_) ? $self->call($_, 'any') :
-      isFunction($_) ? $_->() :
+      isFunction($_) ? $_->{func}->() :
       $_;
     } @$args;
   }
 
-  return $func if $func eq $func + 0;
+  return $func if isNumber $func;
 
   xxxxx "Bad call type '${\ typeof $func}' for '$func'"
     unless isFunction($func);
 
-  my $trace_name = func_trace($func) || func_name($func);
-  xxxxx $func unless $func;
+  my $trace_name = $func->{trace};
 
   push @{$self->{stack}}, $self->new_state($trace_name);
 
@@ -101,7 +100,7 @@ sub call {
   my $pos = $self->{pos};
   $self->receive($func, 'try', $pos);
 
-  my $func2 = $func->($self, @$args);
+  my $func2 = $func->{func}->($self, @$args);
   my $value = $func2;
   while (isFunction($func2) or isArray($func2)) {
     $value = $func2 = $self->call($func2);
@@ -128,12 +127,13 @@ sub call {
 
   return $value;
 }
-my %receivers;
+
 sub receive {
   my ($self, $func, $type, $pos) = @_;
 
-  my $receiver = ($receivers{$func} //=
-    $self->make_receivers)->{$type};
+  my $receiver = (
+    $func->{receivers} //= $self->make_receivers
+  )->{$type};
 
   return unless $receiver;
 

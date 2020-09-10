@@ -12,11 +12,12 @@ global.generator_class = \
     package Grammar;
     use Prelude;
 
-    sub TOP {
+    use constant DEBUG => $ENV{DEBUG};
+
+    rule '000', TOP => sub {
       my ($self) = @_;
       $self->func('#{name}');
-    }
-    name 'TOP', \\&TOP;
+    };
     \n\n
     """
 
@@ -28,12 +29,11 @@ global.generator_class = \
   gen_rule_code: (num, comment, rule_name, debug_args, rule_args, rule_body)->
     """\
     #{comment}
-    sub #{rule_name} {
+    rule '#{num}', #{rule_name} => sub {
       my #{rule_args} = @_;
-      debug1("#{rule_name}"#{debug_args});
+      debug_rule("#{rule_name}"#{debug_args}) if DEBUG;
     #{rule_body};
-    }
-    name '#{rule_name}', \\&#{rule_name};
+    };
     \n\n\n
     """
 

@@ -7,48 +7,56 @@ use Exporter 'import';
 use JSON::PP;
 use Time::HiRes qw< gettimeofday tv_interval >;
 use YAML::PP::Perl;
-
 use XXX;
 
 our @EXPORT = qw<
-  name func_name func_trace stringify typeof func timer
-  isNull isBoolean isNumber isString isFunction isArray isObject
-  debug debug1 dump
-  carp croak cluck confess
+  name rule
   true false
+  stringify typeof func
+  isNull isBoolean isNumber isString isFunction isArray isObject
+  debug debug_rule dump
+  carp croak cluck confess
   WWW XXX YYY ZZZ
   xxxxx
+  timer
 >;
 
-my %name;
-my %num;
-my %trace;
-my %sig;
-my $save = [];
-sub name {
-  my ($name, $func, $trace) = @_;
-  push @$save, $func;
-  $name{$func} = $name;
-  if (defined $trace) {
-    if ($trace =~ /^(\d+)$/) {
-      $num{$func} = $trace;
-    }
-    else {
-      $trace{$func} = $trace;
-    }
+{
+  package Func;
+  use overload
+    eq => sub { 0 },
+    bool => sub { 1 };
+  sub new {
+    my ($class, $func, $name, $trace, $num) = @_;
+    bless {
+      func => $func,
+      name => $name,
+      trace => $trace || $name,
+      num => $num,
+      receivers => undef,
+    }, $class;
   }
+  sub TO_JSON { $_[0]->{func} }
+}
+
+sub rule {
+  my ($num, $name, $func) = @_;
+  my ($pkg) = caller;
+  {
+    no strict 'refs';
+    *{"${pkg}::$name"} = $func;
+  }
+  $func = name($name, $func);
+  $func->{num} = $num;
   return $func;
 }
 
-sub func_name {
-  $name{$_[0]};
+sub name {
+  my ($name, $func, $trace) = (@_, '');
+  return Func->new($func, $name, $trace);
 }
 
-sub func_trace {
-  $trace{$_[0]};
-}
-
-my $json = JSON::PP->new->canonical->allow_unknown->allow_nonref;
+my $json = JSON::PP->new->canonical->allow_unknown->allow_nonref->convert_blessed;
 sub json_stringify {
   my $string;
   eval {
@@ -64,7 +72,7 @@ sub stringify {
     return "\\uFEFF";
   }
   if (typeof($c) eq 'function') {
-    return "\@$name{$c}";
+    return "\@$c->{name}";
   }
   if (typeof($c) eq 'object') {
     return json_stringify [ sort keys %$c ];
@@ -78,7 +86,7 @@ sub isNull { not defined $_[0] }
 sub isBoolean { ref($_[0]) eq 'boolean' }
 sub isNumber { not(ref $_[0]) and $_[0] =~ /^-?\d+$/ }
 sub isString { not(ref $_[0]) and $_[0] !~ /^-?\d+$/ }
-sub isFunction { ref($_[0]) eq 'CODE' }
+sub isFunction { ref($_[0]) eq 'Func' }
 sub isArray { ref($_[0]) eq 'ARRAY' }
 sub isObject { ref($_[0]) eq 'HASH' }
 
@@ -96,8 +104,9 @@ sub typeof {
 
 sub func {
   my ($self, $name) = @_;
-  $self->can($name) ||
+  my $func = $self->can($name) or
     die "Can't find parser function '$name'";
+  Func->new($func, $name);
 }
 
 sub debug {
@@ -105,7 +114,7 @@ sub debug {
   warn ">>> $msg\n";
 }
 
-sub debug1 {
+sub debug_rule {
   return unless $ENV{DEBUG};
   my ($name, @args) = @_;
   my $args = join ',', map stringify($_), @args;
