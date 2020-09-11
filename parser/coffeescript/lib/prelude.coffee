@@ -1,8 +1,9 @@
 require 'ingy-prelude'
 
+global.ENV = process.env
+
 global.name_ = (name, func, trace)->
-  if trace?
-    func.trace = trace
+  func.trace = trace || name
   func
 
 global.stringify = (c)->
@@ -39,7 +40,7 @@ global.debug = (msg)->
   warn ">>> #{msg}"
 
 global.debug1 = (name, args...)->
-  return unless process.env.DEBUG
+  return unless ENV.DEBUG
   args = _.join _.map args, (a)->
     stringify(a)
   , ','

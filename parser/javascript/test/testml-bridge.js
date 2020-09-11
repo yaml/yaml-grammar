@@ -18,7 +18,7 @@
       parser = new Parser(new TestReceiver());
       error = '';
       try {
-        parser.parse(yaml, void 0, process.env.TRACE);
+        parser.parse(yaml);
       } catch (error1) {
         e = error1;
         error = String(e);

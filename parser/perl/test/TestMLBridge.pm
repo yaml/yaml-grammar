@@ -13,7 +13,7 @@ sub parse {
 
   my $parser = Parser->new(TestReceiver->new);
 
-  eval { $parser->parse($yaml, undef, $ENV{TRACE}) };
+  eval { $parser->parse($yaml) };
   return $@
     ? do { warn $@; '' }
     : $parser->{receiver}->output;

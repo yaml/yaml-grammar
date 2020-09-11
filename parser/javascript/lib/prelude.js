@@ -2,10 +2,10 @@
 (function() {
   require('ingy-prelude');
 
+  global.ENV = process.env;
+
   global.name_ = function(name, func, trace) {
-    if (trace != null) {
-      func.trace = trace;
-    }
+    func.trace = trace || name;
     return func;
   };
 
@@ -70,7 +70,7 @@
   };
 
   global.debug1 = function(name, ...args) {
-    if (!process.env.DEBUG) {
+    if (!ENV.DEBUG) {
       return;
     }
     args = _.join(_.map(args, function(a) {

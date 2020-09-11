@@ -6,6 +6,8 @@ grammar. It calls methods in the receiver class, when a rule matches:
 require './prelude'
 require './grammar'
 
+TRACE = Boolean ENV.TRACE
+
 global.Parser = class Parser extends Grammar
 
   constructor: (receiver)->
@@ -15,27 +17,26 @@ global.Parser = class Parser extends Grammar
     @len = 0
     @stack = []
     @trace_num = 1
+    @trace_on = true
     @trace_off = 0
     @trace_info = ['', '', '']
 
-  parse: (@input, rule=@TOP, trace=false)->
+  parse: (@input)->
     @len = @input.length
 
-    @trace = @noop
-    @trace = @trace_func if trace
+    @trace_on = not @trace_start() if TRACE
 
     try
-      ok = @call rule
+      ok = @call @TOP
+      @trace_flush()
     catch err
       @trace_flush()
       throw err
 
-    @trace_flush()
-
     if not ok
       throw "Parser failed"
 
-    if @pos < @input.length
+    if @pos < @len
       throw "Parser finished before end of input"
 
     return true
@@ -65,11 +66,11 @@ global.Parser = class Parser extends Grammar
     xxxxx "Bad call type '#{typeof_ func}' for '#{func}'" \
       unless isFunction func
 
-    trace_name = func.trace || func.name or xxx func
+    func.trace ?= func.name
 
-    @stack.push @new_state(trace_name)
+    @stack.push @new_state(func.trace)
 
-    @trace '?', trace_name, args
+    @trace '?', func.trace, args if TRACE
 
     pos = @pos
     @receive func, 'try', pos
@@ -79,7 +80,7 @@ global.Parser = class Parser extends Grammar
     while isFunction(func2) or isArray(func2)
       value = func2 = @call func2
 
-    xxxxx "Calling '#{trace_name}' returned '#{typeof_ value}' instead of '#{type}'" \
+    xxxxx "Calling '#{func.trace}' returned '#{typeof_ value}' instead of '#{type}'" \
       if type != 'any' and typeof_(value) != type
 
     if type != 'boolean'
@@ -87,10 +88,10 @@ global.Parser = class Parser extends Grammar
       return value
 
     if value
-      @trace '+', trace_name
+      @trace '+', func.trace if TRACE
       @receive func, 'got', pos
     else
-      @trace 'x', trace_name
+      @trace 'x', func.trace if TRACE
       @receive func, 'not', pos
 
     @stack.pop()
@@ -243,8 +244,7 @@ global.Parser = class Parser extends Grammar
   add: (x, y)->
     add = ->
       x + y
-    add.trace = "add(#{x},#{y})"
-    add
+    name_ 'add', add, "add(#{x},#{y})"
 
   sub: (x, y)->
     sub = ->
@@ -271,37 +271,36 @@ global.Parser = class Parser extends Grammar
 #------------------------------------------------------------------------------
 # Trace debugging
 #------------------------------------------------------------------------------
-  noop: ->
+  trace_start: ->
+    '' || ENV.TRACE_START
 
-  trace_start: process.env.TRACE_START
-  trace_quiet: [
-#     'b_char',
-#     'c_byte_order_mark',
-#     'c_flow_indicator',
-#     'c_indicator',
-#     'c_ns_alias_node',
-#     'c_ns_properties',
-#     'c_printable',
-#     'l_comment',
-#     'l_directive_document',
-#     'l_document_prefix',
-#     'l_explicit_document',
-#     'nb_char',
-#     'ns_char',
-#     'ns_flow_pair',
-#     'ns_plain',
-#     'ns_plain_char',
-#     's_l_block_collection',
-#     's_l_block_in_block',
-#     's_l_comments',
-#     's_separate',
-#     's_white',
-  ].concat((process.env.TRACE_QUIET || '').split ',')
+  trace_quiet: ->
+    [
+#       'b_char',
+#       'c_byte_order_mark',
+#       'c_flow_indicator',
+#       'c_indicator',
+#       'c_ns_alias_node',
+#       'c_ns_properties',
+#       'c_printable',
+#       'l_comment',
+#       'l_directive_document',
+#       'l_document_prefix',
+#       'l_explicit_document',
+#       'nb_char',
+#       'ns_char',
+#       'ns_flow_pair',
+#       'ns_plain',
+#       'ns_plain_char',
+#       's_l_block_collection',
+#       's_l_block_in_block',
+#       's_l_comments',
+#       's_separate',
+#       's_white',
+    ].concat((ENV.TRACE_QUIET || '').split ',')
 
-  trace_func: (type, call, args=[])->
-    if @trace_start
-      return unless call == @trace_start
-      @trace_start = ''
+  trace: (type, call, args=[])->
+    return unless @trace_on or call == @trace_start()
 
     level = @state().lvl
     indent = _.repeat ' ', level
@@ -344,6 +343,9 @@ global.Parser = class Parser extends Grammar
         warn sprintf "%5d %s", @trace_num++, prev_line
 
       @trace_info = trace_info
+
+    if call == @trace_start()
+      @trace_on = not @trace_on
 
   trace_format_call: (call, args)->
     return call unless args.length

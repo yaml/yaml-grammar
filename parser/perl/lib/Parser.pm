@@ -8,6 +8,8 @@ package Parser;
 use Prelude;
 use base 'Grammar';
 
+use constant TRACE => $ENV{TRACE};
+
 sub new {
   my ($class, $receiver) = @_;
 
@@ -17,25 +19,23 @@ sub new {
     len => 0,
     stack => [],
     trace_num => 1,
+    trace_on => true,
     trace_off => 0,
     trace_info => ['', '', ''],
   }, $class;
 }
 
 sub parse {
-  my ($self, $input, $rule, $trace) = @_;
+  my ($self, $input) = @_;
   $self->{input} = $input;
-  $rule //= $self->func('TOP');
-  $trace //= false;
 
   $self->{len} = length $self->{input};
 
-  *trace = \&noop;
-  *trace = \&trace_func if $trace;
+  $self->{trace_on} = not $self->trace_start if TRACE;
 
   my $ok;
   eval {
-    $ok = $self->call($rule);
+    $ok = $self->call($self->func('TOP'));
   };
   if ($@) {
     $self->trace_flush;
@@ -91,11 +91,9 @@ sub call {
   xxxxx "Bad call type '${\ typeof $func}' for '$func'"
     unless isFunction($func);
 
-  my $trace_name = $func->{trace};
+  push @{$self->{stack}}, $self->new_state($func->{trace});
 
-  push @{$self->{stack}}, $self->new_state($trace_name);
-
-  $self->trace('?', $trace_name, $args);
+  $self->trace('?', $func->{trace}, $args) if TRACE;
 
   my $pos = $self->{pos};
   $self->receive($func, 'try', $pos);
@@ -106,7 +104,7 @@ sub call {
     $value = $func2 = $self->call($func2);
   }
 
-  xxxxx "Calling '$trace_name' returned '${\ typeof($value)}' instead of '$type'"
+  xxxxx "Calling '$func->{trace}' returned '${\ typeof($value)}' instead of '$type'"
     if $type ne 'any' and typeof($value) ne $type;
 
   if ($type ne 'boolean') {
@@ -115,11 +113,11 @@ sub call {
   }
 
   if ($value) {
-    $self->trace('+', $trace_name);
+    $self->trace('+', $func->{trace}) if TRACE;
     $self->receive($func, 'got', $pos);
   }
   else {
-    $self->trace('x', $trace_name);
+    $self->trace('x', $func->{trace}) if TRACE;
     $self->receive($func, 'not', $pos);
   }
 
@@ -370,9 +368,13 @@ name 'auto_detect_indent', \&auto_detect_indent;
 #------------------------------------------------------------------------------
 # Trace debugging
 #------------------------------------------------------------------------------
-sub noop {}
-my $trace_start = 'l_block_mapping' || "$ENV{TRACE_START}";
-my @trace_quiet = (
+sub trace_start {
+  '' || "$ENV{TRACE_START}";
+}
+
+sub trace_quiet {
+  [
+    split(',', ($ENV{TRACE_QUIET} || '')),
 #     'b_char',
 #     'c_byte_order_mark',
 #     'c_flow_indicator',
@@ -394,17 +396,14 @@ my @trace_quiet = (
 #     's_l_comments',
 #     's_separate',
 #     's_white',
-);
-push @trace_quiet, split ',', $ENV{TRACE_QUIET} if $ENV{TRACE_QUIET};
+  ];
+}
 
-sub trace_func {
+sub trace {
   my ($self, $type, $call, $args) = @_;
   $args //= [];
 
-  if ($trace_start) {
-    return unless $call eq $trace_start;
-    $trace_start = '';
-  }
+  return unless $self->{trace_on} or $call eq $self->trace_start;
 
   my $level = $self->state->{lvl};
   my $indent = ' ' x $level;
@@ -432,7 +431,7 @@ sub trace_func {
   if ($type eq '?' and not $self->{trace_off}) {
     $trace_info = [$type, $level, $line];
   }
-  if (grep $_ eq $call, @trace_quiet) {
+  if (grep $_ eq $call, @{$self->{trace_quiet}}) {
     $self->{trace_off} += $type eq '?' ? 1 : -1;
   }
   if ($type ne '?' and not $self->{trace_off}) {
@@ -455,6 +454,10 @@ sub trace_func {
     }
 
     $self->{trace_info} = $trace_info;
+  }
+
+  if ($call eq $self->trace_start) {
+    $self->{trace_on} = not $self->{trace_on};
   }
 }
 

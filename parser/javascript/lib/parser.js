@@ -4,473 +4,479 @@
   This is a parser class. It has a parse() method and parsing primitives for the
   grammar. It calls methods in the receiver class, when a rule matches:
   */
-  var Parser,
+  var Parser, TRACE,
     indexOf = [].indexOf;
 
   require('./prelude');
 
   require('./grammar');
 
-  global.Parser = Parser = (function() {
-    class Parser extends Grammar {
-      constructor(receiver) {
-        super();
-        this.receiver = receiver;
-        this.pos = 0;
-        this.len = 0;
-        this.stack = [];
-        this.trace_num = 1;
-        this.trace_off = 0;
-        this.trace_info = ['', '', ''];
-      }
+  TRACE = Boolean(ENV.TRACE);
 
-      parse(input1, rule = this.TOP, trace = false) {
-        var err, ok;
-        this.input = input1;
-        this.len = this.input.length;
-        this.trace = this.noop;
-        if (trace) {
-          this.trace = this.trace_func;
-        }
-        try {
-          ok = this.call(rule);
-        } catch (error) {
-          err = error;
-          this.trace_flush();
-          throw err;
-        }
+  global.Parser = Parser = class Parser extends Grammar {
+    constructor(receiver) {
+      super();
+      this.receiver = receiver;
+      this.pos = 0;
+      this.len = 0;
+      this.stack = [];
+      this.trace_num = 1;
+      this.trace_on = true;
+      this.trace_off = 0;
+      this.trace_info = ['', '', ''];
+    }
+
+    parse(input1) {
+      var err, ok;
+      this.input = input1;
+      this.len = this.input.length;
+      if (TRACE) {
+        this.trace_on = !this.trace_start();
+      }
+      try {
+        ok = this.call(this.TOP);
         this.trace_flush();
-        if (!ok) {
-          throw "Parser failed";
-        }
-        if (this.pos < this.input.length) {
-          throw "Parser finished before end of input";
-        }
-        return true;
+      } catch (error) {
+        err = error;
+        this.trace_flush();
+        throw err;
       }
-
-      state() {
-        return _.last(this.stack) || {
-          lvl: 0
-        };
+      if (!ok) {
+        throw "Parser failed";
       }
-
-      new_state(name) {
-        var prev;
-        prev = this.state();
-        return {
-          name: name,
-          lvl: prev.lvl + 1,
-          pos: this.pos,
-          m: null
-        };
+      if (this.pos < this.len) {
+        throw "Parser finished before end of input";
       }
+      return true;
+    }
 
-      call(func, type = 'boolean') {
-        var args, func2, pos, trace_name, value;
-        args = [];
-        if (isArray(func)) {
-          [func, ...args] = func;
-          args = _.map(args, (a) => {
-            if (isArray(a)) {
-              return this.call(a, 'any');
-            } else if (isFunction(a)) {
-              return a();
-            } else {
-              return a;
-            }
-          });
-        }
-        if (isNumber(func)) {
-          return func;
-        }
-        if (!isFunction(func)) {
-          xxxxx(`Bad call type '${typeof_(func)}' for '${func}'`);
-        }
-        trace_name = func.trace || func.name || xxx(func);
-        this.stack.push(this.new_state(trace_name));
-        this.trace('?', trace_name, args);
-        pos = this.pos;
-        this.receive(func, 'try', pos);
-        func2 = func.apply(this, args);
-        value = func2;
-        while (isFunction(func2) || isArray(func2)) {
-          value = func2 = this.call(func2);
-        }
-        if (type !== 'any' && typeof_(value) !== type) {
-          xxxxx(`Calling '${trace_name}' returned '${typeof_(value)}' instead of '${type}'`);
-        }
-        if (type !== 'boolean') {
-          this.stack.pop();
-          return value;
-        }
-        if (value) {
-          this.trace('+', trace_name);
-          this.receive(func, 'got', pos);
-        } else {
-          this.trace('x', trace_name);
-          this.receive(func, 'not', pos);
-        }
+    state() {
+      return _.last(this.stack) || {
+        lvl: 0
+      };
+    }
+
+    new_state(name) {
+      var prev;
+      prev = this.state();
+      return {
+        name: name,
+        lvl: prev.lvl + 1,
+        pos: this.pos,
+        m: null
+      };
+    }
+
+    call(func, type = 'boolean') {
+      var args, func2, pos, value;
+      args = [];
+      if (isArray(func)) {
+        [func, ...args] = func;
+        args = _.map(args, (a) => {
+          if (isArray(a)) {
+            return this.call(a, 'any');
+          } else if (isFunction(a)) {
+            return a();
+          } else {
+            return a;
+          }
+        });
+      }
+      if (isNumber(func)) {
+        return func;
+      }
+      if (!isFunction(func)) {
+        xxxxx(`Bad call type '${typeof_(func)}' for '${func}'`);
+      }
+      if (func.trace == null) {
+        func.trace = func.name;
+      }
+      this.stack.push(this.new_state(func.trace));
+      if (TRACE) {
+        this.trace('?', func.trace, args);
+      }
+      pos = this.pos;
+      this.receive(func, 'try', pos);
+      func2 = func.apply(this, args);
+      value = func2;
+      while (isFunction(func2) || isArray(func2)) {
+        value = func2 = this.call(func2);
+      }
+      if (type !== 'any' && typeof_(value) !== type) {
+        xxxxx(`Calling '${func.trace}' returned '${typeof_(value)}' instead of '${type}'`);
+      }
+      if (type !== 'boolean') {
         this.stack.pop();
         return value;
       }
-
-      receive(func, type, pos) {
-        var receiver;
-        receiver = (func.receivers != null ? func.receivers : func.receivers = this.make_receivers())[type];
-        if (!receiver) {
-          return;
+      if (value) {
+        if (TRACE) {
+          this.trace('+', func.trace);
         }
-        // warn receiver.name
-        return receiver.call(this.receiver, {
-          text: this.input.slice(pos, +(this.pos - 1) + 1 || 9e9),
-          state: this.state(),
-          start: pos
-        });
-      }
-
-      make_receivers() {
-        var i, m, n, name, names;
-        i = this.stack.length;
-        names = [];
-        while (i > 0 && !(n = this.stack[--i].name).match(/_/)) {
-          if (m = n.match(/^chr\((.)\)$/)) {
-            n = 'x' + m[1].charCodeAt(0).toString(16);
-          }
-          names.unshift(n);
+        this.receive(func, 'got', pos);
+      } else {
+        if (TRACE) {
+          this.trace('x', func.trace);
         }
-        name = [n, ...names].join('__');
-        return {
-          try: this.receiver.constructor.prototype[`try__${name}`],
-          got: this.receiver.constructor.prototype[`got__${name}`],
-          not: this.receiver.constructor.prototype[`not__${name}`]
-        };
+        this.receive(func, 'not', pos);
       }
+      this.stack.pop();
+      return value;
+    }
 
-      // Match all subrule methods:
-      all(...funcs) {
-        var all;
-        return all = function() {
-          var func, j, len, pos;
-          pos = this.pos;
-          for (j = 0, len = funcs.length; j < len; j++) {
-            func = funcs[j];
-            if (func == null) {
-              xxxxx('*** Missing function in @all group:', funcs);
-            }
-            if (!this.call(func)) {
-              this.pos = pos;
-              return false;
-            }
-          }
-          return true;
-        };
+    receive(func, type, pos) {
+      var receiver;
+      receiver = (func.receivers != null ? func.receivers : func.receivers = this.make_receivers())[type];
+      if (!receiver) {
+        return;
       }
+      // warn receiver.name
+      return receiver.call(this.receiver, {
+        text: this.input.slice(pos, +(this.pos - 1) + 1 || 9e9),
+        state: this.state(),
+        start: pos
+      });
+    }
 
-      // Match any subrule method. Rules are tried in order and stops on first
-      // match:
-      any(...funcs) {
-        var any;
-        return any = function() {
-          var func, j, len;
-          for (j = 0, len = funcs.length; j < len; j++) {
-            func = funcs[j];
-            if (this.call(func)) {
-              return true;
-            }
-          }
-          return false;
-        };
+    make_receivers() {
+      var i, m, n, name, names;
+      i = this.stack.length;
+      names = [];
+      while (i > 0 && !(n = this.stack[--i].name).match(/_/)) {
+        if (m = n.match(/^chr\((.)\)$/)) {
+          n = 'x' + m[1].charCodeAt(0).toString(16);
+        }
+        names.unshift(n);
       }
+      name = [n, ...names].join('__');
+      return {
+        try: this.receiver.constructor.prototype[`try__${name}`],
+        got: this.receiver.constructor.prototype[`got__${name}`],
+        not: this.receiver.constructor.prototype[`not__${name}`]
+      };
+    }
 
-      // Repeat a rule a certain number of times:
-      rep(min, max, func) {
-        var rep;
-        rep = function() {
-          var count, pos;
-          count = 0;
-          pos = this.pos;
-          while (this.pos < this.len && this.call(func)) {
-            if (min === 0 && pos === this.pos) {
-              return true;
-            }
-            count++;
+    // Match all subrule methods:
+    all(...funcs) {
+      var all;
+      return all = function() {
+        var func, j, len, pos;
+        pos = this.pos;
+        for (j = 0, len = funcs.length; j < len; j++) {
+          func = funcs[j];
+          if (func == null) {
+            xxxxx('*** Missing function in @all group:', funcs);
           }
-          if (count >= min && (max === 0 || count <= max)) {
-            return true;
-          } else {
+          if (!this.call(func)) {
             this.pos = pos;
             return false;
           }
-        };
-        return name_('rep', rep, `rep(${min},${max})`);
-      }
-
-      // Call a rule depending on state value:
-      case(var_, map) {
-        var case_;
-        case_ = function() {
-          var rule;
-          rule = map[var_] || xxxxx(`Can't find '${var_}' in:`, map);
-          return this.call(rule);
-        };
-        return name_('case', case_, `case(${var_}, ${stringify(map)})`);
-      }
-
-      // Call a rule depending on state value:
-      flip(var_, map) {
-        var value;
-        value = map[var_] || xxxxx(`Can't find '${var_}' in:`, map);
-        if (isString(value)) {
-          return value;
         }
-        return this.call(value);
-      }
-
-      // Match a single char:
-      chr(char) {
-        var chr;
-        chr = function() {
-          if (this.pos >= this.len) {
-            return false;
-          } else if (this.input[this.pos] === char) {
-            this.pos++;
-            return true;
-          } else {
-            return false;
-          }
-        };
-        return name_('chr', chr, `chr(${stringify(char)})`);
-      }
-
-      // Match a char in a range:
-      rng(low, high) {
-        var rng;
-        rng = function() {
-          var ref;
-          if (this.pos >= this.input.length) {
-            return false;
-          } else if ((low <= (ref = this.input[this.pos]) && ref <= high)) {
-            this.pos++;
-            return true;
-          } else {
-            return false;
-          }
-        };
-        name_('rng', rng, `rng(${stringify(low)},${stringify(high)})`);
-        return rng;
-      }
-
-      // Must match first rule but none of others:
-      but(...funcs) {
-        var but;
-        return but = function() {
-          var func, j, len, pos1, pos2, ref;
-          pos1 = this.pos;
-          if (!this.call(funcs[0])) {
-            return false;
-          }
-          pos2 = this.pos;
-          this.pos = pos1;
-          ref = funcs.slice(1);
-          for (j = 0, len = ref.length; j < len; j++) {
-            func = ref[j];
-            if (this.call(func)) {
-              this.pos = pos1;
-              return false;
-            }
-          }
-          this.pos = pos2;
-          return true;
-        };
-      }
-
-      chk(type, expr) {
-        var chk;
-        chk = function() {
-          var ok, pos;
-          pos = this.pos;
-          if (type === '<=') {
-            this.pos--;
-          }
-          ok = this.call(expr);
-          this.pos = pos;
-          if (type === '!') {
-            return !ok;
-          } else {
-            return ok;
-          }
-        };
-        return name_('chk', chk, `chk(${type}, ${stringify(expr)})`);
-      }
-
-      set(var_, expr) {
-        var set;
-        return set = function() {
-          this.state()[var_] = this.call(expr, 'any');
-          return true;
-        };
-      }
-
-      max(max) {
-        return max = function() {
-          return true;
-        };
-      }
-
-      exclude(rule) {
-        var exclude;
-        return exclude = function() {
-          return true;
-        };
-      }
-
-      add(x, y) {
-        var add;
-        add = function() {
-          return x + y;
-        };
-        add.trace = `add(${x},${y})`;
-        return add;
-      }
-
-      sub(x, y) {
-        var sub;
-        return sub = function() {
-          return x - y;
-        };
-      }
-
-      m() {
-        return 0;
-      }
-
-      t() {
-        return '';
-      }
-
-      //------------------------------------------------------------------------------
-      // Special grammar rules
-      //------------------------------------------------------------------------------
-      start_of_line() {
-        return this.pos === 0 || this.input[this.pos - 1] === "\n";
-      }
-
-      end_of_stream() {
-        return this.pos >= this.len;
-      }
-
-      empty() {
         return true;
-      }
+      };
+    }
 
-      auto_detect_indent() {
-        return 1;
-      }
-
-      //------------------------------------------------------------------------------
-      // Trace debugging
-      //------------------------------------------------------------------------------
-      noop() {}
-
-      trace_func(type, call, args = []) {
-        var indent, input, l, level, line, prev_level, prev_line, prev_type, trace_info;
-        if (this.trace_start) {
-          if (call !== this.trace_start) {
-            return;
+    // Match any subrule method. Rules are tried in order and stops on first
+    // match:
+    any(...funcs) {
+      var any;
+      return any = function() {
+        var func, j, len;
+        for (j = 0, len = funcs.length; j < len; j++) {
+          func = funcs[j];
+          if (this.call(func)) {
+            return true;
           }
-          this.trace_start = '';
         }
-        level = this.state().lvl;
-        indent = _.repeat(' ', level);
-        if (level > 0) {
-          l = `${level}`.length;
-          indent = `${level}` + indent.slice(l);
-        }
-        input = this.input.slice(this.pos).replace(/\t/g, '\\t').replace(/\r/g, '\\r').replace(/\n/g, '\\n');
-        line = sprintf("%s%s %-30s  %4d '%s'", indent, type, this.trace_format_call(call, args), this.pos, input);
-        trace_info = null;
-        level = `${level}_${call}`;
-        if (type === '?' && this.trace_off === 0) {
-          trace_info = [type, level, line];
-        }
-        if (indexOf.call(this.trace_quiet, call) >= 0) {
-          this.trace_off += type === '?' ? 1 : -1;
-        }
-        if (type !== '?' && this.trace_off === 0) {
-          trace_info = [type, level, line];
-        }
-        if (trace_info != null) {
-          [prev_type, prev_level, prev_line] = this.trace_info;
-          if (prev_type === '?' && prev_level === level) {
-            trace_info[1] = '';
-            if (line.match(/^\d*\ *\+/)) {
-              prev_line = prev_line.replace(/\?/, '=');
-            } else {
-              prev_line = prev_line.replace(/\?/, '!');
-            }
+        return false;
+      };
+    }
+
+    // Repeat a rule a certain number of times:
+    rep(min, max, func) {
+      var rep;
+      rep = function() {
+        var count, pos;
+        count = 0;
+        pos = this.pos;
+        while (this.pos < this.len && this.call(func)) {
+          if (min === 0 && pos === this.pos) {
+            return true;
           }
-          if (prev_level) {
-            warn(sprintf("%5d %s", this.trace_num++, prev_line));
-          }
-          return this.trace_info = trace_info;
+          count++;
         }
+        if (count >= min && (max === 0 || count <= max)) {
+          return true;
+        } else {
+          this.pos = pos;
+          return false;
+        }
+      };
+      return name_('rep', rep, `rep(${min},${max})`);
+    }
+
+    // Call a rule depending on state value:
+    case(var_, map) {
+      var case_;
+      case_ = function() {
+        var rule;
+        rule = map[var_] || xxxxx(`Can't find '${var_}' in:`, map);
+        return this.call(rule);
+      };
+      return name_('case', case_, `case(${var_}, ${stringify(map)})`);
+    }
+
+    // Call a rule depending on state value:
+    flip(var_, map) {
+      var value;
+      value = map[var_] || xxxxx(`Can't find '${var_}' in:`, map);
+      if (isString(value)) {
+        return value;
       }
+      return this.call(value);
+    }
 
-      trace_format_call(call, args) {
-        var list;
-        if (!args.length) {
-          return call;
+    // Match a single char:
+    chr(char) {
+      var chr;
+      chr = function() {
+        if (this.pos >= this.len) {
+          return false;
+        } else if (this.input[this.pos] === char) {
+          this.pos++;
+          return true;
+        } else {
+          return false;
         }
-        list = _.map(args, function(a) {
-          if (isFunction(a)) {
-            return a.call;
-          }
-          if (isNull(a)) {
-            return 'null';
-          }
-          return `${a}`;
-        });
-        return call + '(' + list.join(',') + ')';
-      }
+      };
+      return name_('chr', chr, `chr(${stringify(char)})`);
+    }
 
-      trace_flush() {
-        var line;
-        if (line = this.trace_info[2]) {
-          return warn(sprintf("%5d %s", this.trace_num++, line));
+    // Match a char in a range:
+    rng(low, high) {
+      var rng;
+      rng = function() {
+        var ref;
+        if (this.pos >= this.input.length) {
+          return false;
+        } else if ((low <= (ref = this.input[this.pos]) && ref <= high)) {
+          this.pos++;
+          return true;
+        } else {
+          return false;
         }
+      };
+      name_('rng', rng, `rng(${stringify(low)},${stringify(high)})`);
+      return rng;
+    }
+
+    // Must match first rule but none of others:
+    but(...funcs) {
+      var but;
+      return but = function() {
+        var func, j, len, pos1, pos2, ref;
+        pos1 = this.pos;
+        if (!this.call(funcs[0])) {
+          return false;
+        }
+        pos2 = this.pos;
+        this.pos = pos1;
+        ref = funcs.slice(1);
+        for (j = 0, len = ref.length; j < len; j++) {
+          func = ref[j];
+          if (this.call(func)) {
+            this.pos = pos1;
+            return false;
+          }
+        }
+        this.pos = pos2;
+        return true;
+      };
+    }
+
+    chk(type, expr) {
+      var chk;
+      chk = function() {
+        var ok, pos;
+        pos = this.pos;
+        if (type === '<=') {
+          this.pos--;
+        }
+        ok = this.call(expr);
+        this.pos = pos;
+        if (type === '!') {
+          return !ok;
+        } else {
+          return ok;
+        }
+      };
+      return name_('chk', chk, `chk(${type}, ${stringify(expr)})`);
+    }
+
+    set(var_, expr) {
+      var set;
+      return set = function() {
+        this.state()[var_] = this.call(expr, 'any');
+        return true;
+      };
+    }
+
+    max(max) {
+      return max = function() {
+        return true;
+      };
+    }
+
+    exclude(rule) {
+      var exclude;
+      return exclude = function() {
+        return true;
+      };
+    }
+
+    add(x, y) {
+      var add;
+      add = function() {
+        return x + y;
+      };
+      return name_('add', add, `add(${x},${y})`);
+    }
+
+    sub(x, y) {
+      var sub;
+      return sub = function() {
+        return x - y;
+      };
+    }
+
+    m() {
+      return 0;
+    }
+
+    t() {
+      return '';
+    }
+
+    //------------------------------------------------------------------------------
+    // Special grammar rules
+    //------------------------------------------------------------------------------
+    start_of_line() {
+      return this.pos === 0 || this.input[this.pos - 1] === "\n";
+    }
+
+    end_of_stream() {
+      return this.pos >= this.len;
+    }
+
+    empty() {
+      return true;
+    }
+
+    auto_detect_indent() {
+      return 1;
+    }
+
+    //------------------------------------------------------------------------------
+    // Trace debugging
+    //------------------------------------------------------------------------------
+    trace_start() {
+      return '' || ENV.TRACE_START;
+    }
+
+    trace_quiet() {
+      //       'b_char',
+      //       'c_byte_order_mark',
+      //       'c_flow_indicator',
+      //       'c_indicator',
+      //       'c_ns_alias_node',
+      //       'c_ns_properties',
+      //       'c_printable',
+      //       'l_comment',
+      //       'l_directive_document',
+      //       'l_document_prefix',
+      //       'l_explicit_document',
+      //       'nb_char',
+      //       'ns_char',
+      //       'ns_flow_pair',
+      //       'ns_plain',
+      //       'ns_plain_char',
+      //       's_l_block_collection',
+      //       's_l_block_in_block',
+      //       's_l_comments',
+      //       's_separate',
+      //       's_white',
+      return [].concat((ENV.TRACE_QUIET || '').split(','));
+    }
+
+    trace(type, call, args = []) {
+      var indent, input, l, level, line, prev_level, prev_line, prev_type, trace_info;
+      if (!(this.trace_on || call === this.trace_start())) {
+        return;
       }
+      level = this.state().lvl;
+      indent = _.repeat(' ', level);
+      if (level > 0) {
+        l = `${level}`.length;
+        indent = `${level}` + indent.slice(l);
+      }
+      input = this.input.slice(this.pos).replace(/\t/g, '\\t').replace(/\r/g, '\\r').replace(/\n/g, '\\n');
+      line = sprintf("%s%s %-30s  %4d '%s'", indent, type, this.trace_format_call(call, args), this.pos, input);
+      trace_info = null;
+      level = `${level}_${call}`;
+      if (type === '?' && this.trace_off === 0) {
+        trace_info = [type, level, line];
+      }
+      if (indexOf.call(this.trace_quiet, call) >= 0) {
+        this.trace_off += type === '?' ? 1 : -1;
+      }
+      if (type !== '?' && this.trace_off === 0) {
+        trace_info = [type, level, line];
+      }
+      if (trace_info != null) {
+        [prev_type, prev_level, prev_line] = this.trace_info;
+        if (prev_type === '?' && prev_level === level) {
+          trace_info[1] = '';
+          if (line.match(/^\d*\ *\+/)) {
+            prev_line = prev_line.replace(/\?/, '=');
+          } else {
+            prev_line = prev_line.replace(/\?/, '!');
+          }
+        }
+        if (prev_level) {
+          warn(sprintf("%5d %s", this.trace_num++, prev_line));
+        }
+        this.trace_info = trace_info;
+      }
+      if (call === this.trace_start()) {
+        return this.trace_on = !this.trace_on;
+      }
+    }
 
-    };
+    trace_format_call(call, args) {
+      var list;
+      if (!args.length) {
+        return call;
+      }
+      list = _.map(args, function(a) {
+        if (isFunction(a)) {
+          return a.call;
+        }
+        if (isNull(a)) {
+          return 'null';
+        }
+        return `${a}`;
+      });
+      return call + '(' + list.join(',') + ')';
+    }
 
-    Parser.prototype.trace_start = process.env.TRACE_START;
+    trace_flush() {
+      var line;
+      if (line = this.trace_info[2]) {
+        return warn(sprintf("%5d %s", this.trace_num++, line));
+      }
+    }
 
-    //     'b_char',
-    //     'c_byte_order_mark',
-    //     'c_flow_indicator',
-    //     'c_indicator',
-    //     'c_ns_alias_node',
-    //     'c_ns_properties',
-    //     'c_printable',
-    //     'l_comment',
-    //     'l_directive_document',
-    //     'l_document_prefix',
-    //     'l_explicit_document',
-    //     'nb_char',
-    //     'ns_char',
-    //     'ns_flow_pair',
-    //     'ns_plain',
-    //     'ns_plain_char',
-    //     's_l_block_collection',
-    //     's_l_block_in_block',
-    //     's_l_comments',
-    //     's_separate',
-    //     's_white',
-    Parser.prototype.trace_quiet = [].concat((process.env.TRACE_QUIET || '').split(','));
-
-    return Parser;
-
-  }).call(this);
+  };
 
   // vim: sw=2:
 
