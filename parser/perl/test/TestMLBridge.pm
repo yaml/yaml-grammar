@@ -15,7 +15,7 @@ sub parse {
 
   eval { $parser->parse($yaml, undef, $ENV{TRACE}) };
   return $@
-    ? $@
+    ? do { warn $@; '' }
     : $parser->{receiver}->output;
 }
 

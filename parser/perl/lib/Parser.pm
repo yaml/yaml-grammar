@@ -167,7 +167,7 @@ sub make_receivers {
 # Match all subrule methods:
 sub all {
   my ($self, @funcs) = @_;
-  name 'all', sub {
+  name all => sub {
     my $pos = $self->{pos};
     for my $func (@funcs) {
       xxxxx '*** Missing function in @all group:', \@funcs
@@ -186,7 +186,7 @@ sub all {
 # Match any subrule method. Rules are tried in order and stops on first match:
 sub any {
   my ($self, @funcs) = @_;
-  name 'any', sub {
+  name any => sub {
     for my $func (@funcs) {
       if ($self->call($func)) {
         return true;
@@ -200,7 +200,7 @@ sub any {
 # Repeat a rule a certain number of times:
 sub rep {
   my ($self, $min, $max, $func) = @_;
-  name 'rep', sub {
+  name rep => sub {
     my $count = 0;
     my $pos = $self->{pos};
     while ($self->{pos} < $self->{len} and $self->call($func)) {
@@ -220,7 +220,7 @@ sub rep {
 # Call a rule depending on state value:
 sub case {
   my ($self, $var, $map) = @_;
-  name 'case', sub {
+  name case => sub {
     my $rule = $map->{$var} or
       xxxxx "Can't find '$var' in:", $map;
     $self->call($rule);
@@ -235,12 +235,12 @@ sub flip {
   return $value if not ref $value;
   return $->call($value);
 }
-name 'flip', \&flip;
+name flip => \&flip;
 
 # Match a single char:
 sub chr {
   my ($self, $char) = @_;
-  name 'chr', sub {
+  name chr => sub {
     if ($self->{pos} >= $self->{len}) {
       return false;
     }
@@ -257,7 +257,7 @@ sub chr {
 # Match a char in a range:
 sub rng {
   my ($self, $low, $high) = @_;
-  name 'rng', sub {
+  name rng => sub {
     if ($self->{pos} >= $self->{len}) {
       return false;
     }
@@ -277,7 +277,7 @@ sub rng {
 # Must match first rule but none of others:
 sub but {
   my ($self, @funcs) = @_;
-  name 'but', sub {
+  name but => sub {
     my $pos1 = $self->{pos};
     return false unless $self->call($funcs[0]);
     my $pos2 = $self->{pos};
@@ -295,7 +295,7 @@ sub but {
 
 sub chk {
   my ($self, $type, $expr) = @_;
-  name 'chk', sub {
+  name chk => sub {
     my $pos = $self->{pos};
     $self->{pos}-- if $type eq '<=';
     my $ok = $self->call($expr);
@@ -306,7 +306,7 @@ sub chk {
 
 sub set {
   my ($self, $var, $expr) = @_;
-  name 'set', sub {
+  name set => sub {
     $self->state->{$var} = $self->call($expr, 'any');
     return true;
   };
@@ -314,28 +314,28 @@ sub set {
 
 sub max {
   my ($self, $max) = @_;
-  name 'max', sub {
+  name max => sub {
     return true;
   };
 }
 
 sub exclude {
   my ($self, $rule) = @_;
-  name 'exclude', sub {
+  name exclude => sub {
     return true;
   };
 }
 
 sub add {
   my ($self, $x, $y) = @_;
-  name 'add', sub {
+  name add => sub {
     return $x + $y;
   }, "add($x,$y)";
 }
 
 sub sub {
   my ($self, $x, $y) = @_;
-  name 'sub', sub {
+  name sub => sub {
     return $x - $y;
   }, "sub($x,$y)";
 }
@@ -371,7 +371,7 @@ name 'auto_detect_indent', \&auto_detect_indent;
 # Trace debugging
 #------------------------------------------------------------------------------
 sub noop {}
-my $trace_start = "$ENV{TRACE_START}";
+my $trace_start = 'l_block_mapping' || "$ENV{TRACE_START}";
 my @trace_quiet = (
 #     'b_char',
 #     'c_byte_order_mark',

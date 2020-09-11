@@ -1,17 +1,24 @@
 #!/usr/bin/env testml
 
 parse(*yaml) == *events
-  :"parse('{*yaml}')"
+  :"+ -- '{*yaml}'"
 
-
-===
+=== Empty stream
 --- yaml: ""
 --- events
 +STR
 -STR
 
 
-===
+=== Empty stream with comments
+--- yaml(<)
+    # comment
+
+    # blank line above
+--- ^events
+
+
+=== Top plain scalar
 --- yaml: foo
 --- events
 +STR
@@ -21,19 +28,19 @@ parse(*yaml) == *events
 -STR
 
 
-===
+=== Top plain with newline
 --- yaml
 foo
 --- ^events
 
 
-===
+=== Top plain with extra ws
 --- yaml: "   foo  "
 --- ^events
 
 
 ===
---- SKIP
+--- SKIP: XXX parser infinite loop
 --- yaml(<)
     # comment
 
@@ -41,7 +48,7 @@ foo
 --- ^events
 
 
-===
+=== Top level double quoted scalar
 --- yaml(-)
 "foo"
 --- events
@@ -52,7 +59,7 @@ foo
 -STR
 
 
-===
+=== Top level single quoted sclaar
 --- yaml: "'foo'"
 --- events
 +STR
@@ -62,11 +69,11 @@ foo
 -STR
 
 
-===
---- SKIP
---- yaml
-|
-  foo
+=== Top level literal scalar
+--- SKIP: Can't find parser function 'match' at lib/Grammar.pm line 2750
+--- yaml(<)
+    --- |
+      foo
 --- events
 +STR
 +DOC
@@ -75,7 +82,7 @@ foo
 -STR
 
 
-===
+=== Empty sequence
 --- yaml: []
 --- events
 +STR
@@ -86,21 +93,66 @@ foo
 -STR
 
 
-===
---- yaml: [1,2 2  ,333,]
+=== Flow sequence
+--- yaml: [1,2,3]
 --- events
 +STR
 +DOC
 +SEQ []
 =VAL :1
-=VAL :2 2
-=VAL :333
+=VAL :2
+=VAL :3
 -SEQ
 -DOC
 -STR
 
 
-===
+=== Flow sequence trailing comma
+--- yaml: [1,2,3,]
+--- ^events
+
+
+=== Flow sequence with ws
+--- yaml: [ 1, 2 , 3  ,]
+--- ^events
+
+
+=== Flow sequence with surrounding ws
+--- yaml: "  [1, 2, 3]  "
+--- ^events
+
+
+=== Flow sequence multiline
+--- yaml
+[ 1,
+ 2, 3]
+--- ^events
+
+
+=== Flow sequence multiline
+--- SKIP: XXX infinite loop
+--- yaml
+[ 1,
+2, 3]
+--- ^events
+
+
+=== Flow sequence with different styles
+--- yaml: [1,two,'three',"four"]
+--- events
++STR
++DOC
++SEQ []
+=VAL :1
+=VAL :two
+=VAL 'three
+=VAL "four
+-SEQ
+-DOC
+-STR
+
+
+=== Sequence in flow sequence
 --- yaml: [[]]
 --- events
 +STR
@@ -126,7 +178,7 @@ foo
 -STR
 
 
-===
+=== Flow mapping
 --- yaml: {foo: 'bar', baz: 42}
 --- events
 +STR
@@ -141,7 +193,7 @@ foo
 -STR
 
 
-===
+=== Flow mapping with empty value
 --- yaml: {foo:}
 --- events
 +STR
@@ -154,20 +206,20 @@ foo
 -STR
 
 
-===
---- yaml: {? foo:}
+=== Flow mapping explicit key
+--- yaml: {? foo: bar}
 --- events
 +STR
 +DOC
 +MAP {}
 =VAL :foo
-=VAL :
+=VAL :bar
 -MAP
 -DOC
 -STR
 
 
-===
+=== Leading ? in flow key
 --- yaml: {?foo:}
 --- events
 +STR
@@ -180,20 +232,20 @@ foo
 -STR
 
 
-===
---- yaml: {http://example.com}
+=== Key with :
+--- yaml: {http://example.com: url}
 --- events
 +STR
 +DOC
 +MAP {}
 =VAL :http://example.com
-=VAL :
+=VAL :url
 -MAP
 -DOC
 -STR
 
 
-===
+=== Double quoted key no space after :
 --- yaml: {"http"://example.com}
 --- events
 +STR
@@ -206,16 +258,16 @@ foo
 -STR
 
 
-===
+=== Block mapping
 --- SKIP
 --- yaml
-foo: 'bar'
+foo: bar
 --- events
 +STR
 +DOC
 +MAP {}
 =VAL :foo
-=VAL 'bar
+=VAL :bar
 -MAP
 -DOC
 -STR

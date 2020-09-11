@@ -105,7 +105,7 @@ sub typeof {
 sub func {
   my ($self, $name) = @_;
   my $func = $self->can($name) or
-    die "Can't find parser function '$name'";
+    croak "Can't find parser function '$name'";
   Func->new($func, $name);
 }
 
