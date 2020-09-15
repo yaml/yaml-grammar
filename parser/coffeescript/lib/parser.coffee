@@ -15,7 +15,7 @@ global.Parser = class Parser extends Grammar
     @receiver = receiver
     @pos = 0
     @len = 0
-    @stack = []
+    @state = []
     @trace_num = 1
     @trace_on = true
     @trace_off = 0
@@ -41,16 +41,33 @@ global.Parser = class Parser extends Grammar
 
     return true
 
-  state: ->
-    _.last(@stack) || lvl: 0
+  state_curr: ->
+    _.last(@state) ||
+      name: null
+      lvl: 0
+      beg: 0
+      end: 0
+      m: null
+      t: null
 
-  new_state: (name)->
-    prev = @state()
+  state_prev: ->
+    @state[@state.length - 2] or xxxxx @
 
-    name: name
-    lvl: prev.lvl + 1
-    pos: @pos
-    m: null
+  state_push: (name)->
+    prev = @state_curr()
+
+    @state.push
+      name: name
+      lvl: prev.lvl + 1
+      pos: @pos
+      m: null
+
+  state_pop: ->
+    @state.pop()
+    # state_prev = @state_prev()
+    # state_curr = @state.pop()
+    # state_prev.beg = state_curr.beg
+    # state_prev.end = @pos
 
   call: (func, type='boolean')->
     args = []
@@ -63,7 +80,7 @@ global.Parser = class Parser extends Grammar
 
     func.trace ?= func.name
 
-    @stack.push @new_state(func.trace)
+    @state_push(func.trace)
 
     @trace '?', func.trace, args if TRACE
 
@@ -85,7 +102,7 @@ global.Parser = class Parser extends Grammar
 
     if type != 'boolean'
       @trace '>', value if TRACE
-      @stack.pop()
+      @state_pop()
       return value
 
     if value
@@ -95,7 +112,7 @@ global.Parser = class Parser extends Grammar
       @trace 'x', func.trace if TRACE
       @receive func, 'not', pos
 
-    @stack.pop()
+    @state_pop()
 
     return value
 
@@ -109,13 +126,13 @@ global.Parser = class Parser extends Grammar
 
     receiver.call @receiver,
       text: @input[pos..@pos-1]
-      state: @state()
+      state: @state_curr()
       start: pos
 
   make_receivers: ->
-    i = @stack.length
+    i = @state.length
     names = []
-    while i > 0 and not (n = @stack[--i].name).match /_/
+    while i > 0 and not (n = @state[--i].name).match /_/
       if m = n.match /^chr\((.)\)$/
         n = 'x' + m[1].charCodeAt(0).toString(16)
       names.unshift n
@@ -235,7 +252,7 @@ global.Parser = class Parser extends Grammar
 
   set: (var_, expr)->
     set = ->
-      @state()[var_] = @call expr, 'any'
+      @state_curr()[var_] = @call expr, 'any'
       true
 
   max: (max)->
@@ -281,7 +298,7 @@ global.Parser = class Parser extends Grammar
   m: ->
     return 0  # XXX
     m = ->
-      @state[m]
+      @state_curr[m]
 
   m: -> 0
   t: -> ''
@@ -335,7 +352,7 @@ global.Parser = class Parser extends Grammar
   trace: (type, call, args=[])->
     return unless @trace_on or call == @trace_start()
 
-    level = @state().lvl
+    level = @state_curr().lvl
     indent = _.repeat ' ', level
     if level > 0
       l = "#{level}".length
@@ -359,7 +376,7 @@ global.Parser = class Parser extends Grammar
     level = "#{level}_#{call}"
     if type == '?' and @trace_off == 0
       trace_info = [type, level, line]
-    if call in @trace_quiet
+    if call in @trace_quiet()
       @trace_off += if type == '?' then 1 else -1
     if type != '?' and @trace_off == 0
       trace_info = [type, level, line]
@@ -383,10 +400,9 @@ global.Parser = class Parser extends Grammar
   trace_format_call: (call, args)->
     return call unless args.length
     list = _.map args, (a)->
-      return a.call if isFunction a
-      return 'null' if isNull a
-      return "#{a}"
-    return call + '(' + list.join(',') + ')'
+      stringify a
+    list = list.join ','
+    return "call(#{list})"
 
   trace_flush: ->
     if line = @trace_info[2]

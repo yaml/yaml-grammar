@@ -17,7 +17,7 @@ sub new {
     receiver => $receiver,
     pos => 0,
     len => 0,
-    stack => [],
+    state => [],
     trace_num => 1,
     trace_on => true,
     trace_off => 0,
@@ -55,21 +55,41 @@ sub parse {
   return true;
 }
 
-sub state {
-  $_[0]->{stack}[-1] || { lvl => 0 };
+sub state_curr {
+  $_[0]->{state}[-1] || {
+    name => undef,
+    lvl => 0,
+    beg => 0,
+    end => 0,
+    m => undef,
+    t => undef,
+  };
 }
 
-sub new_state {
+sub state_prev {
+  $_[0]->{state}[-2] or xxxxx $_[0];
+}
+
+sub state_push {
   my ($self, $name) = @_;
 
-  my $prev = $self->state;
+  my $prev = $self->state_curr;
 
-  {
+  push @{$self->{state}}, {
     name => $name,
     lvl => $prev->{lvl} + 1,
     pos => $self->{pos},
     m => undef,
   };
+}
+
+sub state_pop {
+  my ($self) = @_;
+  pop @{$self->{state}};
+  # my $state_prev = $self->state_prev;
+  # my $state_curr = pop @{$self->{state}};
+  # $state_prev->{beg} = $state_curr->{beg};
+  # $state_prev->{end} = $self->{pos};
 }
 
 sub call {
@@ -84,7 +104,7 @@ sub call {
   xxxxx "Bad call type '${\ typeof $func}' for '$func'"
     unless isFunction($func);
 
-  push @{$self->{stack}}, $self->new_state($func->{trace});
+  $self->state_push($func->{trace});
 
   $self->trace('?', $func->{trace}, $args) if TRACE;
 
@@ -108,7 +128,7 @@ sub call {
 
   if ($type ne 'boolean') {
     $self->trace('>', $value) if TRACE;
-    pop @{$self->{stack}};
+    $self->state_pop;
     return $value;
   }
 
@@ -121,7 +141,7 @@ sub call {
     $self->receive($func, 'not', $pos);
   }
 
-  pop @{$self->{stack}};
+  $self->state_pop;
 
   return $value;
 }
@@ -137,17 +157,17 @@ sub receive {
 
   $receiver->($self->{receiver}, {
     text => substr($self->{input}, $pos, $self->{pos}-$pos),
-    state => $self->state,
+    state => $self->state_curr,
     start => $pos,
   });
 }
 
 sub make_receivers {
   my ($self) = @_;
-  my $i = @{$self->{stack}};
+  my $i = @{$self->{state}};
   my $names = [];
   my $n;
-  while ($i > 0 and ($n = $self->{stack}[--$i]{name}) !~ /_/) {
+  while ($i > 0 and ($n = $self->{state}[--$i]{name}) !~ /_/) {
     if ($n =~ /^chr\((.)\)$/) {
       $n = sprintf "x%x", ord($1);
     }
@@ -312,7 +332,7 @@ sub chk {
 sub set {
   my ($self, $var, $expr) = @_;
   name set => sub {
-    $self->state->{$var} = $self->call($expr, 'any');
+    $self->state_curr->{$var} = $self->call($expr, 'any');
     return true;
   }, "set('$var', ${\ stringify $expr})";
 }
@@ -348,7 +368,7 @@ sub sub {
 sub match {
   my ($self) = @_;
   name match => sub {
-    XXX my ($beg, $end) = ${XXX $self->up_state}{'beg', 'end'};
+    XXX my ($beg, $end) = ${XXX $self->state_prev}{'beg', 'end'};
   };
 }
 
@@ -382,7 +402,7 @@ sub m {
   my ($self) = @_;
     return 0; # XXX
   name m => sub {
-    $self->state->{m};
+    $self->state_curr->{m};
   };
 }
 
@@ -452,7 +472,7 @@ sub trace {
 
   return unless $self->{trace_on} or $call eq $self->trace_start;
 
-  my $level = $self->state->{lvl};
+  my $level = $self->state_curr->{lvl};
   my $indent = ' ' x $level;
   if ($level > 0) {
     my $l = length "$level";

@@ -19,7 +19,7 @@
       this.receiver = receiver;
       this.pos = 0;
       this.len = 0;
-      this.stack = [];
+      this.state = [];
       this.trace_num = 1;
       this.trace_on = true;
       this.trace_off = 0;
@@ -50,23 +50,40 @@
       return true;
     }
 
-    state() {
-      return _.last(this.stack) || {
-        lvl: 0
+    state_curr() {
+      return _.last(this.state) || {
+        name: null,
+        lvl: 0,
+        beg: 0,
+        end: 0,
+        m: null,
+        t: null
       };
     }
 
-    new_state(name) {
+    state_prev() {
+      return this.state[this.state.length - 2] || xxxxx(this);
+    }
+
+    state_push(name) {
       var prev;
-      prev = this.state();
-      return {
+      prev = this.state_curr();
+      return this.state.push({
         name: name,
         lvl: prev.lvl + 1,
         pos: this.pos,
         m: null
-      };
+      });
     }
 
+    state_pop() {
+      return this.state.pop();
+    }
+
+    // state_prev = @state_prev()
+    // state_curr = @state.pop()
+    // state_prev.beg = state_curr.beg
+    // state_prev.end = @pos
     call(func, type = 'boolean') {
       var args, func2, pos, value;
       args = [];
@@ -82,7 +99,7 @@
       if (func.trace == null) {
         func.trace = func.name;
       }
-      this.stack.push(this.new_state(func.trace));
+      this.state_push(func.trace);
       if (TRACE) {
         this.trace('?', func.trace, args);
       }
@@ -109,7 +126,7 @@
         if (TRACE) {
           this.trace('>', value);
         }
-        this.stack.pop();
+        this.state_pop();
         return value;
       }
       if (value) {
@@ -123,7 +140,7 @@
         }
         this.receive(func, 'not', pos);
       }
-      this.stack.pop();
+      this.state_pop();
       return value;
     }
 
@@ -136,16 +153,16 @@
       // warn receiver.name
       return receiver.call(this.receiver, {
         text: this.input.slice(pos, +(this.pos - 1) + 1 || 9e9),
-        state: this.state(),
+        state: this.state_curr(),
         start: pos
       });
     }
 
     make_receivers() {
       var i, m, n, name, names;
-      i = this.stack.length;
+      i = this.state.length;
       names = [];
-      while (i > 0 && !(n = this.stack[--i].name).match(/_/)) {
+      while (i > 0 && !(n = this.state[--i].name).match(/_/)) {
         if (m = n.match(/^chr\((.)\)$/)) {
           n = 'x' + m[1].charCodeAt(0).toString(16);
         }
@@ -326,7 +343,7 @@
     set(var_, expr) {
       var set;
       return set = function() {
-        this.state()[var_] = this.call(expr, 'any');
+        this.state_curr()[var_] = this.call(expr, 'any');
         return true;
       };
     }
@@ -409,7 +426,7 @@
       var m;
       return 0; // XXX
       return m = function() {
-        return this.state[m];
+        return this.state_curr[m];
       };
     }
 
@@ -477,7 +494,7 @@
       if (!(this.trace_on || call === this.trace_start())) {
         return;
       }
-      level = this.state().lvl;
+      level = this.state_curr().lvl;
       indent = _.repeat(' ', level);
       if (level > 0) {
         l = `${level}`.length;
@@ -522,15 +539,10 @@
         return call;
       }
       list = _.map(args, function(a) {
-        if (isFunction(a)) {
-          return a.call;
-        }
-        if (isNull(a)) {
-          return 'null';
-        }
-        return `${a}`;
+        return stringify(a);
       });
-      return call + '(' + list.join(',') + ')';
+      list = list.join(',');
+      return `call(${list})`;
     }
 
     trace_flush() {
