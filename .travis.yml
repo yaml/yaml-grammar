@@ -8,6 +8,6 @@ script:
 - git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 - git fetch origin
 - rm -fr ./node_modules/
+- make test
 - node --version
 - ./node_modules/.bin/coffee --version
-- make test
