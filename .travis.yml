@@ -3,9 +3,8 @@ language: node_js
 branches: {only: [master, travis]}
 
 script:
-- ls -la .
 - git fetch --unshallow
 - git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 - git fetch origin
-- ls -la node_modules
+- rm -fr ./node_modules/
 - make test
