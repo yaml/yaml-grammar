@@ -1,7 +1,10 @@
 #!/usr/bin/env testml
 
+
 parse(*yaml) == *events
   :"+ -- '{*yaml}'"
+
+
 
 === Empty stream
 --- yaml: ""
@@ -39,12 +42,19 @@ foo
 --- ^events
 
 
-===
+=== Comment before node
 --- SKIP: XXX parser infinite loop
 --- yaml(<)
     # comment
 
     foo
+--- ^events
+
+
+=== Top level scalar with header
+--- SKIP: XXX parser infinite loop
+--- yaml(<)
+    --- foo
 --- ^events
 
 
@@ -165,14 +175,25 @@ foo
 -STR
 
 
-===
---- yaml: {foo: 'bar'}
+=== Empty flow mapping
+--- yaml: {}
+--- events
++STR
++DOC
++MAP {}
+-MAP
+-DOC
+-STR
+
+
+=== Flow mapping
+--- yaml: {foo: bar}
 --- events
 +STR
 +DOC
 +MAP {}
 =VAL :foo
-=VAL 'bar
+=VAL :bar
 -MAP
 -DOC
 -STR
@@ -265,9 +286,74 @@ foo: bar
 --- events
 +STR
 +DOC
-+MAP {}
++MAP
 =VAL :foo
 =VAL :bar
 -MAP
+-DOC
+-STR
+
+
+=== Mapping value on next line
+--- SKIP: XXX
+--- yaml
+foo:
+  bar
+--- ^events
+
+
+=== Mapping value quoted
+--- SKIP
+--- yaml
+foo: "bar"
+--- events
++STR
++DOC
++MAP
+=VAL :foo
+=VAL "bar
+-MAP
+-DOC
+-STR
+
+
+=== Mapping flow seq value
+--- SKIP
+--- yaml
+foo: [1,2]
+--- events
++STR
++DOC
++MAP
+=VAL :foo
++SEQ []
+=VAL :1
+=VAL :2
+-SEQ
+-MAP
+-DOC
+-STR
+
+
+=== Mapping flow seq value multiline
+--- SKIP: XXX
+--- yaml
+foo: [1,
+  2]
+--- ^events
+
+
+=== Block sequence
+--- SKIP
+--- yaml
+- foo
+- bar
+--- events
++STR
++DOC
++SEQ
+=VAL :foo
+=VAL :bar
+-SEQ
 -DOC
 -STR
