@@ -507,7 +507,7 @@
       if (type === '?' && this.trace_off === 0) {
         trace_info = [type, level, line];
       }
-      if (indexOf.call(this.trace_quiet, call) >= 0) {
+      if (indexOf.call(this.trace_quiet(), call) >= 0) {
         this.trace_off += type === '?' ? 1 : -1;
       }
       if (type !== '?' && this.trace_off === 0) {
