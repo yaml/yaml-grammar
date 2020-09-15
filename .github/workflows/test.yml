@@ -1,0 +1,37 @@
+name: linux/mac
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+
+    env:
+      CC: ${{ matrix.compiler }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+        - ubuntu-latest
+        - macOS-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - run: env | sort
+    - name: Install software
+      if: ${{ matrix.os == 'macOS-latest' }}
+      run: |
+        brew install node perl
+        # echo ::add-path::/usr/local/opt/coreutils/libexec/gnubin
+        # echo ::add-path::/usr/local/opt/make/libexec/gnubin
+    - name: Fetch branches
+      run: |
+        git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
+        git fetch --unshallow
+
+    - run: make test
