@@ -232,7 +232,7 @@ global.YamlGrammarGenerator = class YamlGrammarGenerator
     @gen_method_call 'lt', @gen_arg(x), @gen_arg(y)
 
   gen_le: ([x, y])->
-    @gen_method_call 'le', @gen(x), @gen(y)
+    @gen_method_call 'le', @gen_arg(x), @gen_arg(y)
 
   gen_null: -> @not_implemented('gen_null')
 

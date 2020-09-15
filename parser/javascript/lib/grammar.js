@@ -333,7 +333,7 @@
 
       s_indent_le(n) {
         debug1("s_indent_le", n);
-        return this.may(this.all(this.rep(0, 0, this.s_space), this.le(this.len(this.match), this.chr('n'))));
+        return this.may(this.all(this.rep(0, 0, this.s_space), this.le(this.len(this.match), n)));
       }
 
       s_separate_in_line() {

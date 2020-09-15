@@ -957,7 +957,7 @@ rule '065', s_indent_le => sub {
   $self->may(
     $self->all(
       $self->rep(0, 0, $self->func('s_space')),
-      $self->le($self->len($self->func('match')), $self->chr('n'))
+      $self->le($self->len($self->func('match')), $n)
     )
   );
 };

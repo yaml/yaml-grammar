@@ -3,7 +3,8 @@ SHELL := bash
 ROOT := $(shell cd ../..; pwd)
 YAML_SPEC_YAML := $(ROOT)/yaml-spec-1.2.yaml
 GENERATOR := $(ROOT)/parser/tool/bin/generate-yaml-grammar
-GENERATOR_LIB := $(ROOT)/parser/tool/lib/generate-yaml-grammar-$(LANG).coffee
+GENERATOR_LIB := $(ROOT)/parser/tool/lib/generate-yaml-grammar.coffee
+GENERATOR_LANG_LIB := $(ROOT)/parser/tool/lib/generate-yaml-grammar-$(LANG).coffee
 
 PATH := $(ROOT)/node_modules/.bin:$(PATH)
 PATH := $(ROOT)/parser/test/testml/bin:$(PATH)
@@ -31,7 +32,7 @@ trace:: build
 
 clean::
 
-$(GRAMMAR): $(YAML_SPEC_YAML) $(GENERATOR_LIB)
+$(GRAMMAR): $(YAML_SPEC_YAML) $(GENERATOR) $(GENERATOR_LIB) $(GENERATOR_LANG_LIB)
 	$(GENERATOR) \
 	    --from=$< \
 	    --to=$(LANG) \

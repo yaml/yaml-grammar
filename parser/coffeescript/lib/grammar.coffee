@@ -886,7 +886,7 @@ global.Grammar = class Grammar
     @may(
       @all(
         @rep(0, 0, @s_space),
-        @le(@len(@match), @chr('n'))
+        @le(@len(@match), n)
       )
     )
 
