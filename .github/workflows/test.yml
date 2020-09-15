@@ -26,7 +26,9 @@ jobs:
     - name: Install software
       if: ${{ matrix.os == 'macOS-latest' }}
       run: |
-        brew install node perl
+        set -x
+        brew install --verbose perl
+        brew install --verbose node
         # echo ::add-path::/usr/local/opt/coreutils/libexec/gnubin
         # echo ::add-path::/usr/local/opt/make/libexec/gnubin
     - name: Fetch branches
