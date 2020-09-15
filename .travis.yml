@@ -1,5 +1,8 @@
 language: node_js
-node_js: '10'
+node_js:
+- '10'
+- '12'
+- '14'
 
 branches: {only: [master, travis]}
 
@@ -9,5 +12,3 @@ script:
 - git fetch origin
 - rm -fr ./node_modules/
 - make test
-- node --version
-- ./node_modules/.bin/coffee --version
