@@ -54,12 +54,7 @@ global.Parser = class Parser extends Grammar
 
   call: (func, type='boolean')->
     args = []
-    if isArray func
-      [func, args...] = func
-      args = _.map args, (a)=>
-        if isArray(a) then @call(a, 'any') else \
-        if isFunction(a) then a() else \
-        a
+    [func, args...] = func if isArray func
 
     return func if isNumber func
 
@@ -71,6 +66,11 @@ global.Parser = class Parser extends Grammar
     @stack.push @new_state(func.trace)
 
     @trace '?', func.trace, args if TRACE
+
+    args = _.map args, (a)=>
+      if isArray(a) then @call(a, 'any') else \
+      if isFunction(a) then a() else \
+      a
 
     pos = @pos
     @receive func, 'try', pos
@@ -84,6 +84,7 @@ global.Parser = class Parser extends Grammar
       if type != 'any' and typeof_(value) != type
 
     if type != 'boolean'
+      @trace '>', value if TRACE
       @stack.pop()
       return value
 
@@ -149,6 +150,10 @@ global.Parser = class Parser extends Grammar
           return true
 
       return false
+
+  may: (func)->
+    may = ->
+      @call func
 
   # Repeat a rule a certain number of times:
   rep: (min, max, func)->
@@ -249,6 +254,34 @@ global.Parser = class Parser extends Grammar
   sub: (x, y)->
     sub = ->
       x - y
+
+  match: ->
+    match = ->
+      XXX [beg, end] = XXX @up_state()
+
+  len: (str)->
+    len = ->
+      str =@call $str, 'string' unless isString str
+      return str.length
+
+  lt: (x, y)->
+    lt = ->
+      x = @call x, 'number' unless isNumber x
+      y = @call y, 'number' unless isNumber y
+      return x < y
+    name 'lt', lt, "lt(#{stringify x},#{stringify y})"
+
+  le: (x, y)->
+    le = ->
+      x = @call x, 'number' unless isNumber x
+      y = @call y, 'number' unless isNumber y
+      return x <= y
+    name 'le', le, "le(#{stringify x},#{stringify y})"
+
+  m: ->
+    return 0  # XXX
+    m = ->
+      @state[m]
 
   m: -> 0
   t: -> ''

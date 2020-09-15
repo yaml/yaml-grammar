@@ -97,6 +97,20 @@
       return this.add("=VAL :");
     }
 
+    try__s_l_block_in_block() {
+      this.pool_up();
+      return this.add('+MAP');
+    }
+
+    got__s_l_block_in_block() {
+      this.pool_down();
+      return this.add('-MAP');
+    }
+
+    not__s_l_block_in_block() {
+      return this.pool_drop();
+    }
+
     try__ns_flow_pair() {
       return this.pool_up();
     }

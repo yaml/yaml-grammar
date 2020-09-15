@@ -108,7 +108,22 @@ sub got__e_scalar {
   $self->add("=VAL :");
 }
 
-sub try__ns_flow_pair { $_[0]->pool_up; }
+sub try__s_l_block_in_block {
+  my ($self, $o) = @_;
+  $self->pool_up;
+  $self->add('+MAP');
+}
+sub got__s_l_block_in_block {
+  my ($self, $o) = @_;
+  $self->pool_down;
+  $self->add('-MAP');
+}
+sub not__s_l_block_in_block {
+  my ($self, $o) = @_;
+  $self->pool_drop;
+}
+
+sub try__ns_flow_pair { $_[0]->pool_up }
 sub got__ns_flow_pair { xxxxx @_ }
 sub not__ns_flow_pair { $_[0]->pool_drop }
 

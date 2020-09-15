@@ -72,15 +72,6 @@
       args = [];
       if (isArray(func)) {
         [func, ...args] = func;
-        args = _.map(args, (a) => {
-          if (isArray(a)) {
-            return this.call(a, 'any');
-          } else if (isFunction(a)) {
-            return a();
-          } else {
-            return a;
-          }
-        });
       }
       if (isNumber(func)) {
         return func;
@@ -95,6 +86,15 @@
       if (TRACE) {
         this.trace('?', func.trace, args);
       }
+      args = _.map(args, (a) => {
+        if (isArray(a)) {
+          return this.call(a, 'any');
+        } else if (isFunction(a)) {
+          return a();
+        } else {
+          return a;
+        }
+      });
       pos = this.pos;
       this.receive(func, 'try', pos);
       func2 = func.apply(this, args);
@@ -106,6 +106,9 @@
         xxxxx(`Calling '${func.trace}' returned '${typeof_(value)}' instead of '${type}'`);
       }
       if (type !== 'boolean') {
+        if (TRACE) {
+          this.trace('>', value);
+        }
         this.stack.pop();
         return value;
       }
@@ -160,9 +163,9 @@
     all(...funcs) {
       var all;
       return all = function() {
-        var func, j, len, pos;
+        var func, j, len1, pos;
         pos = this.pos;
-        for (j = 0, len = funcs.length; j < len; j++) {
+        for (j = 0, len1 = funcs.length; j < len1; j++) {
           func = funcs[j];
           if (func == null) {
             xxxxx('*** Missing function in @all group:', funcs);
@@ -181,14 +184,21 @@
     any(...funcs) {
       var any;
       return any = function() {
-        var func, j, len;
-        for (j = 0, len = funcs.length; j < len; j++) {
+        var func, j, len1;
+        for (j = 0, len1 = funcs.length; j < len1; j++) {
           func = funcs[j];
           if (this.call(func)) {
             return true;
           }
         }
         return false;
+      };
+    }
+
+    may(func) {
+      var may;
+      return may = function() {
+        return this.call(func);
       };
     }
 
@@ -274,7 +284,7 @@
     but(...funcs) {
       var but;
       return but = function() {
-        var func, j, len, pos1, pos2, ref;
+        var func, j, len1, pos1, pos2, ref;
         pos1 = this.pos;
         if (!this.call(funcs[0])) {
           return false;
@@ -282,7 +292,7 @@
         pos2 = this.pos;
         this.pos = pos1;
         ref = funcs.slice(1);
-        for (j = 0, len = ref.length; j < len; j++) {
+        for (j = 0, len1 = ref.length; j < len1; j++) {
           func = ref[j];
           if (this.call(func)) {
             this.pos = pos1;
@@ -346,6 +356,60 @@
       var sub;
       return sub = function() {
         return x - y;
+      };
+    }
+
+    match() {
+      var match;
+      return match = function() {
+        var beg, end;
+        return XXX([beg, end] = XXX(this.up_state()));
+      };
+    }
+
+    len(str) {
+      var len;
+      return len = function() {
+        if (!isString(str)) {
+          str = this.call($str, 'string');
+        }
+        return str.length;
+      };
+    }
+
+    lt(x, y) {
+      var lt;
+      lt = function() {
+        if (!isNumber(x)) {
+          x = this.call(x, 'number');
+        }
+        if (!isNumber(y)) {
+          y = this.call(y, 'number');
+        }
+        return x < y;
+      };
+      return name('lt', lt, `lt(${stringify(x)},${stringify(y)})`);
+    }
+
+    le(x, y) {
+      var le;
+      le = function() {
+        if (!isNumber(x)) {
+          x = this.call(x, 'number');
+        }
+        if (!isNumber(y)) {
+          y = this.call(y, 'number');
+        }
+        return x <= y;
+      };
+      return name('le', le, `le(${stringify(x)},${stringify(y)})`);
+    }
+
+    m() {
+      var m;
+      return 0; // XXX
+      return m = function() {
+        return this.state[m];
       };
     }
 

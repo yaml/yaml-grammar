@@ -65,6 +65,17 @@ global.TestReceiver = class TestReceiver
   got__e_scalar: ->
     @add "=VAL :"
 
+  try__s_l_block_in_block: ->
+    @pool_up()
+    @add '+MAP'
+
+  got__s_l_block_in_block: ->
+    @pool_down()
+    @add '-MAP'
+
+  not__s_l_block_in_block: ->
+    @pool_drop()
+
   try__ns_flow_pair: -> @pool_up()
   got__ns_flow_pair: -> xxxxx @
   not__ns_flow_pair: -> @pool_drop()

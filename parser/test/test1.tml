@@ -280,8 +280,6 @@ foo
 
 
 === Block mapping
---- SKIP
---- yaml
 foo: bar
 --- events
 +STR

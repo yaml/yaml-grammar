@@ -77,14 +77,7 @@ sub call {
   $type //= 'boolean';
 
   my $args = [];
-  if (isArray($func)) {
-    ($func, @$args) = @$func;
-    @$args = map {
-      isArray($_) ? $self->call($_, 'any') :
-      isFunction($_) ? $_->{func}->() :
-      $_;
-    } @$args;
-  }
+  ($func, @$args) = @$func if isArray($func);
 
   return $func if isNumber $func;
 
@@ -94,6 +87,12 @@ sub call {
   push @{$self->{stack}}, $self->new_state($func->{trace});
 
   $self->trace('?', $func->{trace}, $args) if TRACE;
+
+  @$args = map {
+    isArray($_) ? $self->call($_, 'any') :
+    isFunction($_) ? $_->{func}->() :
+    $_;
+  } @$args;
 
   my $pos = $self->{pos};
   $self->receive($func, 'try', $pos);
@@ -108,6 +107,7 @@ sub call {
     if $type ne 'any' and typeof($value) ne $type;
 
   if ($type ne 'boolean') {
+    $self->trace('>', $value) if TRACE;
     pop @{$self->{stack}};
     return $value;
   }
@@ -192,6 +192,13 @@ sub any {
     }
 
     return false;
+  };
+}
+
+sub may {
+  my ($self, $func) = @_;
+  name may => sub {
+    $self->call($func);
   };
 }
 
@@ -307,7 +314,7 @@ sub set {
   name set => sub {
     $self->state->{$var} = $self->call($expr, 'any');
     return true;
-  };
+  }, "set('$var', ${\ stringify $expr})";
 }
 
 sub max {
@@ -338,7 +345,47 @@ sub sub {
   }, "sub($x,$y)";
 }
 
-sub m {0}
+sub match {
+  my ($self) = @_;
+  name match => sub {
+    XXX my ($beg, $end) = ${XXX $self->up_state}{'beg', 'end'};
+  };
+}
+
+sub len {
+  my ($self, $str) = @_;
+  name len => sub {
+    $str = $self->call($str, 'string') unless isString($str);
+    return length $str;
+  };
+}
+
+sub lt {
+  my ($self, $x, $y) = @_;
+  name lt => sub {
+    $x = $self->call($x, 'number') unless isNumber($x);
+    $y = $self->call($y, 'number') unless isNumber($y);
+    return $x < $y ? true : false;
+  }, "lt(${\ stringify $x},${\ stringify $y})";
+}
+
+sub le {
+  my ($self, $x, $y) = @_;
+  name le => sub {
+    $x = $self->call($x, 'number') unless isNumber($x);
+    $y = $self->call($y, 'number') unless isNumber($y);
+    return $x <= $y ? true : false;
+  }, "le(${\ stringify $x},${\ stringify $y})";
+}
+
+sub m {
+  my ($self) = @_;
+    return 0; # XXX
+  name m => sub {
+    $self->state->{m};
+  };
+}
+
 sub t {''}
 
 #------------------------------------------------------------------------------
@@ -431,7 +478,7 @@ sub trace {
   if ($type eq '?' and not $self->{trace_off}) {
     $trace_info = [$type, $level, $line];
   }
-  if (grep $_ eq $call, @{$self->{trace_quiet}}) {
+  if (grep $_ eq $call, @{$self->trace_quiet}) {
     $self->{trace_off} += $type eq '?' ? 1 : -1;
   }
   if ($type ne '?' and not $self->{trace_off}) {
@@ -464,18 +511,8 @@ sub trace {
 sub trace_format_call {
   my ($self, $call, $args) = @_;
   return $call unless @$args;
-  my @list = map {
-    if (isFunction($_)) {
-      $_->();
-    }
-    elsif (not defined $_) {
-      'null';
-    }
-    else {
-      $_;
-    }
-  } @$args;
-  return $call . '(' . join(',', @list) . ')';
+  my $list = join ',', map stringify($_), @$args;
+  return "$call($list)";
 }
 
 sub trace_flush {
