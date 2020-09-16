@@ -517,6 +517,7 @@ sub trace {
       }
     }
     if ($prev_level) {
+      # die $prev_line if $prev_line =~ /\\\\/;
       warn sprintf "%5d %s", $self->{trace_num}++, $prev_line;
     }
 

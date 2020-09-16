@@ -342,10 +342,11 @@
 
     set(var_, expr) {
       var set;
-      return set = function() {
+      set = function() {
         this.state_curr()[var_] = this.call(expr, 'any');
         return true;
       };
+      return name_('set', set, `set('${var_}', ${stringify(expr)})`);
     }
 
     max(max) {
@@ -542,7 +543,7 @@
         return stringify(a);
       });
       list = list.join(',');
-      return `call(${list})`;
+      return `${call}(${list})`;
     }
 
     trace_flush() {

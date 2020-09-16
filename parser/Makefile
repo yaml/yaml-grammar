@@ -30,6 +30,7 @@ trace-%:
 	make -C $(@:trace-%=%) trace TRACE=$(trace) DEBUG=$(debug)
 
 clean: $(ALL_CLEAN)
+	rm -f diff
 	rm -fr test/testml
 	rm -fr test/.testml
 
@@ -45,3 +46,9 @@ docker-test: docker-build
 	    -u $$(id -u "$$USER"):$$(id -g "$$USER") \
 	    yaml-grammar-test \
 	    make -C /yaml-grammar/parser test
+
+.PHONY: diff
+diff:
+	make -C coffeescript/ trace
+	make -C perl/ trace
+	diff -u coffeescript/trace perl/trace |& tee diff

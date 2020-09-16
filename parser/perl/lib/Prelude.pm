@@ -66,22 +66,6 @@ sub json_stringify {
   return $string;
 }
 
-sub stringify {
-  my ($c) = @_;
-  if ($c eq "\x{feff}") {
-    return "\\uFEFF";
-  }
-  if (typeof($c) eq 'function') {
-    return "\@$c->{name}";
-  }
-  if (typeof($c) eq 'object') {
-    return json_stringify [ sort keys %$c ];
-  }
-  $_ = json_stringify $c;
-  s/^"(.*)"/$1/;
-  return $_;
-}
-
 sub isNull { not defined $_[0] }
 sub isBoolean { ref($_[0]) eq 'boolean' }
 sub isNumber { not(ref $_[0]) and $_[0] =~ /^-?\d+$/ }
@@ -102,10 +86,33 @@ sub typeof {
   XXX [$value, ref($value)];
 }
 
+sub stringify;
+sub stringify {
+  my ($o) = @_;
+  if ($o eq "\x{feff}") {
+    return "\\uFEFF";
+  }
+  if (isFunction $o) {
+    return "\@$o->{name}";
+  }
+  if (isObject $o) {
+    return json_stringify [ sort keys %$o ];
+  }
+  if (isArray $o) {
+    return "[${\ join ',', map stringify($_), @$o}]";
+  }
+  if (isString $o) {
+    $_ = json_stringify $o;
+    s/^"(.*)"$/$1/;
+    return $_;
+  }
+  return json_stringify $o;
+}
+
 sub func {
   my ($self, $name) = @_;
   my $func = $self->can($name) or
-    croak "Can't find parser function '$name'";
+    die "Can't find parser function '$name'";
   Func->new($func, $name);
 }
 

@@ -254,6 +254,7 @@ global.Parser = class Parser extends Grammar
     set = ->
       @state_curr()[var_] = @call expr, 'any'
       true
+    name_ 'set', set, "set('#{var_}', #{stringify expr})"
 
   max: (max)->
     max = ->
@@ -402,7 +403,7 @@ global.Parser = class Parser extends Grammar
     list = _.map args, (a)->
       stringify a
     list = list.join ','
-    return "call(#{list})"
+    return "#{call}(#{list})"
 
   trace_flush: ->
     if line = @trace_info[2]

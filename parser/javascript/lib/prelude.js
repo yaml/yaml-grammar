@@ -9,19 +9,6 @@
     return func;
   };
 
-  global.stringify = function(c) {
-    if (c === "\ufeff") {
-      return "\\uFEFF";
-    }
-    if (isFunction(c)) {
-      return `@${c.name}`;
-    }
-    if (isObject(c)) {
-      return JSON.stringify(_.keys(c));
-    }
-    return JSON.stringify(c).replace(/^"(.*)"$/, '$1');
-  };
-
   global.isNull = _.isNull;
 
   global.isBoolean = _.isBoolean;
@@ -34,7 +21,7 @@
 
   global.isArray = _.isArray;
 
-  global.isObject = _.isObject;
+  global.isObject = _.isPlainObject;
 
   global.typeof_ = function(value) {
     if (_.isNull(value)) {
@@ -55,10 +42,28 @@
     if (_.isArray(value)) {
       return 'array';
     }
-    if (_.isObject(value)) {
+    if (_.PlainisObject(value)) {
       return 'object';
     }
     return xxx([value, typeof value]);
+  };
+
+  global.stringify = function(o) {
+    if (o === "\ufeff") {
+      return "\\uFEFF";
+    }
+    if (isFunction(o)) {
+      return `@${o.name}`;
+    }
+    if (isObject(o)) {
+      return JSON.stringify(_.keys(o));
+    }
+    if (isArray(o)) {
+      return `[${(_.map(o, function(e) {
+        return stringify(e);
+      })).join(',')}]`;
+    }
+    return JSON.stringify(o).replace(/^"(.*)"$/, '$1');
   };
 
   global.die_ = function(msg) {

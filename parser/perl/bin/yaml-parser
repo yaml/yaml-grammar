@@ -13,24 +13,8 @@ use DebugParser;
 use TestReceiver;
 
 sub main {
-  my ($yaml, $rule, @args) = @_;
+  my ($yaml) = @_;
   $yaml //= do { local $/; <> };
-  $rule //= 'TOP';
-
-  my $args = [
-    map {
-      if ($_ eq 'null') { undef }
-      elsif (/^-?[0-9]+$/) { 0 + $_ }
-      else { $_ }
-    } @args
-  ];
-
-  test_parse($yaml, $rule, $args);
-}
-
-sub test_parse {
-  my ($yaml, $rule, $args) = @_;
-  $args //= [];
 
   my $parser;
   if ($ENV{DEBUG}) {
@@ -40,19 +24,11 @@ sub test_parse {
     $parser = Parser->new(TestReceiver->new);
   }
 
-  if (not ref $rule) {
-    $rule = $parser->{$rule};
-  }
-  if (@$args) {
-    $rule = [$rule, @$args];
-  }
-
   my $pass = 1;
-  my $trace = $ENV{TRACE};
   my $start = timer;
 
   eval {
-    $parser->parse($yaml, $rule, $trace);
+    $parser->parse($yaml);
   };
   if ($@) {
     warn $@;

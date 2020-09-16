@@ -19,10 +19,4 @@ ext/perl:
 	git worktree add -f $@ $@
 
 clean::
-	rm -fr diff ext/
-
-.PHONY: diff
-diff:
-	make trace
-	make -C ../coffeescript/ trace
-	diff -u ../coffeescript/trace ../perl/trace |& tee diff
+	rm -fr ext/
