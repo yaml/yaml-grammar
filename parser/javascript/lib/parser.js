@@ -223,19 +223,20 @@
     rep(min, max, func) {
       var rep;
       rep = function() {
-        var count, pos;
+        var count, pos, pos_start;
         count = 0;
-        pos = this.pos;
+        pos_start = pos = this.pos;
         while (this.pos < this.len && this.call(func)) {
-          if (min === 0 && pos === this.pos) {
-            return true;
+          if (this.pos === pos) {
+            break;
           }
           count++;
+          pos = this.pos;
         }
         if (count >= min && (max === 0 || count <= max)) {
           return true;
         } else {
-          this.pos = pos;
+          this.pos = pos_start;
           return false;
         }
       };
@@ -393,6 +394,27 @@
         }
         return str.length;
       };
+    }
+
+    ord(str) {
+      var ord;
+      return ord = function() {
+        return str.charCodeAt(0);
+      };
+    }
+
+    if(test, do_if_true) {
+      var if_;
+      if_ = function() {
+        if (!isBoolean(test)) {
+          test = this.call(test, 'boolean');
+        }
+        if (test) {
+          this.call(do_if_true);
+        }
+        return test;
+      };
+      return name_('if', if_);
     }
 
     lt(x, y) {

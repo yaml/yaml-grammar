@@ -78,7 +78,7 @@ foo
 
 
 === Top level literal scalar
---- SKIP: Can't find parser function 'match' at lib/Grammar.pm line 2750
+--- SKIP: Bad call type 'string' for 'auto-detect'
 --- yaml(<)
     --- |
       foo
@@ -138,7 +138,6 @@ foo
 
 
 === Flow sequence multiline
---- SKIP: XXX infinite loop
 --- yaml
 [ 1,
 2, 3]

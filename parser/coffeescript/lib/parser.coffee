@@ -176,14 +176,15 @@ global.Parser = class Parser extends Grammar
   rep: (min, max, func)->
     rep = ->
       count = 0
-      pos = @pos
+      pos_start = pos = @pos
       while @pos < @len and @call func
-        return true if min == 0 and pos == @pos
+        break if @pos == pos
         count++
+        pos = @pos
       if count >= min and (max == 0 or count <= max)
         true
       else
-        @pos = pos
+        @pos = pos_start
         false
     name_ 'rep', rep, "rep(#{min},#{max})"
 
@@ -279,8 +280,19 @@ global.Parser = class Parser extends Grammar
 
   len: (str)->
     len = ->
-      str =@call $str, 'string' unless isString str
+      str = @call $str, 'string' unless isString str
       return str.length
+
+  ord: (str)->
+    ord = ->
+      return str.charCodeAt(0)
+
+  if: (test, do_if_true)->
+    if_ = ->
+      test = @call test, 'boolean' unless isBoolean test
+      @call do_if_true if test
+      return test
+    name_ 'if', if_
 
   lt: (x, y)->
     lt = ->

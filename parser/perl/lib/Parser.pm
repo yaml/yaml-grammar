@@ -228,15 +228,17 @@ sub rep {
   name rep => sub {
     my $count = 0;
     my $pos = $self->{pos};
+    my $pos_start = $pos;
     while ($self->{pos} < $self->{len} and $self->call($func)) {
-      return true if $min == 0 and $pos == $self->{pos};
+      last if $self->{pos} == $pos;
       $count++;
+      $pos = $self->{pos};
     }
     if ($count >= $min and ($max == 0 or $count <= $max)) {
       return true;
     }
     else {
-      $self->{pos} = $pos;
+      $self->{pos} = $pos_start;
       return false;
     }
   }, "rep($min,$max)";
@@ -377,6 +379,22 @@ sub len {
   name len => sub {
     $str = $self->call($str, 'string') unless isString($str);
     return length $str;
+  };
+}
+
+sub ord {
+  my ($self, $str) = @_;
+  name ord => sub {
+    return ord $str;
+  };
+}
+
+sub if {
+  my ($self, $test, $do_if_true) = @_;
+  name if => sub {
+    $test = $self->call($test, 'boolean') unless isBoolean $test;
+    return $self->call($do_if_true) if $test;
+    return undef;
   };
 }
 
