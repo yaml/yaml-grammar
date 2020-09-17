@@ -3647,26 +3647,26 @@ rule '210', l_any_document => sub {
 
 # [211]
 # l-yaml-stream ::=
-#   l-document-prefix* l-any-document?
-#   ( ( l-document-suffix+ l-document-prefix*
+#   l-document-prefix l-any-document?
+#   ( ( l-document-suffix+ l-document-prefix
 #   l-any-document? )
-#   | ( l-document-prefix* l-explicit-document? ) )*
+#   | ( l-document-prefix l-explicit-document? ) )*
 
 rule '211', l_yaml_stream => sub {
   my ($self) = @_;
   debug_rule("l_yaml_stream") if DEBUG;
   $self->all(
-    $self->rep(0, 0, $self->func('l_document_prefix')),
+    $self->func('l_document_prefix'),
     $self->rep(0, 1, $self->func('l_any_document')),
     $self->rep(0, 0,
       $self->any(
         $self->all(
-          $self->rep(1, 0, $self->func('l_document_suffix')),
+          $self->func('l_document_suffix'),
           $self->rep(0, 0, $self->func('l_document_prefix')),
           $self->rep(0, 1, $self->func('l_any_document'))
         ),
         $self->all(
-          $self->rep(0, 0, $self->func('l_document_prefix')),
+          $self->func('l_document_prefix'),
           $self->rep(0, 1, $self->func('l_explicit_document'))
         )
       ))

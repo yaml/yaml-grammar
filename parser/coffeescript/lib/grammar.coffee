@@ -3430,26 +3430,26 @@ global.Grammar = class Grammar
 
   # [211]
   # l-yaml-stream ::=
-  #   l-document-prefix* l-any-document?
-  #   ( ( l-document-suffix+ l-document-prefix*
+  #   l-document-prefix l-any-document?
+  #   ( ( l-document-suffix+ l-document-prefix
   #   l-any-document? )
-  #   | ( l-document-prefix* l-explicit-document? ) )*
+  #   | ( l-document-prefix l-explicit-document? ) )*
 
   @::l_yaml_stream.num = 211
   l_yaml_stream: ->
     debug1("l_yaml_stream")
     @all(
-      @rep(0, 0, @l_document_prefix),
+      @l_document_prefix,
       @rep(0, 1, @l_any_document),
       @rep(0, 0,
         @any(
           @all(
-            @rep(1, 0, @l_document_suffix),
+            @l_document_suffix,
             @rep(0, 0, @l_document_prefix),
             @rep(0, 1, @l_any_document)
           ),
           @all(
-            @rep(0, 0, @l_document_prefix),
+            @l_document_prefix,
             @rep(0, 1, @l_explicit_document)
           )
         ))

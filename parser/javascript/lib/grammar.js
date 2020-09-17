@@ -1111,7 +1111,7 @@
 
       l_yaml_stream() {
         debug1("l_yaml_stream");
-        return this.all(this.rep(0, 0, this.l_document_prefix), this.rep(0, 1, this.l_any_document), this.rep(0, 0, this.any(this.all(this.rep(1, 0, this.l_document_suffix), this.rep(0, 0, this.l_document_prefix), this.rep(0, 1, this.l_any_document)), this.all(this.rep(0, 0, this.l_document_prefix), this.rep(0, 1, this.l_explicit_document)))));
+        return this.all(this.l_document_prefix, this.rep(0, 1, this.l_any_document), this.rep(0, 0, this.any(this.all(this.l_document_suffix, this.rep(0, 0, this.l_document_prefix), this.rep(0, 1, this.l_any_document)), this.all(this.l_document_prefix, this.rep(0, 1, this.l_explicit_document)))));
       }
 
     };
@@ -2372,10 +2372,10 @@
 
     // [211]
     // l-yaml-stream ::=
-    //   l-document-prefix* l-any-document?
-    //   ( ( l-document-suffix+ l-document-prefix*
+    //   l-document-prefix l-any-document?
+    //   ( ( l-document-suffix+ l-document-prefix
     //   l-any-document? )
-    //   | ( l-document-prefix* l-explicit-document? ) )*
+    //   | ( l-document-prefix l-explicit-document? ) )*
     Grammar.prototype.l_yaml_stream.num = 211;
 
     return Grammar;

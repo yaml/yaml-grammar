@@ -1,9 +1,10 @@
+ROOT := $(shell cd ../..; pwd)
 LANG := perl
 BIN := perl
 GRAMMAR := lib/Grammar.pm
 
 BUILD_DEPS := \
-    ../../node_modules \
+    $(ROOT)/node_modules \
 
 TEST_DEPS := \
     ../test/testml \

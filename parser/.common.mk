@@ -1,12 +1,16 @@
 SHELL := bash
 
-ROOT := $(shell cd ../..; pwd)
-YAML_SPEC_YAML := $(ROOT)/yaml-spec-1.2.yaml
+ifeq ($(ROOT),)
+    $(error ROOT not defined)
+endif
+
+YAML_SPEC_YAML_PATCH := $(ROOT)/yaml-spec-1.2-patch.yaml
 GENERATOR := $(ROOT)/parser/tool/bin/generate-yaml-grammar
 GENERATOR_LIB := $(ROOT)/parser/tool/lib/generate-yaml-grammar.coffee
 GENERATOR_LANG_LIB := $(ROOT)/parser/tool/lib/generate-yaml-grammar-$(LANG).coffee
+NODE_MODULES := $(ROOT)/node_modules
 
-PATH := $(ROOT)/node_modules/.bin:$(PATH)
+PATH := $(NODE_MODULES)/.bin:$(PATH)
 PATH := $(ROOT)/parser/test/testml/bin:$(PATH)
 export PATH
 
@@ -32,7 +36,7 @@ trace:: build
 
 clean::
 
-$(GRAMMAR): $(YAML_SPEC_YAML) $(GENERATOR) $(GENERATOR_LIB) $(GENERATOR_LANG_LIB)
+$(GRAMMAR): $(YAML_SPEC_YAML_PATCH) $(GENERATOR) $(GENERATOR_LIB) $(GENERATOR_LANG_LIB)
 	$(GENERATOR) \
 	    --from=$< \
 	    --to=$(LANG) \
@@ -44,5 +48,5 @@ $(GRAMMAR): $(YAML_SPEC_YAML) $(GENERATOR) $(GENERATOR_LIB) $(GENERATOR_LANG_LIB
 	make -C $@ ext/perl
 	make -C $@ src/node_modules
 
-../../node_modules:
-	make -C ../.. node_modules
+$(NODE_MODULES) $(YAML_SPEC_YAML_PATCH):
+	make -C $(ROOT) $(@:$(ROOT)/%=%)
