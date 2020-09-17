@@ -51,7 +51,6 @@ foo
 
 
 === Top level scalar with header
---- SKIP: XXX parser infinite loop
 --- yaml(<)
     --- foo
 --- ^events
