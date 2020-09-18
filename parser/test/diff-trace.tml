@@ -1,0 +1,19 @@
+#!/usr/bin/env testml-bash
+
+my-trace(*yaml) == coffee-trace(*yaml)
+  :"+ -- TRACE output matches coffeescript's TRACE output -- '{*yaml}'"
+
+%Bridge bash
+
+my-trace() {
+  TRACE=1 ./bin/yaml-parser "$1" 2>&1 | head -n-1
+}
+
+coffee-trace() {
+  TRACE=1 ../coffeescript/bin/yaml-parser "$1" 2>&1 | head -n-1
+}
+
+=== Flow sequence
+--- yaml: [ 1,22 , 333,]
+
+# vim: ft=sh:

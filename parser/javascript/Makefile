@@ -7,7 +7,6 @@ ALL_JS := \
     lib/parser.js \
     lib/prelude.js \
     lib/test-receiver.js \
-    test/test.js \
     test/testml-bridge.js \
 
 ROOT := $(shell cd ../..; pwd)
@@ -17,7 +16,7 @@ PATH := $(ROOT)/parser/test/testml/bin:$(PATH)
 export PATH
 export TESTML_RUN := node-tap
 
-tests := test/*.tml
+test := test/*.tml
 
 .DELETE_ON_ERROR:
 
@@ -26,7 +25,7 @@ default:
 build: build-coffee $(ALL_JS)
 
 test: build ../test/testml/src/node/lib
-	prove -v $(tests)
+	prove -v $(test)
 
 clean:
 

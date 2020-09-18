@@ -14,7 +14,7 @@ PATH := $(NODE_MODULES)/.bin:$(PATH)
 PATH := $(ROOT)/parser/test/testml/bin:$(PATH)
 export PATH
 
-tests := test/*.tml
+test := test/*.tml
 
 .DELETE_ON_ERROR:
 
@@ -24,7 +24,7 @@ build:: $(BUILD_DEPS) $(GRAMMAR)
 
 test:: build $(TEST_DEPS)
 	TRACE=$(TRACE) TRACE_QUIET=$(TRACE_QUIET) DEBUG=$(DEBUG) \
-	    prove -v $(tests)
+	    prove -v $(test)
 
 clean::
 
