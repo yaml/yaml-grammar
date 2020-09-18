@@ -290,7 +290,7 @@ foo: bar
 
 
 === Mapping value on next line
---- SKIP: XXX
+--- SKIP: Parser failed
 --- yaml
 foo:
   bar
@@ -298,7 +298,6 @@ foo:
 
 
 === Mapping value quoted
---- SKIP
 --- yaml
 foo: "bar"
 --- events
@@ -313,7 +312,6 @@ foo: "bar"
 
 
 === Mapping flow seq value
---- SKIP
 --- yaml
 foo: [1,2]
 --- events
@@ -331,7 +329,7 @@ foo: [1,2]
 
 
 === Mapping flow seq value multiline
---- SKIP: XXX
+--- SKIP: Parser finished before end of input
 --- yaml
 foo: [1,
   2]
@@ -339,7 +337,7 @@ foo: [1,
 
 
 === Block sequence
---- SKIP
+--- SKIP: Is returning MAP events...
 --- yaml
 - foo
 - bar

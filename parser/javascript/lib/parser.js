@@ -18,7 +18,7 @@
       super();
       this.receiver = receiver;
       this.pos = 0;
-      this.len = 0;
+      this.end = 0;
       this.state = [];
       this.trace_num = 1;
       this.trace_on = true;
@@ -29,7 +29,7 @@
     parse(input1) {
       var err, ok;
       this.input = input1;
-      this.len = this.input.length;
+      this.end = this.input.length;
       if (TRACE) {
         this.trace_on = !this.trace_start();
       }
@@ -44,7 +44,7 @@
       if (!ok) {
         throw "Parser failed";
       }
-      if (this.pos < this.len) {
+      if (this.pos < this.end) {
         throw "Parser finished before end of input";
       }
       return true;
@@ -62,7 +62,7 @@
     }
 
     state_prev() {
-      return this.state[this.state.length - 2] || xxxxx(this);
+      return this.state[this.state.length - 2];
     }
 
     state_push(name) {
@@ -71,19 +71,24 @@
       return this.state.push({
         name: name,
         lvl: prev.lvl + 1,
-        pos: this.pos,
-        m: null
+        beg: this.pos,
+        end: null,
+        m: prev.m,
+        t: prev.t
       });
     }
 
     state_pop() {
-      return this.state.pop();
+      var curr, prev;
+      prev = this.state_prev();
+      curr = this.state.pop();
+      if (prev == null) {
+        return;
+      }
+      prev.beg = curr.beg;
+      return prev.end = this.pos;
     }
 
-    // state_prev = @state_prev()
-    // state_curr = @state.pop()
-    // state_prev.beg = state_curr.beg
-    // state_prev.end = @pos
     call(func, type = 'boolean') {
       var args, func2, pos, value;
       args = [];
@@ -226,7 +231,7 @@
         var count, pos, pos_start;
         count = 0;
         pos_start = pos = this.pos;
-        while (this.pos < this.len && this.call(func)) {
+        while (this.pos < this.end && this.call(func)) {
           if (this.pos === pos) {
             break;
           }
@@ -261,14 +266,14 @@
       if (isString(value)) {
         return value;
       }
-      return this.call(value);
+      return this.call(value, 'number');
     }
 
     // Match a single char:
     chr(char) {
       var chr;
       chr = function() {
-        if (this.pos >= this.len) {
+        if (this.pos >= this.end) {
           return false;
         } else if (this.input[this.pos] === char) {
           this.pos++;
@@ -344,7 +349,9 @@
     set(var_, expr) {
       var set;
       set = function() {
-        this.state_curr()[var_] = this.call(expr, 'any');
+        var value;
+        value = this.call(expr, 'any');
+        this.state_prev()[var_] = value;
         return true;
       };
       return name_('set', set, `set('${var_}', ${stringify(expr)})`);
@@ -378,19 +385,27 @@
       };
     }
 
+    // This method does not need to return a function since it is never
+    // called in the grammar.
     match() {
-      var match;
-      return match = function() {
-        var beg, end;
-        return XXX([beg, end] = XXX(this.up_state()));
-      };
+      var beg, end, i, state;
+      state = this.state;
+      i = state.length - 1;
+      while (i > 0 && (state[i].end == null)) {
+        if (i === 1) {
+          xxxxx("Can't find match");
+        }
+        i--;
+      }
+      ({beg, end} = state[i]);
+      return this.input.slice(beg, end);
     }
 
     len(str) {
       var len;
       return len = function() {
         if (!isString(str)) {
-          str = this.call($str, 'string');
+          str = this.call(str, 'string');
         }
         return str.length;
       };
@@ -428,7 +443,7 @@
         }
         return x < y;
       };
-      return name('lt', lt, `lt(${stringify(x)},${stringify(y)})`);
+      return name_('lt', lt, `lt(${stringify(x)},${stringify(y)})`);
     }
 
     le(x, y) {
@@ -442,23 +457,22 @@
         }
         return x <= y;
       };
-      return name('le', le, `le(${stringify(x)},${stringify(y)})`);
+      return name_('le', le, `le(${stringify(x)},${stringify(y)})`);
     }
 
     m() {
       var m;
-      return 0; // XXX
+      return 1; // XXX
       return m = function() {
-        return this.state_curr[m];
+        return WWW(this.state_curr())[m];
       };
     }
 
-    m() {
-      return 0;
-    }
-
     t() {
-      return '';
+      var t;
+      return t = function() {
+        return xxxxx(this);
+      };
     }
 
     //------------------------------------------------------------------------------
@@ -469,7 +483,7 @@
     }
 
     end_of_stream() {
-      return this.pos >= this.len;
+      return this.pos >= this.end;
     }
 
     empty() {

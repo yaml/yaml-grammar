@@ -16,7 +16,7 @@ sub new {
   bless {
     receiver => $receiver,
     pos => 0,
-    len => 0,
+    end => 0,
     state => [],
     trace_num => 1,
     trace_on => true,
@@ -29,7 +29,7 @@ sub parse {
   my ($self, $input) = @_;
   $self->{input} = $input;
 
-  $self->{len} = length $self->{input};
+  $self->{end} = length $self->{input};
 
   $self->{trace_on} = not $self->trace_start if TRACE;
 
@@ -48,7 +48,7 @@ sub parse {
     die "Parser failed";
   }
 
-  if ($self->{pos} < $self->{len}) {
+  if ($self->{pos} < $self->{end}) {
     die "Parser finished before end of input";
   }
 
@@ -67,7 +67,7 @@ sub state_curr {
 }
 
 sub state_prev {
-  $_[0]->{state}[-2] or xxxxx $_[0];
+  $_[0]->{state}[-2]
 }
 
 sub state_push {
@@ -78,18 +78,20 @@ sub state_push {
   push @{$self->{state}}, {
     name => $name,
     lvl => $prev->{lvl} + 1,
-    pos => $self->{pos},
-    m => undef,
+    beg => $self->{pos},
+    end => undef,
+    m => $prev->{m},
+    t => $prev->{t},
   };
 }
 
 sub state_pop {
   my ($self) = @_;
-  pop @{$self->{state}};
-  # my $state_prev = $self->state_prev;
-  # my $state_curr = pop @{$self->{state}};
-  # $state_prev->{beg} = $state_curr->{beg};
-  # $state_prev->{end} = $self->{pos};
+  my $prev = $self->state_prev;
+  my $curr = pop @{$self->{state}};
+  return unless defined $prev;
+  $prev->{beg} = $curr->{beg};
+  $prev->{end} = $self->{pos};
 }
 
 sub call {
@@ -229,7 +231,7 @@ sub rep {
     my $count = 0;
     my $pos = $self->{pos};
     my $pos_start = $pos;
-    while ($self->{pos} < $self->{len} and $self->call($func)) {
+    while ($self->{pos} < $self->{end} and $self->call($func)) {
       last if $self->{pos} == $pos;
       $count++;
       $pos = $self->{pos};
@@ -260,7 +262,7 @@ sub flip {
   my $value = $map->{$var} or
     xxxxx "Can't find '$var' in:", $map;
   return $value if not ref $value;
-  return $->call($value);
+  return $->call($value, 'number');
 }
 name flip => \&flip;
 
@@ -268,7 +270,7 @@ name flip => \&flip;
 sub chr {
   my ($self, $char) = @_;
   name chr => sub {
-    if ($self->{pos} >= $self->{len}) {
+    if ($self->{pos} >= $self->{end}) {
       return false;
     }
     elsif (substr($self->{input}, $self->{pos}, 1) eq $char) {
@@ -285,7 +287,7 @@ sub chr {
 sub rng {
   my ($self, $low, $high) = @_;
   name rng => sub {
-    if ($self->{pos} >= $self->{len}) {
+    if ($self->{pos} >= $self->{end}) {
       return false;
     }
     elsif (
@@ -334,7 +336,8 @@ sub chk {
 sub set {
   my ($self, $var, $expr) = @_;
   name set => sub {
-    $self->state_curr->{$var} = $self->call($expr, 'any');
+    my $value = $self->call($expr, 'any');
+    $self->state_curr->{$var} = $value;
     return true;
   }, "set('$var', ${\ stringify $expr})";
 }
@@ -356,6 +359,7 @@ sub exclude {
 sub add {
   my ($self, $x, $y) = @_;
   name add => sub {
+    $y = $self->call($y, 'number') if isFunction $y;
     return $x + $y;
   }, "add($x,$y)";
 }
@@ -367,12 +371,21 @@ sub sub {
   }, "sub($x,$y)";
 }
 
+# This method does not need to return a function since it is never
+# called in the grammar.
 sub match {
   my ($self) = @_;
-  name match => sub {
-    XXX my ($beg, $end) = ${XXX $self->state_prev}{'beg', 'end'};
-  };
+  my $state = $self->{state};
+  my $i = @$state - 1;
+  while ($i > 0 && not defined $state->[$i]{end}) {
+    xxxxx "Can't find match" if $i == 1;
+    $i--;
+  }
+
+  my ($beg, $end) = @{$self->{state}[$i]}{qw<beg end>};
+  return substr($self->{input}, $beg, ($end - $beg));
 }
+name match => \&match;
 
 sub len {
   my ($self, $str) = @_;
@@ -418,13 +431,18 @@ sub le {
 
 sub m {
   my ($self) = @_;
-    return 0; # XXX
+  return 1; # XXX
   name m => sub {
     $self->state_curr->{m};
   };
 }
 
-sub t {''}
+sub t {
+  my ($self) = @_;
+  name t => sub {
+    xxxxx $self;
+  };
+}
 
 #------------------------------------------------------------------------------
 # Special grammar rules
@@ -438,7 +456,7 @@ sub start_of_line {
 name 'start_of_line', \&start_of_line;
 
 sub end_of_stream {
-  ($_[0]->{pos} >= $_[0]->{len}) ? true : false;
+  ($_[0]->{pos} >= $_[0]->{end}) ? true : false;
 }
 name 'end_of_stream', \&end_of_stream;
 

@@ -14,7 +14,7 @@ global.Parser = class Parser extends Grammar
     super()
     @receiver = receiver
     @pos = 0
-    @len = 0
+    @end = 0
     @state = []
     @trace_num = 1
     @trace_on = true
@@ -22,7 +22,7 @@ global.Parser = class Parser extends Grammar
     @trace_info = ['', '', '']
 
   parse: (@input)->
-    @len = @input.length
+    @end = @input.length
 
     @trace_on = not @trace_start() if TRACE
 
@@ -36,7 +36,7 @@ global.Parser = class Parser extends Grammar
     if not ok
       throw "Parser failed"
 
-    if @pos < @len
+    if @pos < @end
       throw "Parser finished before end of input"
 
     return true
@@ -51,7 +51,7 @@ global.Parser = class Parser extends Grammar
       t: null
 
   state_prev: ->
-    @state[@state.length - 2] or xxxxx @
+    @state[@state.length - 2]
 
   state_push: (name)->
     prev = @state_curr()
@@ -59,15 +59,17 @@ global.Parser = class Parser extends Grammar
     @state.push
       name: name
       lvl: prev.lvl + 1
-      pos: @pos
-      m: null
+      beg: @pos
+      end: null
+      m: prev.m
+      t: prev.t
 
   state_pop: ->
-    @state.pop()
-    # state_prev = @state_prev()
-    # state_curr = @state.pop()
-    # state_prev.beg = state_curr.beg
-    # state_prev.end = @pos
+    prev = @state_prev()
+    curr = @state.pop()
+    return unless prev?
+    prev.beg = curr.beg
+    prev.end = @pos
 
   call: (func, type='boolean')->
     args = []
@@ -177,7 +179,7 @@ global.Parser = class Parser extends Grammar
     rep = ->
       count = 0
       pos_start = pos = @pos
-      while @pos < @len and @call func
+      while @pos < @end and @call func
         break if @pos == pos
         count++
         pos = @pos
@@ -201,12 +203,12 @@ global.Parser = class Parser extends Grammar
     value = map[var_] or
       xxxxx "Can't find '#{var_}' in:", map
     return value if isString value
-    return @call value
+    return @call value, 'number'
 
   # Match a single char:
   chr: (char)->
     chr = ->
-      if @pos >= @len
+      if @pos >= @end
         false
       else if @input[@pos] == char
         @pos++
@@ -253,7 +255,8 @@ global.Parser = class Parser extends Grammar
 
   set: (var_, expr)->
     set = ->
-      @state_curr()[var_] = @call expr, 'any'
+      value = @call expr, 'any'
+      @state_prev()[var_] = value
       true
     name_ 'set', set, "set('#{var_}', #{stringify expr})"
 
@@ -274,13 +277,21 @@ global.Parser = class Parser extends Grammar
     sub = ->
       x - y
 
+  # This method does not need to return a function since it is never
+  # called in the grammar.
   match: ->
-    match = ->
-      XXX [beg, end] = XXX @up_state()
+    state = @state
+    i = state.length - 1
+    while i > 0 && not state[i].end?
+      xxxxx "Can't find match" if i == 1
+      i--
+
+    {beg, end} = state[i]
+    return @input[beg...end]
 
   len: (str)->
     len = ->
-      str = @call $str, 'string' unless isString str
+      str = @call str, 'string' unless isString str
       return str.length
 
   ord: (str)->
@@ -299,22 +310,23 @@ global.Parser = class Parser extends Grammar
       x = @call x, 'number' unless isNumber x
       y = @call y, 'number' unless isNumber y
       return x < y
-    name 'lt', lt, "lt(#{stringify x},#{stringify y})"
+    name_ 'lt', lt, "lt(#{stringify x},#{stringify y})"
 
   le: (x, y)->
     le = ->
       x = @call x, 'number' unless isNumber x
       y = @call y, 'number' unless isNumber y
       return x <= y
-    name 'le', le, "le(#{stringify x},#{stringify y})"
+    name_ 'le', le, "le(#{stringify x},#{stringify y})"
 
   m: ->
-    return 0  # XXX
+    return 1  # XXX
     m = ->
-      @state_curr[m]
+      WWW(@state_curr())[m]
 
-  m: -> 0
-  t: -> ''
+  t: ->
+    t = ->
+      xxxxx @
 
 #------------------------------------------------------------------------------
 # Special grammar rules
@@ -324,7 +336,7 @@ global.Parser = class Parser extends Grammar
       @input[@pos - 1] == "\n"
 
   end_of_stream: ->
-    @pos >= @len
+    @pos >= @end
 
   empty: -> true
 
