@@ -28,14 +28,6 @@ build: build-coffee $(ALL_JS)
 test: build ../test/testml/src/node/lib
 	prove -v $(tests)
 
-.PHONY: trace
-trace: build
-	-TRACE=1 DEBUG=$(debug) \
-	    ./bin/yaml-parser \
-	    '[1,2 2  ,333,]' \
-	    |& grep -v '^Parse' \
-	    > $@
-
 clean:
 
 build-coffee:

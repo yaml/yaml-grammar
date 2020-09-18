@@ -26,14 +26,6 @@ test:: build $(TEST_DEPS)
 	TRACE=$(TRACE) TRACE_QUIET=$(TRACE_QUIET) DEBUG=$(DEBUG) \
 	    prove -v $(tests)
 
-.PHONY: trace
-trace:: build
-	-TRACE=1 DEBUG=$(DEBUG) \
-	    ./bin/yaml-parser \
-	    '[1,2 2  ,333,]' \
-	    |& grep -v '^Parse' \
-	    > $@
-
 clean::
 
 $(GRAMMAR): $(YAML_SPEC_YAML_PATCH) $(GENERATOR) $(GENERATOR_LIB) $(GENERATOR_LANG_LIB)

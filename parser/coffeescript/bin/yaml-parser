@@ -5,35 +5,23 @@ require '../lib/parser'
 require '../lib/debug-parser'
 require '../lib/test-receiver'
 
-main = (yaml=file_read('-'), rule='TOP', args...)->
+main = (yaml=file_read('-'))->
 
   args = _.map args, (a)->
     if a == 'null' then null
     else if a.match /^-?[0-9]+$/ then Number a
     else a
 
-  test_parse yaml, rule, args
-
-test_parse = (yaml, rule=null, args=[])->
   if process.env.DEBUG
-    require '../lib/debug-parser'
     parser = new DebugParser(new TestReceiver)
   else
     parser = new Parser(new TestReceiver)
 
-  rule ?= 'TOP'
-
-  if _.isString rule
-    rule = parser[rule]
-  if args.length > 0
-    rule = [rule, args...]
-
   pass = true
-  trace = process.env.TRACE
   start = timer()
 
   try
-    parser.parse(yaml, rule, trace)
+    parser.parse(yaml)
   catch e
     warn e
     pass = false
