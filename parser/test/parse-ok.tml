@@ -337,7 +337,7 @@ foo: [1,
 
 
 === Block sequence
---- SKIP: Is returning MAP events...
+--- SKIP
 --- yaml
 - foo
 - bar
@@ -348,5 +348,22 @@ foo: [1,
 =VAL :foo
 =VAL :bar
 -SEQ
+-DOC
+-STR
+
+
+=== Block mapping, two pair
+--- yaml
+foo: bar
+baz: 42
+--- events
++STR
++DOC
++MAP
+=VAL :foo
+=VAL :bar
+=VAL :baz
+=VAL :42
+-MAP
 -DOC
 -STR
