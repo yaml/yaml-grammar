@@ -1,3 +1,5 @@
+require '../../coffeescript/lib/prelude'
+
 global.YamlGrammarGenerator = class YamlGrammarGenerator
   constructor: (spec)->
     @spec = require('yaml').parse spec
@@ -6,6 +8,13 @@ global.YamlGrammarGenerator = class YamlGrammarGenerator
     @grammar = ''
     @arg = false
     @group = false
+    @nums = _.keys(@spec) \
+      .filter (k)->
+        k[0] == ':'
+      .reduce (n, k)=>
+        n[@spec[k]] = k
+        return n
+      , {}
 
   gen_grammar: (top)->
     @out @gen_grammar_head top
@@ -30,7 +39,7 @@ global.YamlGrammarGenerator = class YamlGrammarGenerator
   gen_grammar_tail: => ''
 
   gen_rule: (name)->
-    num = "#{sprintf "%03d", ++@num}"
+    num = @num = @nums[name][1..]
     comment = @comments[num]
     rule_name = @rule_name name
     debug_args = @gen_debug_args name

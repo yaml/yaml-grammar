@@ -17,7 +17,7 @@ global.generator_class = \
   gen_rule_code: (num, comment, rule_name, debug_args, rule_args, rule_body)->
     @indent """\
     #{comment}
-    @::#{rule_name}.num = #{@num}
+    @::#{rule_name}.num = #{Number @num}
     #{rule_name}: #{rule_args}->
       debug_rule("#{rule_name}"#{debug_args})
     #{rule_body}
