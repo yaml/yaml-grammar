@@ -3,22 +3,14 @@ require './prelude'
 CoffeeScript = require 'coffeescript'
 
 methods = [
-  'all',
-  'any',
-  'rep',
-  'case',
-  'flip',
-  'chr',
-  'rng',
-  'but',
-  'chk',
-  'set',
-  'max',
-  'exclude',
-  'add',
-  'sub',
-  'm',
-  't',
+  'all', 'any', 'may', 'rep',
+  'case', 'flip',
+  'chr', 'rng', 'but', 'chk',
+  'set', 'max', 'exclude',
+  'add', 'sub',
+  'match', 'len', 'ord', 'if', 'lt', 'le',
+  'm', 't',
+  'start_of_line', 'end_of_stream', 'empty', 'auto_detect_indent',
 ]
 
 coffee = """
