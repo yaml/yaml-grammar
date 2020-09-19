@@ -51,7 +51,7 @@
     }
 
     state_curr() {
-      return _.last(this.state) || {
+      return this.state[this.state.length - 1] || {
         name: null,
         lvl: 0,
         beg: 0,
@@ -80,8 +80,8 @@
 
     state_pop() {
       var curr, prev;
-      prev = this.state_prev();
       curr = this.state.pop();
+      prev = this.state_prev();
       if (prev == null) {
         return;
       }
@@ -90,7 +90,7 @@
     }
 
     call(func, type = 'boolean') {
-      var args, func2, pos, value;
+      var args, pos, value;
       args = [];
       if (isArray(func)) {
         [func, ...args] = func;
@@ -108,7 +108,7 @@
       if (TRACE) {
         this.trace('?', func.trace, args);
       }
-      args = _.map(args, (a) => {
+      args = args.map((a) => {
         if (isArray(a)) {
           return this.call(a, 'any');
         } else if (isFunction(a)) {
@@ -119,10 +119,9 @@
       });
       pos = this.pos;
       this.receive(func, 'try', pos);
-      func2 = func.apply(this, args);
-      value = func2;
-      while (isFunction(func2) || isArray(func2)) {
-        value = func2 = this.call(func2);
+      value = func.apply(this, args);
+      while (isFunction(value) || isArray(value)) {
+        value = this.call(value);
       }
       if (type !== 'any' && typeof_(value) !== type) {
         xxxxx(`Calling '${func.trace}' returned '${typeof_(value)}' instead of '${type}'`);
@@ -131,19 +130,18 @@
         if (TRACE) {
           this.trace('>', value);
         }
-        this.state_pop();
-        return value;
-      }
-      if (value) {
-        if (TRACE) {
-          this.trace('+', func.trace);
-        }
-        this.receive(func, 'got', pos);
       } else {
-        if (TRACE) {
-          this.trace('x', func.trace);
+        if (value) {
+          if (TRACE) {
+            this.trace('+', func.trace);
+          }
+          this.receive(func, 'got', pos);
+        } else {
+          if (TRACE) {
+            this.trace('x', func.trace);
+          }
+          this.receive(func, 'not', pos);
         }
-        this.receive(func, 'not', pos);
       }
       this.state_pop();
       return value;
@@ -151,13 +149,16 @@
 
     receive(func, type, pos) {
       var receiver;
-      receiver = (func.receivers != null ? func.receivers : func.receivers = this.make_receivers())[type];
+      if (func.receivers == null) {
+        func.receivers = this.make_receivers();
+      }
+      receiver = func.receivers[type];
       if (!receiver) {
         return;
       }
       // warn receiver.name
       return receiver.call(this.receiver, {
-        text: this.input.slice(pos, +(this.pos - 1) + 1 || 9e9),
+        text: this.input.slice(pos, this.pos),
         state: this.state_curr(),
         start: pos
       });
@@ -167,9 +168,9 @@
       var i, m, n, name, names;
       i = this.state.length;
       names = [];
-      while (i > 0 && !(n = this.state[--i].name).match(/_/)) {
+      while (i > 0 && !((n = this.state[--i].name).match(/_/))) {
         if (m = n.match(/^chr\((.)\)$/)) {
-          n = 'x' + m[1].charCodeAt(0).toString(16);
+          n = 'x' + hex_char(m[1]);
         }
         names.unshift(n);
       }
@@ -230,7 +231,8 @@
       rep = function() {
         var count, pos, pos_start;
         count = 0;
-        pos_start = pos = this.pos;
+        pos = this.pos;
+        pos_start = pos;
         while (this.pos < this.end && this.call(func)) {
           if (this.pos === pos) {
             break;
@@ -240,10 +242,9 @@
         }
         if (count >= min && (max === 0 || count <= max)) {
           return true;
-        } else {
-          this.pos = pos_start;
-          return false;
         }
+        this.pos = pos_start;
+        return false;
       };
       return name_('rep', rep, `rep(${min},${max})`);
     }
@@ -256,7 +257,7 @@
         rule = map[var_] || xxxxx(`Can't find '${var_}' in:`, map);
         return this.call(rule);
       };
-      return name_('case', case_, `case(${var_}, ${stringify(map)})`);
+      return name_('case', case_, `case(${var_},${stringify(map)})`);
     }
 
     // Call a rule depending on state value:
@@ -275,12 +276,12 @@
       chr = function() {
         if (this.pos >= this.end) {
           return false;
-        } else if (this.input[this.pos] === char) {
+        }
+        if (this.input[this.pos] === char) {
           this.pos++;
           return true;
-        } else {
-          return false;
         }
+        return false;
       };
       return name_('chr', chr, `chr(${stringify(char)})`);
     }
@@ -292,15 +293,14 @@
         var ref;
         if (this.pos >= this.input.length) {
           return false;
-        } else if ((low <= (ref = this.input[this.pos]) && ref <= high)) {
+        }
+        if ((low <= (ref = this.input[this.pos]) && ref <= high)) {
           this.pos++;
           return true;
-        } else {
-          return false;
         }
+        return false;
       };
-      name_('rng', rng, `rng(${stringify(low)},${stringify(high)})`);
-      return rng;
+      return name_('rng', rng, `rng(${stringify(low)},${stringify(high)})`);
     }
 
     // Must match first rule but none of others:
@@ -373,6 +373,9 @@
     add(x, y) {
       var add;
       add = function() {
+        if (isFunction(y)) {
+          y = this.call(y, 'number');
+        }
         return x + y;
       };
       return name_('add', add, `add(${x},${y})`);
@@ -575,7 +578,7 @@
       if (!args.length) {
         return call;
       }
-      list = _.map(args, function(a) {
+      list = args.map(function(a) {
         return stringify(a);
       });
       list = list.join(',');

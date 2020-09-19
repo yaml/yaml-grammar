@@ -33,16 +33,14 @@ global.Parser = class Parser extends Grammar
       @trace_flush()
       throw err
 
-    if not ok
-      throw "Parser failed"
-
-    if @pos < @end
-      throw "Parser finished before end of input"
+    throw "Parser failed" if not ok
+    throw "Parser finished before end of input" \
+      if @pos < @end
 
     return true
 
   state_curr: ->
-    _.last(@state) ||
+    @state[@state.length - 1] ||
       name: null
       lvl: 0
       beg: 0
@@ -65,8 +63,8 @@ global.Parser = class Parser extends Grammar
       t: prev.t
 
   state_pop: ->
-    prev = @state_prev()
     curr = @state.pop()
+    prev = @state_prev()
     return unless prev?
     prev.beg = curr.beg
     prev.end = @pos
@@ -86,7 +84,7 @@ global.Parser = class Parser extends Grammar
 
     @trace '?', func.trace, args if TRACE
 
-    args = _.map args, (a)=>
+    args = args.map (a)=>
       if isArray(a) then @call(a, 'any') else \
       if isFunction(a) then a() else \
       a
@@ -94,55 +92,51 @@ global.Parser = class Parser extends Grammar
     pos = @pos
     @receive func, 'try', pos
 
-    func2 = func.apply(@, args)
-    value = func2
-    while isFunction(func2) or isArray(func2)
-      value = func2 = @call func2
+    value = func.apply(@, args)
+    while isFunction(value) or isArray(value)
+      value = @call value
 
     xxxxx "Calling '#{func.trace}' returned '#{typeof_ value}' instead of '#{type}'" \
       if type != 'any' and typeof_(value) != type
 
     if type != 'boolean'
       @trace '>', value if TRACE
-      @state_pop()
-      return value
-
-    if value
-      @trace '+', func.trace if TRACE
-      @receive func, 'got', pos
     else
-      @trace 'x', func.trace if TRACE
-      @receive func, 'not', pos
+      if value
+        @trace '+', func.trace if TRACE
+        @receive func, 'got', pos
+      else
+        @trace 'x', func.trace if TRACE
+        @receive func, 'not', pos
 
     @state_pop()
-
     return value
 
   receive: (func, type, pos)->
-    receiver = (func.receivers ?=
-      @make_receivers())[type]
-
+    func.receivers ?= @make_receivers()
+    receiver = func.receivers[type]
     return unless receiver
 
     # warn receiver.name
 
     receiver.call @receiver,
-      text: @input[pos..@pos-1]
+      text: @input[pos...@pos]
       state: @state_curr()
       start: pos
 
   make_receivers: ->
     i = @state.length
     names = []
-    while i > 0 and not (n = @state[--i].name).match /_/
+    while i > 0 and not((n = @state[--i].name).match /_/)
       if m = n.match /^chr\((.)\)$/
-        n = 'x' + m[1].charCodeAt(0).toString(16)
+        n = 'x' + hex_char m[1]
       names.unshift n
     name = [n, names...].join '__'
 
-    try: @receiver.constructor.prototype["try__#{name}"]
-    got: @receiver.constructor.prototype["got__#{name}"]
-    not: @receiver.constructor.prototype["not__#{name}"]
+    return
+      try: @receiver.constructor.prototype["try__#{name}"]
+      got: @receiver.constructor.prototype["got__#{name}"]
+      not: @receiver.constructor.prototype["not__#{name}"]
 
 
 
@@ -152,7 +146,7 @@ global.Parser = class Parser extends Grammar
       pos = @pos
       for func in funcs
         xxxxx '*** Missing function in @all group:', funcs \
-          if not func?
+          unless func?
 
         if not @call func
           @pos = pos
@@ -178,16 +172,16 @@ global.Parser = class Parser extends Grammar
   rep: (min, max, func)->
     rep = ->
       count = 0
-      pos_start = pos = @pos
+      pos = @pos
+      pos_start = pos
       while @pos < @end and @call func
         break if @pos == pos
         count++
         pos = @pos
       if count >= min and (max == 0 or count <= max)
-        true
-      else
-        @pos = pos_start
-        false
+        return true
+      @pos = pos_start
+      return false
     name_ 'rep', rep, "rep(#{min},#{max})"
 
   # Call a rule depending on state value:
@@ -196,7 +190,7 @@ global.Parser = class Parser extends Grammar
       rule = map[var_] or
         xxxxx "Can't find '#{var_}' in:", map
       @call rule
-    name_ 'case', case_, "case(#{var_}, #{stringify map})"
+    name_ 'case', case_, "case(#{var_},#{stringify map})"
 
   # Call a rule depending on state value:
   flip: (var_, map)->
@@ -209,26 +203,23 @@ global.Parser = class Parser extends Grammar
   chr: (char)->
     chr = ->
       if @pos >= @end
-        false
-      else if @input[@pos] == char
+        return false
+      if @input[@pos] == char
         @pos++
-        true
-      else
-        false
+        return true
+      return false
     name_ 'chr', chr, "chr(#{stringify char})"
 
   # Match a char in a range:
   rng: (low, high)->
     rng = ->
       if @pos >= @input.length
-        false
-      else if low <= @input[@pos] <= high
+        return false
+      if low <= @input[@pos] <= high
         @pos++
-        true
-      else
-        false
+        return true
+      return false
     name_ 'rng', rng, "rng(#{stringify(low)},#{stringify(high)})"
-    rng
 
   # Must match first rule but none of others:
   but: (funcs...)->
@@ -270,6 +261,7 @@ global.Parser = class Parser extends Grammar
 
   add: (x, y)->
     add = ->
+      y = @call y, 'number' if isFunction y
       x + y
     name_ 'add', add, "add(#{x},#{y})"
 
@@ -424,7 +416,7 @@ global.Parser = class Parser extends Grammar
 
   trace_format_call: (call, args)->
     return call unless args.length
-    list = _.map args, (a)->
+    list = args.map (a)->
       stringify a
     list = list.join ','
     return "#{call}(#{list})"

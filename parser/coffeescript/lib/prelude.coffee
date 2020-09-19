@@ -35,13 +35,16 @@ global.stringify = (o)->
     return "[#{(_.map o, (e)-> stringify e).join ','}]"
   return JSON.stringify(o).replace /^"(.*)"$/, '$1'
 
+global.hex_char = (chr)->
+  return chr.charCodeAt(0).toString(16)
+
 global.die_ = (msg)->
   die((new Error().stack) + "\n" + msg)
 
 global.debug = (msg)->
   warn ">>> #{msg}"
 
-global.debug1 = (name, args...)->
+global.debug_rule = (name, args...)->
   return unless ENV.DEBUG
   args = _.join _.map args, (a)->
     stringify(a)

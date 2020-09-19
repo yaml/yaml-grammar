@@ -66,6 +66,10 @@
     return JSON.stringify(o).replace(/^"(.*)"$/, '$1');
   };
 
+  global.hex_char = function(chr) {
+    return chr.charCodeAt(0).toString(16);
+  };
+
   global.die_ = function(msg) {
     return die((new Error().stack) + "\n" + msg);
   };
@@ -74,7 +78,7 @@
     return warn(`>>> ${msg}`);
   };
 
-  global.debug1 = function(name, ...args) {
+  global.debug_rule = function(name, ...args) {
     if (!ENV.DEBUG) {
       return;
     }

@@ -7,11 +7,6 @@ require '../lib/test-receiver'
 
 main = (yaml=file_read('-'))->
 
-  args = _.map args, (a)->
-    if a == 'null' then null
-    else if a.match /^-?[0-9]+$/ then Number a
-    else a
-
   if process.env.DEBUG
     parser = new DebugParser(new TestReceiver)
   else

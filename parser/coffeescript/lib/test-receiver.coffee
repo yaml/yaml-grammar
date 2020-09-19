@@ -55,11 +55,11 @@ global.TestReceiver = class TestReceiver
     @add "=VAL :#{o.text}"
 
   got__c_single_quoted: (o)->
-    value = o.text[1..-2]
+    value = o.text[1...-1]
     @add "=VAL '#{value}"
 
   got__c_double_quoted: (o)->
-    value = o.text[1..-2]
+    value = o.text[1...-1]
     @add "=VAL \"#{value}"
 
   got__e_scalar: ->

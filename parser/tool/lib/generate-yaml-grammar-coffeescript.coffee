@@ -19,7 +19,7 @@ global.generator_class = \
     #{comment}
     @::#{rule_name}.num = #{@num}
     #{rule_name}: #{rule_args}->
-      debug1("#{rule_name}"#{debug_args})
+      debug_rule("#{rule_name}"#{debug_args})
     #{rule_body}
     \n\n\n
     """

@@ -16,12 +16,12 @@ default:
 build: $(ALL_BUILD)
 
 build-%:
-	make -C $(@:build-%=%) build TRACE=$(trace) DEBUG=$(debug)
+	make -C $(@:build-%=%) build
 
 test: $(ALL_TEST)
 
 test-%:
-	make -C $(@:test-%=%) test TRACE=$(trace) DEBUG=$(debug)
+	make -C $(@:test-%=%) test TRACE=$(TRACE) DEBUG=$(DEBUG)
 
 clean: $(ALL_CLEAN)
 	rm -fr test/testml

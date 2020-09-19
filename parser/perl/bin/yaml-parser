@@ -14,7 +14,7 @@ use TestReceiver;
 
 sub main {
   my ($yaml) = @_;
-  $yaml //= do { local $/; <> };
+  $yaml //= file_read '-';
 
   my $parser;
   if ($ENV{DEBUG}) {
@@ -24,7 +24,7 @@ sub main {
     $parser = Parser->new(TestReceiver->new);
   }
 
-  my $pass = 1;
+  my $pass = true;
   my $start = timer;
 
   eval {
@@ -32,8 +32,9 @@ sub main {
   };
   if ($@) {
     warn $@;
-    $pass = 0;
+    $pass = false;
   }
+
   my $time = timer($start);
 
   my $n;

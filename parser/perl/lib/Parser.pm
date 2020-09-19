@@ -4,8 +4,12 @@
 ###
 
 use v5.12;
+
 package Parser;
+
 use Prelude;
+use Grammar;
+
 use base 'Grammar';
 
 use constant TRACE => $ENV{TRACE};
@@ -36,27 +40,23 @@ sub parse {
   my $ok;
   eval {
     $ok = $self->call($self->func('TOP'));
+    $self->trace_flush;
   };
   if ($@) {
     $self->trace_flush;
     die $@;
   }
 
-  $self->trace_flush;
-
-  if (not $ok) {
-    die "Parser failed";
-  }
-
-  if ($self->{pos} < $self->{end}) {
-    die "Parser finished before end of input";
-  }
+  die "Parser failed" if not $ok;
+  die "Parser finished before end of input"
+    if $self->{pos} < $self->{end};
 
   return true;
 }
 
 sub state_curr {
-  $_[0]->{state}[-1] || {
+  my ($self) = @_;
+  $self->{state}[-1] || {
     name => undef,
     lvl => 0,
     beg => 0,
@@ -67,7 +67,8 @@ sub state_curr {
 }
 
 sub state_prev {
-  $_[0]->{state}[-2]
+  my ($self) = @_;
+  $self->{state}[-2]
 }
 
 sub state_push {
@@ -87,8 +88,8 @@ sub state_push {
 
 sub state_pop {
   my ($self) = @_;
-  my $prev = $self->state_prev;
   my $curr = pop @{$self->{state}};
+  my $prev = $self->state_prev;
   return unless defined $prev;
   $prev->{beg} = $curr->{beg};
   $prev->{end} = $self->{pos};
@@ -99,12 +100,14 @@ sub call {
   $type //= 'boolean';
 
   my $args = [];
-  ($func, @$args) = @$func if isArray($func);
+  ($func, @$args) = @$func if isArray $func;
 
   return $func if isNumber $func;
 
   xxxxx "Bad call type '${\ typeof $func}' for '$func'"
-    unless isFunction($func);
+    unless isFunction $func;
+
+  $func->{trace} //= $func->{name};
 
   $self->state_push($func->{trace});
 
@@ -119,10 +122,9 @@ sub call {
   my $pos = $self->{pos};
   $self->receive($func, 'try', $pos);
 
-  my $func2 = $func->{func}->($self, @$args);
-  my $value = $func2;
-  while (isFunction($func2) or isArray($func2)) {
-    $value = $func2 = $self->call($func2);
+  my $value = $func->{func}->($self, @$args);
+  while (isFunction($value) or isArray($value)) {
+    $value = $self->call($value);
   }
 
   xxxxx "Calling '$func->{trace}' returned '${\ typeof($value)}' instead of '$type'"
@@ -130,31 +132,27 @@ sub call {
 
   if ($type ne 'boolean') {
     $self->trace('>', $value) if TRACE;
-    $self->state_pop;
-    return $value;
-  }
-
-  if ($value) {
-    $self->trace('+', $func->{trace}) if TRACE;
-    $self->receive($func, 'got', $pos);
   }
   else {
-    $self->trace('x', $func->{trace}) if TRACE;
-    $self->receive($func, 'not', $pos);
+    if ($value) {
+      $self->trace('+', $func->{trace}) if TRACE;
+      $self->receive($func, 'got', $pos);
+    }
+    else {
+      $self->trace('x', $func->{trace}) if TRACE;
+      $self->receive($func, 'not', $pos);
+    }
   }
 
   $self->state_pop;
-
   return $value;
 }
 
 sub receive {
   my ($self, $func, $type, $pos) = @_;
 
-  my $receiver = (
-    $func->{receivers} //= $self->make_receivers
-  )->{$type};
-
+  $func->{receivers} //= $self->make_receivers;
+  my $receiver = $func->{receivers}{$type};
   return unless $receiver;
 
   $receiver->($self->{receiver}, {
@@ -169,9 +167,9 @@ sub make_receivers {
   my $i = @{$self->{state}};
   my $names = [];
   my $n;
-  while ($i > 0 and ($n = $self->{state}[--$i]{name}) !~ /_/) {
+  while ($i > 0 and not(($n = $self->{state}[--$i]{name}) =~ /_/)) {
     if ($n =~ /^chr\((.)\)$/) {
-      $n = sprintf "x%x", ord($1);
+      $n = hex_char $1;
     }
     unshift @$names, $n;
   }
@@ -239,10 +237,8 @@ sub rep {
     if ($count >= $min and ($max == 0 or $count <= $max)) {
       return true;
     }
-    else {
-      $self->{pos} = $pos_start;
-      return false;
-    }
+    $self->{pos} = $pos_start;
+    return false;
   }, "rep($min,$max)";
 }
 
@@ -253,7 +249,7 @@ sub case {
     my $rule = $map->{$var} or
       xxxxx "Can't find '$var' in:", $map;
     $self->call($rule);
-  }, "case($var, ${\ stringify $map})";
+  }, "case($var,${\ stringify $map})";
 }
 
 # Call a rule depending on state value:
@@ -273,13 +269,11 @@ sub chr {
     if ($self->{pos} >= $self->{end}) {
       return false;
     }
-    elsif (substr($self->{input}, $self->{pos}, 1) eq $char) {
+    if (substr($self->{input}, $self->{pos}, 1) eq $char) {
       $self->{pos}++;
       return true;
     }
-    else {
-      return false;
-    }
+    return false;
   }, "chr(${\ stringify($char)})";
 }
 
@@ -290,16 +284,14 @@ sub rng {
     if ($self->{pos} >= $self->{end}) {
       return false;
     }
-    elsif (
+    if (
       $low le substr($self->{input}, $self->{pos}, 1) and
       substr($self->{input}, $self->{pos}, 1) le $high
     ) {
       $self->{pos}++;
       return true;
     }
-    else {
-      return false;
-    }
+    return false;
   }, "rng(${\ stringify($low)},${\ stringify($high)})";
 }
 
@@ -448,15 +440,17 @@ sub t {
 # Special grammar rules
 #------------------------------------------------------------------------------
 sub start_of_line {
+  my ($self) = @_;
   (
-    $_[0]->{pos} == 0 ||
-    substr($_[0]->{input}, $_[0]->{pos} - 1, 1) eq "\n"
+    $self->{pos} == 0 ||
+    substr($self->{input}, $self->{pos} - 1, 1) eq "\n"
   ) ? true : false;
 }
 name 'start_of_line', \&start_of_line;
 
 sub end_of_stream {
-  ($_[0]->{pos} >= $_[0]->{end}) ? true : false;
+  my ($self) = @_;
+  ($self->{pos} >= $self->{end}) ? true : false;
 }
 name 'end_of_stream', \&end_of_stream;
 

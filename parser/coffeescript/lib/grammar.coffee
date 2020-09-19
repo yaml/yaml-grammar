@@ -15,7 +15,7 @@ global.Grammar = class Grammar
 
   @::c_printable.num = 1
   c_printable: ->
-    debug1("c_printable")
+    debug_rule("c_printable")
     @any(
       @chr("\u{09}"),
       @chr("\u{0A}"),
@@ -35,7 +35,7 @@ global.Grammar = class Grammar
 
   @::nb_json.num = 2
   nb_json: ->
-    debug1("nb_json")
+    debug_rule("nb_json")
     @any(
       @chr("\u{09}"),
       @rng("\u{20}", "\u{10FFFF}")
@@ -49,7 +49,7 @@ global.Grammar = class Grammar
 
   @::c_byte_order_mark.num = 3
   c_byte_order_mark: ->
-    debug1("c_byte_order_mark")
+    debug_rule("c_byte_order_mark")
     @chr("\u{FEFF}")
 
 
@@ -60,7 +60,7 @@ global.Grammar = class Grammar
 
   @::c_sequence_entry.num = 4
   c_sequence_entry: ->
-    debug1("c_sequence_entry")
+    debug_rule("c_sequence_entry")
     @chr('-')
 
 
@@ -71,7 +71,7 @@ global.Grammar = class Grammar
 
   @::c_mapping_key.num = 5
   c_mapping_key: ->
-    debug1("c_mapping_key")
+    debug_rule("c_mapping_key")
     @chr('?')
 
 
@@ -82,7 +82,7 @@ global.Grammar = class Grammar
 
   @::c_mapping_value.num = 6
   c_mapping_value: ->
-    debug1("c_mapping_value")
+    debug_rule("c_mapping_value")
     @chr(':')
 
 
@@ -93,7 +93,7 @@ global.Grammar = class Grammar
 
   @::c_collect_entry.num = 7
   c_collect_entry: ->
-    debug1("c_collect_entry")
+    debug_rule("c_collect_entry")
     @chr(',')
 
 
@@ -104,7 +104,7 @@ global.Grammar = class Grammar
 
   @::c_sequence_start.num = 8
   c_sequence_start: ->
-    debug1("c_sequence_start")
+    debug_rule("c_sequence_start")
     @chr('[')
 
 
@@ -115,7 +115,7 @@ global.Grammar = class Grammar
 
   @::c_sequence_end.num = 9
   c_sequence_end: ->
-    debug1("c_sequence_end")
+    debug_rule("c_sequence_end")
     @chr(']')
 
 
@@ -126,7 +126,7 @@ global.Grammar = class Grammar
 
   @::c_mapping_start.num = 10
   c_mapping_start: ->
-    debug1("c_mapping_start")
+    debug_rule("c_mapping_start")
     @chr('{')
 
 
@@ -137,7 +137,7 @@ global.Grammar = class Grammar
 
   @::c_mapping_end.num = 11
   c_mapping_end: ->
-    debug1("c_mapping_end")
+    debug_rule("c_mapping_end")
     @chr('}')
 
 
@@ -148,7 +148,7 @@ global.Grammar = class Grammar
 
   @::c_comment.num = 12
   c_comment: ->
-    debug1("c_comment")
+    debug_rule("c_comment")
     @chr('#')
 
 
@@ -159,7 +159,7 @@ global.Grammar = class Grammar
 
   @::c_anchor.num = 13
   c_anchor: ->
-    debug1("c_anchor")
+    debug_rule("c_anchor")
     @chr('&')
 
 
@@ -170,7 +170,7 @@ global.Grammar = class Grammar
 
   @::c_alias.num = 14
   c_alias: ->
-    debug1("c_alias")
+    debug_rule("c_alias")
     @chr('*')
 
 
@@ -181,7 +181,7 @@ global.Grammar = class Grammar
 
   @::c_tag.num = 15
   c_tag: ->
-    debug1("c_tag")
+    debug_rule("c_tag")
     @chr('!')
 
 
@@ -192,7 +192,7 @@ global.Grammar = class Grammar
 
   @::c_literal.num = 16
   c_literal: ->
-    debug1("c_literal")
+    debug_rule("c_literal")
     @chr('|')
 
 
@@ -203,7 +203,7 @@ global.Grammar = class Grammar
 
   @::c_folded.num = 17
   c_folded: ->
-    debug1("c_folded")
+    debug_rule("c_folded")
     @chr('>')
 
 
@@ -214,7 +214,7 @@ global.Grammar = class Grammar
 
   @::c_single_quote.num = 18
   c_single_quote: ->
-    debug1("c_single_quote")
+    debug_rule("c_single_quote")
     @chr("'")
 
 
@@ -225,7 +225,7 @@ global.Grammar = class Grammar
 
   @::c_double_quote.num = 19
   c_double_quote: ->
-    debug1("c_double_quote")
+    debug_rule("c_double_quote")
     @chr('"')
 
 
@@ -236,7 +236,7 @@ global.Grammar = class Grammar
 
   @::c_directive.num = 20
   c_directive: ->
-    debug1("c_directive")
+    debug_rule("c_directive")
     @chr('%')
 
 
@@ -247,7 +247,7 @@ global.Grammar = class Grammar
 
   @::c_reserved.num = 21
   c_reserved: ->
-    debug1("c_reserved")
+    debug_rule("c_reserved")
     @any(
       @chr('@'),
       @chr('`')
@@ -263,7 +263,7 @@ global.Grammar = class Grammar
 
   @::c_indicator.num = 22
   c_indicator: ->
-    debug1("c_indicator")
+    debug_rule("c_indicator")
     @any(
       @chr('-'),
       @chr('?'),
@@ -294,7 +294,7 @@ global.Grammar = class Grammar
 
   @::c_flow_indicator.num = 23
   c_flow_indicator: ->
-    debug1("c_flow_indicator")
+    debug_rule("c_flow_indicator")
     @any(
       @chr(','),
       @chr('['),
@@ -311,7 +311,7 @@ global.Grammar = class Grammar
 
   @::b_line_feed.num = 24
   b_line_feed: ->
-    debug1("b_line_feed")
+    debug_rule("b_line_feed")
     @chr("\u{0A}")
 
 
@@ -322,7 +322,7 @@ global.Grammar = class Grammar
 
   @::b_carriage_return.num = 25
   b_carriage_return: ->
-    debug1("b_carriage_return")
+    debug_rule("b_carriage_return")
     @chr("\u{0D}")
 
 
@@ -333,7 +333,7 @@ global.Grammar = class Grammar
 
   @::b_char.num = 26
   b_char: ->
-    debug1("b_char")
+    debug_rule("b_char")
     @any(
       @b_line_feed,
       @b_carriage_return
@@ -347,7 +347,7 @@ global.Grammar = class Grammar
 
   @::nb_char.num = 27
   nb_char: ->
-    debug1("nb_char")
+    debug_rule("nb_char")
     @but(
       @c_printable,
       @b_char,
@@ -364,7 +364,7 @@ global.Grammar = class Grammar
 
   @::b_break.num = 28
   b_break: ->
-    debug1("b_break")
+    debug_rule("b_break")
     @any(
       @all(
         @b_carriage_return,
@@ -382,7 +382,7 @@ global.Grammar = class Grammar
 
   @::b_as_line_feed.num = 29
   b_as_line_feed: ->
-    debug1("b_as_line_feed")
+    debug_rule("b_as_line_feed")
     @b_break
 
 
@@ -393,7 +393,7 @@ global.Grammar = class Grammar
 
   @::b_non_content.num = 30
   b_non_content: ->
-    debug1("b_non_content")
+    debug_rule("b_non_content")
     @b_break
 
 
@@ -404,7 +404,7 @@ global.Grammar = class Grammar
 
   @::s_space.num = 31
   s_space: ->
-    debug1("s_space")
+    debug_rule("s_space")
     @chr("\u{20}")
 
 
@@ -415,7 +415,7 @@ global.Grammar = class Grammar
 
   @::s_tab.num = 32
   s_tab: ->
-    debug1("s_tab")
+    debug_rule("s_tab")
     @chr("\u{09}")
 
 
@@ -426,7 +426,7 @@ global.Grammar = class Grammar
 
   @::s_white.num = 33
   s_white: ->
-    debug1("s_white")
+    debug_rule("s_white")
     @any(
       @s_space,
       @s_tab
@@ -440,7 +440,7 @@ global.Grammar = class Grammar
 
   @::ns_char.num = 34
   ns_char: ->
-    debug1("ns_char")
+    debug_rule("ns_char")
     @but(
       @nb_char,
       @s_white
@@ -454,7 +454,7 @@ global.Grammar = class Grammar
 
   @::ns_dec_digit.num = 35
   ns_dec_digit: ->
-    debug1("ns_dec_digit")
+    debug_rule("ns_dec_digit")
     @rng("\u{30}", "\u{39}")
 
 
@@ -466,7 +466,7 @@ global.Grammar = class Grammar
 
   @::ns_hex_digit.num = 36
   ns_hex_digit: ->
-    debug1("ns_hex_digit")
+    debug_rule("ns_hex_digit")
     @any(
       @ns_dec_digit,
       @rng("\u{41}", "\u{46}"),
@@ -481,7 +481,7 @@ global.Grammar = class Grammar
 
   @::ns_ascii_letter.num = 37
   ns_ascii_letter: ->
-    debug1("ns_ascii_letter")
+    debug_rule("ns_ascii_letter")
     @any(
       @rng("\u{41}", "\u{5A}"),
       @rng("\u{61}", "\u{7A}")
@@ -495,7 +495,7 @@ global.Grammar = class Grammar
 
   @::ns_word_char.num = 38
   ns_word_char: ->
-    debug1("ns_word_char")
+    debug_rule("ns_word_char")
     @any(
       @ns_dec_digit,
       @ns_ascii_letter,
@@ -512,7 +512,7 @@ global.Grammar = class Grammar
 
   @::ns_uri_char.num = 39
   ns_uri_char: ->
-    debug1("ns_uri_char")
+    debug_rule("ns_uri_char")
     @any(
       @all(
         @chr('%'),
@@ -551,7 +551,7 @@ global.Grammar = class Grammar
 
   @::ns_tag_char.num = 40
   ns_tag_char: ->
-    debug1("ns_tag_char")
+    debug_rule("ns_tag_char")
     @but(
       @ns_uri_char,
       @chr('!'),
@@ -566,7 +566,7 @@ global.Grammar = class Grammar
 
   @::c_escape.num = 41
   c_escape: ->
-    debug1("c_escape")
+    debug_rule("c_escape")
     @chr("\\")
 
 
@@ -577,7 +577,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_null.num = 42
   ns_esc_null: ->
-    debug1("ns_esc_null")
+    debug_rule("ns_esc_null")
     @chr('0')
 
 
@@ -588,7 +588,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_bell.num = 43
   ns_esc_bell: ->
-    debug1("ns_esc_bell")
+    debug_rule("ns_esc_bell")
     @chr('a')
 
 
@@ -599,7 +599,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_backspace.num = 44
   ns_esc_backspace: ->
-    debug1("ns_esc_backspace")
+    debug_rule("ns_esc_backspace")
     @chr('b')
 
 
@@ -610,7 +610,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_horizontal_tab.num = 45
   ns_esc_horizontal_tab: ->
-    debug1("ns_esc_horizontal_tab")
+    debug_rule("ns_esc_horizontal_tab")
     @any(
       @chr('t'),
       @chr("\u{09}")
@@ -624,7 +624,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_line_feed.num = 46
   ns_esc_line_feed: ->
-    debug1("ns_esc_line_feed")
+    debug_rule("ns_esc_line_feed")
     @chr('n')
 
 
@@ -635,7 +635,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_vertical_tab.num = 47
   ns_esc_vertical_tab: ->
-    debug1("ns_esc_vertical_tab")
+    debug_rule("ns_esc_vertical_tab")
     @chr('v')
 
 
@@ -646,7 +646,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_form_feed.num = 48
   ns_esc_form_feed: ->
-    debug1("ns_esc_form_feed")
+    debug_rule("ns_esc_form_feed")
     @chr('f')
 
 
@@ -657,7 +657,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_carriage_return.num = 49
   ns_esc_carriage_return: ->
-    debug1("ns_esc_carriage_return")
+    debug_rule("ns_esc_carriage_return")
     @chr('r')
 
 
@@ -668,7 +668,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_escape.num = 50
   ns_esc_escape: ->
-    debug1("ns_esc_escape")
+    debug_rule("ns_esc_escape")
     @chr('e')
 
 
@@ -679,7 +679,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_space.num = 51
   ns_esc_space: ->
-    debug1("ns_esc_space")
+    debug_rule("ns_esc_space")
     @chr("\u{20}")
 
 
@@ -690,7 +690,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_double_quote.num = 52
   ns_esc_double_quote: ->
-    debug1("ns_esc_double_quote")
+    debug_rule("ns_esc_double_quote")
     @chr('"')
 
 
@@ -701,7 +701,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_slash.num = 53
   ns_esc_slash: ->
-    debug1("ns_esc_slash")
+    debug_rule("ns_esc_slash")
     @chr('/')
 
 
@@ -712,7 +712,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_backslash.num = 54
   ns_esc_backslash: ->
-    debug1("ns_esc_backslash")
+    debug_rule("ns_esc_backslash")
     @chr("\\")
 
 
@@ -723,7 +723,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_next_line.num = 55
   ns_esc_next_line: ->
-    debug1("ns_esc_next_line")
+    debug_rule("ns_esc_next_line")
     @chr('N')
 
 
@@ -734,7 +734,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_non_breaking_space.num = 56
   ns_esc_non_breaking_space: ->
-    debug1("ns_esc_non_breaking_space")
+    debug_rule("ns_esc_non_breaking_space")
     @chr('_')
 
 
@@ -745,7 +745,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_line_separator.num = 57
   ns_esc_line_separator: ->
-    debug1("ns_esc_line_separator")
+    debug_rule("ns_esc_line_separator")
     @chr('L')
 
 
@@ -756,7 +756,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_paragraph_separator.num = 58
   ns_esc_paragraph_separator: ->
-    debug1("ns_esc_paragraph_separator")
+    debug_rule("ns_esc_paragraph_separator")
     @chr('P')
 
 
@@ -768,7 +768,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_8_bit.num = 59
   ns_esc_8_bit: ->
-    debug1("ns_esc_8_bit")
+    debug_rule("ns_esc_8_bit")
     @all(
       @chr('x'),
       @rep(2, 2, @ns_hex_digit)
@@ -783,7 +783,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_16_bit.num = 60
   ns_esc_16_bit: ->
-    debug1("ns_esc_16_bit")
+    debug_rule("ns_esc_16_bit")
     @all(
       @chr('u'),
       @rep(4, 4, @ns_hex_digit)
@@ -798,7 +798,7 @@ global.Grammar = class Grammar
 
   @::ns_esc_32_bit.num = 61
   ns_esc_32_bit: ->
-    debug1("ns_esc_32_bit")
+    debug_rule("ns_esc_32_bit")
     @all(
       @chr('U'),
       @rep(8, 8, @ns_hex_digit)
@@ -820,7 +820,7 @@ global.Grammar = class Grammar
 
   @::c_ns_esc_char.num = 62
   c_ns_esc_char: ->
-    debug1("c_ns_esc_char")
+    debug_rule("c_ns_esc_char")
     @all(
       @chr("\\"),
       @any(
@@ -855,7 +855,7 @@ global.Grammar = class Grammar
 
   @::s_indent.num = 63
   s_indent: (n)->
-    debug1("s_indent",n)
+    debug_rule("s_indent",n)
     @rep(n, n, @s_space)
 
 
@@ -866,7 +866,7 @@ global.Grammar = class Grammar
 
   @::s_indent_lt.num = 64
   s_indent_lt: (n)->
-    debug1("s_indent_lt",n)
+    debug_rule("s_indent_lt",n)
     @may(
       @all(
         @rep(0, 0, @s_space),
@@ -882,7 +882,7 @@ global.Grammar = class Grammar
 
   @::s_indent_le.num = 65
   s_indent_le: (n)->
-    debug1("s_indent_le",n)
+    debug_rule("s_indent_le",n)
     @may(
       @all(
         @rep(0, 0, @s_space),
@@ -898,7 +898,7 @@ global.Grammar = class Grammar
 
   @::s_separate_in_line.num = 66
   s_separate_in_line: ->
-    debug1("s_separate_in_line")
+    debug_rule("s_separate_in_line")
     @any(
       @rep(1, 0, @s_white),
       @start_of_line
@@ -915,7 +915,7 @@ global.Grammar = class Grammar
 
   @::s_line_prefix.num = 67
   s_line_prefix: (n, c)->
-    debug1("s_line_prefix",n,c)
+    debug_rule("s_line_prefix",n,c)
     @case(
       c,
       {
@@ -934,7 +934,7 @@ global.Grammar = class Grammar
 
   @::s_block_line_prefix.num = 68
   s_block_line_prefix: (n)->
-    debug1("s_block_line_prefix",n)
+    debug_rule("s_block_line_prefix",n)
     [ @s_indent, n ]
 
 
@@ -946,7 +946,7 @@ global.Grammar = class Grammar
 
   @::s_flow_line_prefix.num = 69
   s_flow_line_prefix: (n)->
-    debug1("s_flow_line_prefix",n)
+    debug_rule("s_flow_line_prefix",n)
     @all(
       [ @s_indent, n ],
       @rep(0, 1, @s_separate_in_line)
@@ -961,7 +961,7 @@ global.Grammar = class Grammar
 
   @::l_empty.num = 70
   l_empty: (n, c)->
-    debug1("l_empty",n,c)
+    debug_rule("l_empty",n,c)
     @all(
       @any(
         [ @s_line_prefix, n, c ],
@@ -978,7 +978,7 @@ global.Grammar = class Grammar
 
   @::b_l_trimmed.num = 71
   b_l_trimmed: (n, c)->
-    debug1("b_l_trimmed",n,c)
+    debug_rule("b_l_trimmed",n,c)
     @all(
       @b_non_content,
       @rep(1, 0, [ @l_empty, n, c ])
@@ -992,7 +992,7 @@ global.Grammar = class Grammar
 
   @::b_as_space.num = 72
   b_as_space: ->
-    debug1("b_as_space")
+    debug_rule("b_as_space")
     @b_break
 
 
@@ -1003,7 +1003,7 @@ global.Grammar = class Grammar
 
   @::b_l_folded.num = 73
   b_l_folded: (n, c)->
-    debug1("b_l_folded",n,c)
+    debug_rule("b_l_folded",n,c)
     @any(
       [ @b_l_trimmed, n, c ],
       @b_as_space
@@ -1019,7 +1019,7 @@ global.Grammar = class Grammar
 
   @::s_flow_folded.num = 74
   s_flow_folded: (n)->
-    debug1("s_flow_folded",n)
+    debug_rule("s_flow_folded",n)
     @all(
       @rep(0, 1, @s_separate_in_line),
       [ @b_l_folded, n, "flow-in" ],
@@ -1034,7 +1034,7 @@ global.Grammar = class Grammar
 
   @::c_nb_comment_text.num = 75
   c_nb_comment_text: ->
-    debug1("c_nb_comment_text")
+    debug_rule("c_nb_comment_text")
     @all(
       @chr('#'),
       @rep(0, 0, @nb_char)
@@ -1048,7 +1048,7 @@ global.Grammar = class Grammar
 
   @::b_comment.num = 76
   b_comment: ->
-    debug1("b_comment")
+    debug_rule("b_comment")
     @any(
       @b_non_content,
       @end_of_stream
@@ -1064,7 +1064,7 @@ global.Grammar = class Grammar
 
   @::s_b_comment.num = 77
   s_b_comment: ->
-    debug1("s_b_comment")
+    debug_rule("s_b_comment")
     @all(
       @rep(0, 1,
         @all(
@@ -1083,7 +1083,7 @@ global.Grammar = class Grammar
 
   @::l_comment.num = 78
   l_comment: ->
-    debug1("l_comment")
+    debug_rule("l_comment")
     @all(
       @s_separate_in_line,
       @rep(0, 1, @c_nb_comment_text),
@@ -1099,7 +1099,7 @@ global.Grammar = class Grammar
 
   @::s_l_comments.num = 79
   s_l_comments: ->
-    debug1("s_l_comments")
+    debug_rule("s_l_comments")
     @all(
       @any(
         @s_b_comment,
@@ -1121,7 +1121,7 @@ global.Grammar = class Grammar
 
   @::s_separate.num = 80
   s_separate: (n, c)->
-    debug1("s_separate",n,c)
+    debug_rule("s_separate",n,c)
     @case(
       c,
       {
@@ -1144,7 +1144,7 @@ global.Grammar = class Grammar
 
   @::s_separate_lines.num = 81
   s_separate_lines: (n)->
-    debug1("s_separate_lines",n)
+    debug_rule("s_separate_lines",n)
     @any(
       @all(
         @s_l_comments,
@@ -1165,7 +1165,7 @@ global.Grammar = class Grammar
 
   @::l_directive.num = 82
   l_directive: ->
-    debug1("l_directive")
+    debug_rule("l_directive")
     @all(
       @chr('%'),
       @any(
@@ -1185,7 +1185,7 @@ global.Grammar = class Grammar
 
   @::ns_reserved_directive.num = 83
   ns_reserved_directive: ->
-    debug1("ns_reserved_directive")
+    debug_rule("ns_reserved_directive")
     @all(
       @ns_directive_name,
       @rep(0, 0,
@@ -1203,7 +1203,7 @@ global.Grammar = class Grammar
 
   @::ns_directive_name.num = 84
   ns_directive_name: ->
-    debug1("ns_directive_name")
+    debug_rule("ns_directive_name")
     @rep(1, 0, @ns_char)
 
 
@@ -1214,7 +1214,7 @@ global.Grammar = class Grammar
 
   @::ns_directive_parameter.num = 85
   ns_directive_parameter: ->
-    debug1("ns_directive_parameter")
+    debug_rule("ns_directive_parameter")
     @rep(1, 0, @ns_char)
 
 
@@ -1226,7 +1226,7 @@ global.Grammar = class Grammar
 
   @::ns_yaml_directive.num = 86
   ns_yaml_directive: ->
-    debug1("ns_yaml_directive")
+    debug_rule("ns_yaml_directive")
     @all(
       @chr('Y'),
       @chr('A'),
@@ -1244,7 +1244,7 @@ global.Grammar = class Grammar
 
   @::ns_yaml_version.num = 87
   ns_yaml_version: ->
-    debug1("ns_yaml_version")
+    debug_rule("ns_yaml_version")
     @all(
       @rep(1, 0, @ns_dec_digit),
       @chr('.'),
@@ -1261,7 +1261,7 @@ global.Grammar = class Grammar
 
   @::ns_tag_directive.num = 88
   ns_tag_directive: ->
-    debug1("ns_tag_directive")
+    debug_rule("ns_tag_directive")
     @all(
       @chr('T'),
       @chr('A'),
@@ -1282,7 +1282,7 @@ global.Grammar = class Grammar
 
   @::c_tag_handle.num = 89
   c_tag_handle: ->
-    debug1("c_tag_handle")
+    debug_rule("c_tag_handle")
     @any(
       @c_named_tag_handle,
       @c_secondary_tag_handle,
@@ -1297,7 +1297,7 @@ global.Grammar = class Grammar
 
   @::c_primary_tag_handle.num = 90
   c_primary_tag_handle: ->
-    debug1("c_primary_tag_handle")
+    debug_rule("c_primary_tag_handle")
     @chr('!')
 
 
@@ -1308,7 +1308,7 @@ global.Grammar = class Grammar
 
   @::c_secondary_tag_handle.num = 91
   c_secondary_tag_handle: ->
-    debug1("c_secondary_tag_handle")
+    debug_rule("c_secondary_tag_handle")
     @all(
       @chr('!'),
       @chr('!')
@@ -1322,7 +1322,7 @@ global.Grammar = class Grammar
 
   @::c_named_tag_handle.num = 92
   c_named_tag_handle: ->
-    debug1("c_named_tag_handle")
+    debug_rule("c_named_tag_handle")
     @all(
       @chr('!'),
       @rep(1, 0, @ns_word_char),
@@ -1337,7 +1337,7 @@ global.Grammar = class Grammar
 
   @::ns_tag_prefix.num = 93
   ns_tag_prefix: ->
-    debug1("ns_tag_prefix")
+    debug_rule("ns_tag_prefix")
     @any(
       @c_ns_local_tag_prefix,
       @ns_global_tag_prefix
@@ -1351,7 +1351,7 @@ global.Grammar = class Grammar
 
   @::c_ns_local_tag_prefix.num = 94
   c_ns_local_tag_prefix: ->
-    debug1("c_ns_local_tag_prefix")
+    debug_rule("c_ns_local_tag_prefix")
     @all(
       @chr('!'),
       @rep(0, 0, @ns_uri_char)
@@ -1365,7 +1365,7 @@ global.Grammar = class Grammar
 
   @::ns_global_tag_prefix.num = 95
   ns_global_tag_prefix: ->
-    debug1("ns_global_tag_prefix")
+    debug_rule("ns_global_tag_prefix")
     @all(
       @ns_tag_char,
       @rep(0, 0, @ns_uri_char)
@@ -1382,7 +1382,7 @@ global.Grammar = class Grammar
 
   @::c_ns_properties.num = 96
   c_ns_properties: (n, c)->
-    debug1("c_ns_properties",n,c)
+    debug_rule("c_ns_properties",n,c)
     @any(
       @all(
         @c_ns_tag_property,
@@ -1412,7 +1412,7 @@ global.Grammar = class Grammar
 
   @::c_ns_tag_property.num = 97
   c_ns_tag_property: ->
-    debug1("c_ns_tag_property")
+    debug_rule("c_ns_tag_property")
     @any(
       @c_verbatim_tag,
       @c_ns_shorthand_tag,
@@ -1427,7 +1427,7 @@ global.Grammar = class Grammar
 
   @::c_verbatim_tag.num = 98
   c_verbatim_tag: ->
-    debug1("c_verbatim_tag")
+    debug_rule("c_verbatim_tag")
     @all(
       @chr('!'),
       @chr('<'),
@@ -1443,7 +1443,7 @@ global.Grammar = class Grammar
 
   @::c_ns_shorthand_tag.num = 99
   c_ns_shorthand_tag: ->
-    debug1("c_ns_shorthand_tag")
+    debug_rule("c_ns_shorthand_tag")
     @all(
       @c_tag_handle,
       @rep(1, 0, @ns_tag_char)
@@ -1457,7 +1457,7 @@ global.Grammar = class Grammar
 
   @::c_non_specific_tag.num = 100
   c_non_specific_tag: ->
-    debug1("c_non_specific_tag")
+    debug_rule("c_non_specific_tag")
     @chr('!')
 
 
@@ -1468,7 +1468,7 @@ global.Grammar = class Grammar
 
   @::c_ns_anchor_property.num = 101
   c_ns_anchor_property: ->
-    debug1("c_ns_anchor_property")
+    debug_rule("c_ns_anchor_property")
     @all(
       @chr('&'),
       @ns_anchor_name
@@ -1482,7 +1482,7 @@ global.Grammar = class Grammar
 
   @::ns_anchor_char.num = 102
   ns_anchor_char: ->
-    debug1("ns_anchor_char")
+    debug_rule("ns_anchor_char")
     @but(
       @ns_char,
       @c_flow_indicator
@@ -1496,7 +1496,7 @@ global.Grammar = class Grammar
 
   @::ns_anchor_name.num = 103
   ns_anchor_name: ->
-    debug1("ns_anchor_name")
+    debug_rule("ns_anchor_name")
     @rep(1, 0, @ns_anchor_char)
 
 
@@ -1507,7 +1507,7 @@ global.Grammar = class Grammar
 
   @::c_ns_alias_node.num = 104
   c_ns_alias_node: ->
-    debug1("c_ns_alias_node")
+    debug_rule("c_ns_alias_node")
     @all(
       @chr('*'),
       @ns_anchor_name
@@ -1521,7 +1521,7 @@ global.Grammar = class Grammar
 
   @::e_scalar.num = 105
   e_scalar: ->
-    debug1("e_scalar")
+    debug_rule("e_scalar")
     @empty
 
 
@@ -1532,7 +1532,7 @@ global.Grammar = class Grammar
 
   @::e_node.num = 106
   e_node: ->
-    debug1("e_node")
+    debug_rule("e_node")
     @e_scalar
 
 
@@ -1543,7 +1543,7 @@ global.Grammar = class Grammar
 
   @::nb_double_char.num = 107
   nb_double_char: ->
-    debug1("nb_double_char")
+    debug_rule("nb_double_char")
     @any(
       @c_ns_esc_char,
       @but(
@@ -1561,7 +1561,7 @@ global.Grammar = class Grammar
 
   @::ns_double_char.num = 108
   ns_double_char: ->
-    debug1("ns_double_char")
+    debug_rule("ns_double_char")
     @but(
       @nb_double_char,
       @s_white
@@ -1576,7 +1576,7 @@ global.Grammar = class Grammar
 
   @::c_double_quoted.num = 109
   c_double_quoted: (n, c)->
-    debug1("c_double_quoted",n,c)
+    debug_rule("c_double_quoted",n,c)
     @all(
       @chr('"'),
       [ @nb_double_text, n, c ],
@@ -1594,7 +1594,7 @@ global.Grammar = class Grammar
 
   @::nb_double_text.num = 110
   nb_double_text: (n, c)->
-    debug1("nb_double_text",n,c)
+    debug_rule("nb_double_text",n,c)
     @case(
       c,
       {
@@ -1613,7 +1613,7 @@ global.Grammar = class Grammar
 
   @::nb_double_one_line.num = 111
   nb_double_one_line: ->
-    debug1("nb_double_one_line")
+    debug_rule("nb_double_one_line")
     @rep(0, 0, @nb_double_char)
 
 
@@ -1626,7 +1626,7 @@ global.Grammar = class Grammar
 
   @::s_double_escaped.num = 112
   s_double_escaped: (n)->
-    debug1("s_double_escaped",n)
+    debug_rule("s_double_escaped",n)
     @all(
       @rep(0, 0, @s_white),
       @chr("\\"),
@@ -1643,7 +1643,7 @@ global.Grammar = class Grammar
 
   @::s_double_break.num = 113
   s_double_break: (n)->
-    debug1("s_double_break",n)
+    debug_rule("s_double_break",n)
     @any(
       [ @s_double_escaped, n ],
       [ @s_flow_folded, n ]
@@ -1657,7 +1657,7 @@ global.Grammar = class Grammar
 
   @::nb_ns_double_in_line.num = 114
   nb_ns_double_in_line: ->
-    debug1("nb_ns_double_in_line")
+    debug_rule("nb_ns_double_in_line")
     @rep(0, 0,
       @all(
         @rep(0, 0, @s_white),
@@ -1674,7 +1674,7 @@ global.Grammar = class Grammar
 
   @::s_double_next_line.num = 115
   s_double_next_line: (n)->
-    debug1("s_double_next_line",n)
+    debug_rule("s_double_next_line",n)
     @all(
       [ @s_double_break, n ],
       @rep(0, 1,
@@ -1697,7 +1697,7 @@ global.Grammar = class Grammar
 
   @::nb_double_multi_line.num = 116
   nb_double_multi_line: (n)->
-    debug1("nb_double_multi_line",n)
+    debug_rule("nb_double_multi_line",n)
     @all(
       @nb_ns_double_in_line,
       @any(
@@ -1714,7 +1714,7 @@ global.Grammar = class Grammar
 
   @::c_quoted_quote.num = 117
   c_quoted_quote: ->
-    debug1("c_quoted_quote")
+    debug_rule("c_quoted_quote")
     @all(
       @chr("'"),
       @chr("'")
@@ -1728,7 +1728,7 @@ global.Grammar = class Grammar
 
   @::nb_single_char.num = 118
   nb_single_char: ->
-    debug1("nb_single_char")
+    debug_rule("nb_single_char")
     @any(
       @c_quoted_quote,
       @but(
@@ -1745,7 +1745,7 @@ global.Grammar = class Grammar
 
   @::ns_single_char.num = 119
   ns_single_char: ->
-    debug1("ns_single_char")
+    debug_rule("ns_single_char")
     @but(
       @nb_single_char,
       @s_white
@@ -1760,7 +1760,7 @@ global.Grammar = class Grammar
 
   @::c_single_quoted.num = 120
   c_single_quoted: (n, c)->
-    debug1("c_single_quoted",n,c)
+    debug_rule("c_single_quoted",n,c)
     @all(
       @chr("'"),
       [ @nb_single_text, n, c ],
@@ -1778,7 +1778,7 @@ global.Grammar = class Grammar
 
   @::nb_single_text.num = 121
   nb_single_text: (n, c)->
-    debug1("nb_single_text",n,c)
+    debug_rule("nb_single_text",n,c)
     @case(
       c,
       {
@@ -1797,7 +1797,7 @@ global.Grammar = class Grammar
 
   @::nb_single_one_line.num = 122
   nb_single_one_line: ->
-    debug1("nb_single_one_line")
+    debug_rule("nb_single_one_line")
     @rep(0, 0, @nb_single_char)
 
 
@@ -1808,7 +1808,7 @@ global.Grammar = class Grammar
 
   @::nb_ns_single_in_line.num = 123
   nb_ns_single_in_line: ->
-    debug1("nb_ns_single_in_line")
+    debug_rule("nb_ns_single_in_line")
     @rep(0, 0,
       @all(
         @rep(0, 0, @s_white),
@@ -1825,7 +1825,7 @@ global.Grammar = class Grammar
 
   @::s_single_next_line.num = 124
   s_single_next_line: (n)->
-    debug1("s_single_next_line",n)
+    debug_rule("s_single_next_line",n)
     @all(
       [ @s_flow_folded, n ],
       @rep(0, 1,
@@ -1848,7 +1848,7 @@ global.Grammar = class Grammar
 
   @::nb_single_multi_line.num = 125
   nb_single_multi_line: (n)->
-    debug1("nb_single_multi_line",n)
+    debug_rule("nb_single_multi_line",n)
     @all(
       @nb_ns_single_in_line,
       @any(
@@ -1867,7 +1867,7 @@ global.Grammar = class Grammar
 
   @::ns_plain_first.num = 126
   ns_plain_first: (c)->
-    debug1("ns_plain_first",c)
+    debug_rule("ns_plain_first",c)
     @any(
       @but(
         @ns_char,
@@ -1894,7 +1894,7 @@ global.Grammar = class Grammar
 
   @::ns_plain_safe.num = 127
   ns_plain_safe: (c)->
-    debug1("ns_plain_safe",c)
+    debug_rule("ns_plain_safe",c)
     @case(
       c,
       {
@@ -1913,7 +1913,7 @@ global.Grammar = class Grammar
 
   @::ns_plain_safe_out.num = 128
   ns_plain_safe_out: ->
-    debug1("ns_plain_safe_out")
+    debug_rule("ns_plain_safe_out")
     @ns_char
 
 
@@ -1924,7 +1924,7 @@ global.Grammar = class Grammar
 
   @::ns_plain_safe_in.num = 129
   ns_plain_safe_in: ->
-    debug1("ns_plain_safe_in")
+    debug_rule("ns_plain_safe_in")
     @but(
       @ns_char,
       @c_flow_indicator
@@ -1940,7 +1940,7 @@ global.Grammar = class Grammar
 
   @::ns_plain_char.num = 130
   ns_plain_char: (c)->
-    debug1("ns_plain_char",c)
+    debug_rule("ns_plain_char",c)
     @any(
       @but(
         [ @ns_plain_safe, c ],
@@ -1968,7 +1968,7 @@ global.Grammar = class Grammar
 
   @::ns_plain.num = 131
   ns_plain: (n, c)->
-    debug1("ns_plain",n,c)
+    debug_rule("ns_plain",n,c)
     @case(
       c,
       {
@@ -1988,7 +1988,7 @@ global.Grammar = class Grammar
 
   @::nb_ns_plain_in_line.num = 132
   nb_ns_plain_in_line: (c)->
-    debug1("nb_ns_plain_in_line",c)
+    debug_rule("nb_ns_plain_in_line",c)
     @rep(0, 0,
       @all(
         @rep(0, 0, @s_white),
@@ -2004,7 +2004,7 @@ global.Grammar = class Grammar
 
   @::ns_plain_one_line.num = 133
   ns_plain_one_line: (c)->
-    debug1("ns_plain_one_line",c)
+    debug_rule("ns_plain_one_line",c)
     @all(
       [ @ns_plain_first, c ],
       [ @nb_ns_plain_in_line, c ]
@@ -2019,7 +2019,7 @@ global.Grammar = class Grammar
 
   @::s_ns_plain_next_line.num = 134
   s_ns_plain_next_line: (n, c)->
-    debug1("s_ns_plain_next_line",n,c)
+    debug_rule("s_ns_plain_next_line",n,c)
     @all(
       [ @s_flow_folded, n ],
       [ @ns_plain_char, c ],
@@ -2035,7 +2035,7 @@ global.Grammar = class Grammar
 
   @::ns_plain_multi_line.num = 135
   ns_plain_multi_line: (n, c)->
-    debug1("ns_plain_multi_line",n,c)
+    debug_rule("ns_plain_multi_line",n,c)
     @all(
       [ @ns_plain_one_line, c ],
       @rep(0, 0, [ @s_ns_plain_next_line, n, c ])
@@ -2052,7 +2052,7 @@ global.Grammar = class Grammar
 
   @::in_flow.num = 136
   in_flow: (c)->
-    debug1("in_flow",c)
+    debug_rule("in_flow",c)
     @flip(
       c,
       {
@@ -2072,7 +2072,7 @@ global.Grammar = class Grammar
 
   @::c_flow_sequence.num = 137
   c_flow_sequence: (n, c)->
-    debug1("c_flow_sequence",n,c)
+    debug_rule("c_flow_sequence",n,c)
     @all(
       @chr('['),
       @rep(0, 1, [ @s_separate, n, c ]),
@@ -2091,7 +2091,7 @@ global.Grammar = class Grammar
 
   @::ns_s_flow_seq_entries.num = 138
   ns_s_flow_seq_entries: (n, c)->
-    debug1("ns_s_flow_seq_entries",n,c)
+    debug_rule("ns_s_flow_seq_entries",n,c)
     @all(
       [ @ns_flow_seq_entry, n, c ],
       @rep(0, 1, [ @s_separate, n, c ]),
@@ -2111,7 +2111,7 @@ global.Grammar = class Grammar
 
   @::ns_flow_seq_entry.num = 139
   ns_flow_seq_entry: (n, c)->
-    debug1("ns_flow_seq_entry",n,c)
+    debug_rule("ns_flow_seq_entry",n,c)
     @any(
       [ @ns_flow_pair, n, c ],
       [ @ns_flow_node, n, c ]
@@ -2126,7 +2126,7 @@ global.Grammar = class Grammar
 
   @::c_flow_mapping.num = 140
   c_flow_mapping: (n, c)->
-    debug1("c_flow_mapping",n,c)
+    debug_rule("c_flow_mapping",n,c)
     @all(
       @chr('{'),
       @rep(0, 1, [ @s_separate, n, c ]),
@@ -2145,7 +2145,7 @@ global.Grammar = class Grammar
 
   @::ns_s_flow_map_entries.num = 141
   ns_s_flow_map_entries: (n, c)->
-    debug1("ns_s_flow_map_entries",n,c)
+    debug_rule("ns_s_flow_map_entries",n,c)
     @all(
       [ @ns_flow_map_entry, n, c ],
       @rep(0, 1, [ @s_separate, n, c ]),
@@ -2167,7 +2167,7 @@ global.Grammar = class Grammar
 
   @::ns_flow_map_entry.num = 142
   ns_flow_map_entry: (n, c)->
-    debug1("ns_flow_map_entry",n,c)
+    debug_rule("ns_flow_map_entry",n,c)
     @any(
       @all(
         @chr('?'),
@@ -2187,7 +2187,7 @@ global.Grammar = class Grammar
 
   @::ns_flow_map_explicit_entry.num = 143
   ns_flow_map_explicit_entry: (n, c)->
-    debug1("ns_flow_map_explicit_entry",n,c)
+    debug_rule("ns_flow_map_explicit_entry",n,c)
     @any(
       [ @ns_flow_map_implicit_entry, n, c ],
       @all(
@@ -2206,7 +2206,7 @@ global.Grammar = class Grammar
 
   @::ns_flow_map_implicit_entry.num = 144
   ns_flow_map_implicit_entry: (n, c)->
-    debug1("ns_flow_map_implicit_entry",n,c)
+    debug_rule("ns_flow_map_implicit_entry",n,c)
     @any(
       [ @ns_flow_map_yaml_key_entry, n, c ],
       [ @c_ns_flow_map_empty_key_entry, n, c ],
@@ -2224,7 +2224,7 @@ global.Grammar = class Grammar
 
   @::ns_flow_map_yaml_key_entry.num = 145
   ns_flow_map_yaml_key_entry: (n, c)->
-    debug1("ns_flow_map_yaml_key_entry",n,c)
+    debug_rule("ns_flow_map_yaml_key_entry",n,c)
     @all(
       [ @ns_flow_yaml_node, n, c ],
       @any(
@@ -2245,7 +2245,7 @@ global.Grammar = class Grammar
 
   @::c_ns_flow_map_empty_key_entry.num = 146
   c_ns_flow_map_empty_key_entry: (n, c)->
-    debug1("c_ns_flow_map_empty_key_entry",n,c)
+    debug_rule("c_ns_flow_map_empty_key_entry",n,c)
     @all(
       @e_node,
       [ @c_ns_flow_map_separate_value, n, c ]
@@ -2261,7 +2261,7 @@ global.Grammar = class Grammar
 
   @::c_ns_flow_map_separate_value.num = 147
   c_ns_flow_map_separate_value: (n, c)->
-    debug1("c_ns_flow_map_separate_value",n,c)
+    debug_rule("c_ns_flow_map_separate_value",n,c)
     @all(
       @chr(':'),
       @chk('!', [ @ns_plain_safe, c ]),
@@ -2285,7 +2285,7 @@ global.Grammar = class Grammar
 
   @::c_ns_flow_map_json_key_entry.num = 148
   c_ns_flow_map_json_key_entry: (n, c)->
-    debug1("c_ns_flow_map_json_key_entry",n,c)
+    debug_rule("c_ns_flow_map_json_key_entry",n,c)
     @all(
       [ @c_flow_json_node, n, c ],
       @any(
@@ -2308,7 +2308,7 @@ global.Grammar = class Grammar
 
   @::c_ns_flow_map_adjacent_value.num = 149
   c_ns_flow_map_adjacent_value: (n, c)->
-    debug1("c_ns_flow_map_adjacent_value",n,c)
+    debug_rule("c_ns_flow_map_adjacent_value",n,c)
     @all(
       @chr(':'),
       @any(
@@ -2330,7 +2330,7 @@ global.Grammar = class Grammar
 
   @::ns_flow_pair.num = 150
   ns_flow_pair: (n, c)->
-    debug1("ns_flow_pair",n,c)
+    debug_rule("ns_flow_pair",n,c)
     @any(
       @all(
         @chr('?'),
@@ -2350,7 +2350,7 @@ global.Grammar = class Grammar
 
   @::ns_flow_pair_entry.num = 151
   ns_flow_pair_entry: (n, c)->
-    debug1("ns_flow_pair_entry",n,c)
+    debug_rule("ns_flow_pair_entry",n,c)
     @any(
       [ @ns_flow_pair_yaml_key_entry, n, c ],
       [ @c_ns_flow_map_empty_key_entry, n, c ],
@@ -2366,7 +2366,7 @@ global.Grammar = class Grammar
 
   @::ns_flow_pair_yaml_key_entry.num = 152
   ns_flow_pair_yaml_key_entry: (n, c)->
-    debug1("ns_flow_pair_yaml_key_entry",n,c)
+    debug_rule("ns_flow_pair_yaml_key_entry",n,c)
     @all(
       [ @ns_s_implicit_yaml_key, "flow-key" ],
       [ @c_ns_flow_map_separate_value, n, c ]
@@ -2381,7 +2381,7 @@ global.Grammar = class Grammar
 
   @::c_ns_flow_pair_json_key_entry.num = 153
   c_ns_flow_pair_json_key_entry: (n, c)->
-    debug1("c_ns_flow_pair_json_key_entry",n,c)
+    debug_rule("c_ns_flow_pair_json_key_entry",n,c)
     @all(
       [ @c_s_implicit_json_key, "flow-key" ],
       [ @c_ns_flow_map_adjacent_value, n, c ]
@@ -2397,7 +2397,7 @@ global.Grammar = class Grammar
 
   @::ns_s_implicit_yaml_key.num = 154
   ns_s_implicit_yaml_key: (c)->
-    debug1("ns_s_implicit_yaml_key",c)
+    debug_rule("ns_s_implicit_yaml_key",c)
     @all(
       @max(1024),
       [ @ns_flow_yaml_node, null, c ],
@@ -2414,7 +2414,7 @@ global.Grammar = class Grammar
 
   @::c_s_implicit_json_key.num = 155
   c_s_implicit_json_key: (c)->
-    debug1("c_s_implicit_json_key",c)
+    debug_rule("c_s_implicit_json_key",c)
     @all(
       @max(1024),
       [ @c_flow_json_node, null, c ],
@@ -2429,7 +2429,7 @@ global.Grammar = class Grammar
 
   @::ns_flow_yaml_content.num = 156
   ns_flow_yaml_content: (n, c)->
-    debug1("ns_flow_yaml_content",n,c)
+    debug_rule("ns_flow_yaml_content",n,c)
     [ @ns_plain, n, c ]
 
 
@@ -2441,7 +2441,7 @@ global.Grammar = class Grammar
 
   @::c_flow_json_content.num = 157
   c_flow_json_content: (n, c)->
-    debug1("c_flow_json_content",n,c)
+    debug_rule("c_flow_json_content",n,c)
     @any(
       [ @c_flow_sequence, n, c ],
       [ @c_flow_mapping, n, c ],
@@ -2457,7 +2457,7 @@ global.Grammar = class Grammar
 
   @::ns_flow_content.num = 158
   ns_flow_content: (n, c)->
-    debug1("ns_flow_content",n,c)
+    debug_rule("ns_flow_content",n,c)
     @any(
       [ @ns_flow_yaml_content, n, c ],
       [ @c_flow_json_content, n, c ]
@@ -2476,7 +2476,7 @@ global.Grammar = class Grammar
 
   @::ns_flow_yaml_node.num = 159
   ns_flow_yaml_node: (n, c)->
-    debug1("ns_flow_yaml_node",n,c)
+    debug_rule("ns_flow_yaml_node",n,c)
     @any(
       @c_ns_alias_node,
       [ @ns_flow_yaml_content, n, c ],
@@ -2502,7 +2502,7 @@ global.Grammar = class Grammar
 
   @::c_flow_json_node.num = 160
   c_flow_json_node: (n, c)->
-    debug1("c_flow_json_node",n,c)
+    debug_rule("c_flow_json_node",n,c)
     @all(
       @rep(0, 1,
         @all(
@@ -2525,7 +2525,7 @@ global.Grammar = class Grammar
 
   @::ns_flow_node.num = 161
   ns_flow_node: (n, c)->
-    debug1("ns_flow_node",n,c)
+    debug_rule("ns_flow_node",n,c)
     @any(
       @c_ns_alias_node,
       [ @ns_flow_content, n, c ],
@@ -2553,7 +2553,7 @@ global.Grammar = class Grammar
 
   @::c_b_block_header.num = 162
   c_b_block_header: (m, t)->
-    debug1("c_b_block_header",m,t)
+    debug_rule("c_b_block_header",m,t)
     @all(
       @any(
         @all(
@@ -2577,7 +2577,7 @@ global.Grammar = class Grammar
 
   @::c_indentation_indicator.num = 163
   c_indentation_indicator: (m)->
-    debug1("c_indentation_indicator",m)
+    debug_rule("c_indentation_indicator",m)
     @any(
       @if(@ns_dec_digit, @set('m', @ord(@match))),
       @if(@empty, @set('m', "auto-detect"))
@@ -2593,7 +2593,7 @@ global.Grammar = class Grammar
 
   @::c_chomping_indicator.num = 164
   c_chomping_indicator: (t)->
-    debug1("c_chomping_indicator",t)
+    debug_rule("c_chomping_indicator",t)
     @any(
       @if(@chr('-'), @set('t', "strip")),
       @if(@chr('+'), @set('t', "keep")),
@@ -2610,7 +2610,7 @@ global.Grammar = class Grammar
 
   @::b_chomped_last.num = 165
   b_chomped_last: (t)->
-    debug1("b_chomped_last",t)
+    debug_rule("b_chomped_last",t)
     @case(
       t,
       {
@@ -2630,7 +2630,7 @@ global.Grammar = class Grammar
 
   @::l_chomped_empty.num = 166
   l_chomped_empty: (n, t)->
-    debug1("l_chomped_empty",n,t)
+    debug_rule("l_chomped_empty",n,t)
     @case(
       t,
       {
@@ -2649,7 +2649,7 @@ global.Grammar = class Grammar
 
   @::l_strip_empty.num = 167
   l_strip_empty: (n)->
-    debug1("l_strip_empty",n)
+    debug_rule("l_strip_empty",n)
     @all(
       @rep(0, 0,
         @all(
@@ -2668,7 +2668,7 @@ global.Grammar = class Grammar
 
   @::l_keep_empty.num = 168
   l_keep_empty: (n)->
-    debug1("l_keep_empty",n)
+    debug_rule("l_keep_empty",n)
     @all(
       @rep(0, 0, [ @l_empty, n, "block-in" ]),
       @rep(0, 1, [ @l_trail_comments, n ])
@@ -2684,7 +2684,7 @@ global.Grammar = class Grammar
 
   @::l_trail_comments.num = 169
   l_trail_comments: (n)->
-    debug1("l_trail_comments",n)
+    debug_rule("l_trail_comments",n)
     @all(
       [ @s_indent_lt, n ],
       @c_nb_comment_text,
@@ -2701,7 +2701,7 @@ global.Grammar = class Grammar
 
   @::c_l_literal.num = 170
   c_l_literal: (n)->
-    debug1("c_l_literal",n)
+    debug_rule("c_l_literal",n)
     @all(
       @chr('|'),
       [ @c_b_block_header, @m(), @t() ],
@@ -2717,7 +2717,7 @@ global.Grammar = class Grammar
 
   @::l_nb_literal_text.num = 171
   l_nb_literal_text: (n)->
-    debug1("l_nb_literal_text",n)
+    debug_rule("l_nb_literal_text",n)
     @all(
       @rep(0, 0, [ @l_empty, n, "block-in" ]),
       [ @s_indent, n ],
@@ -2733,7 +2733,7 @@ global.Grammar = class Grammar
 
   @::b_nb_literal_next.num = 172
   b_nb_literal_next: (n)->
-    debug1("b_nb_literal_next",n)
+    debug_rule("b_nb_literal_next",n)
     @all(
       @b_as_line_feed,
       [ @l_nb_literal_text, n ]
@@ -2750,7 +2750,7 @@ global.Grammar = class Grammar
 
   @::l_literal_content.num = 173
   l_literal_content: (n, t)->
-    debug1("l_literal_content",n,t)
+    debug_rule("l_literal_content",n,t)
     @all(
       @rep(0, 1,
         @all(
@@ -2770,7 +2770,7 @@ global.Grammar = class Grammar
 
   @::c_l_folded.num = 174
   c_l_folded: (n)->
-    debug1("c_l_folded",n)
+    debug_rule("c_l_folded",n)
     @all(
       @chr('>'),
       [ @c_b_block_header, @m(), @t() ],
@@ -2786,7 +2786,7 @@ global.Grammar = class Grammar
 
   @::s_nb_folded_text.num = 175
   s_nb_folded_text: (n)->
-    debug1("s_nb_folded_text",n)
+    debug_rule("s_nb_folded_text",n)
     @all(
       [ @s_indent, n ],
       @ns_char,
@@ -2802,7 +2802,7 @@ global.Grammar = class Grammar
 
   @::l_nb_folded_lines.num = 176
   l_nb_folded_lines: (n)->
-    debug1("l_nb_folded_lines",n)
+    debug_rule("l_nb_folded_lines",n)
     @all(
       [ @s_nb_folded_text, n ],
       @rep(0, 0,
@@ -2821,7 +2821,7 @@ global.Grammar = class Grammar
 
   @::s_nb_spaced_text.num = 177
   s_nb_spaced_text: (n)->
-    debug1("s_nb_spaced_text",n)
+    debug_rule("s_nb_spaced_text",n)
     @all(
       [ @s_indent, n ],
       @s_white,
@@ -2837,7 +2837,7 @@ global.Grammar = class Grammar
 
   @::b_l_spaced.num = 178
   b_l_spaced: (n)->
-    debug1("b_l_spaced",n)
+    debug_rule("b_l_spaced",n)
     @all(
       @b_as_line_feed,
       @rep(0, 0, [ @l_empty, n, "block-in" ])
@@ -2852,7 +2852,7 @@ global.Grammar = class Grammar
 
   @::l_nb_spaced_lines.num = 179
   l_nb_spaced_lines: (n)->
-    debug1("l_nb_spaced_lines",n)
+    debug_rule("l_nb_spaced_lines",n)
     @all(
       [ @s_nb_spaced_text, n ],
       @rep(0, 0,
@@ -2871,7 +2871,7 @@ global.Grammar = class Grammar
 
   @::l_nb_same_lines.num = 180
   l_nb_same_lines: (n)->
-    debug1("l_nb_same_lines",n)
+    debug_rule("l_nb_same_lines",n)
     @all(
       @rep(0, 0, [ @l_empty, n, "block-in" ]),
       @any(
@@ -2889,7 +2889,7 @@ global.Grammar = class Grammar
 
   @::l_nb_diff_lines.num = 181
   l_nb_diff_lines: (n)->
-    debug1("l_nb_diff_lines",n)
+    debug_rule("l_nb_diff_lines",n)
     @all(
       [ @l_nb_same_lines, n ],
       @rep(0, 0,
@@ -2909,7 +2909,7 @@ global.Grammar = class Grammar
 
   @::l_folded_content.num = 182
   l_folded_content: (n, t)->
-    debug1("l_folded_content",n,t)
+    debug_rule("l_folded_content",n,t)
     @all(
       @rep(0, 1,
         @all(
@@ -2929,7 +2929,7 @@ global.Grammar = class Grammar
 
   @::l_block_sequence.num = 183
   l_block_sequence: (n)->
-    debug1("l_block_sequence",n)
+    debug_rule("l_block_sequence",n)
     @all(
       @set('m', @auto_detect_indent),
       @rep(1, 0,
@@ -2948,7 +2948,7 @@ global.Grammar = class Grammar
 
   @::c_l_block_seq_entry.num = 184
   c_l_block_seq_entry: (n)->
-    debug1("c_l_block_seq_entry",n)
+    debug_rule("c_l_block_seq_entry",n)
     @all(
       @chr('-'),
       @chk('!', @ns_char),
@@ -2967,7 +2967,7 @@ global.Grammar = class Grammar
 
   @::s_l_block_indented.num = 185
   s_l_block_indented: (n, c)->
-    debug1("s_l_block_indented",n,c)
+    debug_rule("s_l_block_indented",n,c)
     @any(
       @all(
         [ @s_indent, @m() ],
@@ -2992,7 +2992,7 @@ global.Grammar = class Grammar
 
   @::ns_l_compact_sequence.num = 186
   ns_l_compact_sequence: (n)->
-    debug1("ns_l_compact_sequence",n)
+    debug_rule("ns_l_compact_sequence",n)
     @all(
       [ @c_l_block_seq_entry, n ],
       @rep(0, 0,
@@ -3012,7 +3012,7 @@ global.Grammar = class Grammar
 
   @::l_block_mapping.num = 187
   l_block_mapping: (n)->
-    debug1("l_block_mapping",n)
+    debug_rule("l_block_mapping",n)
     @all(
       @set('m', @auto_detect_indent),
       @rep(1, 0,
@@ -3031,7 +3031,7 @@ global.Grammar = class Grammar
 
   @::ns_l_block_map_entry.num = 188
   ns_l_block_map_entry: (n)->
-    debug1("ns_l_block_map_entry",n)
+    debug_rule("ns_l_block_map_entry",n)
     @any(
       [ @c_l_block_map_explicit_entry, n ],
       [ @ns_l_block_map_implicit_entry, n ]
@@ -3047,7 +3047,7 @@ global.Grammar = class Grammar
 
   @::c_l_block_map_explicit_entry.num = 189
   c_l_block_map_explicit_entry: (n)->
-    debug1("c_l_block_map_explicit_entry",n)
+    debug_rule("c_l_block_map_explicit_entry",n)
     @all(
       [ @c_l_block_map_explicit_key, n ],
       @any(
@@ -3065,7 +3065,7 @@ global.Grammar = class Grammar
 
   @::c_l_block_map_explicit_key.num = 190
   c_l_block_map_explicit_key: (n)->
-    debug1("c_l_block_map_explicit_key",n)
+    debug_rule("c_l_block_map_explicit_key",n)
     @all(
       @chr('?'),
       [ @s_l_block_indented, n, "block-out" ]
@@ -3080,7 +3080,7 @@ global.Grammar = class Grammar
 
   @::l_block_map_explicit_value.num = 191
   l_block_map_explicit_value: (n)->
-    debug1("l_block_map_explicit_value",n)
+    debug_rule("l_block_map_explicit_value",n)
     @all(
       [ @s_indent, n ],
       @chr(':'),
@@ -3098,7 +3098,7 @@ global.Grammar = class Grammar
 
   @::ns_l_block_map_implicit_entry.num = 192
   ns_l_block_map_implicit_entry: (n)->
-    debug1("ns_l_block_map_implicit_entry",n)
+    debug_rule("ns_l_block_map_implicit_entry",n)
     @all(
       @any(
         @ns_s_block_map_implicit_key,
@@ -3116,7 +3116,7 @@ global.Grammar = class Grammar
 
   @::ns_s_block_map_implicit_key.num = 193
   ns_s_block_map_implicit_key: ->
-    debug1("ns_s_block_map_implicit_key")
+    debug_rule("ns_s_block_map_implicit_key")
     @any(
       [ @c_s_implicit_json_key, "block-key" ],
       [ @ns_s_implicit_yaml_key, "block-key" ]
@@ -3132,7 +3132,7 @@ global.Grammar = class Grammar
 
   @::c_l_block_map_implicit_value.num = 194
   c_l_block_map_implicit_value: (n)->
-    debug1("c_l_block_map_implicit_value",n)
+    debug_rule("c_l_block_map_implicit_value",n)
     @all(
       @chr(':'),
       @any(
@@ -3153,7 +3153,7 @@ global.Grammar = class Grammar
 
   @::ns_l_compact_mapping.num = 195
   ns_l_compact_mapping: (n)->
-    debug1("ns_l_compact_mapping",n)
+    debug_rule("ns_l_compact_mapping",n)
     @all(
       [ @ns_l_block_map_entry, n ],
       @rep(0, 0,
@@ -3171,7 +3171,7 @@ global.Grammar = class Grammar
 
   @::s_l_block_node.num = 196
   s_l_block_node: (n, c)->
-    debug1("s_l_block_node",n,c)
+    debug_rule("s_l_block_node",n,c)
     @any(
       [ @s_l_block_in_block, n, c ],
       [ @s_l_flow_in_block, n ]
@@ -3186,7 +3186,7 @@ global.Grammar = class Grammar
 
   @::s_l_flow_in_block.num = 197
   s_l_flow_in_block: (n)->
-    debug1("s_l_flow_in_block",n)
+    debug_rule("s_l_flow_in_block",n)
     @all(
       [ @s_separate, @add(n, 1), "flow-out" ],
       [ @ns_flow_node, @add(n, 1), "flow-out" ],
@@ -3201,7 +3201,7 @@ global.Grammar = class Grammar
 
   @::s_l_block_in_block.num = 198
   s_l_block_in_block: (n, c)->
-    debug1("s_l_block_in_block",n,c)
+    debug_rule("s_l_block_in_block",n,c)
     @any(
       [ @s_l_block_scalar, n, c ],
       [ @s_l_block_collection, n, c ]
@@ -3217,7 +3217,7 @@ global.Grammar = class Grammar
 
   @::s_l_block_scalar.num = 199
   s_l_block_scalar: (n, c)->
-    debug1("s_l_block_scalar",n,c)
+    debug_rule("s_l_block_scalar",n,c)
     @all(
       [ @s_separate, @add(n, 1), c ],
       @rep(0, 1,
@@ -3243,7 +3243,7 @@ global.Grammar = class Grammar
 
   @::s_l_block_collection.num = 200
   s_l_block_collection: (n, c)->
-    debug1("s_l_block_collection",n,c)
+    debug_rule("s_l_block_collection",n,c)
     @all(
       @rep(0, 1,
         @all(
@@ -3266,7 +3266,7 @@ global.Grammar = class Grammar
 
   @::seq_spaces.num = 201
   seq_spaces: (n, c)->
-    debug1("seq_spaces",n,c)
+    debug_rule("seq_spaces",n,c)
     @flip(
       c,
       {
@@ -3283,7 +3283,7 @@ global.Grammar = class Grammar
 
   @::l_document_prefix.num = 202
   l_document_prefix: ->
-    debug1("l_document_prefix")
+    debug_rule("l_document_prefix")
     @all(
       @rep(0, 1, @c_byte_order_mark),
       @rep(0, 0, @l_comment)
@@ -3297,7 +3297,7 @@ global.Grammar = class Grammar
 
   @::c_directives_end.num = 203
   c_directives_end: ->
-    debug1("c_directives_end")
+    debug_rule("c_directives_end")
     @all(
       @chr('-'),
       @chr('-'),
@@ -3312,7 +3312,7 @@ global.Grammar = class Grammar
 
   @::c_document_end.num = 204
   c_document_end: ->
-    debug1("c_document_end")
+    debug_rule("c_document_end")
     @all(
       @chr('.'),
       @chr('.'),
@@ -3327,7 +3327,7 @@ global.Grammar = class Grammar
 
   @::l_document_suffix.num = 205
   l_document_suffix: ->
-    debug1("l_document_suffix")
+    debug_rule("l_document_suffix")
     @all(
       @c_document_end,
       @s_l_comments
@@ -3343,7 +3343,7 @@ global.Grammar = class Grammar
 
   @::c_forbidden.num = 206
   c_forbidden: ->
-    debug1("c_forbidden")
+    debug_rule("c_forbidden")
     @all(
       @start_of_line,
       @any(
@@ -3366,7 +3366,7 @@ global.Grammar = class Grammar
 
   @::l_bare_document.num = 207
   l_bare_document: ->
-    debug1("l_bare_document")
+    debug_rule("l_bare_document")
     @all(
       @exclude(@c_forbidden),
       [ @s_l_block_node, -1, "block-in" ]
@@ -3382,7 +3382,7 @@ global.Grammar = class Grammar
 
   @::l_explicit_document.num = 208
   l_explicit_document: ->
-    debug1("l_explicit_document")
+    debug_rule("l_explicit_document")
     @all(
       @c_directives_end,
       @any(
@@ -3403,7 +3403,7 @@ global.Grammar = class Grammar
 
   @::l_directive_document.num = 209
   l_directive_document: ->
-    debug1("l_directive_document")
+    debug_rule("l_directive_document")
     @all(
       @rep(1, 0, @l_directive),
       @l_explicit_document
@@ -3419,7 +3419,7 @@ global.Grammar = class Grammar
 
   @::l_any_document.num = 210
   l_any_document: ->
-    debug1("l_any_document")
+    debug_rule("l_any_document")
     @any(
       @l_directive_document,
       @l_explicit_document,
@@ -3437,7 +3437,7 @@ global.Grammar = class Grammar
 
   @::l_yaml_stream.num = 211
   l_yaml_stream: ->
-    debug1("l_yaml_stream")
+    debug_rule("l_yaml_stream")
     @all(
       @l_document_prefix,
       @rep(0, 1, @l_any_document),

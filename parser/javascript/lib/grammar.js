@@ -12,337 +12,337 @@
       }
 
       c_printable() {
-        debug1("c_printable");
+        debug_rule("c_printable");
         return this.any(this.chr("\u{09}"), this.chr("\u{0A}"), this.chr("\u{0D}"), this.rng("\u{20}", "\u{7E}"), this.chr("\u{85}"), this.rng("\u{A0}", "\u{D7FF}"), this.rng("\u{E000}", "\u{FFFD}"), this.rng("\u{010000}", "\u{10FFFF}"));
       }
 
       nb_json() {
-        debug1("nb_json");
+        debug_rule("nb_json");
         return this.any(this.chr("\u{09}"), this.rng("\u{20}", "\u{10FFFF}"));
       }
 
       c_byte_order_mark() {
-        debug1("c_byte_order_mark");
+        debug_rule("c_byte_order_mark");
         return this.chr("\u{FEFF}");
       }
 
       c_sequence_entry() {
-        debug1("c_sequence_entry");
+        debug_rule("c_sequence_entry");
         return this.chr('-');
       }
 
       c_mapping_key() {
-        debug1("c_mapping_key");
+        debug_rule("c_mapping_key");
         return this.chr('?');
       }
 
       c_mapping_value() {
-        debug1("c_mapping_value");
+        debug_rule("c_mapping_value");
         return this.chr(':');
       }
 
       c_collect_entry() {
-        debug1("c_collect_entry");
+        debug_rule("c_collect_entry");
         return this.chr(',');
       }
 
       c_sequence_start() {
-        debug1("c_sequence_start");
+        debug_rule("c_sequence_start");
         return this.chr('[');
       }
 
       c_sequence_end() {
-        debug1("c_sequence_end");
+        debug_rule("c_sequence_end");
         return this.chr(']');
       }
 
       c_mapping_start() {
-        debug1("c_mapping_start");
+        debug_rule("c_mapping_start");
         return this.chr('{');
       }
 
       c_mapping_end() {
-        debug1("c_mapping_end");
+        debug_rule("c_mapping_end");
         return this.chr('}');
       }
 
       c_comment() {
-        debug1("c_comment");
+        debug_rule("c_comment");
         return this.chr('#');
       }
 
       c_anchor() {
-        debug1("c_anchor");
+        debug_rule("c_anchor");
         return this.chr('&');
       }
 
       c_alias() {
-        debug1("c_alias");
+        debug_rule("c_alias");
         return this.chr('*');
       }
 
       c_tag() {
-        debug1("c_tag");
+        debug_rule("c_tag");
         return this.chr('!');
       }
 
       c_literal() {
-        debug1("c_literal");
+        debug_rule("c_literal");
         return this.chr('|');
       }
 
       c_folded() {
-        debug1("c_folded");
+        debug_rule("c_folded");
         return this.chr('>');
       }
 
       c_single_quote() {
-        debug1("c_single_quote");
+        debug_rule("c_single_quote");
         return this.chr("'");
       }
 
       c_double_quote() {
-        debug1("c_double_quote");
+        debug_rule("c_double_quote");
         return this.chr('"');
       }
 
       c_directive() {
-        debug1("c_directive");
+        debug_rule("c_directive");
         return this.chr('%');
       }
 
       c_reserved() {
-        debug1("c_reserved");
+        debug_rule("c_reserved");
         return this.any(this.chr('@'), this.chr('`'));
       }
 
       c_indicator() {
-        debug1("c_indicator");
+        debug_rule("c_indicator");
         return this.any(this.chr('-'), this.chr('?'), this.chr(':'), this.chr(','), this.chr('['), this.chr(']'), this.chr('{'), this.chr('}'), this.chr('#'), this.chr('&'), this.chr('*'), this.chr('!'), this.chr('|'), this.chr('>'), this.chr("'"), this.chr('"'), this.chr('%'), this.chr('@'), this.chr('`'));
       }
 
       c_flow_indicator() {
-        debug1("c_flow_indicator");
+        debug_rule("c_flow_indicator");
         return this.any(this.chr(','), this.chr('['), this.chr(']'), this.chr('{'), this.chr('}'));
       }
 
       b_line_feed() {
-        debug1("b_line_feed");
+        debug_rule("b_line_feed");
         return this.chr("\u{0A}");
       }
 
       b_carriage_return() {
-        debug1("b_carriage_return");
+        debug_rule("b_carriage_return");
         return this.chr("\u{0D}");
       }
 
       b_char() {
-        debug1("b_char");
+        debug_rule("b_char");
         return this.any(this.b_line_feed, this.b_carriage_return);
       }
 
       nb_char() {
-        debug1("nb_char");
+        debug_rule("nb_char");
         return this.but(this.c_printable, this.b_char, this.c_byte_order_mark);
       }
 
       b_break() {
-        debug1("b_break");
+        debug_rule("b_break");
         return this.any(this.all(this.b_carriage_return, this.b_line_feed), this.b_carriage_return, this.b_line_feed);
       }
 
       b_as_line_feed() {
-        debug1("b_as_line_feed");
+        debug_rule("b_as_line_feed");
         return this.b_break;
       }
 
       b_non_content() {
-        debug1("b_non_content");
+        debug_rule("b_non_content");
         return this.b_break;
       }
 
       s_space() {
-        debug1("s_space");
+        debug_rule("s_space");
         return this.chr("\u{20}");
       }
 
       s_tab() {
-        debug1("s_tab");
+        debug_rule("s_tab");
         return this.chr("\u{09}");
       }
 
       s_white() {
-        debug1("s_white");
+        debug_rule("s_white");
         return this.any(this.s_space, this.s_tab);
       }
 
       ns_char() {
-        debug1("ns_char");
+        debug_rule("ns_char");
         return this.but(this.nb_char, this.s_white);
       }
 
       ns_dec_digit() {
-        debug1("ns_dec_digit");
+        debug_rule("ns_dec_digit");
         return this.rng("\u{30}", "\u{39}");
       }
 
       ns_hex_digit() {
-        debug1("ns_hex_digit");
+        debug_rule("ns_hex_digit");
         return this.any(this.ns_dec_digit, this.rng("\u{41}", "\u{46}"), this.rng("\u{61}", "\u{66}"));
       }
 
       ns_ascii_letter() {
-        debug1("ns_ascii_letter");
+        debug_rule("ns_ascii_letter");
         return this.any(this.rng("\u{41}", "\u{5A}"), this.rng("\u{61}", "\u{7A}"));
       }
 
       ns_word_char() {
-        debug1("ns_word_char");
+        debug_rule("ns_word_char");
         return this.any(this.ns_dec_digit, this.ns_ascii_letter, this.chr('-'));
       }
 
       ns_uri_char() {
-        debug1("ns_uri_char");
+        debug_rule("ns_uri_char");
         return this.any(this.all(this.chr('%'), this.ns_hex_digit, this.ns_hex_digit), this.ns_word_char, this.chr('#'), this.chr(';'), this.chr('/'), this.chr('?'), this.chr(':'), this.chr('@'), this.chr('&'), this.chr('='), this.chr('+'), this.chr('$'), this.chr(','), this.chr('_'), this.chr('.'), this.chr('!'), this.chr('~'), this.chr('*'), this.chr("'"), this.chr('('), this.chr(')'), this.chr('['), this.chr(']'));
       }
 
       ns_tag_char() {
-        debug1("ns_tag_char");
+        debug_rule("ns_tag_char");
         return this.but(this.ns_uri_char, this.chr('!'), this.c_flow_indicator);
       }
 
       c_escape() {
-        debug1("c_escape");
+        debug_rule("c_escape");
         return this.chr("\\");
       }
 
       ns_esc_null() {
-        debug1("ns_esc_null");
+        debug_rule("ns_esc_null");
         return this.chr('0');
       }
 
       ns_esc_bell() {
-        debug1("ns_esc_bell");
+        debug_rule("ns_esc_bell");
         return this.chr('a');
       }
 
       ns_esc_backspace() {
-        debug1("ns_esc_backspace");
+        debug_rule("ns_esc_backspace");
         return this.chr('b');
       }
 
       ns_esc_horizontal_tab() {
-        debug1("ns_esc_horizontal_tab");
+        debug_rule("ns_esc_horizontal_tab");
         return this.any(this.chr('t'), this.chr("\u{09}"));
       }
 
       ns_esc_line_feed() {
-        debug1("ns_esc_line_feed");
+        debug_rule("ns_esc_line_feed");
         return this.chr('n');
       }
 
       ns_esc_vertical_tab() {
-        debug1("ns_esc_vertical_tab");
+        debug_rule("ns_esc_vertical_tab");
         return this.chr('v');
       }
 
       ns_esc_form_feed() {
-        debug1("ns_esc_form_feed");
+        debug_rule("ns_esc_form_feed");
         return this.chr('f');
       }
 
       ns_esc_carriage_return() {
-        debug1("ns_esc_carriage_return");
+        debug_rule("ns_esc_carriage_return");
         return this.chr('r');
       }
 
       ns_esc_escape() {
-        debug1("ns_esc_escape");
+        debug_rule("ns_esc_escape");
         return this.chr('e');
       }
 
       ns_esc_space() {
-        debug1("ns_esc_space");
+        debug_rule("ns_esc_space");
         return this.chr("\u{20}");
       }
 
       ns_esc_double_quote() {
-        debug1("ns_esc_double_quote");
+        debug_rule("ns_esc_double_quote");
         return this.chr('"');
       }
 
       ns_esc_slash() {
-        debug1("ns_esc_slash");
+        debug_rule("ns_esc_slash");
         return this.chr('/');
       }
 
       ns_esc_backslash() {
-        debug1("ns_esc_backslash");
+        debug_rule("ns_esc_backslash");
         return this.chr("\\");
       }
 
       ns_esc_next_line() {
-        debug1("ns_esc_next_line");
+        debug_rule("ns_esc_next_line");
         return this.chr('N');
       }
 
       ns_esc_non_breaking_space() {
-        debug1("ns_esc_non_breaking_space");
+        debug_rule("ns_esc_non_breaking_space");
         return this.chr('_');
       }
 
       ns_esc_line_separator() {
-        debug1("ns_esc_line_separator");
+        debug_rule("ns_esc_line_separator");
         return this.chr('L');
       }
 
       ns_esc_paragraph_separator() {
-        debug1("ns_esc_paragraph_separator");
+        debug_rule("ns_esc_paragraph_separator");
         return this.chr('P');
       }
 
       ns_esc_8_bit() {
-        debug1("ns_esc_8_bit");
+        debug_rule("ns_esc_8_bit");
         return this.all(this.chr('x'), this.rep(2, 2, this.ns_hex_digit));
       }
 
       ns_esc_16_bit() {
-        debug1("ns_esc_16_bit");
+        debug_rule("ns_esc_16_bit");
         return this.all(this.chr('u'), this.rep(4, 4, this.ns_hex_digit));
       }
 
       ns_esc_32_bit() {
-        debug1("ns_esc_32_bit");
+        debug_rule("ns_esc_32_bit");
         return this.all(this.chr('U'), this.rep(8, 8, this.ns_hex_digit));
       }
 
       c_ns_esc_char() {
-        debug1("c_ns_esc_char");
+        debug_rule("c_ns_esc_char");
         return this.all(this.chr("\\"), this.any(this.ns_esc_null, this.ns_esc_bell, this.ns_esc_backspace, this.ns_esc_horizontal_tab, this.ns_esc_line_feed, this.ns_esc_vertical_tab, this.ns_esc_form_feed, this.ns_esc_carriage_return, this.ns_esc_escape, this.ns_esc_space, this.ns_esc_double_quote, this.ns_esc_slash, this.ns_esc_backslash, this.ns_esc_next_line, this.ns_esc_non_breaking_space, this.ns_esc_line_separator, this.ns_esc_paragraph_separator, this.ns_esc_8_bit, this.ns_esc_16_bit, this.ns_esc_32_bit));
       }
 
       s_indent(n) {
-        debug1("s_indent", n);
+        debug_rule("s_indent", n);
         return this.rep(n, n, this.s_space);
       }
 
       s_indent_lt(n) {
-        debug1("s_indent_lt", n);
+        debug_rule("s_indent_lt", n);
         return this.may(this.all(this.rep(0, 0, this.s_space), this.lt(this.len(this.match), n)));
       }
 
       s_indent_le(n) {
-        debug1("s_indent_le", n);
+        debug_rule("s_indent_le", n);
         return this.may(this.all(this.rep(0, 0, this.s_space), this.le(this.len(this.match), n)));
       }
 
       s_separate_in_line() {
-        debug1("s_separate_in_line");
+        debug_rule("s_separate_in_line");
         return this.any(this.rep(1, 0, this.s_white), this.start_of_line);
       }
 
       s_line_prefix(n, c) {
-        debug1("s_line_prefix", n, c);
+        debug_rule("s_line_prefix", n, c);
         return this.case(c, {
           'block-in': [this.s_block_line_prefix, n],
           'block-out': [this.s_block_line_prefix, n],
@@ -352,67 +352,67 @@
       }
 
       s_block_line_prefix(n) {
-        debug1("s_block_line_prefix", n);
+        debug_rule("s_block_line_prefix", n);
         return [this.s_indent, n];
       }
 
       s_flow_line_prefix(n) {
-        debug1("s_flow_line_prefix", n);
+        debug_rule("s_flow_line_prefix", n);
         return this.all([this.s_indent, n], this.rep(0, 1, this.s_separate_in_line));
       }
 
       l_empty(n, c) {
-        debug1("l_empty", n, c);
+        debug_rule("l_empty", n, c);
         return this.all(this.any([this.s_line_prefix, n, c], [this.s_indent_lt, n]), this.b_as_line_feed);
       }
 
       b_l_trimmed(n, c) {
-        debug1("b_l_trimmed", n, c);
+        debug_rule("b_l_trimmed", n, c);
         return this.all(this.b_non_content, this.rep(1, 0, [this.l_empty, n, c]));
       }
 
       b_as_space() {
-        debug1("b_as_space");
+        debug_rule("b_as_space");
         return this.b_break;
       }
 
       b_l_folded(n, c) {
-        debug1("b_l_folded", n, c);
+        debug_rule("b_l_folded", n, c);
         return this.any([this.b_l_trimmed, n, c], this.b_as_space);
       }
 
       s_flow_folded(n) {
-        debug1("s_flow_folded", n);
+        debug_rule("s_flow_folded", n);
         return this.all(this.rep(0, 1, this.s_separate_in_line), [this.b_l_folded, n, "flow-in"], [this.s_flow_line_prefix, n]);
       }
 
       c_nb_comment_text() {
-        debug1("c_nb_comment_text");
+        debug_rule("c_nb_comment_text");
         return this.all(this.chr('#'), this.rep(0, 0, this.nb_char));
       }
 
       b_comment() {
-        debug1("b_comment");
+        debug_rule("b_comment");
         return this.any(this.b_non_content, this.end_of_stream);
       }
 
       s_b_comment() {
-        debug1("s_b_comment");
+        debug_rule("s_b_comment");
         return this.all(this.rep(0, 1, this.all(this.s_separate_in_line, this.rep(0, 1, this.c_nb_comment_text))), this.b_comment);
       }
 
       l_comment() {
-        debug1("l_comment");
+        debug_rule("l_comment");
         return this.all(this.s_separate_in_line, this.rep(0, 1, this.c_nb_comment_text), this.b_comment);
       }
 
       s_l_comments() {
-        debug1("s_l_comments");
+        debug_rule("s_l_comments");
         return this.all(this.any(this.s_b_comment, this.start_of_line), this.rep(0, 0, this.l_comment));
       }
 
       s_separate(n, c) {
-        debug1("s_separate", n, c);
+        debug_rule("s_separate", n, c);
         return this.case(c, {
           'block-in': [this.s_separate_lines, n],
           'block-key': this.s_separate_in_line,
@@ -424,152 +424,152 @@
       }
 
       s_separate_lines(n) {
-        debug1("s_separate_lines", n);
+        debug_rule("s_separate_lines", n);
         return this.any(this.all(this.s_l_comments, [this.s_flow_line_prefix, n]), this.s_separate_in_line);
       }
 
       l_directive() {
-        debug1("l_directive");
+        debug_rule("l_directive");
         return this.all(this.chr('%'), this.any(this.ns_yaml_directive, this.ns_tag_directive, this.ns_reserved_directive), this.s_l_comments);
       }
 
       ns_reserved_directive() {
-        debug1("ns_reserved_directive");
+        debug_rule("ns_reserved_directive");
         return this.all(this.ns_directive_name, this.rep(0, 0, this.all(this.s_separate_in_line, this.ns_directive_parameter)));
       }
 
       ns_directive_name() {
-        debug1("ns_directive_name");
+        debug_rule("ns_directive_name");
         return this.rep(1, 0, this.ns_char);
       }
 
       ns_directive_parameter() {
-        debug1("ns_directive_parameter");
+        debug_rule("ns_directive_parameter");
         return this.rep(1, 0, this.ns_char);
       }
 
       ns_yaml_directive() {
-        debug1("ns_yaml_directive");
+        debug_rule("ns_yaml_directive");
         return this.all(this.chr('Y'), this.chr('A'), this.chr('M'), this.chr('L'), this.s_separate_in_line, this.ns_yaml_version);
       }
 
       ns_yaml_version() {
-        debug1("ns_yaml_version");
+        debug_rule("ns_yaml_version");
         return this.all(this.rep(1, 0, this.ns_dec_digit), this.chr('.'), this.rep(1, 0, this.ns_dec_digit));
       }
 
       ns_tag_directive() {
-        debug1("ns_tag_directive");
+        debug_rule("ns_tag_directive");
         return this.all(this.chr('T'), this.chr('A'), this.chr('G'), this.s_separate_in_line, this.c_tag_handle, this.s_separate_in_line, this.ns_tag_prefix);
       }
 
       c_tag_handle() {
-        debug1("c_tag_handle");
+        debug_rule("c_tag_handle");
         return this.any(this.c_named_tag_handle, this.c_secondary_tag_handle, this.c_primary_tag_handle);
       }
 
       c_primary_tag_handle() {
-        debug1("c_primary_tag_handle");
+        debug_rule("c_primary_tag_handle");
         return this.chr('!');
       }
 
       c_secondary_tag_handle() {
-        debug1("c_secondary_tag_handle");
+        debug_rule("c_secondary_tag_handle");
         return this.all(this.chr('!'), this.chr('!'));
       }
 
       c_named_tag_handle() {
-        debug1("c_named_tag_handle");
+        debug_rule("c_named_tag_handle");
         return this.all(this.chr('!'), this.rep(1, 0, this.ns_word_char), this.chr('!'));
       }
 
       ns_tag_prefix() {
-        debug1("ns_tag_prefix");
+        debug_rule("ns_tag_prefix");
         return this.any(this.c_ns_local_tag_prefix, this.ns_global_tag_prefix);
       }
 
       c_ns_local_tag_prefix() {
-        debug1("c_ns_local_tag_prefix");
+        debug_rule("c_ns_local_tag_prefix");
         return this.all(this.chr('!'), this.rep(0, 0, this.ns_uri_char));
       }
 
       ns_global_tag_prefix() {
-        debug1("ns_global_tag_prefix");
+        debug_rule("ns_global_tag_prefix");
         return this.all(this.ns_tag_char, this.rep(0, 0, this.ns_uri_char));
       }
 
       c_ns_properties(n, c) {
-        debug1("c_ns_properties", n, c);
+        debug_rule("c_ns_properties", n, c);
         return this.any(this.all(this.c_ns_tag_property, this.rep(0, 1, this.all([this.s_separate, n, c], this.c_ns_anchor_property))), this.all(this.c_ns_anchor_property, this.rep(0, 1, this.all([this.s_separate, n, c], this.c_ns_tag_property))));
       }
 
       c_ns_tag_property() {
-        debug1("c_ns_tag_property");
+        debug_rule("c_ns_tag_property");
         return this.any(this.c_verbatim_tag, this.c_ns_shorthand_tag, this.c_non_specific_tag);
       }
 
       c_verbatim_tag() {
-        debug1("c_verbatim_tag");
+        debug_rule("c_verbatim_tag");
         return this.all(this.chr('!'), this.chr('<'), this.rep(1, 0, this.ns_uri_char), this.chr('>'));
       }
 
       c_ns_shorthand_tag() {
-        debug1("c_ns_shorthand_tag");
+        debug_rule("c_ns_shorthand_tag");
         return this.all(this.c_tag_handle, this.rep(1, 0, this.ns_tag_char));
       }
 
       c_non_specific_tag() {
-        debug1("c_non_specific_tag");
+        debug_rule("c_non_specific_tag");
         return this.chr('!');
       }
 
       c_ns_anchor_property() {
-        debug1("c_ns_anchor_property");
+        debug_rule("c_ns_anchor_property");
         return this.all(this.chr('&'), this.ns_anchor_name);
       }
 
       ns_anchor_char() {
-        debug1("ns_anchor_char");
+        debug_rule("ns_anchor_char");
         return this.but(this.ns_char, this.c_flow_indicator);
       }
 
       ns_anchor_name() {
-        debug1("ns_anchor_name");
+        debug_rule("ns_anchor_name");
         return this.rep(1, 0, this.ns_anchor_char);
       }
 
       c_ns_alias_node() {
-        debug1("c_ns_alias_node");
+        debug_rule("c_ns_alias_node");
         return this.all(this.chr('*'), this.ns_anchor_name);
       }
 
       e_scalar() {
-        debug1("e_scalar");
+        debug_rule("e_scalar");
         return this.empty;
       }
 
       e_node() {
-        debug1("e_node");
+        debug_rule("e_node");
         return this.e_scalar;
       }
 
       nb_double_char() {
-        debug1("nb_double_char");
+        debug_rule("nb_double_char");
         return this.any(this.c_ns_esc_char, this.but(this.nb_json, this.chr("\\"), this.chr('"')));
       }
 
       ns_double_char() {
-        debug1("ns_double_char");
+        debug_rule("ns_double_char");
         return this.but(this.nb_double_char, this.s_white);
       }
 
       c_double_quoted(n, c) {
-        debug1("c_double_quoted", n, c);
+        debug_rule("c_double_quoted", n, c);
         return this.all(this.chr('"'), [this.nb_double_text, n, c], this.chr('"'));
       }
 
       nb_double_text(n, c) {
-        debug1("nb_double_text", n, c);
+        debug_rule("nb_double_text", n, c);
         return this.case(c, {
           'block-key': this.nb_double_one_line,
           'flow-in': [this.nb_double_multi_line, n],
@@ -579,57 +579,57 @@
       }
 
       nb_double_one_line() {
-        debug1("nb_double_one_line");
+        debug_rule("nb_double_one_line");
         return this.rep(0, 0, this.nb_double_char);
       }
 
       s_double_escaped(n) {
-        debug1("s_double_escaped", n);
+        debug_rule("s_double_escaped", n);
         return this.all(this.rep(0, 0, this.s_white), this.chr("\\"), this.b_non_content, this.rep(0, 0, [this.l_empty, n, "flow-in"]), [this.s_flow_line_prefix, n]);
       }
 
       s_double_break(n) {
-        debug1("s_double_break", n);
+        debug_rule("s_double_break", n);
         return this.any([this.s_double_escaped, n], [this.s_flow_folded, n]);
       }
 
       nb_ns_double_in_line() {
-        debug1("nb_ns_double_in_line");
+        debug_rule("nb_ns_double_in_line");
         return this.rep(0, 0, this.all(this.rep(0, 0, this.s_white), this.ns_double_char));
       }
 
       s_double_next_line(n) {
-        debug1("s_double_next_line", n);
+        debug_rule("s_double_next_line", n);
         return this.all([this.s_double_break, n], this.rep(0, 1, this.all(this.ns_double_char, this.nb_ns_double_in_line, this.any([this.s_double_next_line, n], this.rep(0, 0, this.s_white)))));
       }
 
       nb_double_multi_line(n) {
-        debug1("nb_double_multi_line", n);
+        debug_rule("nb_double_multi_line", n);
         return this.all(this.nb_ns_double_in_line, this.any([this.s_double_next_line, n], this.rep(0, 0, this.s_white)));
       }
 
       c_quoted_quote() {
-        debug1("c_quoted_quote");
+        debug_rule("c_quoted_quote");
         return this.all(this.chr("'"), this.chr("'"));
       }
 
       nb_single_char() {
-        debug1("nb_single_char");
+        debug_rule("nb_single_char");
         return this.any(this.c_quoted_quote, this.but(this.nb_json, this.chr("'")));
       }
 
       ns_single_char() {
-        debug1("ns_single_char");
+        debug_rule("ns_single_char");
         return this.but(this.nb_single_char, this.s_white);
       }
 
       c_single_quoted(n, c) {
-        debug1("c_single_quoted", n, c);
+        debug_rule("c_single_quoted", n, c);
         return this.all(this.chr("'"), [this.nb_single_text, n, c], this.chr("'"));
       }
 
       nb_single_text(n, c) {
-        debug1("nb_single_text", n, c);
+        debug_rule("nb_single_text", n, c);
         return this.case(c, {
           'block-key': this.nb_single_one_line,
           'flow-in': [this.nb_single_multi_line, n],
@@ -639,32 +639,32 @@
       }
 
       nb_single_one_line() {
-        debug1("nb_single_one_line");
+        debug_rule("nb_single_one_line");
         return this.rep(0, 0, this.nb_single_char);
       }
 
       nb_ns_single_in_line() {
-        debug1("nb_ns_single_in_line");
+        debug_rule("nb_ns_single_in_line");
         return this.rep(0, 0, this.all(this.rep(0, 0, this.s_white), this.ns_single_char));
       }
 
       s_single_next_line(n) {
-        debug1("s_single_next_line", n);
+        debug_rule("s_single_next_line", n);
         return this.all([this.s_flow_folded, n], this.rep(0, 1, this.all(this.ns_single_char, this.nb_ns_single_in_line, this.any([this.s_single_next_line, n], this.rep(0, 0, this.s_white)))));
       }
 
       nb_single_multi_line(n) {
-        debug1("nb_single_multi_line", n);
+        debug_rule("nb_single_multi_line", n);
         return this.all(this.nb_ns_single_in_line, this.any([this.s_single_next_line, n], this.rep(0, 0, this.s_white)));
       }
 
       ns_plain_first(c) {
-        debug1("ns_plain_first", c);
+        debug_rule("ns_plain_first", c);
         return this.any(this.but(this.ns_char, this.c_indicator), this.all(this.any(this.chr('?'), this.chr(':'), this.chr('-')), this.chk('=', [this.ns_plain_safe, c])));
       }
 
       ns_plain_safe(c) {
-        debug1("ns_plain_safe", c);
+        debug_rule("ns_plain_safe", c);
         return this.case(c, {
           'block-key': this.ns_plain_safe_out,
           'flow-in': this.ns_plain_safe_in,
@@ -674,22 +674,22 @@
       }
 
       ns_plain_safe_out() {
-        debug1("ns_plain_safe_out");
+        debug_rule("ns_plain_safe_out");
         return this.ns_char;
       }
 
       ns_plain_safe_in() {
-        debug1("ns_plain_safe_in");
+        debug_rule("ns_plain_safe_in");
         return this.but(this.ns_char, this.c_flow_indicator);
       }
 
       ns_plain_char(c) {
-        debug1("ns_plain_char", c);
+        debug_rule("ns_plain_char", c);
         return this.any(this.but([this.ns_plain_safe, c], this.chr(':'), this.chr('#')), this.all(this.chk('<=', this.ns_char), this.chr('#')), this.all(this.chr(':'), this.chk('=', [this.ns_plain_safe, c])));
       }
 
       ns_plain(n, c) {
-        debug1("ns_plain", n, c);
+        debug_rule("ns_plain", n, c);
         return this.case(c, {
           'block-key': [this.ns_plain_one_line, c],
           'flow-in': [this.ns_plain_multi_line, n, c],
@@ -699,27 +699,27 @@
       }
 
       nb_ns_plain_in_line(c) {
-        debug1("nb_ns_plain_in_line", c);
+        debug_rule("nb_ns_plain_in_line", c);
         return this.rep(0, 0, this.all(this.rep(0, 0, this.s_white), [this.ns_plain_char, c]));
       }
 
       ns_plain_one_line(c) {
-        debug1("ns_plain_one_line", c);
+        debug_rule("ns_plain_one_line", c);
         return this.all([this.ns_plain_first, c], [this.nb_ns_plain_in_line, c]);
       }
 
       s_ns_plain_next_line(n, c) {
-        debug1("s_ns_plain_next_line", n, c);
+        debug_rule("s_ns_plain_next_line", n, c);
         return this.all([this.s_flow_folded, n], [this.ns_plain_char, c], [this.nb_ns_plain_in_line, c]);
       }
 
       ns_plain_multi_line(n, c) {
-        debug1("ns_plain_multi_line", n, c);
+        debug_rule("ns_plain_multi_line", n, c);
         return this.all([this.ns_plain_one_line, c], this.rep(0, 0, [this.s_ns_plain_next_line, n, c]));
       }
 
       in_flow(c) {
-        debug1("in_flow", c);
+        debug_rule("in_flow", c);
         return this.flip(c, {
           'block-key': "flow-key",
           'flow-in': "flow-in",
@@ -729,147 +729,147 @@
       }
 
       c_flow_sequence(n, c) {
-        debug1("c_flow_sequence", n, c);
+        debug_rule("c_flow_sequence", n, c);
         return this.all(this.chr('['), this.rep(0, 1, [this.s_separate, n, c]), this.rep(0, 1, [this.ns_s_flow_seq_entries, n, [this.in_flow, c]]), this.chr(']'));
       }
 
       ns_s_flow_seq_entries(n, c) {
-        debug1("ns_s_flow_seq_entries", n, c);
+        debug_rule("ns_s_flow_seq_entries", n, c);
         return this.all([this.ns_flow_seq_entry, n, c], this.rep(0, 1, [this.s_separate, n, c]), this.rep(0, 1, this.all(this.chr(','), this.rep(0, 1, [this.s_separate, n, c]), this.rep(0, 1, [this.ns_s_flow_seq_entries, n, c]))));
       }
 
       ns_flow_seq_entry(n, c) {
-        debug1("ns_flow_seq_entry", n, c);
+        debug_rule("ns_flow_seq_entry", n, c);
         return this.any([this.ns_flow_pair, n, c], [this.ns_flow_node, n, c]);
       }
 
       c_flow_mapping(n, c) {
-        debug1("c_flow_mapping", n, c);
+        debug_rule("c_flow_mapping", n, c);
         return this.all(this.chr('{'), this.rep(0, 1, [this.s_separate, n, c]), this.rep(0, 1, [this.ns_s_flow_map_entries, n, [this.in_flow, c]]), this.chr('}'));
       }
 
       ns_s_flow_map_entries(n, c) {
-        debug1("ns_s_flow_map_entries", n, c);
+        debug_rule("ns_s_flow_map_entries", n, c);
         return this.all([this.ns_flow_map_entry, n, c], this.rep(0, 1, [this.s_separate, n, c]), this.rep(0, 1, this.all(this.chr(','), this.rep(0, 1, [this.s_separate, n, c]), this.rep(0, 1, [this.ns_s_flow_map_entries, n, c]))));
       }
 
       ns_flow_map_entry(n, c) {
-        debug1("ns_flow_map_entry", n, c);
+        debug_rule("ns_flow_map_entry", n, c);
         return this.any(this.all(this.chr('?'), [this.s_separate, n, c], [this.ns_flow_map_explicit_entry, n, c]), [this.ns_flow_map_implicit_entry, n, c]);
       }
 
       ns_flow_map_explicit_entry(n, c) {
-        debug1("ns_flow_map_explicit_entry", n, c);
+        debug_rule("ns_flow_map_explicit_entry", n, c);
         return this.any([this.ns_flow_map_implicit_entry, n, c], this.all(this.e_node, this.e_node));
       }
 
       ns_flow_map_implicit_entry(n, c) {
-        debug1("ns_flow_map_implicit_entry", n, c);
+        debug_rule("ns_flow_map_implicit_entry", n, c);
         return this.any([this.ns_flow_map_yaml_key_entry, n, c], [this.c_ns_flow_map_empty_key_entry, n, c], [this.c_ns_flow_map_json_key_entry, n, c]);
       }
 
       ns_flow_map_yaml_key_entry(n, c) {
-        debug1("ns_flow_map_yaml_key_entry", n, c);
+        debug_rule("ns_flow_map_yaml_key_entry", n, c);
         return this.all([this.ns_flow_yaml_node, n, c], this.any(this.all(this.rep(0, 1, [this.s_separate, n, c]), [this.c_ns_flow_map_separate_value, n, c]), this.e_node));
       }
 
       c_ns_flow_map_empty_key_entry(n, c) {
-        debug1("c_ns_flow_map_empty_key_entry", n, c);
+        debug_rule("c_ns_flow_map_empty_key_entry", n, c);
         return this.all(this.e_node, [this.c_ns_flow_map_separate_value, n, c]);
       }
 
       c_ns_flow_map_separate_value(n, c) {
-        debug1("c_ns_flow_map_separate_value", n, c);
+        debug_rule("c_ns_flow_map_separate_value", n, c);
         return this.all(this.chr(':'), this.chk('!', [this.ns_plain_safe, c]), this.any(this.all([this.s_separate, n, c], [this.ns_flow_node, n, c]), this.e_node));
       }
 
       c_ns_flow_map_json_key_entry(n, c) {
-        debug1("c_ns_flow_map_json_key_entry", n, c);
+        debug_rule("c_ns_flow_map_json_key_entry", n, c);
         return this.all([this.c_flow_json_node, n, c], this.any(this.all(this.rep(0, 1, [this.s_separate, n, c]), [this.c_ns_flow_map_adjacent_value, n, c]), this.e_node));
       }
 
       c_ns_flow_map_adjacent_value(n, c) {
-        debug1("c_ns_flow_map_adjacent_value", n, c);
+        debug_rule("c_ns_flow_map_adjacent_value", n, c);
         return this.all(this.chr(':'), this.any(this.all(this.rep(0, 1, [this.s_separate, n, c]), [this.ns_flow_node, n, c]), this.e_node));
       }
 
       ns_flow_pair(n, c) {
-        debug1("ns_flow_pair", n, c);
+        debug_rule("ns_flow_pair", n, c);
         return this.any(this.all(this.chr('?'), [this.s_separate, n, c], [this.ns_flow_map_explicit_entry, n, c]), [this.ns_flow_pair_entry, n, c]);
       }
 
       ns_flow_pair_entry(n, c) {
-        debug1("ns_flow_pair_entry", n, c);
+        debug_rule("ns_flow_pair_entry", n, c);
         return this.any([this.ns_flow_pair_yaml_key_entry, n, c], [this.c_ns_flow_map_empty_key_entry, n, c], [this.c_ns_flow_pair_json_key_entry, n, c]);
       }
 
       ns_flow_pair_yaml_key_entry(n, c) {
-        debug1("ns_flow_pair_yaml_key_entry", n, c);
+        debug_rule("ns_flow_pair_yaml_key_entry", n, c);
         return this.all([this.ns_s_implicit_yaml_key, "flow-key"], [this.c_ns_flow_map_separate_value, n, c]);
       }
 
       c_ns_flow_pair_json_key_entry(n, c) {
-        debug1("c_ns_flow_pair_json_key_entry", n, c);
+        debug_rule("c_ns_flow_pair_json_key_entry", n, c);
         return this.all([this.c_s_implicit_json_key, "flow-key"], [this.c_ns_flow_map_adjacent_value, n, c]);
       }
 
       ns_s_implicit_yaml_key(c) {
-        debug1("ns_s_implicit_yaml_key", c);
+        debug_rule("ns_s_implicit_yaml_key", c);
         return this.all(this.max(1024), [this.ns_flow_yaml_node, null, c], this.rep(0, 1, this.s_separate_in_line));
       }
 
       c_s_implicit_json_key(c) {
-        debug1("c_s_implicit_json_key", c);
+        debug_rule("c_s_implicit_json_key", c);
         return this.all(this.max(1024), [this.c_flow_json_node, null, c], this.rep(0, 1, this.s_separate_in_line));
       }
 
       ns_flow_yaml_content(n, c) {
-        debug1("ns_flow_yaml_content", n, c);
+        debug_rule("ns_flow_yaml_content", n, c);
         return [this.ns_plain, n, c];
       }
 
       c_flow_json_content(n, c) {
-        debug1("c_flow_json_content", n, c);
+        debug_rule("c_flow_json_content", n, c);
         return this.any([this.c_flow_sequence, n, c], [this.c_flow_mapping, n, c], [this.c_single_quoted, n, c], [this.c_double_quoted, n, c]);
       }
 
       ns_flow_content(n, c) {
-        debug1("ns_flow_content", n, c);
+        debug_rule("ns_flow_content", n, c);
         return this.any([this.ns_flow_yaml_content, n, c], [this.c_flow_json_content, n, c]);
       }
 
       ns_flow_yaml_node(n, c) {
-        debug1("ns_flow_yaml_node", n, c);
+        debug_rule("ns_flow_yaml_node", n, c);
         return this.any(this.c_ns_alias_node, [this.ns_flow_yaml_content, n, c], this.all([this.c_ns_properties, n, c], this.any(this.all([this.s_separate, n, c], [this.ns_flow_yaml_content, n, c]), this.e_scalar)));
       }
 
       c_flow_json_node(n, c) {
-        debug1("c_flow_json_node", n, c);
+        debug_rule("c_flow_json_node", n, c);
         return this.all(this.rep(0, 1, this.all([this.c_ns_properties, n, c], [this.s_separate, n, c])), [this.c_flow_json_content, n, c]);
       }
 
       ns_flow_node(n, c) {
-        debug1("ns_flow_node", n, c);
+        debug_rule("ns_flow_node", n, c);
         return this.any(this.c_ns_alias_node, [this.ns_flow_content, n, c], this.all([this.c_ns_properties, n, c], this.any(this.all([this.s_separate, n, c], [this.ns_flow_content, n, c]), this.e_scalar)));
       }
 
       c_b_block_header(m, t) {
-        debug1("c_b_block_header", m, t);
+        debug_rule("c_b_block_header", m, t);
         return this.all(this.any(this.all([this.c_indentation_indicator, m], [this.c_chomping_indicator, t]), this.all([this.c_chomping_indicator, t], [this.c_indentation_indicator, m])), this.s_b_comment);
       }
 
       c_indentation_indicator(m) {
-        debug1("c_indentation_indicator", m);
+        debug_rule("c_indentation_indicator", m);
         return this.any(this.if(this.ns_dec_digit, this.set('m', this.ord(this.match))), this.if(this.empty, this.set('m', "auto-detect")));
       }
 
       c_chomping_indicator(t) {
-        debug1("c_chomping_indicator", t);
+        debug_rule("c_chomping_indicator", t);
         return this.any(this.if(this.chr('-'), this.set('t', "strip")), this.if(this.chr('+'), this.set('t', "keep")), this.if(this.empty, this.set('t', "clip")));
       }
 
       b_chomped_last(t) {
-        debug1("b_chomped_last", t);
+        debug_rule("b_chomped_last", t);
         return this.case(t, {
           'clip': this.any(this.b_as_line_feed, this.end_of_stream),
           'keep': this.any(this.b_as_line_feed, this.end_of_stream),
@@ -878,7 +878,7 @@
       }
 
       l_chomped_empty(n, t) {
-        debug1("l_chomped_empty", n, t);
+        debug_rule("l_chomped_empty", n, t);
         return this.case(t, {
           'clip': [this.l_strip_empty, n],
           'keep': [this.l_keep_empty, n],
@@ -887,177 +887,177 @@
       }
 
       l_strip_empty(n) {
-        debug1("l_strip_empty", n);
+        debug_rule("l_strip_empty", n);
         return this.all(this.rep(0, 0, this.all([this.s_indent_le, n], this.b_non_content)), this.rep(0, 1, [this.l_trail_comments, n]));
       }
 
       l_keep_empty(n) {
-        debug1("l_keep_empty", n);
+        debug_rule("l_keep_empty", n);
         return this.all(this.rep(0, 0, [this.l_empty, n, "block-in"]), this.rep(0, 1, [this.l_trail_comments, n]));
       }
 
       l_trail_comments(n) {
-        debug1("l_trail_comments", n);
+        debug_rule("l_trail_comments", n);
         return this.all([this.s_indent_lt, n], this.c_nb_comment_text, this.b_comment, this.rep(0, 0, this.l_comment));
       }
 
       c_l_literal(n) {
-        debug1("c_l_literal", n);
+        debug_rule("c_l_literal", n);
         return this.all(this.chr('|'), [this.c_b_block_header, this.m(), this.t()], [this.l_literal_content, this.add(n, this.m()), this.t()]);
       }
 
       l_nb_literal_text(n) {
-        debug1("l_nb_literal_text", n);
+        debug_rule("l_nb_literal_text", n);
         return this.all(this.rep(0, 0, [this.l_empty, n, "block-in"]), [this.s_indent, n], this.rep(1, 0, this.nb_char));
       }
 
       b_nb_literal_next(n) {
-        debug1("b_nb_literal_next", n);
+        debug_rule("b_nb_literal_next", n);
         return this.all(this.b_as_line_feed, [this.l_nb_literal_text, n]);
       }
 
       l_literal_content(n, t) {
-        debug1("l_literal_content", n, t);
+        debug_rule("l_literal_content", n, t);
         return this.all(this.rep(0, 1, this.all([this.l_nb_literal_text, n], this.rep(0, 0, [this.b_nb_literal_next, n]), [this.b_chomped_last, t])), [this.l_chomped_empty, n, t]);
       }
 
       c_l_folded(n) {
-        debug1("c_l_folded", n);
+        debug_rule("c_l_folded", n);
         return this.all(this.chr('>'), [this.c_b_block_header, this.m(), this.t()], [this.l_folded_content, this.add(n, this.m()), this.t()]);
       }
 
       s_nb_folded_text(n) {
-        debug1("s_nb_folded_text", n);
+        debug_rule("s_nb_folded_text", n);
         return this.all([this.s_indent, n], this.ns_char, this.rep(0, 0, this.nb_char));
       }
 
       l_nb_folded_lines(n) {
-        debug1("l_nb_folded_lines", n);
+        debug_rule("l_nb_folded_lines", n);
         return this.all([this.s_nb_folded_text, n], this.rep(0, 0, this.all([this.b_l_folded, n, "block-in"], [this.s_nb_folded_text, n])));
       }
 
       s_nb_spaced_text(n) {
-        debug1("s_nb_spaced_text", n);
+        debug_rule("s_nb_spaced_text", n);
         return this.all([this.s_indent, n], this.s_white, this.rep(0, 0, this.nb_char));
       }
 
       b_l_spaced(n) {
-        debug1("b_l_spaced", n);
+        debug_rule("b_l_spaced", n);
         return this.all(this.b_as_line_feed, this.rep(0, 0, [this.l_empty, n, "block-in"]));
       }
 
       l_nb_spaced_lines(n) {
-        debug1("l_nb_spaced_lines", n);
+        debug_rule("l_nb_spaced_lines", n);
         return this.all([this.s_nb_spaced_text, n], this.rep(0, 0, this.all([this.b_l_spaced, n], [this.s_nb_spaced_text, n])));
       }
 
       l_nb_same_lines(n) {
-        debug1("l_nb_same_lines", n);
+        debug_rule("l_nb_same_lines", n);
         return this.all(this.rep(0, 0, [this.l_empty, n, "block-in"]), this.any([this.l_nb_folded_lines, n], [this.l_nb_spaced_lines, n]));
       }
 
       l_nb_diff_lines(n) {
-        debug1("l_nb_diff_lines", n);
+        debug_rule("l_nb_diff_lines", n);
         return this.all([this.l_nb_same_lines, n], this.rep(0, 0, this.all(this.b_as_line_feed, [this.l_nb_same_lines, n])));
       }
 
       l_folded_content(n, t) {
-        debug1("l_folded_content", n, t);
+        debug_rule("l_folded_content", n, t);
         return this.all(this.rep(0, 1, this.all([this.l_nb_diff_lines, n], [this.b_chomped_last, t])), [this.l_chomped_empty, n, t]);
       }
 
       l_block_sequence(n) {
-        debug1("l_block_sequence", n);
+        debug_rule("l_block_sequence", n);
         return this.all(this.set('m', this.auto_detect_indent), this.rep(1, 0, this.all([this.s_indent, this.add(n, this.m())], [this.c_l_block_seq_entry, this.add(n, this.m())])));
       }
 
       c_l_block_seq_entry(n) {
-        debug1("c_l_block_seq_entry", n);
+        debug_rule("c_l_block_seq_entry", n);
         return this.all(this.chr('-'), this.chk('!', this.ns_char), [this.s_l_block_indented, n, "block-in"]);
       }
 
       s_l_block_indented(n, c) {
-        debug1("s_l_block_indented", n, c);
+        debug_rule("s_l_block_indented", n, c);
         return this.any(this.all([this.s_indent, this.m()], this.any([this.ns_l_compact_sequence, this.add(n, this.add(1, this.m()))], [this.ns_l_compact_mapping, this.add(n, this.add(1, this.m()))])), [this.s_l_block_node, n, c], this.all(this.e_node, this.s_l_comments));
       }
 
       ns_l_compact_sequence(n) {
-        debug1("ns_l_compact_sequence", n);
+        debug_rule("ns_l_compact_sequence", n);
         return this.all([this.c_l_block_seq_entry, n], this.rep(0, 0, this.all([this.s_indent, n], [this.c_l_block_seq_entry, n])));
       }
 
       l_block_mapping(n) {
-        debug1("l_block_mapping", n);
+        debug_rule("l_block_mapping", n);
         return this.all(this.set('m', this.auto_detect_indent), this.rep(1, 0, this.all([this.s_indent, this.add(n, this.m())], [this.ns_l_block_map_entry, this.add(n, this.m())])));
       }
 
       ns_l_block_map_entry(n) {
-        debug1("ns_l_block_map_entry", n);
+        debug_rule("ns_l_block_map_entry", n);
         return this.any([this.c_l_block_map_explicit_entry, n], [this.ns_l_block_map_implicit_entry, n]);
       }
 
       c_l_block_map_explicit_entry(n) {
-        debug1("c_l_block_map_explicit_entry", n);
+        debug_rule("c_l_block_map_explicit_entry", n);
         return this.all([this.c_l_block_map_explicit_key, n], this.any([this.l_block_map_explicit_value, n], this.e_node));
       }
 
       c_l_block_map_explicit_key(n) {
-        debug1("c_l_block_map_explicit_key", n);
+        debug_rule("c_l_block_map_explicit_key", n);
         return this.all(this.chr('?'), [this.s_l_block_indented, n, "block-out"]);
       }
 
       l_block_map_explicit_value(n) {
-        debug1("l_block_map_explicit_value", n);
+        debug_rule("l_block_map_explicit_value", n);
         return this.all([this.s_indent, n], this.chr(':'), [this.s_l_block_indented, n, "block-out"]);
       }
 
       ns_l_block_map_implicit_entry(n) {
-        debug1("ns_l_block_map_implicit_entry", n);
+        debug_rule("ns_l_block_map_implicit_entry", n);
         return this.all(this.any(this.ns_s_block_map_implicit_key, this.e_node), [this.c_l_block_map_implicit_value, n]);
       }
 
       ns_s_block_map_implicit_key() {
-        debug1("ns_s_block_map_implicit_key");
+        debug_rule("ns_s_block_map_implicit_key");
         return this.any([this.c_s_implicit_json_key, "block-key"], [this.ns_s_implicit_yaml_key, "block-key"]);
       }
 
       c_l_block_map_implicit_value(n) {
-        debug1("c_l_block_map_implicit_value", n);
+        debug_rule("c_l_block_map_implicit_value", n);
         return this.all(this.chr(':'), this.any([this.s_l_block_node, n, "block-out"], this.all(this.e_node, this.s_l_comments)));
       }
 
       ns_l_compact_mapping(n) {
-        debug1("ns_l_compact_mapping", n);
+        debug_rule("ns_l_compact_mapping", n);
         return this.all([this.ns_l_block_map_entry, n], this.rep(0, 0, this.all([this.s_indent, n], [this.ns_l_block_map_entry, n])));
       }
 
       s_l_block_node(n, c) {
-        debug1("s_l_block_node", n, c);
+        debug_rule("s_l_block_node", n, c);
         return this.any([this.s_l_block_in_block, n, c], [this.s_l_flow_in_block, n]);
       }
 
       s_l_flow_in_block(n) {
-        debug1("s_l_flow_in_block", n);
+        debug_rule("s_l_flow_in_block", n);
         return this.all([this.s_separate, this.add(n, 1), "flow-out"], [this.ns_flow_node, this.add(n, 1), "flow-out"], this.s_l_comments);
       }
 
       s_l_block_in_block(n, c) {
-        debug1("s_l_block_in_block", n, c);
+        debug_rule("s_l_block_in_block", n, c);
         return this.any([this.s_l_block_scalar, n, c], [this.s_l_block_collection, n, c]);
       }
 
       s_l_block_scalar(n, c) {
-        debug1("s_l_block_scalar", n, c);
+        debug_rule("s_l_block_scalar", n, c);
         return this.all([this.s_separate, this.add(n, 1), c], this.rep(0, 1, this.all([this.c_ns_properties, this.add(n, 1), c], [this.s_separate, this.add(n, 1), c])), this.any([this.c_l_literal, n], [this.c_l_folded, n]));
       }
 
       s_l_block_collection(n, c) {
-        debug1("s_l_block_collection", n, c);
+        debug_rule("s_l_block_collection", n, c);
         return this.all(this.rep(0, 1, this.all([this.s_separate, this.add(n, 1), c], [this.c_ns_properties, this.add(n, 1), c])), this.s_l_comments, this.any([this.l_block_sequence, [this.seq_spaces, n, c]], [this.l_block_mapping, n]));
       }
 
       seq_spaces(n, c) {
-        debug1("seq_spaces", n, c);
+        debug_rule("seq_spaces", n, c);
         return this.flip(c, {
           'block-in': n,
           'block-out': this.sub(n, 1)
@@ -1065,52 +1065,52 @@
       }
 
       l_document_prefix() {
-        debug1("l_document_prefix");
+        debug_rule("l_document_prefix");
         return this.all(this.rep(0, 1, this.c_byte_order_mark), this.rep(0, 0, this.l_comment));
       }
 
       c_directives_end() {
-        debug1("c_directives_end");
+        debug_rule("c_directives_end");
         return this.all(this.chr('-'), this.chr('-'), this.chr('-'));
       }
 
       c_document_end() {
-        debug1("c_document_end");
+        debug_rule("c_document_end");
         return this.all(this.chr('.'), this.chr('.'), this.chr('.'));
       }
 
       l_document_suffix() {
-        debug1("l_document_suffix");
+        debug_rule("l_document_suffix");
         return this.all(this.c_document_end, this.s_l_comments);
       }
 
       c_forbidden() {
-        debug1("c_forbidden");
+        debug_rule("c_forbidden");
         return this.all(this.start_of_line, this.any(this.c_directives_end, this.c_document_end), this.any(this.b_char, this.s_white, this.end_of_stream));
       }
 
       l_bare_document() {
-        debug1("l_bare_document");
+        debug_rule("l_bare_document");
         return this.all(this.exclude(this.c_forbidden), [this.s_l_block_node, -1, "block-in"]);
       }
 
       l_explicit_document() {
-        debug1("l_explicit_document");
+        debug_rule("l_explicit_document");
         return this.all(this.c_directives_end, this.any(this.l_bare_document, this.all(this.e_node, this.s_l_comments)));
       }
 
       l_directive_document() {
-        debug1("l_directive_document");
+        debug_rule("l_directive_document");
         return this.all(this.rep(1, 0, this.l_directive), this.l_explicit_document);
       }
 
       l_any_document() {
-        debug1("l_any_document");
+        debug_rule("l_any_document");
         return this.any(this.l_directive_document, this.l_explicit_document, this.l_bare_document);
       }
 
       l_yaml_stream() {
-        debug1("l_yaml_stream");
+        debug_rule("l_yaml_stream");
         return this.all(this.l_document_prefix, this.rep(0, 1, this.l_any_document), this.rep(0, 0, this.any(this.all(this.l_document_suffix, this.rep(0, 0, this.l_document_prefix), this.rep(0, 1, this.l_any_document)), this.all(this.l_document_prefix, this.rep(0, 1, this.l_explicit_document)))));
       }
 

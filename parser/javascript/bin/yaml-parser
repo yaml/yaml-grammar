@@ -13,16 +13,7 @@
   require('../lib/test-receiver');
 
   main = function(yaml = file_read('-')) {
-    var args, e, n, parser, pass, start, time;
-    args = _.map(args, function(a) {
-      if (a === 'null') {
-        return null;
-      } else if (a.match(/^-?[0-9]+$/)) {
-        return Number(a);
-      } else {
-        return a;
-      }
-    });
+    var e, n, parser, pass, start, time;
     if (process.env.DEBUG) {
       parser = new DebugParser(new TestReceiver());
     } else {
