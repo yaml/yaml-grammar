@@ -1,107 +1,166 @@
-import os, sys, re, yaml
+import os, sys, re
+import json, timeit, traceback, types, yaml
 
 __all__ = [
-  'file_read',
-  'isArray',
-  'isNumber',
-  'isFunction',
   'ENV',
+  'file_read',
+  'name',
+  'func_name',
+  'func_trace',
+  'isNull',
+  'isBoolean',
+  'isNumber',
+  'isString',
+  'isCallable',
+  'isFunction',
+  'isMethod',
+  'isArray',
+  'isObject',
+  'typeof',
+  'stringify',
+  'die',
+  'warn',
+  'debug',
+  'debug_rule',
+  'dump',
   'WWW',
   'XXX',
-  'warn',
-  'die',
+  'xxxxx',
   'timer',
 ]
+
+def ENV(var):
+  value = os.environ.get(var, None)
+  if value in ['', '0', '1']:
+    return bool(value)
+  if value is None:
+    return ''
+  return value
 
 def file_read(name):
   return sys.stdin.readlines()
 
-ENV = os.environ
+def name(name, func, trace):
+  func.trace = trace or name
+  return func
 
-def WWW(*o):
-  for n in o:
-    sys.stderr.write(yaml.dump(n))
-  return o[0]
-  
+def func_name(func):
+  if isFunction(func):
+    return func.__name__
+  if isMethod(func):
+    return func.__func__.__name__
 
-def XXX(*o):
-  for n in o:
-    sys.stderr.write(yaml.dump(n))
-  sys.exit(1)
+def func_trace(func, trace=None):
+  if trace:
+    if isFunction(func):
+      func.trace = trace
+    elif isMethod(func):
+      func.__func__.trace = trace
+    else:
+      XXX(func, trace)
+    return
 
-#  global.name_ = (name, func, trace)->
-#    func.trace = trace || name
-#    func
+  if isFunction(func):
+    return func.trace
+  if isMethod(func):
+    return func.__func__.trace
 
-#  global.isNull = _.isNull
-#  global.isBoolean = _.isBoolean
-def isNumber(v):
-  return isinstance(v, int)
-#  global.isString = _.isString
-def isFunction(v):
-  return callable(v)
-def isArray(v):
-  return isinstance(v, list)
+def isNull(value):
+  return value is None
+def isBoolean(value):
+  return isinstance(value, bool)
+def isNumber(value):
+  return isinstance(value, int)
+def isString(value):
+  return isinstance(value, str)
+def isCallable(value):
+  return isFunction(value) or isMethod(value)
+def isFunction(value):
+  return isinstance(value, types.FunctionType)
+def isMethod(value):
+  return isinstance(value, types.MethodType)
+def isArray(value):
+  return isinstance(value, list)
+def isObject(value):
+  return isinstance(value, dict)
 
-#  global.isObject = _.isPlainObject
+def typeof(value):
+  if value is None:
+    return 'null'
+  if isinstance(value, bool):
+    return 'boolean'
+  if isinstance(value, int):
+    return 'number'
+  if isinstance(value, str):
+    return 'string'
+  if isinstance(value, types.MethodType):
+    return 'method'
+  if isinstance(value, types.FunctionType):
+    return 'function'
+  if isinstance(value, list):
+    return 'array'
+  if isinstance(value, dict):
+    return 'hash'
+  XXX([value, type(value)])
 
-#  global.typeof_ = (value)->
-#    return 'null' if _.isNull value
-#    return 'boolean' if _.isBoolean value
-#    return 'number' if _.isNumber value
-#    return 'string' if _.isString value
-#    return 'function' if _.isFunction value
-#    return 'array' if _.isArray value
-#    return 'object' if _.PlainisObject value
-#    xxx [value, typeof(value)]
+def stringify(o):
+  if o == "\ufeff":
+    return "\\uFEFF"
+  if isCallable(o):
+    return f"@{func_name(o)}"
+  if isObject(o):
+    return json.dumps(list(o.keys()))
+  if isArray(o):
+    return f"[{','.join(map(lambda e: stringify(e), o))}]"
+  return re.sub(r'^"(.*)"$', r'\1', json.dumps(o))
 
-#  global.stringify = (o)->
-#    if o == "\ufeff"
-#      return "\\uFEFF"
-#    if isFunction o
-#      return "@#{o.name}"
-#    if isObject o
-#      return JSON.stringify _.keys(o)
-#    if isArray o
-#      return "[#{(_.map o, (e)-> stringify e).join ','}]"
-#    return JSON.stringify(o).replace /^"(.*)"$/, '$1'
-
-#  global.hex_char = (chr)->
-#    return chr.charCodeAt(0).toString(16)
-
-#  global.die_ = (msg)->
-#    die((new Error().stack) + "\n" + msg)
-
-#  global.debug = (msg)->
-#    warn ">>> #{msg}"
-
-#  global.debug_rule = (name, args...)->
-#    return unless ENV.DEBUG
-#    args = _.join _.map args, (a)->
-#      stringify(a)
-#    , ','
-#    debug "#{name}(#{args})"
-
-#  global.dump = (o)->
-#    require('yaml').stringify o
-
-#  global.xxxxx = (o...)->
-#    WWW o
-#    die 'xxxxx'
+def hex_char(chr):
+  return hex(ord(chr))[2:]
 
 def die(msg):
+  traceback.print_exception(*(sys.exc_info()))
   raise Exception(msg)
 
 def warn(msg):
   sys.stderr.write(str(msg) + "\n")
 
+def debug(msg):
+  warn(f">>> {msg}")
+
+def debug_rule(name, *args):
+  if not(ENV('DEBUG')): return
+  args = ','.join(map(lambda x: stringify(x), args))
+  debug(f"{name}({args})")
+
+def dump(o):
+  return yaml.dump(
+    o,
+    default_flow_style=False,
+    explicit_start=True,
+    explicit_end=True,
+  )
+
+def WWW(*o):
+  for n in list(o):
+    sys.stderr.write(dump(n))
+  return o[0]
+
+def XXX(*o):
+  WWW(*o)
+  sys.exit(1)
+
+def xxxxx(*o):
+  WWW(*o)
+  msg = 'xxxxx'
+  if isString(o[0]):
+    msg += f" - {o[0]}"
+  die(msg)
+
 def timer(start=None):
-  return 1.23
-#  global.timer = (start=null)->
-#    if start?
-#      time = process.hrtime(start)
-#      time[0] + time[1] / 1000000000
-#    else
-#      process.hrtime()
+  time = timeit.timeit()
+  if start is None:
+    return time
+  else:
+    return time - start
 
 # vim: et sw=2:

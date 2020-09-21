@@ -1,41 +1,53 @@
-__all__ = [
-    'Parser',
-    ]
-
 ###
 # This is a parser class. It has a parse() method and parsing primitives for the
 # grammar. It calls methods in the receiver class, when a rule matches:
 ###
-import os, sys, re
+
+__all__ = [
+  'Parser',
+]
+
+import re
+
 from prelude import *
 from grammar import *
 
-#  TRACE = Boolean ENV.TRACE
-TRACE = bool(ENV.get("TRACE", False))
+TRACE = ENV('TRACE')
 
 class Parser(Grammar):
   def __init__(self, receiver):
     self.receiver = receiver
     self.pos = 0
     self.end = 0
-    self.state = []
+    self.state = [
+      {
+        'name': None,
+        'lvl': 0,
+        'beg': 0,
+        'end': 0,
+        'm': None,
+        't': None,
+      }
+    ]
+
     self.trace_num = 1
     self.trace_on = True
     self.trace_off = 0
     self.trace_info = ['', '', '']
 
   def parse(self, input):
+    self.input = input
     self.end = len(input)
 
     if TRACE:
       self.trace_on = not self.trace_start()
 
     try:
-      ok = self.call(self.TOP())
+      ok = self.call(self.TOP)
       self.trace_flush()
     except Exception as err:
       self.trace_flush()
-      raise(WWW(err))
+      die(err)
 
     if not ok:
       die("Parser failed")
@@ -44,37 +56,33 @@ class Parser(Grammar):
 
     return True
 
-#    state_curr: ->
-#      @state[@state.length - 1] ||
-#        name: null
-#        lvl: 0
-#        beg: 0
-#        end: 0
-#        m: null
-#        t: null
+  def state_curr(self):
+    return self.state[-1]
 
-#    state_prev: ->
-#      @state[@state.length - 2]
+  def state_prev(self):
+    return self.state[len(self.state) - 2]
 
-#    state_push: (name)->
-#      prev = @state_curr()
+  def state_push(self, name):
+    prev = self.state_curr()
 
-#      @state.push
-#        name: name
-#        lvl: prev.lvl + 1
-#        beg: @pos
-#        end: null
-#        m: prev.m
-#        t: prev.t
+    self.state.append({
+      'name': name,
+      'lvl': prev.get('lvl') + 1,
+      'beg': self.pos,
+      'end': None,
+      'm': prev.get('m'),
+      't': prev.get('t'),
+    })
 
-#    state_pop: ->
-#      curr = @state.pop()
-#      prev = @state_prev()
-#      return unless prev?
-#      prev.beg = curr.beg
-#      prev.end = @pos
+  def state_pop(self):
+    curr = self.state.pop()
+    prev = self.state_prev()
+    if prev is None:
+      return
+    prev['beg'] = curr.get('beg')
+    prev['end'] = self.pos
 
-  def call(self, func, type_="boolean"):
+  def call(self, func, type="boolean"):
     args = []
     if isArray(func):
       args = func[1:]
@@ -83,51 +91,50 @@ class Parser(Grammar):
     if isNumber(func):
       return func
 
-    if not isFunction(func):
+    if not isCallable(func):
       xxxxx(f"Bad call type '{typeof(func)}' for '{func}'")
 
     if not hasattr(func, 'trace'):
-      func.trace = func.name
+      func_trace(func, func_name(func))
 
     self.state_push(func.trace)
 
-    if TRACE:
-      self.trace('?', func.trace, args)
+    if TRACE: self.trace('?', func, args)
 
     def m1(a):
-      if isArray(a):
-        return self.call(a, 'any')
-      elif isFunction(a):
-        return a()
+      if isArray(a): return self.call(a, 'any')
+      if isCallable(a): return a()
+      return a
+
+    args = map(m1, args)
+
+    pos = self.pos
+    self.receive(func, 'try', pos)
+
+    value = func(*args)
+    if value is None:
+      die(1)
+    while isCallable(value) or isArray(value):
+      value = self.call(value)
+      if value is None: die(2)
+
+    if type != 'any' and typeof(value) != type:
+      xxxxx(f"Calling '{func.trace}' returned '{typeof(value)}' instead of '{type}'")
+    if type != 'boolean':
+      if TRACE: self.trace('>', value)
+    else:
+      if value:
+        if TRACE: self.trace('+', func)
+        self.receive(func, 'got', pos)
       else:
-        return a
+        if TRACE: self.trace('x', func)
+        self.receive(func, 'not', pos)
 
-      args = map(m1, args)
+    self.state_pop()
+    return value
 
-      pos = self.pos
-      self.receive(func, 'try', pos)
-
-      value = func(self, args)
-      while isFunction(value) or isArray(value):
-        value = self.call(value)
-      if type_ != 'any' and typeof(value) != type_:
-        xxxxx(f"Calling '{func.trace}' returned '{typeof(value)}' instead of '{type}'")
-      if type_ != 'boolean':
-        if TRACE:
-          self.trace('>', value)
-      else:
-        if value:
-          if TRACE:
-            self.trace('+', func.trace)
-          self.receive(func, 'got', pos)
-        else:
-          if TRACE:
-            self.trace('x', func.trace)
-          self.receive(func, 'not', pos)
-      
-      self.state_pop()
-      return value
-
+  def receive(self, func, type, pos):
+    pass
 #    receive: (func, type, pos)->
 #      func.receivers ?= @make_receivers()
 #      receiver = func.receivers[type]
@@ -156,134 +163,145 @@ class Parser(Grammar):
 
 
 
-#    # Match all subrule methods:
-#    all: (funcs...)->
-#      all = ->
-#        pos = @pos
-#        for func in funcs
-#          xxxxx '*** Missing function in @all group:', funcs \
-    #            unless func?
+  # Match all subrule methods:
+  def all(self, *funcs):
+    def all():
+      pos = self.pos
+      for func in funcs:
+        if not self.call(func):
+          self.pos = pos
+          return False
 
-#          if not @call func
-#            @pos = pos
-#            return false
+      return True
+    return all
 
-#        return true
+  # Match any subrule method. Rules are tried in order and stops on
+  # first match:
+  def any(self, *funcs):
+    def any():
+      for func in funcs:
+        if self.call(func):
+          return True
 
-#    # Match any subrule method. Rules are tried in order and stops on first
-#    # match:
-#    any: (funcs...)->
-#      any = ->
-#        for func in funcs
-#          if @call func
-#            return true
+      return False
+    return any
 
-#        return false
+  def may(self, func):
+    def may():
+      return self.call(func)
+    return may
 
-#    may: (func)->
-#      may = ->
-#        @call func
+  # Repeat a rule a certain number of times:
+  def rep(self, min, max, func):
+    def rep():
+      count = 0
+      pos = self.pos
+      pos_start = pos
+      while self.pos < self.end and self.call(func):
+        if self.pos == pos:
+          break
+        count += 1
+        pos = self.pos
+      if count >= min and (max == 0 or count <= max):
+        return True
+      self.pos = pos_start
+      return False
+    return name('rep', rep, f"rep({min},{max})")
 
-#    # Repeat a rule a certain number of times:
-#    rep: (min, max, func)->
-#      rep = ->
-#        count = 0
-#        pos = @pos
-#        pos_start = pos
-#        while @pos < @end and @call func
-#          break if @pos == pos
-#          count++
-#          pos = @pos
-#        if count >= min and (max == 0 or count <= max)
-#          return true
-#        @pos = pos_start
-#        return false
-#      name_ 'rep', rep, "rep(#{min},#{max})"
+  # Call a rule depending on state value:
+  def case(self, var, map):
+    def case():
+      rule = map.get(var)
+      if rule is None:
+        xxxxx(f"Can't find '{var}' in:", map)
+      return self.call(rule)
+    return name('case', case, f"case({var},{stringify(map)})")
 
-#    # Call a rule depending on state value:
-#    case: (var_, map)->
-#      case_ = ->
-#        rule = map[var_] or
-#          xxxxx "Can't find '#{var_}' in:", map
-#        @call rule
-#      name_ 'case', case_, "case(#{var_},#{stringify map})"
+  # Call a rule depending on state value:
+  def flip(self, var, map):
+    value = map.get(var)
+    if not value:
+      xxxxx(f"Can't find '{var}' in:", map)
+    if isString(value): return value
+    return self.call(value, 'number')
 
-#    # Call a rule depending on state value:
-#    flip: (var_, map)->
-#      value = map[var_] or
-#        xxxxx "Can't find '#{var_}' in:", map
-#      return value if isString value
-#      return @call value, 'number'
+  # Match a single char:
+  def chr(self, char):
+    def chr():
+      if self.pos >= self.end:
+        return False
+      if self.input[self.pos] == char:
+        self.pos += 1
+        return True
+      return False
+    return name('chr', chr, f"chr({stringify(char)})")
 
-#    # Match a single char:
-#    chr: (char)->
-#      chr = ->
-#        if @pos >= @end
-#          return false
-#        if @input[@pos] == char
-#          @pos++
-#          return true
-#        return false
-#      name_ 'chr', chr, "chr(#{stringify char})"
+  # Match a char in a range:
+  def rng(self, low, high):
+    def rng():
+      if self.pos >= self.end:
+        return False
+      if low <= self.input[self.pos] <= high:
+        self.pos += 1
+        return True
+      return False
+    return name('rng', rng, f"rng({stringify(low)},{stringify(high)})")
 
-#    # Match a char in a range:
-#    rng: (low, high)->
-#      rng = ->
-#        if @pos >= @input.length
-#          return false
-#        if low <= @input[@pos] <= high
-#          @pos++
-#          return true
-#        return false
-#      name_ 'rng', rng, "rng(#{stringify(low)},#{stringify(high)})"
+  # Must match first rule but none of others:
+  def but(self, *funcs):
+    def but():
+      pos1 = self.pos
+      if not(self.call(funcs[0])):
+        return False
+      pos2 = self.pos
+      self.pos = pos1
+      for func in funcs[1:]:
+        if self.call(func):
+          self.pos = pos1
+          return False
+      self.pos = pos2
+      return True
+    return but
 
-#    # Must match first rule but none of others:
-#    but: (funcs...)->
-#      but = ->
-#        pos1 = @pos
-#        return false unless @call funcs[0]
-#        pos2 = @pos
-#        @pos = pos1
-#        for func in funcs[1..]
-#          if @call func
-#            @pos = pos1
-#            return false
-#        @pos = pos2
-#        return true
+  def chk(self, type, expr):
+    def chk():
+      pos = self.pos
+      if type == '<=':
+        self.pos -= 1
+      ok = self.call(expr)
+      self.pos = pos
+      return not(ok) if type == '!' else ok
+    return name('chk', chk, f"chk({type}, {stringify(expr)})")
 
-#    chk: (type, expr)->
-#      chk = ->
-#        pos = @pos
-#        @pos-- if type == '<='
-#        ok = @call expr
-#        @pos = pos
-#        return if type == '!' then not(ok) else ok
-#      name_ 'chk', chk, "chk(#{type}, #{stringify expr})"
+  def set(self, var, expr):
+    def set():
+      value = self.call(expr, 'any')
+      self.state_prev()[var] = value
+      return True
+    return name('set', set, f"set('{var}', {stringify(expr)})")
 
-#    set: (var_, expr)->
-#      set = ->
-#        value = @call expr, 'any'
-#        @state_prev()[var_] = value
-#        true
-#      name_ 'set', set, "set('#{var_}', #{stringify expr})"
+  def max(self, max):
+    def max():
+      return True
+    return max
 
-#    max: (max)->
-#      max = ->
-#        true
+  def exclude(self, rule):
+    def exclude():
+      return True
+    return exclude
 
-#    exclude: (rule)->
-#      exclude = ->
-#        true
+  def add(self, x, y):
+    def add():
+      y1 = y
+      if isFunction(y1):
+        y1 = self.call(y1, 'number')
+      return x + y1
+    return name('add', add, "add({x},{y})")
 
-#    add: (x, y)->
-#      add = ->
-#        y = @call y, 'number' if isFunction y
-#        x + y
-#      name_ 'add', add, "add(#{x},#{y})"
-
-#    sub: (x, y)->
-#      sub = ->
-#        x - y
+  def sub(self, x, y):
+    def sub ():
+      return x - y
+    return sub
 
 #    # This method does not need to return a function since it is never
 #    # called in the grammar.
@@ -311,136 +329,139 @@ class Parser(Grammar):
 #        test = @call test, 'boolean' unless isBoolean test
 #        @call do_if_true if test
 #        return test
-#      name_ 'if', if_
+#      name 'if', if_
 
 #    lt: (x, y)->
 #      lt = ->
 #        x = @call x, 'number' unless isNumber x
 #        y = @call y, 'number' unless isNumber y
 #        return x < y
-#      name_ 'lt', lt, "lt(#{stringify x},#{stringify y})"
+#      name 'lt', lt, "lt(#{stringify x},#{stringify y})"
 
 #    le: (x, y)->
 #      le = ->
 #        x = @call x, 'number' unless isNumber x
 #        y = @call y, 'number' unless isNumber y
 #        return x <= y
-#      name_ 'le', le, "le(#{stringify x},#{stringify y})"
+#      name 'le', le, "le(#{stringify x},#{stringify y})"
 
-#    m: ->
-#      return 1  # XXX
-#      m = ->
-#        WWW(@state_curr())[m]
+  def m(self):
+    return 1  # XXX
+    def m():
+      WWW(self.state_curr())['m']
+    return m
 
-#    t: ->
-#      t = ->
-#        xxxxx @
+  def t(self):
+    def t():
+      xxxxx(self)
 
-#  #------------------------------------------------------------------------------
-#  # Special grammar rules
-#  #------------------------------------------------------------------------------
-#    start_of_line: ->
-#      @pos == 0 or
-#        @input[@pos - 1] == "\n"
+#------------------------------------------------------------------------------
+# Special grammar rules
+#------------------------------------------------------------------------------
+  def start_of_line(self):
+    if self.pos == 0:
+      return True
+    return (self.input[self.pos - 1] == "\n")
 
-#    end_of_stream: ->
-#      @pos >= @end
+  def end_of_stream(self):
+    return (self.pos >= self.end)
 
-#    empty: -> true
+  def empty(self):
+    return True
 
-#    auto_detect_indent: ->
-#      1
+  def auto_detect_indent(self):
+    return 1
 
-#  #------------------------------------------------------------------------------
-#  # Trace debugging
-#  #------------------------------------------------------------------------------
-#    trace_start: ->
-#      '' || ENV.TRACE_START
+#------------------------------------------------------------------------------
+# Trace debugging
+#------------------------------------------------------------------------------
+  def trace_start(self):
+    return ENV('TRACE_START')
 
-#    trace_quiet: ->
-#      [
-#  #       'b_char',
-#  #       'c_byte_order_mark',
-#  #       'c_flow_indicator',
-#  #       'c_indicator',
-#  #       'c_ns_alias_node',
-#  #       'c_ns_properties',
-#  #       'c_printable',
-#  #       'l_comment',
-#  #       'l_directive_document',
-#  #       'l_document_prefix',
-#  #       'l_explicit_document',
-#  #       'nb_char',
-#  #       'ns_char',
-#  #       'ns_flow_pair',
-#  #       'ns_plain',
-#  #       'ns_plain_char',
-#  #       's_l_block_collection',
-#  #       's_l_block_in_block',
-#  #       's_l_comments',
-#  #       's_separate',
-#  #       's_white',
-#      ].concat((ENV.TRACE_QUIET || '').split ',')
+  def trace_quiet(self):
+    return [
+#       'b_char',
+#       'c_byte_order_mark',
+#       'c_flow_indicator',
+#       'c_indicator',
+#       'c_ns_alias_node',
+#       'c_ns_properties',
+#       'c_printable',
+#       'l_comment',
+#       'l_directive_document',
+#       'l_document_prefix',
+#       'l_explicit_document',
+#       'nb_char',
+#       'ns_char',
+#       'ns_flow_pair',
+#       'ns_plain',
+#       'ns_plain_char',
+#       's_l_block_collection',
+#       's_l_block_in_block',
+#       's_l_comments',
+#       's_separate',
+#       's_white',
+    ] #.concat(ENV('TRACE_QUIET').split ',')
 
-#    trace: (type, call, args=[])->
-#      return unless @trace_on or call == @trace_start()
+  def trace(self, type, call, args=[]):
+    call = func_trace(call)
+    if not(self.trace_on or call == self.trace_start()):
+      return
 
-#      level = @state_curr().lvl
-#      indent = _.repeat ' ', level
-#      if level > 0
-#        l = "#{level}".length
-#        indent = "#{level}" + indent[l..]
+    level = self.state_curr().get('lvl')
+    indent = ''.join([' '*level])
+    if level > 0:
+      l = len(f"{level}")
+      indent = f"{level}" + indent[l:]
 
-#      input = @input[@pos..]
-#        .replace(/\t/g, '\\t')
-#        .replace(/\r/g, '\\r')
-#        .replace(/\n/g, '\\n')
+    input = self.input[self.pos:] \
+      .replace("\t", "\\t") \
+      .replace("\r", "\\r") \
+      .replace("\n", "\\n")
 
-#      line = sprintf(
-#        "%s%s %-30s  %4d '%s'",
-#        indent,
-#        type,
-#        @trace_format_call call, args
-#        @pos,
-#        input,
-#      )
+    line = "%s%s %-30s  %4d '%s'" % (
+      indent,
+      type,
+      self.trace_format_call(call, args),
+      self.pos,
+      input,
+    )
 
-#      trace_info = null
-#      level = "#{level}_#{call}"
-#      if type == '?' and @trace_off == 0
-#        trace_info = [type, level, line]
-#      if call in @trace_quiet()
-#        @trace_off += if type == '?' then 1 else -1
-#      if type != '?' and @trace_off == 0
-#        trace_info = [type, level, line]
+    trace_info = None
+    level = f"{level}_{call}"
+    if type == '?' and self.trace_off == 0:
+      trace_info = [type, level, line]
+    if call in self.trace_quiet():
+      self.trace_off += 1 if type == '?' else -1
+    if type != '?' and self.trace_off == 0:
+      trace_info = [type, level, line]
 
-#      if trace_info?
-#        [prev_type, prev_level, prev_line] = @trace_info
-#        if prev_type == '?' and prev_level == level
-#          trace_info[1] = ''
-#          if line.match /^\d*\ *\+/
-#            prev_line = prev_line.replace /\?/, '='
-#          else
-#            prev_line = prev_line.replace /\?/, '!'
-#        if prev_level
-#          warn sprintf "%5d %s", @trace_num++, prev_line
+    if trace_info:
+      [prev_type, prev_level, prev_line] = self.trace_info
+      if prev_type == '?' and prev_level == level:
+        trace_info[1] = ''
+        if re.match(r'^\d*\ *\+', line):
+          prev_line = prev_line.replace('?', '=')
+        else:
+          prev_line = prev_line.replace('?', '!')
+      if prev_level:
+        warn("%5d %s" % (self.trace_num, prev_line))
+        self.trace_num += 1
 
-#        @trace_info = trace_info
+      self.trace_info = trace_info
 
-#      if call == @trace_start()
-#        @trace_on = not @trace_on
+    if call == self.trace_start():
+      self.trace_on = not(self.trace_on)
 
-#    trace_format_call: (call, args)->
-#      return call unless args.length
-#      list = args.map (a)->
-#        stringify a
-#      list = list.join ','
-#      return "#{call}(#{list})"
+  def trace_format_call(self, call, args):
+    if len(args) == 0:
+      return call
+    list = ','.join(map(lambda a: stringify(a), args))
+    return f"{call}({list})"
 
   def trace_flush(self):
-    pass
-#    trace_flush: ->
-#      if line = @trace_info[2]
-#        warn sprintf "%5d %s", @trace_num++, line
+    line = self.trace_info[2]
+    if line:
+      warn("%5d %s" % (self.trace_num, line))
 
 # vim: sw=2:

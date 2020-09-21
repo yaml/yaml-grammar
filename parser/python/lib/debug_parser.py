@@ -1,6 +1,9 @@
-require './prelude'
+__all__ = [
+  'DebugParser',
+]
 
-CoffeeScript = require 'coffeescript'
+from parser import *
+from prelude import *
 
 methods = [
   'all', 'any', 'may', 'rep',
@@ -13,19 +16,7 @@ methods = [
   'start_of_line', 'end_of_stream', 'empty', 'auto_detect_indent',
 ]
 
-coffee = """
-global.DebugParser = class DebugParser extends Parser
-"""
-
-for method in methods
-  coffee += """
-
-      #{method}: (args...)->
-        debug "#{method}"
-        super.#{method} args...
-
-    """.replace /^/gm, '  '
-
-eval CoffeeScript.compile coffee, bare: true
+class DebugParser(Parser):
+  pass
 
 # vim: sw=2:

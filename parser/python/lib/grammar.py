@@ -3,6 +3,9 @@
 ###
 
 __all__ = ["Grammar"]
+
+from prelude import *
+
 class Grammar:
 
   def TOP(self):
@@ -19,14 +22,14 @@ class Grammar:
   def c_printable(self):
     debug_rule("c_printable")
     return self.any(
-      self.chr('\x09'.decode('unicode-escape')),
-      self.chr('\x0A'.decode('unicode-escape')),
-      self.chr('\x0D'.decode('unicode-escape')),
-      self.rng('\x20'.decode('unicode-escape'), '\x7E'.decode('unicode-escape')),
-      self.chr('\x85'.decode('unicode-escape')),
-      self.rng('\xA0'.decode('unicode-escape'), '\uD7FF'.decode('unicode-escape')),
-      self.rng('\uE000'.decode('unicode-escape'), '\uFFFD'.decode('unicode-escape')),
-      self.rng('\U00010000'.decode('unicode-escape'), '\U0010FFFF'.decode('unicode-escape'))
+      self.chr('\x09'),
+      self.chr('\x0A'),
+      self.chr('\x0D'),
+      self.rng('\x20', '\x7E'),
+      self.chr('\x85'),
+      self.rng('\xA0', '\uD7FF'),
+      self.rng('\uE000', '\uFFFD'),
+      self.rng('\U00010000', '\U0010FFFF')
     )
 
 
@@ -39,8 +42,8 @@ class Grammar:
   def nb_json(self):
     debug_rule("nb_json")
     return self.any(
-      self.chr('\x09'.decode('unicode-escape')),
-      self.rng('\x20'.decode('unicode-escape'), '\U0010FFFF'.decode('unicode-escape'))
+      self.chr('\x09'),
+      self.rng('\x20', '\U0010FFFF')
     )
 
 
@@ -52,7 +55,7 @@ class Grammar:
   # @::c_byte_order_mark.num = 3
   def c_byte_order_mark(self):
     debug_rule("c_byte_order_mark")
-    return self.chr('\uFEFF'.decode('unicode-escape'))
+    return self.chr('\uFEFF')
 
 
 
@@ -314,7 +317,7 @@ class Grammar:
   # @::b_line_feed.num = 24
   def b_line_feed(self):
     debug_rule("b_line_feed")
-    return self.chr('\x0A'.decode('unicode-escape'))
+    return self.chr('\x0A')
 
 
 
@@ -325,7 +328,7 @@ class Grammar:
   # @::b_carriage_return.num = 25
   def b_carriage_return(self):
     debug_rule("b_carriage_return")
-    return self.chr('\x0D'.decode('unicode-escape'))
+    return self.chr('\x0D')
 
 
 
@@ -407,7 +410,7 @@ class Grammar:
   # @::s_space.num = 31
   def s_space(self):
     debug_rule("s_space")
-    return self.chr('\x20'.decode('unicode-escape'))
+    return self.chr('\x20')
 
 
 
@@ -418,7 +421,7 @@ class Grammar:
   # @::s_tab.num = 32
   def s_tab(self):
     debug_rule("s_tab")
-    return self.chr('\x09'.decode('unicode-escape'))
+    return self.chr('\x09')
 
 
 
@@ -457,7 +460,7 @@ class Grammar:
   # @::ns_dec_digit.num = 35
   def ns_dec_digit(self):
     debug_rule("ns_dec_digit")
-    return self.rng('\x30'.decode('unicode-escape'), '\x39'.decode('unicode-escape'))
+    return self.rng('\x30', '\x39')
 
 
 
@@ -471,8 +474,8 @@ class Grammar:
     debug_rule("ns_hex_digit")
     return self.any(
       self.ns_dec_digit,
-      self.rng('\x41'.decode('unicode-escape'), '\x46'.decode('unicode-escape')),
-      self.rng('\x61'.decode('unicode-escape'), '\x66'.decode('unicode-escape'))
+      self.rng('\x41', '\x46'),
+      self.rng('\x61', '\x66')
     )
 
 
@@ -485,8 +488,8 @@ class Grammar:
   def ns_ascii_letter(self):
     debug_rule("ns_ascii_letter")
     return self.any(
-      self.rng('\x41'.decode('unicode-escape'), '\x5A'.decode('unicode-escape')),
-      self.rng('\x61'.decode('unicode-escape'), '\x7A'.decode('unicode-escape'))
+      self.rng('\x41', '\x5A'),
+      self.rng('\x61', '\x7A')
     )
 
 
@@ -615,7 +618,7 @@ class Grammar:
     debug_rule("ns_esc_horizontal_tab")
     return self.any(
       self.chr('t'),
-      self.chr('\x09'.decode('unicode-escape'))
+      self.chr('\x09')
     )
 
 
@@ -682,7 +685,7 @@ class Grammar:
   # @::ns_esc_space.num = 51
   def ns_esc_space(self):
     debug_rule("ns_esc_space")
-    return self.chr('\x20'.decode('unicode-escape'))
+    return self.chr('\x20')
 
 
 
@@ -916,7 +919,7 @@ class Grammar:
   #   ( c = flow-in => s-flow-line-prefix(n) )
 
   # @::s_line_prefix.num = 67
-  def s_line_prefix(n, c):
+  def s_line_prefix(self, n, c):
     debug_rule("s_line_prefix",n,c)
     return self.case(
       c,
@@ -962,7 +965,7 @@ class Grammar:
   #   b-as-line-feed
 
   # @::l_empty.num = 70
-  def l_empty(n, c):
+  def l_empty(self, n, c):
     debug_rule("l_empty",n,c)
     return self.all(
       self.any(
@@ -979,7 +982,7 @@ class Grammar:
   #   b-non-content l-empty(n,c)+
 
   # @::b_l_trimmed.num = 71
-  def b_l_trimmed(n, c):
+  def b_l_trimmed(self, n, c):
     debug_rule("b_l_trimmed",n,c)
     return self.all(
       self.b_non_content,
@@ -1004,7 +1007,7 @@ class Grammar:
   #   b-l-trimmed(n,c) | b-as-space
 
   # @::b_l_folded.num = 73
-  def b_l_folded(n, c):
+  def b_l_folded(self, n, c):
     debug_rule("b_l_folded",n,c)
     return self.any(
       [ self.b_l_trimmed, n, c ],
@@ -1122,7 +1125,7 @@ class Grammar:
   #   ( c = flow-key => s-separate-in-line )
 
   # @::s_separate.num = 80
-  def s_separate(n, c):
+  def s_separate(self, n, c):
     debug_rule("s_separate",n,c)
     return self.case(
       c,
@@ -1383,7 +1386,7 @@ class Grammar:
   #   ( s-separate(n,c) c-ns-tag-property )? )
 
   # @::c_ns_properties.num = 96
-  def c_ns_properties(n, c):
+  def c_ns_properties(self, n, c):
     debug_rule("c_ns_properties",n,c)
     return self.any(
       self.all(
@@ -1577,7 +1580,7 @@ class Grammar:
   #   '"'
 
   # @::c_double_quoted.num = 109
-  def c_double_quoted(n, c):
+  def c_double_quoted(self, n, c):
     debug_rule("c_double_quoted",n,c)
     return self.all(
       self.chr('"'),
@@ -1595,7 +1598,7 @@ class Grammar:
   #   ( c = flow-key => nb-double-one-line )
 
   # @::nb_double_text.num = 110
-  def nb_double_text(n, c):
+  def nb_double_text(self, n, c):
     debug_rule("nb_double_text",n,c)
     return self.case(
       c,
@@ -1761,7 +1764,7 @@ class Grammar:
   #   '''
 
   # @::c_single_quoted.num = 120
-  def c_single_quoted(n, c):
+  def c_single_quoted(self, n, c):
     debug_rule("c_single_quoted",n,c)
     return self.all(
       self.chr("'"),
@@ -1779,7 +1782,7 @@ class Grammar:
   #   ( c = flow-key => nb-single-one-line )
 
   # @::nb_single_text.num = 121
-  def nb_single_text(n, c):
+  def nb_single_text(self, n, c):
     debug_rule("nb_single_text",n,c)
     return self.case(
       c,
@@ -1969,7 +1972,7 @@ class Grammar:
   #   ( c = flow-key => ns-plain-one-line(c) )
 
   # @::ns_plain.num = 131
-  def ns_plain(n, c):
+  def ns_plain(self, n, c):
     debug_rule("ns_plain",n,c)
     return self.case(
       c,
@@ -2020,7 +2023,7 @@ class Grammar:
   #   ns-plain-char(c) nb-ns-plain-in-line(c)
 
   # @::s_ns_plain_next_line.num = 134
-  def s_ns_plain_next_line(n, c):
+  def s_ns_plain_next_line(self, n, c):
     debug_rule("s_ns_plain_next_line",n,c)
     return self.all(
       [ self.s_flow_folded, n ],
@@ -2036,7 +2039,7 @@ class Grammar:
   #   s-ns-plain-next-line(n,c)*
 
   # @::ns_plain_multi_line.num = 135
-  def ns_plain_multi_line(n, c):
+  def ns_plain_multi_line(self, n, c):
     debug_rule("ns_plain_multi_line",n,c)
     return self.all(
       [ self.ns_plain_one_line, c ],
@@ -2073,7 +2076,7 @@ class Grammar:
   #   ns-s-flow-seq-entries(n,in-flow(c))? ']'
 
   # @::c_flow_sequence.num = 137
-  def c_flow_sequence(n, c):
+  def c_flow_sequence(self, n, c):
     debug_rule("c_flow_sequence",n,c)
     return self.all(
       self.chr('['),
@@ -2092,7 +2095,7 @@ class Grammar:
   #   ns-s-flow-seq-entries(n,c)? )?
 
   # @::ns_s_flow_seq_entries.num = 138
-  def ns_s_flow_seq_entries(n, c):
+  def ns_s_flow_seq_entries(self, n, c):
     debug_rule("ns_s_flow_seq_entries",n,c)
     return self.all(
       [ self.ns_flow_seq_entry, n, c ],
@@ -2112,7 +2115,7 @@ class Grammar:
   #   ns-flow-pair(n,c) | ns-flow-node(n,c)
 
   # @::ns_flow_seq_entry.num = 139
-  def ns_flow_seq_entry(n, c):
+  def ns_flow_seq_entry(self, n, c):
     debug_rule("ns_flow_seq_entry",n,c)
     return self.any(
       [ self.ns_flow_pair, n, c ],
@@ -2127,7 +2130,7 @@ class Grammar:
   #   ns-s-flow-map-entries(n,in-flow(c))? '}'
 
   # @::c_flow_mapping.num = 140
-  def c_flow_mapping(n, c):
+  def c_flow_mapping(self, n, c):
     debug_rule("c_flow_mapping",n,c)
     return self.all(
       self.chr('{'),
@@ -2146,7 +2149,7 @@ class Grammar:
   #   ns-s-flow-map-entries(n,c)? )?
 
   # @::ns_s_flow_map_entries.num = 141
-  def ns_s_flow_map_entries(n, c):
+  def ns_s_flow_map_entries(self, n, c):
     debug_rule("ns_s_flow_map_entries",n,c)
     return self.all(
       [ self.ns_flow_map_entry, n, c ],
@@ -2168,7 +2171,7 @@ class Grammar:
   #   | ns-flow-map-implicit-entry(n,c)
 
   # @::ns_flow_map_entry.num = 142
-  def ns_flow_map_entry(n, c):
+  def ns_flow_map_entry(self, n, c):
     debug_rule("ns_flow_map_entry",n,c)
     return self.any(
       self.all(
@@ -2188,7 +2191,7 @@ class Grammar:
   #   e-node )
 
   # @::ns_flow_map_explicit_entry.num = 143
-  def ns_flow_map_explicit_entry(n, c):
+  def ns_flow_map_explicit_entry(self, n, c):
     debug_rule("ns_flow_map_explicit_entry",n,c)
     return self.any(
       [ self.ns_flow_map_implicit_entry, n, c ],
@@ -2207,7 +2210,7 @@ class Grammar:
   #   | c-ns-flow-map-json-key-entry(n,c)
 
   # @::ns_flow_map_implicit_entry.num = 144
-  def ns_flow_map_implicit_entry(n, c):
+  def ns_flow_map_implicit_entry(self, n, c):
     debug_rule("ns_flow_map_implicit_entry",n,c)
     return self.any(
       [ self.ns_flow_map_yaml_key_entry, n, c ],
@@ -2225,7 +2228,7 @@ class Grammar:
   #   | e-node )
 
   # @::ns_flow_map_yaml_key_entry.num = 145
-  def ns_flow_map_yaml_key_entry(n, c):
+  def ns_flow_map_yaml_key_entry(self, n, c):
     debug_rule("ns_flow_map_yaml_key_entry",n,c)
     return self.all(
       [ self.ns_flow_yaml_node, n, c ],
@@ -2246,7 +2249,7 @@ class Grammar:
   #   c-ns-flow-map-separate-value(n,c)
 
   # @::c_ns_flow_map_empty_key_entry.num = 146
-  def c_ns_flow_map_empty_key_entry(n, c):
+  def c_ns_flow_map_empty_key_entry(self, n, c):
     debug_rule("c_ns_flow_map_empty_key_entry",n,c)
     return self.all(
       self.e_node,
@@ -2262,7 +2265,7 @@ class Grammar:
   #   | e-node )
 
   # @::c_ns_flow_map_separate_value.num = 147
-  def c_ns_flow_map_separate_value(n, c):
+  def c_ns_flow_map_separate_value(self, n, c):
     debug_rule("c_ns_flow_map_separate_value",n,c)
     return self.all(
       self.chr(':'),
@@ -2286,7 +2289,7 @@ class Grammar:
   #   | e-node )
 
   # @::c_ns_flow_map_json_key_entry.num = 148
-  def c_ns_flow_map_json_key_entry(n, c):
+  def c_ns_flow_map_json_key_entry(self, n, c):
     debug_rule("c_ns_flow_map_json_key_entry",n,c)
     return self.all(
       [ self.c_flow_json_node, n, c ],
@@ -2309,7 +2312,7 @@ class Grammar:
   #   | e-node )
 
   # @::c_ns_flow_map_adjacent_value.num = 149
-  def c_ns_flow_map_adjacent_value(n, c):
+  def c_ns_flow_map_adjacent_value(self, n, c):
     debug_rule("c_ns_flow_map_adjacent_value",n,c)
     return self.all(
       self.chr(':'),
@@ -2331,7 +2334,7 @@ class Grammar:
   #   | ns-flow-pair-entry(n,c)
 
   # @::ns_flow_pair.num = 150
-  def ns_flow_pair(n, c):
+  def ns_flow_pair(self, n, c):
     debug_rule("ns_flow_pair",n,c)
     return self.any(
       self.all(
@@ -2351,7 +2354,7 @@ class Grammar:
   #   | c-ns-flow-pair-json-key-entry(n,c)
 
   # @::ns_flow_pair_entry.num = 151
-  def ns_flow_pair_entry(n, c):
+  def ns_flow_pair_entry(self, n, c):
     debug_rule("ns_flow_pair_entry",n,c)
     return self.any(
       [ self.ns_flow_pair_yaml_key_entry, n, c ],
@@ -2367,7 +2370,7 @@ class Grammar:
   #   c-ns-flow-map-separate-value(n,c)
 
   # @::ns_flow_pair_yaml_key_entry.num = 152
-  def ns_flow_pair_yaml_key_entry(n, c):
+  def ns_flow_pair_yaml_key_entry(self, n, c):
     debug_rule("ns_flow_pair_yaml_key_entry",n,c)
     return self.all(
       [ self.ns_s_implicit_yaml_key, "flow-key" ],
@@ -2382,7 +2385,7 @@ class Grammar:
   #   c-ns-flow-map-adjacent-value(n,c)
 
   # @::c_ns_flow_pair_json_key_entry.num = 153
-  def c_ns_flow_pair_json_key_entry(n, c):
+  def c_ns_flow_pair_json_key_entry(self, n, c):
     debug_rule("c_ns_flow_pair_json_key_entry",n,c)
     return self.all(
       [ self.c_s_implicit_json_key, "flow-key" ],
@@ -2402,7 +2405,7 @@ class Grammar:
     debug_rule("ns_s_implicit_yaml_key",c)
     return self.all(
       self.max(1024),
-      [ self.ns_flow_yaml_node, null, c ],
+      [ self.ns_flow_yaml_node, None, c ],
       self.rep(0, 1, self.s_separate_in_line)
     )
 
@@ -2419,7 +2422,7 @@ class Grammar:
     debug_rule("c_s_implicit_json_key",c)
     return self.all(
       self.max(1024),
-      [ self.c_flow_json_node, null, c ],
+      [ self.c_flow_json_node, None, c ],
       self.rep(0, 1, self.s_separate_in_line)
     )
 
@@ -2430,7 +2433,7 @@ class Grammar:
   #   ns-plain(n,c)
 
   # @::ns_flow_yaml_content.num = 156
-  def ns_flow_yaml_content(n, c):
+  def ns_flow_yaml_content(self, n, c):
     debug_rule("ns_flow_yaml_content",n,c)
     return [ self.ns_plain, n, c ]
 
@@ -2442,7 +2445,7 @@ class Grammar:
   #   | c-single-quoted(n,c) | c-double-quoted(n,c)
 
   # @::c_flow_json_content.num = 157
-  def c_flow_json_content(n, c):
+  def c_flow_json_content(self, n, c):
     debug_rule("c_flow_json_content",n,c)
     return self.any(
       [ self.c_flow_sequence, n, c ],
@@ -2458,7 +2461,7 @@ class Grammar:
   #   ns-flow-yaml-content(n,c) | c-flow-json-content(n,c)
 
   # @::ns_flow_content.num = 158
-  def ns_flow_content(n, c):
+  def ns_flow_content(self, n, c):
     debug_rule("ns_flow_content",n,c)
     return self.any(
       [ self.ns_flow_yaml_content, n, c ],
@@ -2477,7 +2480,7 @@ class Grammar:
   #   | e-scalar ) )
 
   # @::ns_flow_yaml_node.num = 159
-  def ns_flow_yaml_node(n, c):
+  def ns_flow_yaml_node(self, n, c):
     debug_rule("ns_flow_yaml_node",n,c)
     return self.any(
       self.c_ns_alias_node,
@@ -2503,7 +2506,7 @@ class Grammar:
   #   c-flow-json-content(n,c)
 
   # @::c_flow_json_node.num = 160
-  def c_flow_json_node(n, c):
+  def c_flow_json_node(self, n, c):
     debug_rule("c_flow_json_node",n,c)
     return self.all(
       self.rep(0, 1,
@@ -2526,7 +2529,7 @@ class Grammar:
   #   | e-scalar ) )
 
   # @::ns_flow_node.num = 161
-  def ns_flow_node(n, c):
+  def ns_flow_node(self, n, c):
     debug_rule("ns_flow_node",n,c)
     return self.any(
       self.c_ns_alias_node,
@@ -2554,7 +2557,7 @@ class Grammar:
   #   s-b-comment
 
   # @::c_b_block_header.num = 162
-  def c_b_block_header(m, t):
+  def c_b_block_header(self, m, t):
     debug_rule("c_b_block_header",m,t)
     return self.all(
       self.any(
@@ -2631,7 +2634,7 @@ class Grammar:
   #   ( t = keep => l-keep-empty(n) )
 
   # @::l_chomped_empty.num = 166
-  def l_chomped_empty(n, t):
+  def l_chomped_empty(self, n, t):
     debug_rule("l_chomped_empty",n,t)
     return self.case(
       t,
@@ -2751,7 +2754,7 @@ class Grammar:
   #   l-chomped-empty(n,t)
 
   # @::l_literal_content.num = 173
-  def l_literal_content(n, t):
+  def l_literal_content(self, n, t):
     debug_rule("l_literal_content",n,t)
     return self.all(
       self.rep(0, 1,
@@ -2910,7 +2913,7 @@ class Grammar:
   #   l-chomped-empty(n,t)
 
   # @::l_folded_content.num = 182
-  def l_folded_content(n, t):
+  def l_folded_content(self, n, t):
     debug_rule("l_folded_content",n,t)
     return self.all(
       self.rep(0, 1,
@@ -2968,7 +2971,7 @@ class Grammar:
   #   | ( e-node s-l-comments )
 
   # @::s_l_block_indented.num = 185
-  def s_l_block_indented(n, c):
+  def s_l_block_indented(self, n, c):
     debug_rule("s_l_block_indented",n,c)
     return self.any(
       self.all(
@@ -3172,7 +3175,7 @@ class Grammar:
   #   s-l+block-in-block(n,c) | s-l+flow-in-block(n)
 
   # @::s_l_block_node.num = 196
-  def s_l_block_node(n, c):
+  def s_l_block_node(self, n, c):
     debug_rule("s_l_block_node",n,c)
     return self.any(
       [ self.s_l_block_in_block, n, c ],
@@ -3202,7 +3205,7 @@ class Grammar:
   #   s-l+block-scalar(n,c) | s-l+block-collection(n,c)
 
   # @::s_l_block_in_block.num = 198
-  def s_l_block_in_block(n, c):
+  def s_l_block_in_block(self, n, c):
     debug_rule("s_l_block_in_block",n,c)
     return self.any(
       [ self.s_l_block_scalar, n, c ],
@@ -3218,7 +3221,7 @@ class Grammar:
   #   ( c-l+literal(n) | c-l+folded(n) )
 
   # @::s_l_block_scalar.num = 199
-  def s_l_block_scalar(n, c):
+  def s_l_block_scalar(self, n, c):
     debug_rule("s_l_block_scalar",n,c)
     return self.all(
       [ self.s_separate, self.add(n, 1), c ],
@@ -3244,7 +3247,7 @@ class Grammar:
   #   | l+block-mapping(n) )
 
   # @::s_l_block_collection.num = 200
-  def s_l_block_collection(n, c):
+  def s_l_block_collection(self, n, c):
     debug_rule("s_l_block_collection",n,c)
     return self.all(
       self.rep(0, 1,
@@ -3267,7 +3270,7 @@ class Grammar:
   #   ( c = block-in => n )
 
   # @::seq_spaces.num = 201
-  def seq_spaces(n, c):
+  def seq_spaces(self, n, c):
     debug_rule("seq_spaces",n,c)
     return self.flip(
       c,

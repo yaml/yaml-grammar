@@ -9,6 +9,9 @@ global.generator_class = \
     """\
     # #{@gen_grammar_info()}
     __all__ = ["Grammar"]
+
+    from prelude import *
+
     class Grammar:
 
       def TOP(self):
@@ -32,7 +35,8 @@ global.generator_class = \
     @args = rule['(...)']
     return '(self)' unless @args?
     delete rule['(...)']
-    @args = [ 'self', @args ] unless _.isArray @args
+    @args = [ @args ] unless _.isArray @args
+    @args.unshift 'self'
     "(#{@args.join ', '})"
 
   gen_debug_args: (name)->
@@ -48,18 +52,18 @@ global.generator_class = \
 
   gen_hex_code: (hex)->
     if hex.length == 2
-      return "'\\x#{hex}'.decode('unicode-escape')"
+      return "'\\x#{hex}'"
     if hex.length == 4
-      return "'\\u#{hex}'.decode('unicode-escape')"
+      return "'\\u#{hex}'"
     if hex.length == 6
-      return "'\\U00#{hex}'.decode('unicode-escape')"
+      return "'\\U00#{hex}'"
     if hex.length == 8
-      return "'\\U#{hex}'.decode('unicode-escape')"
+      return "'\\U#{hex}'"
     XXX hex
 
   gen_pair_sep: -> ': '
 
-  gen_null: -> 'null'
+  gen_null: -> 'None'
 
   gen_method_call: (method, args...)->
     if method == 'if'
