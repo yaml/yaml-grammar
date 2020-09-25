@@ -939,7 +939,7 @@ rule '064', s_indent_lt => sub {
   debug_rule("s_indent_lt",$n) if DEBUG;
   $self->may(
     $self->all(
-      $self->rep(0, 0, $self->func('s_space')),
+      $self->rep(0, -1, $self->func('s_space')),
       $self->lt($self->len($self->func('match')), $n)
     )
   );
@@ -956,7 +956,7 @@ rule '065', s_indent_le => sub {
   debug_rule("s_indent_le",$n) if DEBUG;
   $self->may(
     $self->all(
-      $self->rep(0, 0, $self->func('s_space')),
+      $self->rep(0, -1, $self->func('s_space')),
       $self->le($self->len($self->func('match')), $n)
     )
   );
@@ -972,7 +972,7 @@ rule '066', s_separate_in_line => sub {
   my ($self) = @_;
   debug_rule("s_separate_in_line") if DEBUG;
   $self->any(
-    $self->rep(1, 0, $self->func('s_white')),
+    $self->rep(1, -1, $self->func('s_white')),
     $self->func('start_of_line')
   );
 };
@@ -1058,7 +1058,7 @@ rule '071', b_l_trimmed => sub {
   debug_rule("b_l_trimmed",$n,$c) if DEBUG;
   $self->all(
     $self->func('b_non_content'),
-    $self->rep(1, 0, [ $self->func('l_empty'), $n, $c ])
+    $self->rep(1, -1, [ $self->func('l_empty'), $n, $c ])
   );
 };
 
@@ -1118,7 +1118,7 @@ rule '075', c_nb_comment_text => sub {
   debug_rule("c_nb_comment_text") if DEBUG;
   $self->all(
     $self->chr('#'),
-    $self->rep(0, 0, $self->func('nb_char'))
+    $self->rep(0, -1, $self->func('nb_char'))
   );
 };
 
@@ -1190,7 +1190,7 @@ rule '079', s_l_comments => sub {
       $self->func('s_b_comment'),
       $self->func('start_of_line')
     ),
-    $self->rep(0, 0, $self->func('l_comment'))
+    $self->rep(0, -1, $self->func('l_comment'))
   );
 };
 
@@ -1277,7 +1277,9 @@ rule '083', ns_reserved_directive => sub {
   debug_rule("ns_reserved_directive") if DEBUG;
   $self->all(
     $self->func('ns_directive_name'),
-    $self->rep(0, 0,
+    $self->rep(
+      0,
+      -1,
       $self->all(
         $self->func('s_separate_in_line'),
         $self->func('ns_directive_parameter')
@@ -1294,7 +1296,7 @@ rule '083', ns_reserved_directive => sub {
 rule '084', ns_directive_name => sub {
   my ($self) = @_;
   debug_rule("ns_directive_name") if DEBUG;
-  $self->rep(1, 0, $self->func('ns_char'));
+  $self->rep(1, -1, $self->func('ns_char'));
 };
 
 
@@ -1306,7 +1308,7 @@ rule '084', ns_directive_name => sub {
 rule '085', ns_directive_parameter => sub {
   my ($self) = @_;
   debug_rule("ns_directive_parameter") if DEBUG;
-  $self->rep(1, 0, $self->func('ns_char'));
+  $self->rep(1, -1, $self->func('ns_char'));
 };
 
 
@@ -1339,9 +1341,9 @@ rule '087', ns_yaml_version => sub {
   my ($self) = @_;
   debug_rule("ns_yaml_version") if DEBUG;
   $self->all(
-    $self->rep(1, 0, $self->func('ns_dec_digit')),
+    $self->rep(1, -1, $self->func('ns_dec_digit')),
     $self->chr('.'),
-    $self->rep(1, 0, $self->func('ns_dec_digit'))
+    $self->rep(1, -1, $self->func('ns_dec_digit'))
   );
 };
 
@@ -1423,7 +1425,7 @@ rule '092', c_named_tag_handle => sub {
   debug_rule("c_named_tag_handle") if DEBUG;
   $self->all(
     $self->chr('!'),
-    $self->rep(1, 0, $self->func('ns_word_char')),
+    $self->rep(1, -1, $self->func('ns_word_char')),
     $self->chr('!')
   );
 };
@@ -1454,7 +1456,7 @@ rule '094', c_ns_local_tag_prefix => sub {
   debug_rule("c_ns_local_tag_prefix") if DEBUG;
   $self->all(
     $self->chr('!'),
-    $self->rep(0, 0, $self->func('ns_uri_char'))
+    $self->rep(0, -1, $self->func('ns_uri_char'))
   );
 };
 
@@ -1469,7 +1471,7 @@ rule '095', ns_global_tag_prefix => sub {
   debug_rule("ns_global_tag_prefix") if DEBUG;
   $self->all(
     $self->func('ns_tag_char'),
-    $self->rep(0, 0, $self->func('ns_uri_char'))
+    $self->rep(0, -1, $self->func('ns_uri_char'))
   );
 };
 
@@ -1535,7 +1537,7 @@ rule '098', c_verbatim_tag => sub {
   $self->all(
     $self->chr('!'),
     $self->chr('<'),
-    $self->rep(1, 0, $self->func('ns_uri_char')),
+    $self->rep(1, -1, $self->func('ns_uri_char')),
     $self->chr('>')
   );
 };
@@ -1551,7 +1553,7 @@ rule '099', c_ns_shorthand_tag => sub {
   debug_rule("c_ns_shorthand_tag") if DEBUG;
   $self->all(
     $self->func('c_tag_handle'),
-    $self->rep(1, 0, $self->func('ns_tag_char'))
+    $self->rep(1, -1, $self->func('ns_tag_char'))
   );
 };
 
@@ -1606,7 +1608,7 @@ rule '102', ns_anchor_char => sub {
 rule '103', ns_anchor_name => sub {
   my ($self) = @_;
   debug_rule("ns_anchor_name") if DEBUG;
-  $self->rep(1, 0, $self->func('ns_anchor_char'));
+  $self->rep(1, -1, $self->func('ns_anchor_char'));
 };
 
 
@@ -1731,7 +1733,7 @@ rule '110', nb_double_text => sub {
 rule '111', nb_double_one_line => sub {
   my ($self) = @_;
   debug_rule("nb_double_one_line") if DEBUG;
-  $self->rep(0, 0, $self->func('nb_double_char'));
+  $self->rep(0, -1, $self->func('nb_double_char'));
 };
 
 
@@ -1746,10 +1748,10 @@ rule '112', s_double_escaped => sub {
   my ($self, $n) = @_;
   debug_rule("s_double_escaped",$n) if DEBUG;
   $self->all(
-    $self->rep(0, 0, $self->func('s_white')),
+    $self->rep(0, -1, $self->func('s_white')),
     $self->chr("\\"),
     $self->func('b_non_content'),
-    $self->rep(0, 0, [ $self->func('l_empty'), $n, "flow-in" ]),
+    $self->rep(0, -1, [ $self->func('l_empty'), $n, "flow-in" ]),
     [ $self->func('s_flow_line_prefix'), $n ]
   );
 };
@@ -1778,9 +1780,11 @@ rule '113', s_double_break => sub {
 rule '114', nb_ns_double_in_line => sub {
   my ($self) = @_;
   debug_rule("nb_ns_double_in_line") if DEBUG;
-  $self->rep(0, 0,
+  $self->rep(
+    0,
+    -1,
     $self->all(
-      $self->rep(0, 0, $self->func('s_white')),
+      $self->rep(0, -1, $self->func('s_white')),
       $self->func('ns_double_char')
     ));
 };
@@ -1804,7 +1808,7 @@ rule '115', s_double_next_line => sub {
         $self->func('nb_ns_double_in_line'),
         $self->any(
           [ $self->func('s_double_next_line'), $n ],
-          $self->rep(0, 0, $self->func('s_white'))
+          $self->rep(0, -1, $self->func('s_white'))
         )
       ))
   );
@@ -1824,7 +1828,7 @@ rule '116', nb_double_multi_line => sub {
     $self->func('nb_ns_double_in_line'),
     $self->any(
       [ $self->func('s_double_next_line'), $n ],
-      $self->rep(0, 0, $self->func('s_white'))
+      $self->rep(0, -1, $self->func('s_white'))
     )
   );
 };
@@ -1926,7 +1930,7 @@ rule '121', nb_single_text => sub {
 rule '122', nb_single_one_line => sub {
   my ($self) = @_;
   debug_rule("nb_single_one_line") if DEBUG;
-  $self->rep(0, 0, $self->func('nb_single_char'));
+  $self->rep(0, -1, $self->func('nb_single_char'));
 };
 
 
@@ -1938,9 +1942,11 @@ rule '122', nb_single_one_line => sub {
 rule '123', nb_ns_single_in_line => sub {
   my ($self) = @_;
   debug_rule("nb_ns_single_in_line") if DEBUG;
-  $self->rep(0, 0,
+  $self->rep(
+    0,
+    -1,
     $self->all(
-      $self->rep(0, 0, $self->func('s_white')),
+      $self->rep(0, -1, $self->func('s_white')),
       $self->func('ns_single_char')
     ));
 };
@@ -1964,7 +1970,7 @@ rule '124', s_single_next_line => sub {
         $self->func('nb_ns_single_in_line'),
         $self->any(
           [ $self->func('s_single_next_line'), $n ],
-          $self->rep(0, 0, $self->func('s_white'))
+          $self->rep(0, -1, $self->func('s_white'))
         )
       ))
   );
@@ -1984,7 +1990,7 @@ rule '125', nb_single_multi_line => sub {
     $self->func('nb_ns_single_in_line'),
     $self->any(
       [ $self->func('s_single_next_line'), $n ],
-      $self->rep(0, 0, $self->func('s_white'))
+      $self->rep(0, -1, $self->func('s_white'))
     )
   );
 };
@@ -2127,9 +2133,11 @@ rule '131', ns_plain => sub {
 rule '132', nb_ns_plain_in_line => sub {
   my ($self, $c) = @_;
   debug_rule("nb_ns_plain_in_line",$c) if DEBUG;
-  $self->rep(0, 0,
+  $self->rep(
+    0,
+    -1,
     $self->all(
-      $self->rep(0, 0, $self->func('s_white')),
+      $self->rep(0, -1, $self->func('s_white')),
       [ $self->func('ns_plain_char'), $c ]
     ));
 };
@@ -2179,7 +2187,7 @@ rule '135', ns_plain_multi_line => sub {
   debug_rule("ns_plain_multi_line",$n,$c) if DEBUG;
   $self->all(
     [ $self->func('ns_plain_one_line'), $c ],
-    $self->rep(0, 0, [ $self->func('s_ns_plain_next_line'), $n, $c ])
+    $self->rep(0, -1, [ $self->func('s_ns_plain_next_line'), $n, $c ])
   );
 };
 
@@ -2824,7 +2832,9 @@ rule '167', l_strip_empty => sub {
   my ($self, $n) = @_;
   debug_rule("l_strip_empty",$n) if DEBUG;
   $self->all(
-    $self->rep(0, 0,
+    $self->rep(
+      0,
+      -1,
       $self->all(
         [ $self->func('s_indent_le'), $n ],
         $self->func('b_non_content')
@@ -2844,7 +2854,7 @@ rule '168', l_keep_empty => sub {
   my ($self, $n) = @_;
   debug_rule("l_keep_empty",$n) if DEBUG;
   $self->all(
-    $self->rep(0, 0, [ $self->func('l_empty'), $n, "block-in" ]),
+    $self->rep(0, -1, [ $self->func('l_empty'), $n, "block-in" ]),
     $self->rep(0, 1, [ $self->func('l_trail_comments'), $n ])
   );
 };
@@ -2864,7 +2874,7 @@ rule '169', l_trail_comments => sub {
     [ $self->func('s_indent_lt'), $n ],
     $self->func('c_nb_comment_text'),
     $self->func('b_comment'),
-    $self->rep(0, 0, $self->func('l_comment'))
+    $self->rep(0, -1, $self->func('l_comment'))
   );
 };
 
@@ -2896,9 +2906,9 @@ rule '171', l_nb_literal_text => sub {
   my ($self, $n) = @_;
   debug_rule("l_nb_literal_text",$n) if DEBUG;
   $self->all(
-    $self->rep(0, 0, [ $self->func('l_empty'), $n, "block-in" ]),
+    $self->rep(0, -1, [ $self->func('l_empty'), $n, "block-in" ]),
     [ $self->func('s_indent'), $n ],
-    $self->rep(1, 0, $self->func('nb_char'))
+    $self->rep(1, -1, $self->func('nb_char'))
   );
 };
 
@@ -2934,7 +2944,7 @@ rule '173', l_literal_content => sub {
     $self->rep(0, 1,
       $self->all(
         [ $self->func('l_nb_literal_text'), $n ],
-        $self->rep(0, 0, [ $self->func('b_nb_literal_next'), $n ]),
+        $self->rep(0, -1, [ $self->func('b_nb_literal_next'), $n ]),
         [ $self->func('b_chomped_last'), $t ]
       )),
     [ $self->func('l_chomped_empty'), $n, $t ]
@@ -2971,7 +2981,7 @@ rule '175', s_nb_folded_text => sub {
   $self->all(
     [ $self->func('s_indent'), $n ],
     $self->func('ns_char'),
-    $self->rep(0, 0, $self->func('nb_char'))
+    $self->rep(0, -1, $self->func('nb_char'))
   );
 };
 
@@ -2987,7 +2997,9 @@ rule '176', l_nb_folded_lines => sub {
   debug_rule("l_nb_folded_lines",$n) if DEBUG;
   $self->all(
     [ $self->func('s_nb_folded_text'), $n ],
-    $self->rep(0, 0,
+    $self->rep(
+      0,
+      -1,
       $self->all(
         [ $self->func('b_l_folded'), $n, "block-in" ],
         [ $self->func('s_nb_folded_text'), $n ]
@@ -3008,7 +3020,7 @@ rule '177', s_nb_spaced_text => sub {
   $self->all(
     [ $self->func('s_indent'), $n ],
     $self->func('s_white'),
-    $self->rep(0, 0, $self->func('nb_char'))
+    $self->rep(0, -1, $self->func('nb_char'))
   );
 };
 
@@ -3024,7 +3036,7 @@ rule '178', b_l_spaced => sub {
   debug_rule("b_l_spaced",$n) if DEBUG;
   $self->all(
     $self->func('b_as_line_feed'),
-    $self->rep(0, 0, [ $self->func('l_empty'), $n, "block-in" ])
+    $self->rep(0, -1, [ $self->func('l_empty'), $n, "block-in" ])
   );
 };
 
@@ -3040,7 +3052,9 @@ rule '179', l_nb_spaced_lines => sub {
   debug_rule("l_nb_spaced_lines",$n) if DEBUG;
   $self->all(
     [ $self->func('s_nb_spaced_text'), $n ],
-    $self->rep(0, 0,
+    $self->rep(
+      0,
+      -1,
       $self->all(
         [ $self->func('b_l_spaced'), $n ],
         [ $self->func('s_nb_spaced_text'), $n ]
@@ -3059,7 +3073,7 @@ rule '180', l_nb_same_lines => sub {
   my ($self, $n) = @_;
   debug_rule("l_nb_same_lines",$n) if DEBUG;
   $self->all(
-    $self->rep(0, 0, [ $self->func('l_empty'), $n, "block-in" ]),
+    $self->rep(0, -1, [ $self->func('l_empty'), $n, "block-in" ]),
     $self->any(
       [ $self->func('l_nb_folded_lines'), $n ],
       [ $self->func('l_nb_spaced_lines'), $n ]
@@ -3079,7 +3093,9 @@ rule '181', l_nb_diff_lines => sub {
   debug_rule("l_nb_diff_lines",$n) if DEBUG;
   $self->all(
     [ $self->func('l_nb_same_lines'), $n ],
-    $self->rep(0, 0,
+    $self->rep(
+      0,
+      -1,
       $self->all(
         $self->func('b_as_line_feed'),
         [ $self->func('l_nb_same_lines'), $n ]
@@ -3121,7 +3137,9 @@ rule '183', l_block_sequence => sub {
   debug_rule("l_block_sequence",$n) if DEBUG;
   $self->all(
     $self->set('m', $self->func('auto_detect_indent')),
-    $self->rep(1, 0,
+    $self->rep(
+      1,
+      -1,
       $self->all(
         [ $self->func('s_indent'), $self->add($n, $self->m()) ],
         [ $self->func('c_l_block_seq_entry'), $self->add($n, $self->m()) ]
@@ -3187,7 +3205,9 @@ rule '186', ns_l_compact_sequence => sub {
   debug_rule("ns_l_compact_sequence",$n) if DEBUG;
   $self->all(
     [ $self->func('c_l_block_seq_entry'), $n ],
-    $self->rep(0, 0,
+    $self->rep(
+      0,
+      -1,
       $self->all(
         [ $self->func('s_indent'), $n ],
         [ $self->func('c_l_block_seq_entry'), $n ]
@@ -3208,7 +3228,9 @@ rule '187', l_block_mapping => sub {
   debug_rule("l_block_mapping",$n) if DEBUG;
   $self->all(
     $self->set('m', $self->func('auto_detect_indent')),
-    $self->rep(1, 0,
+    $self->rep(
+      1,
+      -1,
       $self->all(
         [ $self->func('s_indent'), $self->add($n, $self->m()) ],
         [ $self->func('ns_l_block_map_entry'), $self->add($n, $self->m()) ]
@@ -3357,7 +3379,9 @@ rule '195', ns_l_compact_mapping => sub {
   debug_rule("ns_l_compact_mapping",$n) if DEBUG;
   $self->all(
     [ $self->func('ns_l_block_map_entry'), $n ],
-    $self->rep(0, 0,
+    $self->rep(
+      0,
+      -1,
       $self->all(
         [ $self->func('s_indent'), $n ],
         [ $self->func('ns_l_block_map_entry'), $n ]
@@ -3494,7 +3518,7 @@ rule '202', l_document_prefix => sub {
   debug_rule("l_document_prefix") if DEBUG;
   $self->all(
     $self->rep(0, 1, $self->func('c_byte_order_mark')),
-    $self->rep(0, 0, $self->func('l_comment'))
+    $self->rep(0, -1, $self->func('l_comment'))
   );
 };
 
@@ -3620,7 +3644,7 @@ rule '209', l_directive_document => sub {
   my ($self) = @_;
   debug_rule("l_directive_document") if DEBUG;
   $self->all(
-    $self->rep(1, 0, $self->func('l_directive')),
+    $self->rep(1, -1, $self->func('l_directive')),
     $self->func('l_explicit_document')
   );
 };
@@ -3658,11 +3682,13 @@ rule '211', l_yaml_stream => sub {
   $self->all(
     $self->func('l_document_prefix'),
     $self->rep(0, 1, $self->func('l_any_document')),
-    $self->rep(0, 0,
+    $self->rep(
+      0,
+      -1,
       $self->any(
         $self->all(
           $self->func('l_document_suffix'),
-          $self->rep(0, 0, $self->func('l_document_prefix')),
+          $self->rep(0, -1, $self->func('l_document_prefix')),
           $self->rep(0, 1, $self->func('l_any_document'))
         ),
         $self->all(

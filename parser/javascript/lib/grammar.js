@@ -328,17 +328,17 @@
 
       s_indent_lt(n) {
         debug_rule("s_indent_lt", n);
-        return this.may(this.all(this.rep(0, 0, this.s_space), this.lt(this.len(this.match), n)));
+        return this.may(this.all(this.rep(0, -1, this.s_space), this.lt(this.len(this.match), n)));
       }
 
       s_indent_le(n) {
         debug_rule("s_indent_le", n);
-        return this.may(this.all(this.rep(0, 0, this.s_space), this.le(this.len(this.match), n)));
+        return this.may(this.all(this.rep(0, -1, this.s_space), this.le(this.len(this.match), n)));
       }
 
       s_separate_in_line() {
         debug_rule("s_separate_in_line");
-        return this.any(this.rep(1, 0, this.s_white), this.start_of_line);
+        return this.any(this.rep(1, -1, this.s_white), this.start_of_line);
       }
 
       s_line_prefix(n, c) {
@@ -368,7 +368,7 @@
 
       b_l_trimmed(n, c) {
         debug_rule("b_l_trimmed", n, c);
-        return this.all(this.b_non_content, this.rep(1, 0, [this.l_empty, n, c]));
+        return this.all(this.b_non_content, this.rep(1, -1, [this.l_empty, n, c]));
       }
 
       b_as_space() {
@@ -388,7 +388,7 @@
 
       c_nb_comment_text() {
         debug_rule("c_nb_comment_text");
-        return this.all(this.chr('#'), this.rep(0, 0, this.nb_char));
+        return this.all(this.chr('#'), this.rep(0, -1, this.nb_char));
       }
 
       b_comment() {
@@ -408,7 +408,7 @@
 
       s_l_comments() {
         debug_rule("s_l_comments");
-        return this.all(this.any(this.s_b_comment, this.start_of_line), this.rep(0, 0, this.l_comment));
+        return this.all(this.any(this.s_b_comment, this.start_of_line), this.rep(0, -1, this.l_comment));
       }
 
       s_separate(n, c) {
@@ -435,17 +435,17 @@
 
       ns_reserved_directive() {
         debug_rule("ns_reserved_directive");
-        return this.all(this.ns_directive_name, this.rep(0, 0, this.all(this.s_separate_in_line, this.ns_directive_parameter)));
+        return this.all(this.ns_directive_name, this.rep(0, -1, this.all(this.s_separate_in_line, this.ns_directive_parameter)));
       }
 
       ns_directive_name() {
         debug_rule("ns_directive_name");
-        return this.rep(1, 0, this.ns_char);
+        return this.rep(1, -1, this.ns_char);
       }
 
       ns_directive_parameter() {
         debug_rule("ns_directive_parameter");
-        return this.rep(1, 0, this.ns_char);
+        return this.rep(1, -1, this.ns_char);
       }
 
       ns_yaml_directive() {
@@ -455,7 +455,7 @@
 
       ns_yaml_version() {
         debug_rule("ns_yaml_version");
-        return this.all(this.rep(1, 0, this.ns_dec_digit), this.chr('.'), this.rep(1, 0, this.ns_dec_digit));
+        return this.all(this.rep(1, -1, this.ns_dec_digit), this.chr('.'), this.rep(1, -1, this.ns_dec_digit));
       }
 
       ns_tag_directive() {
@@ -480,7 +480,7 @@
 
       c_named_tag_handle() {
         debug_rule("c_named_tag_handle");
-        return this.all(this.chr('!'), this.rep(1, 0, this.ns_word_char), this.chr('!'));
+        return this.all(this.chr('!'), this.rep(1, -1, this.ns_word_char), this.chr('!'));
       }
 
       ns_tag_prefix() {
@@ -490,12 +490,12 @@
 
       c_ns_local_tag_prefix() {
         debug_rule("c_ns_local_tag_prefix");
-        return this.all(this.chr('!'), this.rep(0, 0, this.ns_uri_char));
+        return this.all(this.chr('!'), this.rep(0, -1, this.ns_uri_char));
       }
 
       ns_global_tag_prefix() {
         debug_rule("ns_global_tag_prefix");
-        return this.all(this.ns_tag_char, this.rep(0, 0, this.ns_uri_char));
+        return this.all(this.ns_tag_char, this.rep(0, -1, this.ns_uri_char));
       }
 
       c_ns_properties(n, c) {
@@ -510,12 +510,12 @@
 
       c_verbatim_tag() {
         debug_rule("c_verbatim_tag");
-        return this.all(this.chr('!'), this.chr('<'), this.rep(1, 0, this.ns_uri_char), this.chr('>'));
+        return this.all(this.chr('!'), this.chr('<'), this.rep(1, -1, this.ns_uri_char), this.chr('>'));
       }
 
       c_ns_shorthand_tag() {
         debug_rule("c_ns_shorthand_tag");
-        return this.all(this.c_tag_handle, this.rep(1, 0, this.ns_tag_char));
+        return this.all(this.c_tag_handle, this.rep(1, -1, this.ns_tag_char));
       }
 
       c_non_specific_tag() {
@@ -535,7 +535,7 @@
 
       ns_anchor_name() {
         debug_rule("ns_anchor_name");
-        return this.rep(1, 0, this.ns_anchor_char);
+        return this.rep(1, -1, this.ns_anchor_char);
       }
 
       c_ns_alias_node() {
@@ -580,12 +580,12 @@
 
       nb_double_one_line() {
         debug_rule("nb_double_one_line");
-        return this.rep(0, 0, this.nb_double_char);
+        return this.rep(0, -1, this.nb_double_char);
       }
 
       s_double_escaped(n) {
         debug_rule("s_double_escaped", n);
-        return this.all(this.rep(0, 0, this.s_white), this.chr("\\"), this.b_non_content, this.rep(0, 0, [this.l_empty, n, "flow-in"]), [this.s_flow_line_prefix, n]);
+        return this.all(this.rep(0, -1, this.s_white), this.chr("\\"), this.b_non_content, this.rep(0, -1, [this.l_empty, n, "flow-in"]), [this.s_flow_line_prefix, n]);
       }
 
       s_double_break(n) {
@@ -595,17 +595,17 @@
 
       nb_ns_double_in_line() {
         debug_rule("nb_ns_double_in_line");
-        return this.rep(0, 0, this.all(this.rep(0, 0, this.s_white), this.ns_double_char));
+        return this.rep(0, -1, this.all(this.rep(0, -1, this.s_white), this.ns_double_char));
       }
 
       s_double_next_line(n) {
         debug_rule("s_double_next_line", n);
-        return this.all([this.s_double_break, n], this.rep(0, 1, this.all(this.ns_double_char, this.nb_ns_double_in_line, this.any([this.s_double_next_line, n], this.rep(0, 0, this.s_white)))));
+        return this.all([this.s_double_break, n], this.rep(0, 1, this.all(this.ns_double_char, this.nb_ns_double_in_line, this.any([this.s_double_next_line, n], this.rep(0, -1, this.s_white)))));
       }
 
       nb_double_multi_line(n) {
         debug_rule("nb_double_multi_line", n);
-        return this.all(this.nb_ns_double_in_line, this.any([this.s_double_next_line, n], this.rep(0, 0, this.s_white)));
+        return this.all(this.nb_ns_double_in_line, this.any([this.s_double_next_line, n], this.rep(0, -1, this.s_white)));
       }
 
       c_quoted_quote() {
@@ -640,22 +640,22 @@
 
       nb_single_one_line() {
         debug_rule("nb_single_one_line");
-        return this.rep(0, 0, this.nb_single_char);
+        return this.rep(0, -1, this.nb_single_char);
       }
 
       nb_ns_single_in_line() {
         debug_rule("nb_ns_single_in_line");
-        return this.rep(0, 0, this.all(this.rep(0, 0, this.s_white), this.ns_single_char));
+        return this.rep(0, -1, this.all(this.rep(0, -1, this.s_white), this.ns_single_char));
       }
 
       s_single_next_line(n) {
         debug_rule("s_single_next_line", n);
-        return this.all([this.s_flow_folded, n], this.rep(0, 1, this.all(this.ns_single_char, this.nb_ns_single_in_line, this.any([this.s_single_next_line, n], this.rep(0, 0, this.s_white)))));
+        return this.all([this.s_flow_folded, n], this.rep(0, 1, this.all(this.ns_single_char, this.nb_ns_single_in_line, this.any([this.s_single_next_line, n], this.rep(0, -1, this.s_white)))));
       }
 
       nb_single_multi_line(n) {
         debug_rule("nb_single_multi_line", n);
-        return this.all(this.nb_ns_single_in_line, this.any([this.s_single_next_line, n], this.rep(0, 0, this.s_white)));
+        return this.all(this.nb_ns_single_in_line, this.any([this.s_single_next_line, n], this.rep(0, -1, this.s_white)));
       }
 
       ns_plain_first(c) {
@@ -700,7 +700,7 @@
 
       nb_ns_plain_in_line(c) {
         debug_rule("nb_ns_plain_in_line", c);
-        return this.rep(0, 0, this.all(this.rep(0, 0, this.s_white), [this.ns_plain_char, c]));
+        return this.rep(0, -1, this.all(this.rep(0, -1, this.s_white), [this.ns_plain_char, c]));
       }
 
       ns_plain_one_line(c) {
@@ -715,7 +715,7 @@
 
       ns_plain_multi_line(n, c) {
         debug_rule("ns_plain_multi_line", n, c);
-        return this.all([this.ns_plain_one_line, c], this.rep(0, 0, [this.s_ns_plain_next_line, n, c]));
+        return this.all([this.ns_plain_one_line, c], this.rep(0, -1, [this.s_ns_plain_next_line, n, c]));
       }
 
       in_flow(c) {
@@ -888,17 +888,17 @@
 
       l_strip_empty(n) {
         debug_rule("l_strip_empty", n);
-        return this.all(this.rep(0, 0, this.all([this.s_indent_le, n], this.b_non_content)), this.rep(0, 1, [this.l_trail_comments, n]));
+        return this.all(this.rep(0, -1, this.all([this.s_indent_le, n], this.b_non_content)), this.rep(0, 1, [this.l_trail_comments, n]));
       }
 
       l_keep_empty(n) {
         debug_rule("l_keep_empty", n);
-        return this.all(this.rep(0, 0, [this.l_empty, n, "block-in"]), this.rep(0, 1, [this.l_trail_comments, n]));
+        return this.all(this.rep(0, -1, [this.l_empty, n, "block-in"]), this.rep(0, 1, [this.l_trail_comments, n]));
       }
 
       l_trail_comments(n) {
         debug_rule("l_trail_comments", n);
-        return this.all([this.s_indent_lt, n], this.c_nb_comment_text, this.b_comment, this.rep(0, 0, this.l_comment));
+        return this.all([this.s_indent_lt, n], this.c_nb_comment_text, this.b_comment, this.rep(0, -1, this.l_comment));
       }
 
       c_l_literal(n) {
@@ -908,7 +908,7 @@
 
       l_nb_literal_text(n) {
         debug_rule("l_nb_literal_text", n);
-        return this.all(this.rep(0, 0, [this.l_empty, n, "block-in"]), [this.s_indent, n], this.rep(1, 0, this.nb_char));
+        return this.all(this.rep(0, -1, [this.l_empty, n, "block-in"]), [this.s_indent, n], this.rep(1, -1, this.nb_char));
       }
 
       b_nb_literal_next(n) {
@@ -918,7 +918,7 @@
 
       l_literal_content(n, t) {
         debug_rule("l_literal_content", n, t);
-        return this.all(this.rep(0, 1, this.all([this.l_nb_literal_text, n], this.rep(0, 0, [this.b_nb_literal_next, n]), [this.b_chomped_last, t])), [this.l_chomped_empty, n, t]);
+        return this.all(this.rep(0, 1, this.all([this.l_nb_literal_text, n], this.rep(0, -1, [this.b_nb_literal_next, n]), [this.b_chomped_last, t])), [this.l_chomped_empty, n, t]);
       }
 
       c_l_folded(n) {
@@ -928,37 +928,37 @@
 
       s_nb_folded_text(n) {
         debug_rule("s_nb_folded_text", n);
-        return this.all([this.s_indent, n], this.ns_char, this.rep(0, 0, this.nb_char));
+        return this.all([this.s_indent, n], this.ns_char, this.rep(0, -1, this.nb_char));
       }
 
       l_nb_folded_lines(n) {
         debug_rule("l_nb_folded_lines", n);
-        return this.all([this.s_nb_folded_text, n], this.rep(0, 0, this.all([this.b_l_folded, n, "block-in"], [this.s_nb_folded_text, n])));
+        return this.all([this.s_nb_folded_text, n], this.rep(0, -1, this.all([this.b_l_folded, n, "block-in"], [this.s_nb_folded_text, n])));
       }
 
       s_nb_spaced_text(n) {
         debug_rule("s_nb_spaced_text", n);
-        return this.all([this.s_indent, n], this.s_white, this.rep(0, 0, this.nb_char));
+        return this.all([this.s_indent, n], this.s_white, this.rep(0, -1, this.nb_char));
       }
 
       b_l_spaced(n) {
         debug_rule("b_l_spaced", n);
-        return this.all(this.b_as_line_feed, this.rep(0, 0, [this.l_empty, n, "block-in"]));
+        return this.all(this.b_as_line_feed, this.rep(0, -1, [this.l_empty, n, "block-in"]));
       }
 
       l_nb_spaced_lines(n) {
         debug_rule("l_nb_spaced_lines", n);
-        return this.all([this.s_nb_spaced_text, n], this.rep(0, 0, this.all([this.b_l_spaced, n], [this.s_nb_spaced_text, n])));
+        return this.all([this.s_nb_spaced_text, n], this.rep(0, -1, this.all([this.b_l_spaced, n], [this.s_nb_spaced_text, n])));
       }
 
       l_nb_same_lines(n) {
         debug_rule("l_nb_same_lines", n);
-        return this.all(this.rep(0, 0, [this.l_empty, n, "block-in"]), this.any([this.l_nb_folded_lines, n], [this.l_nb_spaced_lines, n]));
+        return this.all(this.rep(0, -1, [this.l_empty, n, "block-in"]), this.any([this.l_nb_folded_lines, n], [this.l_nb_spaced_lines, n]));
       }
 
       l_nb_diff_lines(n) {
         debug_rule("l_nb_diff_lines", n);
-        return this.all([this.l_nb_same_lines, n], this.rep(0, 0, this.all(this.b_as_line_feed, [this.l_nb_same_lines, n])));
+        return this.all([this.l_nb_same_lines, n], this.rep(0, -1, this.all(this.b_as_line_feed, [this.l_nb_same_lines, n])));
       }
 
       l_folded_content(n, t) {
@@ -968,7 +968,7 @@
 
       l_block_sequence(n) {
         debug_rule("l_block_sequence", n);
-        return this.all(this.set('m', this.auto_detect_indent), this.rep(1, 0, this.all([this.s_indent, this.add(n, this.m())], [this.c_l_block_seq_entry, this.add(n, this.m())])));
+        return this.all(this.set('m', this.auto_detect_indent), this.rep(1, -1, this.all([this.s_indent, this.add(n, this.m())], [this.c_l_block_seq_entry, this.add(n, this.m())])));
       }
 
       c_l_block_seq_entry(n) {
@@ -983,12 +983,12 @@
 
       ns_l_compact_sequence(n) {
         debug_rule("ns_l_compact_sequence", n);
-        return this.all([this.c_l_block_seq_entry, n], this.rep(0, 0, this.all([this.s_indent, n], [this.c_l_block_seq_entry, n])));
+        return this.all([this.c_l_block_seq_entry, n], this.rep(0, -1, this.all([this.s_indent, n], [this.c_l_block_seq_entry, n])));
       }
 
       l_block_mapping(n) {
         debug_rule("l_block_mapping", n);
-        return this.all(this.set('m', this.auto_detect_indent), this.rep(1, 0, this.all([this.s_indent, this.add(n, this.m())], [this.ns_l_block_map_entry, this.add(n, this.m())])));
+        return this.all(this.set('m', this.auto_detect_indent), this.rep(1, -1, this.all([this.s_indent, this.add(n, this.m())], [this.ns_l_block_map_entry, this.add(n, this.m())])));
       }
 
       ns_l_block_map_entry(n) {
@@ -1028,7 +1028,7 @@
 
       ns_l_compact_mapping(n) {
         debug_rule("ns_l_compact_mapping", n);
-        return this.all([this.ns_l_block_map_entry, n], this.rep(0, 0, this.all([this.s_indent, n], [this.ns_l_block_map_entry, n])));
+        return this.all([this.ns_l_block_map_entry, n], this.rep(0, -1, this.all([this.s_indent, n], [this.ns_l_block_map_entry, n])));
       }
 
       s_l_block_node(n, c) {
@@ -1066,7 +1066,7 @@
 
       l_document_prefix() {
         debug_rule("l_document_prefix");
-        return this.all(this.rep(0, 1, this.c_byte_order_mark), this.rep(0, 0, this.l_comment));
+        return this.all(this.rep(0, 1, this.c_byte_order_mark), this.rep(0, -1, this.l_comment));
       }
 
       c_directives_end() {
@@ -1101,7 +1101,7 @@
 
       l_directive_document() {
         debug_rule("l_directive_document");
-        return this.all(this.rep(1, 0, this.l_directive), this.l_explicit_document);
+        return this.all(this.rep(1, -1, this.l_directive), this.l_explicit_document);
       }
 
       l_any_document() {
@@ -1111,7 +1111,7 @@
 
       l_yaml_stream() {
         debug_rule("l_yaml_stream");
-        return this.all(this.l_document_prefix, this.rep(0, 1, this.l_any_document), this.rep(0, 0, this.any(this.all(this.l_document_suffix, this.rep(0, 0, this.l_document_prefix), this.rep(0, 1, this.l_any_document)), this.all(this.l_document_prefix, this.rep(0, 1, this.l_explicit_document)))));
+        return this.all(this.l_document_prefix, this.rep(0, 1, this.l_any_document), this.rep(0, -1, this.any(this.all(this.l_document_suffix, this.rep(0, -1, this.l_document_prefix), this.rep(0, 1, this.l_any_document)), this.all(this.l_document_prefix, this.rep(0, 1, this.l_explicit_document)))));
       }
 
     };

@@ -61,6 +61,7 @@ sub state_curr {
     lvl => 0,
     beg => 0,
     end => 0,
+    ind => -1,
     m => undef,
     t => undef,
   };
@@ -81,6 +82,7 @@ sub state_push {
     lvl => $prev->{lvl} + 1,
     beg => $self->{pos},
     end => undef,
+    ind => $prev->{ind},
     m => $prev->{m},
     t => $prev->{t},
   };
@@ -229,12 +231,16 @@ sub rep {
     my $count = 0;
     my $pos = $self->{pos};
     my $pos_start = $pos;
-    while ($self->{pos} < $self->{end} and $self->call($func)) {
+    while (
+      ($max == -1 or $count < $max) and
+      $self->{pos} < $self->{end}
+    ) {
+      last unless $self->call($func);
       last if $self->{pos} == $pos;
       $count++;
       $pos = $self->{pos};
     }
-    if ($count >= $min and ($max == 0 or $count <= $max)) {
+    if ($count >= $min and ($max == -1 or $count <= $max)) {
       return true;
     }
     $self->{pos} = $pos_start;
@@ -258,7 +264,7 @@ sub flip {
   my $value = $map->{$var} or
     xxxxx "Can't find '$var' in:", $map;
   return $value if not ref $value;
-  return $->call($value, 'number');
+  return $self->call($value, 'number');
 }
 name flip => \&flip;
 
@@ -458,7 +464,13 @@ sub empty { true }
 name 'empty', \&empty;
 
 sub auto_detect_indent {
-  1;
+  my ($self) = @_;
+  my $state = $self->state_curr;
+  substr($self->{input}, $self->{pos}) =~ /^(\ *)/ or die;
+  my $indent = length $1;
+  $indent++ if $state->{ind} == -1;
+  $state->{ind} += $indent;
+  return $indent;
 }
 name 'auto_detect_indent', \&auto_detect_indent;
 

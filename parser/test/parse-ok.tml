@@ -290,7 +290,6 @@ foo: bar
 
 
 === Mapping value on next line
---- SKIP: Parser failed
 --- yaml
 foo:
   bar
@@ -329,7 +328,6 @@ foo: [1,2]
 
 
 === Mapping flow seq value multiline
---- SKIP: Parser finished before end of input
 --- yaml
 foo: [1,
   2]

@@ -56,6 +56,7 @@
         lvl: 0,
         beg: 0,
         end: 0,
+        ind: -1,
         m: null,
         t: null
       };
@@ -73,6 +74,7 @@
         lvl: prev.lvl + 1,
         beg: this.pos,
         end: null,
+        ind: prev.ind,
         m: prev.m,
         t: prev.t
       });
@@ -233,14 +235,17 @@
         count = 0;
         pos = this.pos;
         pos_start = pos;
-        while (this.pos < this.end && this.call(func)) {
+        while ((max === -1 || count < max) && this.pos < this.end) {
+          if (!this.call(func)) {
+            break;
+          }
           if (this.pos === pos) {
             break;
           }
           count++;
           pos = this.pos;
         }
-        if (count >= min && (max === 0 || count <= max)) {
+        if (count >= min && (max === -1 || count <= max)) {
           return true;
         }
         this.pos = pos_start;
@@ -494,7 +499,15 @@
     }
 
     auto_detect_indent() {
-      return 1;
+      var indent, m, state;
+      state = this.state_curr();
+      m = this.input.slice(this.pos).match(/^(\ *)/ || die());
+      indent = m[1].length;
+      if (state.ind === -1) {
+        indent += 1;
+      }
+      state.ind += indent;
+      return indent;
     }
 
     //------------------------------------------------------------------------------

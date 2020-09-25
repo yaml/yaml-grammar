@@ -45,6 +45,7 @@ global.Parser = class Parser extends Grammar
       lvl: 0
       beg: 0
       end: 0
+      ind: -1
       m: null
       t: null
 
@@ -59,6 +60,7 @@ global.Parser = class Parser extends Grammar
       lvl: prev.lvl + 1
       beg: @pos
       end: null
+      ind: prev.ind
       m: prev.m
       t: prev.t
 
@@ -174,11 +176,12 @@ global.Parser = class Parser extends Grammar
       count = 0
       pos = @pos
       pos_start = pos
-      while @pos < @end and @call func
+      while (max == -1 or count < max) and @pos < @end
+        break unless @call func
         break if @pos == pos
         count++
         pos = @pos
-      if count >= min and (max == 0 or count <= max)
+      if count >= min and (max == -1 or count <= max)
         return true
       @pos = pos_start
       return false
@@ -333,7 +336,12 @@ global.Parser = class Parser extends Grammar
   empty: -> true
 
   auto_detect_indent: ->
-    1
+    state = @state_curr()
+    m = @input[@pos..].match /^(\ *)/ or die()
+    indent = m[1].length
+    indent += 1 if state.ind == -1
+    state.ind += indent
+    return indent
 
 #------------------------------------------------------------------------------
 # Trace debugging

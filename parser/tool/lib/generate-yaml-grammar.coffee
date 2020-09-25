@@ -92,8 +92,8 @@ global.YamlGrammarGenerator = class YamlGrammarGenerator
       when '(all)'  then return @gen_group val, 'all'
       when '(---)'  then return @gen_group val, 'but'
 
-      when '(+++)'  then return @gen_rep val, 1, 0
-      when '(***)'  then return @gen_rep val, 0, 0
+      when '(+++)'  then return @gen_rep val, 1, -1
+      when '(***)'  then return @gen_rep val, 0, -1
       when '(???)'  then return @gen_rep val, 0, 1
 
       when '(<<<)'  then return @gen_may val
