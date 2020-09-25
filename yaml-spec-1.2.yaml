@@ -54,7 +54,7 @@
 # Example rule names:
 #
 #   * nb-foo-bar
-#   * nb+foo-bar
+#   * nb-foo-bar
 #   * nb-foo-bar(n)
 #   * nb-foo-bar(n,c)
 #
