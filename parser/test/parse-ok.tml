@@ -78,7 +78,7 @@ foo
 
 
 === Top level literal scalar
---- SKIP: Bad call type 'string' for 'auto-detect'
+--- SKIP
 --- yaml(<)
     --- |
       foo

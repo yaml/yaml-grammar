@@ -544,6 +544,12 @@
 
     trace(type, call, args = []) {
       var indent, input, l, level, line, prev_level, prev_line, prev_type, trace_info;
+      if (!isString(call)) { // XXX
+        call = String(call);
+      }
+      if (call.match(/^($| |.* $)/)) {
+        call = `'${call}'`;
+      }
       if (!(this.trace_on || call === this.trace_start())) {
         return;
       }

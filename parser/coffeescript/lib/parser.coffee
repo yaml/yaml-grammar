@@ -375,6 +375,8 @@ global.Parser = class Parser extends Grammar
     ].concat((ENV.TRACE_QUIET || '').split ',')
 
   trace: (type, call, args=[])->
+    call = String(call) unless isString call  # XXX
+    call = "'#{call}'" if call.match /^($| |.* $)/
     return unless @trace_on or call == @trace_start()
 
     level = @state_curr().lvl

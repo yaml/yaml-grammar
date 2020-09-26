@@ -512,6 +512,7 @@ sub trace {
   my ($self, $type, $call, $args) = @_;
   $args //= [];
 
+  $call = "'$call'" if $call =~ /^($| |.* $)/;
   return unless $self->{trace_on} or $call eq $self->trace_start;
 
   my $level = $self->state_curr->{lvl};

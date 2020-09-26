@@ -123,6 +123,12 @@ sub not__s_l_block_in_block {
   $self->pool_drop;
 }
 
+# sub got__c_l_block_seq_entry__all__chk {
+#   my ($self, $o) = @_;
+# #   $self->pool_up;
+#   $self->add('+SEQ');
+# }
+
 sub try__ns_flow_pair { $_[0]->pool_up }
 sub got__ns_flow_pair { xxxxx @_ }
 sub not__ns_flow_pair { $_[0]->pool_drop }
