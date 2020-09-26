@@ -82,13 +82,15 @@
 
     state_pop() {
       var curr, prev;
-      curr = this.state.pop();
-      prev = this.state_prev();
-      if (prev == null) {
+      prev = this.state.pop();
+      curr = this.state_curr();
+      if (curr == null) {
         return;
       }
-      prev.beg = curr.beg;
-      return prev.end = this.pos;
+      curr.beg = prev.beg;
+      curr.end = this.pos;
+      curr.m = prev.m;
+      return curr.t = prev.t;
     }
 
     call(func, type = 'boolean') {
@@ -353,10 +355,10 @@
 
     set(var_, expr) {
       var set;
-      set = function() {
+      set = () => {
         var value;
         value = this.call(expr, 'any');
-        this.state_prev()[var_] = value;
+        this.state_curr()[var_] = value;
         return true;
       };
       return name_('set', set, `set('${var_}', ${stringify(expr)})`);
@@ -377,7 +379,7 @@
 
     add(x, y) {
       var add;
-      add = function() {
+      add = () => {
         if (isFunction(y)) {
           y = this.call(y, 'number');
         }
@@ -470,16 +472,16 @@
 
     m() {
       var m;
-      return 1; // XXX
-      return m = function() {
-        return WWW(this.state_curr())[m];
+      return m = () => {
+        return this.state_curr().m;
       };
     }
 
     t() {
       var t;
-      return t = function() {
-        return xxxxx(this);
+      return t = () => {
+        xxxxx(this);
+        return this.state_curr().t;
       };
     }
 

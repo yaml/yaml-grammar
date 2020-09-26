@@ -65,11 +65,13 @@ global.Parser = class Parser extends Grammar
       t: prev.t
 
   state_pop: ->
-    curr = @state.pop()
-    prev = @state_prev()
-    return unless prev?
-    prev.beg = curr.beg
-    prev.end = @pos
+    prev = @state.pop()
+    curr = @state_curr()
+    return unless curr?
+    curr.beg = prev.beg
+    curr.end = @pos
+    curr.m = prev.m
+    curr.t = prev.t
 
   call: (func, type='boolean')->
     args = []
@@ -248,9 +250,9 @@ global.Parser = class Parser extends Grammar
     name_ 'chk', chk, "chk(#{type}, #{stringify expr})"
 
   set: (var_, expr)->
-    set = ->
+    set = =>
       value = @call expr, 'any'
-      @state_prev()[var_] = value
+      @state_curr()[var_] = value
       true
     name_ 'set', set, "set('#{var_}', #{stringify expr})"
 
@@ -263,7 +265,7 @@ global.Parser = class Parser extends Grammar
       true
 
   add: (x, y)->
-    add = ->
+    add = =>
       y = @call y, 'number' if isFunction y
       x + y
     name_ 'add', add, "add(#{x},#{y})"
@@ -315,13 +317,13 @@ global.Parser = class Parser extends Grammar
     name_ 'le', le, "le(#{stringify x},#{stringify y})"
 
   m: ->
-    return 1  # XXX
-    m = ->
-      WWW(@state_curr())[m]
+    m = =>
+      @state_curr().m
 
   t: ->
-    t = ->
+    t = =>
       xxxxx @
+      @state_curr().t
 
 #------------------------------------------------------------------------------
 # Special grammar rules

@@ -90,11 +90,13 @@ sub state_push {
 
 sub state_pop {
   my ($self) = @_;
-  my $curr = pop @{$self->{state}};
-  my $prev = $self->state_prev;
-  return unless defined $prev;
-  $prev->{beg} = $curr->{beg};
-  $prev->{end} = $self->{pos};
+  my $prev = pop @{$self->{state}};
+  my $curr = $self->state_curr;
+  return unless defined $curr;
+  $curr->{beg} = $prev->{beg};
+  $curr->{end} = $self->{pos};
+  $curr->{m} = $prev->{m};
+  $curr->{t} = $prev->{t};
 }
 
 sub call {
@@ -429,7 +431,6 @@ sub le {
 
 sub m {
   my ($self) = @_;
-  return 1; # XXX
   name m => sub {
     $self->state_curr->{m};
   };
@@ -439,6 +440,7 @@ sub t {
   my ($self) = @_;
   name t => sub {
     xxxxx $self;
+    $self->state_curr->{t};
   };
 }
 
