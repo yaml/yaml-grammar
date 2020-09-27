@@ -7,24 +7,24 @@
   global.TestReceiver = TestReceiver = class TestReceiver {
     constructor() {
       this.event = [];
-      this.pools = [];
+      this.cache = [];
     }
 
     add(event) {
-      if (this.pools.length) {
-        return _.last(this.pools).push(event);
+      if (this.cache.length) {
+        return _.last(this.cache).push(event);
       } else {
         return this.send(event);
       }
     }
 
-    pool_up() {
-      return this.pools.push([]);
+    cache_up() {
+      return this.cache.push([]);
     }
 
-    pool_down() {
+    cache_down() {
       var e, events, i, len, results;
-      events = this.pools.pop() || xxxxx(this);
+      events = this.cache.pop() || xxxxx(this);
       results = [];
       for (i = 0, len = events.length; i < len; i++) {
         e = events[i];
@@ -33,8 +33,8 @@
       return results;
     }
 
-    pool_drop() {
-      return this.pools.pop() || xxxxx(this);
+    cache_drop() {
+      return this.cache.pop() || xxxxx(this);
     }
 
     send(event) {
@@ -61,6 +61,14 @@
       return this.add('-DOC');
     }
 
+    got__c_flow_mapping__all__x7b() {
+      return this.add('+MAP {}');
+    }
+
+    got__c_flow_mapping__all__x7d() {
+      return this.add('-MAP');
+    }
+
     got__c_flow_sequence__all__x5b() {
       return this.add('+SEQ []');
     }
@@ -69,12 +77,56 @@
       return this.add('-SEQ');
     }
 
-    got__c_flow_mapping__all__x7b() {
-      return this.add('+MAP {}');
+    try__l_block_mapping() {
+      this.cache_up();
+      return this.add('+MAP');
     }
 
-    got__c_flow_mapping__all__x7d() {
+    got__l_block_mapping() {
+      this.cache_down();
       return this.add('-MAP');
+    }
+
+    not__l_block_mapping() {
+      return this.cache_drop();
+    }
+
+    try__l_block_sequence() {
+      this.cache_up();
+      return this.add('+SEQ');
+    }
+
+    got__l_block_sequence() {
+      this.cache_down();
+      return this.add('-SEQ');
+    }
+
+    not__l_block_sequence() {
+      return this.cache_drop();
+    }
+
+    try__ns_flow_pair() {
+      return this.cache_up();
+    }
+
+    got__ns_flow_pair() {
+      return xxxxx(this);
+    }
+
+    not__ns_flow_pair() {
+      return this.cache_drop();
+    }
+
+    try__c_ns_flow_map_empty_key_entry() {
+      return this.cache_up();
+    }
+
+    got__c_ns_flow_map_empty_key_entry() {
+      return xxxxx(this);
+    }
+
+    not__c_ns_flow_map_empty_key_entry() {
+      return this.cache_drop();
     }
 
     got__ns_plain(o) {
@@ -95,44 +147,6 @@
 
     got__e_scalar() {
       return this.add("=VAL :");
-    }
-
-    try__s_l_block_in_block() {
-      this.pool_up();
-      return this.add('+MAP');
-    }
-
-    got__s_l_block_in_block() {
-      this.pool_down();
-      return this.add('-MAP');
-    }
-
-    not__s_l_block_in_block() {
-      return this.pool_drop();
-    }
-
-    try__ns_flow_pair() {
-      return this.pool_up();
-    }
-
-    got__ns_flow_pair() {
-      return xxxxx(this);
-    }
-
-    not__ns_flow_pair() {
-      return this.pool_drop();
-    }
-
-    try__c_ns_flow_map_empty_key_entry() {
-      return this.pool_up();
-    }
-
-    got__c_ns_flow_map_empty_key_entry() {
-      return xxxxx(this);
-    }
-
-    not__c_ns_flow_map_empty_key_entry() {
-      return this.pool_drop();
     }
 
   };
