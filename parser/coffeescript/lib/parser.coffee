@@ -12,6 +12,7 @@ global.Parser = class Parser extends Grammar
 
   constructor: (receiver)->
     super()
+    receiver.parser = @
     @receiver = receiver
     @pos = 0
     @end = 0

@@ -94,7 +94,7 @@
 
   global.xxxxx = function(...o) {
     WWW(o);
-    return die('xxxxx');
+    return die(`xxxxx '${o[0] || '???'}'`);
   };
 
   global.timer = function(start = null) {

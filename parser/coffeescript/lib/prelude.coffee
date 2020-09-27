@@ -56,7 +56,7 @@ global.dump = (o)->
 
 global.xxxxx = (o...)->
   WWW o
-  die 'xxxxx'
+  die "xxxxx '#{o[0] || '???'}'"
 
 global.timer = (start=null)->
   if start?

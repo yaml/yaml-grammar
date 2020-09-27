@@ -16,6 +16,7 @@
   global.Parser = Parser = class Parser extends Grammar {
     constructor(receiver) {
       super();
+      receiver.parser = this;
       this.receiver = receiver;
       this.pos = 0;
       this.end = 0;

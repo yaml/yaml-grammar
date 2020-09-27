@@ -152,7 +152,8 @@ sub dump {
 
 export 'xxxxx';
 sub xxxxx {
-  confess @_;
+  WWW [@_];
+  confess "xxxxx '${\ $_[0] // '???'}'";
 }
 
 export 'timer';

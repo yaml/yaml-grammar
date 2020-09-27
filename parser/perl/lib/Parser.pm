@@ -17,7 +17,7 @@ use constant TRACE => $ENV{TRACE};
 sub new {
   my ($class, $receiver) = @_;
 
-  bless {
+  my $self = bless {
     receiver => $receiver,
     pos => 0,
     end => 0,
@@ -27,6 +27,10 @@ sub new {
     trace_off => 0,
     trace_info => ['', '', ''],
   }, $class;
+
+  $receiver->{parser} = $self;
+
+  return $self;
 }
 
 sub parse {
