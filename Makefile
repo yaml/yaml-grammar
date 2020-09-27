@@ -22,18 +22,14 @@ default:
 
 force:
 
-build: $(BUILD)
+build: node_modules $(BUILD)
 
 build-yaml: $(SPEC12_YAML_PATCH)
 
 comments: $(SPEC12_COMMENTS)
 
-test:
-	make -C parser $@
-
 clean:
 	rm -fr node_modules
-	make -C parser $@
 
 $(SPEC12_TXT):
 	lynx --dump $(SPEC12_URL) > $@

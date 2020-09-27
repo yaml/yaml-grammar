@@ -1,2 +1,0 @@
-test:
-	coffee test.coffee

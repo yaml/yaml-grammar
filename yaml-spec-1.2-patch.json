@@ -1,0 +1,3094 @@
+{
+  ":001": "c-printable",
+  "c-printable": {
+    "(any)": [
+      "x09",
+      "x0A",
+      "x0D",
+      [
+        "x20",
+        "x7E"
+      ],
+      "x85",
+      [
+        "xA0",
+        "xD7FF"
+      ],
+      [
+        "xE000",
+        "xFFFD"
+      ],
+      [
+        "x010000",
+        "x10FFFF"
+      ]
+    ]
+  },
+  ":002": "nb-json",
+  "nb-json": {
+    "(any)": [
+      "x09",
+      [
+        "x20",
+        "x10FFFF"
+      ]
+    ]
+  },
+  ":003": "c-byte-order-mark",
+  "c-byte-order-mark": "xFEFF",
+  ":004": "c-sequence-entry",
+  "c-sequence-entry": "-",
+  ":005": "c-mapping-key",
+  "c-mapping-key": "?",
+  ":006": "c-mapping-value",
+  "c-mapping-value": ":",
+  ":007": "c-collect-entry",
+  "c-collect-entry": ",",
+  ":008": "c-sequence-start",
+  "c-sequence-start": "[",
+  ":009": "c-sequence-end",
+  "c-sequence-end": "]",
+  ":010": "c-mapping-start",
+  "c-mapping-start": "{",
+  ":011": "c-mapping-end",
+  "c-mapping-end": "}",
+  ":012": "c-comment",
+  "c-comment": "#",
+  ":013": "c-anchor",
+  "c-anchor": "&",
+  ":014": "c-alias",
+  "c-alias": "*",
+  ":015": "c-tag",
+  "c-tag": "!",
+  ":016": "c-literal",
+  "c-literal": "|",
+  ":017": "c-folded",
+  "c-folded": ">",
+  ":018": "c-single-quote",
+  "c-single-quote": "'",
+  ":019": "c-double-quote",
+  "c-double-quote": "\"",
+  ":020": "c-directive",
+  "c-directive": "%",
+  ":021": "c-reserved",
+  "c-reserved": {
+    "(any)": [
+      "@",
+      "`"
+    ]
+  },
+  ":022": "c-indicator",
+  "c-indicator": {
+    "(any)": [
+      "-",
+      "?",
+      ":",
+      ",",
+      "[",
+      "]",
+      "{",
+      "}",
+      "#",
+      "&",
+      "*",
+      "!",
+      "|",
+      ">",
+      "'",
+      "\"",
+      "%",
+      "@",
+      "`"
+    ]
+  },
+  ":023": "c-flow-indicator",
+  "c-flow-indicator": {
+    "(any)": [
+      ",",
+      "[",
+      "]",
+      "{",
+      "}"
+    ]
+  },
+  ":024": "b-line-feed",
+  "b-line-feed": "x0A",
+  ":025": "b-carriage-return",
+  "b-carriage-return": "x0D",
+  ":026": "b-char",
+  "b-char": {
+    "(any)": [
+      "b-line-feed",
+      "b-carriage-return"
+    ]
+  },
+  ":027": "nb-char",
+  "nb-char": {
+    "(---)": [
+      "c-printable",
+      "b-char",
+      "c-byte-order-mark"
+    ]
+  },
+  ":028": "b-break",
+  "b-break": {
+    "(any)": [
+      {
+        "(all)": [
+          "b-carriage-return",
+          "b-line-feed"
+        ]
+      },
+      "b-carriage-return",
+      "b-line-feed"
+    ]
+  },
+  ":029": "b-as-line-feed",
+  "b-as-line-feed": "b-break",
+  ":030": "b-non-content",
+  "b-non-content": "b-break",
+  ":031": "s-space",
+  "s-space": "x20",
+  ":032": "s-tab",
+  "s-tab": "x09",
+  ":033": "s-white",
+  "s-white": {
+    "(any)": [
+      "s-space",
+      "s-tab"
+    ]
+  },
+  ":034": "ns-char",
+  "ns-char": {
+    "(---)": [
+      "nb-char",
+      "s-white"
+    ]
+  },
+  ":035": "ns-dec-digit",
+  "ns-dec-digit": [
+    "x30",
+    "x39"
+  ],
+  ":036": "ns-hex-digit",
+  "ns-hex-digit": {
+    "(any)": [
+      "ns-dec-digit",
+      [
+        "x41",
+        "x46"
+      ],
+      [
+        "x61",
+        "x66"
+      ]
+    ]
+  },
+  ":037": "ns-ascii-letter",
+  "ns-ascii-letter": {
+    "(any)": [
+      [
+        "x41",
+        "x5A"
+      ],
+      [
+        "x61",
+        "x7A"
+      ]
+    ]
+  },
+  ":038": "ns-word-char",
+  "ns-word-char": {
+    "(any)": [
+      "ns-dec-digit",
+      "ns-ascii-letter",
+      "-"
+    ]
+  },
+  ":039": "ns-uri-char",
+  "ns-uri-char": {
+    "(any)": [
+      {
+        "(all)": [
+          "%",
+          "ns-hex-digit",
+          "ns-hex-digit"
+        ]
+      },
+      "ns-word-char",
+      "#",
+      ";",
+      "/",
+      "?",
+      ":",
+      "@",
+      "&",
+      "=",
+      "+",
+      "$",
+      ",",
+      "_",
+      ".",
+      "!",
+      "~",
+      "*",
+      "'",
+      "(",
+      ")",
+      "[",
+      "]"
+    ]
+  },
+  ":040": "ns-tag-char",
+  "ns-tag-char": {
+    "(---)": [
+      "ns-uri-char",
+      "!",
+      "c-flow-indicator"
+    ]
+  },
+  ":041": "c-escape",
+  "c-escape": "\\",
+  ":042": "ns-esc-null",
+  "ns-esc-null": "0",
+  ":043": "ns-esc-bell",
+  "ns-esc-bell": "a",
+  ":044": "ns-esc-backspace",
+  "ns-esc-backspace": "b",
+  ":045": "ns-esc-horizontal-tab",
+  "ns-esc-horizontal-tab": {
+    "(any)": [
+      "t",
+      "x09"
+    ]
+  },
+  ":046": "ns-esc-line-feed",
+  "ns-esc-line-feed": "n",
+  ":047": "ns-esc-vertical-tab",
+  "ns-esc-vertical-tab": "v",
+  ":048": "ns-esc-form-feed",
+  "ns-esc-form-feed": "f",
+  ":049": "ns-esc-carriage-return",
+  "ns-esc-carriage-return": "r",
+  ":050": "ns-esc-escape",
+  "ns-esc-escape": "e",
+  ":051": "ns-esc-space",
+  "ns-esc-space": "x20",
+  ":052": "ns-esc-double-quote",
+  "ns-esc-double-quote": "\"",
+  ":053": "ns-esc-slash",
+  "ns-esc-slash": "/",
+  ":054": "ns-esc-backslash",
+  "ns-esc-backslash": "\\",
+  ":055": "ns-esc-next-line",
+  "ns-esc-next-line": "N",
+  ":056": "ns-esc-non-breaking-space",
+  "ns-esc-non-breaking-space": "_",
+  ":057": "ns-esc-line-separator",
+  "ns-esc-line-separator": "L",
+  ":058": "ns-esc-paragraph-separator",
+  "ns-esc-paragraph-separator": "P",
+  ":059": "ns-esc-8-bit",
+  "ns-esc-8-bit": {
+    "(all)": [
+      "x",
+      {
+        "({2})": "ns-hex-digit"
+      }
+    ]
+  },
+  ":060": "ns-esc-16-bit",
+  "ns-esc-16-bit": {
+    "(all)": [
+      "u",
+      {
+        "({4})": "ns-hex-digit"
+      }
+    ]
+  },
+  ":061": "ns-esc-32-bit",
+  "ns-esc-32-bit": {
+    "(all)": [
+      "U",
+      {
+        "({8})": "ns-hex-digit"
+      }
+    ]
+  },
+  ":062": "c-ns-esc-char",
+  "c-ns-esc-char": {
+    "(all)": [
+      "\\",
+      {
+        "(any)": [
+          "ns-esc-null",
+          "ns-esc-bell",
+          "ns-esc-backspace",
+          "ns-esc-horizontal-tab",
+          "ns-esc-line-feed",
+          "ns-esc-vertical-tab",
+          "ns-esc-form-feed",
+          "ns-esc-carriage-return",
+          "ns-esc-escape",
+          "ns-esc-space",
+          "ns-esc-double-quote",
+          "ns-esc-slash",
+          "ns-esc-backslash",
+          "ns-esc-next-line",
+          "ns-esc-non-breaking-space",
+          "ns-esc-line-separator",
+          "ns-esc-paragraph-separator",
+          "ns-esc-8-bit",
+          "ns-esc-16-bit",
+          "ns-esc-32-bit"
+        ]
+      }
+    ]
+  },
+  ":063": "s-indent",
+  "s-indent": {
+    "(...)": "n",
+    "({n})": "s-space"
+  },
+  ":064": "s-indent-lt",
+  "s-indent-lt": {
+    "(...)": "n",
+    "(<<<)": {
+      "(all)": [
+        {
+          "(***)": "s-space"
+        },
+        {
+          "(<)": [
+            {
+              "(len)": "(match)"
+            },
+            "n"
+          ]
+        }
+      ]
+    }
+  },
+  ":065": "s-indent-le",
+  "s-indent-le": {
+    "(...)": "n",
+    "(<<<)": {
+      "(all)": [
+        {
+          "(***)": "s-space"
+        },
+        {
+          "(<=)": [
+            {
+              "(len)": "(match)"
+            },
+            "n"
+          ]
+        }
+      ]
+    }
+  },
+  ":066": "s-separate-in-line",
+  "s-separate-in-line": {
+    "(any)": [
+      {
+        "(+++)": "s-white"
+      },
+      "<start-of-line>"
+    ]
+  },
+  ":067": "s-line-prefix",
+  "s-line-prefix": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(case)": {
+      "var": "c",
+      "block-in": {
+        "s-block-line-prefix": "n"
+      },
+      "block-out": {
+        "s-block-line-prefix": "n"
+      },
+      "flow-in": {
+        "s-flow-line-prefix": "n"
+      },
+      "flow-out": {
+        "s-flow-line-prefix": "n"
+      }
+    }
+  },
+  ":068": "s-block-line-prefix",
+  "s-block-line-prefix": {
+    "(...)": "n",
+    "s-indent": "n"
+  },
+  ":069": "s-flow-line-prefix",
+  "s-flow-line-prefix": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "s-indent": "n"
+      },
+      {
+        "(???)": "s-separate-in-line"
+      }
+    ]
+  },
+  ":070": "l-empty",
+  "l-empty": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      {
+        "(any)": [
+          {
+            "s-line-prefix": [
+              "n",
+              "c"
+            ]
+          },
+          {
+            "s-indent-lt": "n"
+          }
+        ]
+      },
+      "b-as-line-feed"
+    ]
+  },
+  ":071": "b-l-trimmed",
+  "b-l-trimmed": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      "b-non-content",
+      {
+        "(+++)": {
+          "l-empty": [
+            "n",
+            "c"
+          ]
+        }
+      }
+    ]
+  },
+  ":072": "b-as-space",
+  "b-as-space": "b-break",
+  ":073": "b-l-folded",
+  "b-l-folded": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(any)": [
+      {
+        "b-l-trimmed": [
+          "n",
+          "c"
+        ]
+      },
+      "b-as-space"
+    ]
+  },
+  ":074": "s-flow-folded",
+  "s-flow-folded": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "(???)": "s-separate-in-line"
+      },
+      {
+        "b-l-folded": [
+          "n",
+          "flow-in"
+        ]
+      },
+      {
+        "s-flow-line-prefix": "n"
+      }
+    ]
+  },
+  ":075": "c-nb-comment-text",
+  "c-nb-comment-text": {
+    "(all)": [
+      "#",
+      {
+        "(***)": "nb-char"
+      }
+    ]
+  },
+  ":076": "b-comment",
+  "b-comment": {
+    "(any)": [
+      "b-non-content",
+      "<end-of-stream>"
+    ]
+  },
+  ":077": "s-b-comment",
+  "s-b-comment": {
+    "(all)": [
+      {
+        "(???)": {
+          "(all)": [
+            "s-separate-in-line",
+            {
+              "(???)": "c-nb-comment-text"
+            }
+          ]
+        }
+      },
+      "b-comment"
+    ]
+  },
+  ":078": "l-comment",
+  "l-comment": {
+    "(all)": [
+      "s-separate-in-line",
+      {
+        "(???)": "c-nb-comment-text"
+      },
+      "b-comment"
+    ]
+  },
+  ":079": "s-l-comments",
+  "s-l-comments": {
+    "(all)": [
+      {
+        "(any)": [
+          "s-b-comment",
+          "<start-of-line>"
+        ]
+      },
+      {
+        "(***)": "l-comment"
+      }
+    ]
+  },
+  ":080": "s-separate",
+  "s-separate": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(case)": {
+      "var": "c",
+      "block-in": {
+        "s-separate-lines": "n"
+      },
+      "block-key": "s-separate-in-line",
+      "block-out": {
+        "s-separate-lines": "n"
+      },
+      "flow-in": {
+        "s-separate-lines": "n"
+      },
+      "flow-key": "s-separate-in-line",
+      "flow-out": {
+        "s-separate-lines": "n"
+      }
+    }
+  },
+  ":081": "s-separate-lines",
+  "s-separate-lines": {
+    "(...)": "n",
+    "(any)": [
+      {
+        "(all)": [
+          "s-l-comments",
+          {
+            "s-flow-line-prefix": "n"
+          }
+        ]
+      },
+      "s-separate-in-line"
+    ]
+  },
+  ":082": "l-directive",
+  "l-directive": {
+    "(all)": [
+      "%",
+      {
+        "(any)": [
+          "ns-yaml-directive",
+          "ns-tag-directive",
+          "ns-reserved-directive"
+        ]
+      },
+      "s-l-comments"
+    ]
+  },
+  ":083": "ns-reserved-directive",
+  "ns-reserved-directive": {
+    "(all)": [
+      "ns-directive-name",
+      {
+        "(***)": {
+          "(all)": [
+            "s-separate-in-line",
+            "ns-directive-parameter"
+          ]
+        }
+      }
+    ]
+  },
+  ":084": "ns-directive-name",
+  "ns-directive-name": {
+    "(+++)": "ns-char"
+  },
+  ":085": "ns-directive-parameter",
+  "ns-directive-parameter": {
+    "(+++)": "ns-char"
+  },
+  ":086": "ns-yaml-directive",
+  "ns-yaml-directive": {
+    "(all)": [
+      "Y",
+      "A",
+      "M",
+      "L",
+      "s-separate-in-line",
+      "ns-yaml-version"
+    ]
+  },
+  ":087": "ns-yaml-version",
+  "ns-yaml-version": {
+    "(all)": [
+      {
+        "(+++)": "ns-dec-digit"
+      },
+      ".",
+      {
+        "(+++)": "ns-dec-digit"
+      }
+    ]
+  },
+  ":088": "ns-tag-directive",
+  "ns-tag-directive": {
+    "(all)": [
+      "T",
+      "A",
+      "G",
+      "s-separate-in-line",
+      "c-tag-handle",
+      "s-separate-in-line",
+      "ns-tag-prefix"
+    ]
+  },
+  ":089": "c-tag-handle",
+  "c-tag-handle": {
+    "(any)": [
+      "c-named-tag-handle",
+      "c-secondary-tag-handle",
+      "c-primary-tag-handle"
+    ]
+  },
+  ":090": "c-primary-tag-handle",
+  "c-primary-tag-handle": "!",
+  ":091": "c-secondary-tag-handle",
+  "c-secondary-tag-handle": {
+    "(all)": [
+      "!",
+      "!"
+    ]
+  },
+  ":092": "c-named-tag-handle",
+  "c-named-tag-handle": {
+    "(all)": [
+      "!",
+      {
+        "(+++)": "ns-word-char"
+      },
+      "!"
+    ]
+  },
+  ":093": "ns-tag-prefix",
+  "ns-tag-prefix": {
+    "(any)": [
+      "c-ns-local-tag-prefix",
+      "ns-global-tag-prefix"
+    ]
+  },
+  ":094": "c-ns-local-tag-prefix",
+  "c-ns-local-tag-prefix": {
+    "(all)": [
+      "!",
+      {
+        "(***)": "ns-uri-char"
+      }
+    ]
+  },
+  ":095": "ns-global-tag-prefix",
+  "ns-global-tag-prefix": {
+    "(all)": [
+      "ns-tag-char",
+      {
+        "(***)": "ns-uri-char"
+      }
+    ]
+  },
+  ":096": "c-ns-properties",
+  "c-ns-properties": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(any)": [
+      {
+        "(all)": [
+          "c-ns-tag-property",
+          {
+            "(???)": {
+              "(all)": [
+                {
+                  "s-separate": [
+                    "n",
+                    "c"
+                  ]
+                },
+                "c-ns-anchor-property"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "(all)": [
+          "c-ns-anchor-property",
+          {
+            "(???)": {
+              "(all)": [
+                {
+                  "s-separate": [
+                    "n",
+                    "c"
+                  ]
+                },
+                "c-ns-tag-property"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  ":097": "c-ns-tag-property",
+  "c-ns-tag-property": {
+    "(any)": [
+      "c-verbatim-tag",
+      "c-ns-shorthand-tag",
+      "c-non-specific-tag"
+    ]
+  },
+  ":098": "c-verbatim-tag",
+  "c-verbatim-tag": {
+    "(all)": [
+      "!",
+      "<",
+      {
+        "(+++)": "ns-uri-char"
+      },
+      ">"
+    ]
+  },
+  ":099": "c-ns-shorthand-tag",
+  "c-ns-shorthand-tag": {
+    "(all)": [
+      "c-tag-handle",
+      {
+        "(+++)": "ns-tag-char"
+      }
+    ]
+  },
+  ":100": "c-non-specific-tag",
+  "c-non-specific-tag": "!",
+  ":101": "c-ns-anchor-property",
+  "c-ns-anchor-property": {
+    "(all)": [
+      "&",
+      "ns-anchor-name"
+    ]
+  },
+  ":102": "ns-anchor-char",
+  "ns-anchor-char": {
+    "(---)": [
+      "ns-char",
+      "c-flow-indicator"
+    ]
+  },
+  ":103": "ns-anchor-name",
+  "ns-anchor-name": {
+    "(+++)": "ns-anchor-char"
+  },
+  ":104": "c-ns-alias-node",
+  "c-ns-alias-node": {
+    "(all)": [
+      "*",
+      "ns-anchor-name"
+    ]
+  },
+  ":105": "e-scalar",
+  "e-scalar": "<empty>",
+  ":106": "e-node",
+  "e-node": "e-scalar",
+  ":107": "nb-double-char",
+  "nb-double-char": {
+    "(any)": [
+      "c-ns-esc-char",
+      {
+        "(---)": [
+          "nb-json",
+          "\\",
+          "\""
+        ]
+      }
+    ]
+  },
+  ":108": "ns-double-char",
+  "ns-double-char": {
+    "(---)": [
+      "nb-double-char",
+      "s-white"
+    ]
+  },
+  ":109": "c-double-quoted",
+  "c-double-quoted": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      "\"",
+      {
+        "nb-double-text": [
+          "n",
+          "c"
+        ]
+      },
+      "\""
+    ]
+  },
+  ":110": "nb-double-text",
+  "nb-double-text": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(case)": {
+      "var": "c",
+      "block-key": "nb-double-one-line",
+      "flow-in": {
+        "nb-double-multi-line": "n"
+      },
+      "flow-key": "nb-double-one-line",
+      "flow-out": {
+        "nb-double-multi-line": "n"
+      }
+    }
+  },
+  ":111": "nb-double-one-line",
+  "nb-double-one-line": {
+    "(***)": "nb-double-char"
+  },
+  ":112": "s-double-escaped",
+  "s-double-escaped": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "(***)": "s-white"
+      },
+      "\\",
+      "b-non-content",
+      {
+        "(***)": {
+          "l-empty": [
+            "n",
+            "flow-in"
+          ]
+        }
+      },
+      {
+        "s-flow-line-prefix": "n"
+      }
+    ]
+  },
+  ":113": "s-double-break",
+  "s-double-break": {
+    "(...)": "n",
+    "(any)": [
+      {
+        "s-double-escaped": "n"
+      },
+      {
+        "s-flow-folded": "n"
+      }
+    ]
+  },
+  ":114": "nb-ns-double-in-line",
+  "nb-ns-double-in-line": {
+    "(***)": {
+      "(all)": [
+        {
+          "(***)": "s-white"
+        },
+        "ns-double-char"
+      ]
+    }
+  },
+  ":115": "s-double-next-line",
+  "s-double-next-line": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "s-double-break": "n"
+      },
+      {
+        "(???)": {
+          "(all)": [
+            "ns-double-char",
+            "nb-ns-double-in-line",
+            {
+              "(any)": [
+                {
+                  "s-double-next-line": "n"
+                },
+                {
+                  "(***)": "s-white"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  ":116": "nb-double-multi-line",
+  "nb-double-multi-line": {
+    "(...)": "n",
+    "(all)": [
+      "nb-ns-double-in-line",
+      {
+        "(any)": [
+          {
+            "s-double-next-line": "n"
+          },
+          {
+            "(***)": "s-white"
+          }
+        ]
+      }
+    ]
+  },
+  ":117": "c-quoted-quote",
+  "c-quoted-quote": {
+    "(all)": [
+      "'",
+      "'"
+    ]
+  },
+  ":118": "nb-single-char",
+  "nb-single-char": {
+    "(any)": [
+      "c-quoted-quote",
+      {
+        "(---)": [
+          "nb-json",
+          "'"
+        ]
+      }
+    ]
+  },
+  ":119": "ns-single-char",
+  "ns-single-char": {
+    "(---)": [
+      "nb-single-char",
+      "s-white"
+    ]
+  },
+  ":120": "c-single-quoted",
+  "c-single-quoted": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      "'",
+      {
+        "nb-single-text": [
+          "n",
+          "c"
+        ]
+      },
+      "'"
+    ]
+  },
+  ":121": "nb-single-text",
+  "nb-single-text": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(case)": {
+      "var": "c",
+      "block-key": "nb-single-one-line",
+      "flow-in": {
+        "nb-single-multi-line": "n"
+      },
+      "flow-key": "nb-single-one-line",
+      "flow-out": {
+        "nb-single-multi-line": "n"
+      }
+    }
+  },
+  ":122": "nb-single-one-line",
+  "nb-single-one-line": {
+    "(***)": "nb-single-char"
+  },
+  ":123": "nb-ns-single-in-line",
+  "nb-ns-single-in-line": {
+    "(***)": {
+      "(all)": [
+        {
+          "(***)": "s-white"
+        },
+        "ns-single-char"
+      ]
+    }
+  },
+  ":124": "s-single-next-line",
+  "s-single-next-line": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "s-flow-folded": "n"
+      },
+      {
+        "(???)": {
+          "(all)": [
+            "ns-single-char",
+            "nb-ns-single-in-line",
+            {
+              "(any)": [
+                {
+                  "s-single-next-line": "n"
+                },
+                {
+                  "(***)": "s-white"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  ":125": "nb-single-multi-line",
+  "nb-single-multi-line": {
+    "(...)": "n",
+    "(all)": [
+      "nb-ns-single-in-line",
+      {
+        "(any)": [
+          {
+            "s-single-next-line": "n"
+          },
+          {
+            "(***)": "s-white"
+          }
+        ]
+      }
+    ]
+  },
+  ":126": "ns-plain-first",
+  "ns-plain-first": {
+    "(...)": "c",
+    "(any)": [
+      {
+        "(---)": [
+          "ns-char",
+          "c-indicator"
+        ]
+      },
+      {
+        "(all)": [
+          {
+            "(any)": [
+              "?",
+              ":",
+              "-"
+            ]
+          },
+          {
+            "(===)": {
+              "ns-plain-safe": "c"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  ":127": "ns-plain-safe",
+  "ns-plain-safe": {
+    "(...)": "c",
+    "(case)": {
+      "var": "c",
+      "block-key": "ns-plain-safe-out",
+      "flow-in": "ns-plain-safe-in",
+      "flow-key": "ns-plain-safe-in",
+      "flow-out": "ns-plain-safe-out"
+    }
+  },
+  ":128": "ns-plain-safe-out",
+  "ns-plain-safe-out": "ns-char",
+  ":129": "ns-plain-safe-in",
+  "ns-plain-safe-in": {
+    "(---)": [
+      "ns-char",
+      "c-flow-indicator"
+    ]
+  },
+  ":130": "ns-plain-char",
+  "ns-plain-char": {
+    "(...)": "c",
+    "(any)": [
+      {
+        "(---)": [
+          {
+            "ns-plain-safe": "c"
+          },
+          ":",
+          "#"
+        ]
+      },
+      {
+        "(all)": [
+          {
+            "(<==)": "ns-char"
+          },
+          "#"
+        ]
+      },
+      {
+        "(all)": [
+          ":",
+          {
+            "(===)": {
+              "ns-plain-safe": "c"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  ":131": "ns-plain",
+  "ns-plain": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(case)": {
+      "var": "c",
+      "block-key": {
+        "ns-plain-one-line": "c"
+      },
+      "flow-in": {
+        "ns-plain-multi-line": [
+          "n",
+          "c"
+        ]
+      },
+      "flow-key": {
+        "ns-plain-one-line": "c"
+      },
+      "flow-out": {
+        "ns-plain-multi-line": [
+          "n",
+          "c"
+        ]
+      }
+    }
+  },
+  ":132": "nb-ns-plain-in-line",
+  "nb-ns-plain-in-line": {
+    "(...)": "c",
+    "(***)": {
+      "(all)": [
+        {
+          "(***)": "s-white"
+        },
+        {
+          "ns-plain-char": "c"
+        }
+      ]
+    }
+  },
+  ":133": "ns-plain-one-line",
+  "ns-plain-one-line": {
+    "(...)": "c",
+    "(all)": [
+      {
+        "ns-plain-first": "c"
+      },
+      {
+        "nb-ns-plain-in-line": "c"
+      }
+    ]
+  },
+  ":134": "s-ns-plain-next-line",
+  "s-ns-plain-next-line": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      {
+        "s-flow-folded": "n"
+      },
+      {
+        "ns-plain-char": "c"
+      },
+      {
+        "nb-ns-plain-in-line": "c"
+      }
+    ]
+  },
+  ":135": "ns-plain-multi-line",
+  "ns-plain-multi-line": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      {
+        "ns-plain-one-line": "c"
+      },
+      {
+        "(***)": {
+          "s-ns-plain-next-line": [
+            "n",
+            "c"
+          ]
+        }
+      }
+    ]
+  },
+  ":136": "in-flow",
+  "in-flow": {
+    "(...)": "c",
+    "(flip)": {
+      "var": "c",
+      "block-key": "flow-key",
+      "flow-in": "flow-in",
+      "flow-key": "flow-key",
+      "flow-out": "flow-in"
+    }
+  },
+  ":137": "c-flow-sequence",
+  "c-flow-sequence": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      "[",
+      {
+        "(???)": {
+          "s-separate": [
+            "n",
+            "c"
+          ]
+        }
+      },
+      {
+        "(???)": {
+          "ns-s-flow-seq-entries": [
+            "n",
+            {
+              "in-flow": "c"
+            }
+          ]
+        }
+      },
+      "]"
+    ]
+  },
+  ":138": "ns-s-flow-seq-entries",
+  "ns-s-flow-seq-entries": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      {
+        "ns-flow-seq-entry": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "(???)": {
+          "s-separate": [
+            "n",
+            "c"
+          ]
+        }
+      },
+      {
+        "(???)": {
+          "(all)": [
+            ",",
+            {
+              "(???)": {
+                "s-separate": [
+                  "n",
+                  "c"
+                ]
+              }
+            },
+            {
+              "(???)": {
+                "ns-s-flow-seq-entries": [
+                  "n",
+                  "c"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  ":139": "ns-flow-seq-entry",
+  "ns-flow-seq-entry": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(any)": [
+      {
+        "ns-flow-pair": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "ns-flow-node": [
+          "n",
+          "c"
+        ]
+      }
+    ]
+  },
+  ":140": "c-flow-mapping",
+  "c-flow-mapping": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      "{",
+      {
+        "(???)": {
+          "s-separate": [
+            "n",
+            "c"
+          ]
+        }
+      },
+      {
+        "(???)": {
+          "ns-s-flow-map-entries": [
+            "n",
+            {
+              "in-flow": "c"
+            }
+          ]
+        }
+      },
+      "}"
+    ]
+  },
+  ":141": "ns-s-flow-map-entries",
+  "ns-s-flow-map-entries": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      {
+        "ns-flow-map-entry": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "(???)": {
+          "s-separate": [
+            "n",
+            "c"
+          ]
+        }
+      },
+      {
+        "(???)": {
+          "(all)": [
+            ",",
+            {
+              "(???)": {
+                "s-separate": [
+                  "n",
+                  "c"
+                ]
+              }
+            },
+            {
+              "(???)": {
+                "ns-s-flow-map-entries": [
+                  "n",
+                  "c"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  ":142": "ns-flow-map-entry",
+  "ns-flow-map-entry": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(any)": [
+      {
+        "(all)": [
+          "?",
+          {
+            "s-separate": [
+              "n",
+              "c"
+            ]
+          },
+          {
+            "ns-flow-map-explicit-entry": [
+              "n",
+              "c"
+            ]
+          }
+        ]
+      },
+      {
+        "ns-flow-map-implicit-entry": [
+          "n",
+          "c"
+        ]
+      }
+    ]
+  },
+  ":143": "ns-flow-map-explicit-entry",
+  "ns-flow-map-explicit-entry": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(any)": [
+      {
+        "ns-flow-map-implicit-entry": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "(all)": [
+          "e-node",
+          "e-node"
+        ]
+      }
+    ]
+  },
+  ":144": "ns-flow-map-implicit-entry",
+  "ns-flow-map-implicit-entry": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(any)": [
+      {
+        "ns-flow-map-yaml-key-entry": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "c-ns-flow-map-empty-key-entry": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "c-ns-flow-map-json-key-entry": [
+          "n",
+          "c"
+        ]
+      }
+    ]
+  },
+  ":145": "ns-flow-map-yaml-key-entry",
+  "ns-flow-map-yaml-key-entry": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      {
+        "ns-flow-yaml-node": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "(any)": [
+          {
+            "(all)": [
+              {
+                "(???)": {
+                  "s-separate": [
+                    "n",
+                    "c"
+                  ]
+                }
+              },
+              {
+                "c-ns-flow-map-separate-value": [
+                  "n",
+                  "c"
+                ]
+              }
+            ]
+          },
+          "e-node"
+        ]
+      }
+    ]
+  },
+  ":146": "c-ns-flow-map-empty-key-entry",
+  "c-ns-flow-map-empty-key-entry": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      "e-node",
+      {
+        "c-ns-flow-map-separate-value": [
+          "n",
+          "c"
+        ]
+      }
+    ]
+  },
+  ":147": "c-ns-flow-map-separate-value",
+  "c-ns-flow-map-separate-value": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      ":",
+      {
+        "(!==)": {
+          "ns-plain-safe": "c"
+        }
+      },
+      {
+        "(any)": [
+          {
+            "(all)": [
+              {
+                "s-separate": [
+                  "n",
+                  "c"
+                ]
+              },
+              {
+                "ns-flow-node": [
+                  "n",
+                  "c"
+                ]
+              }
+            ]
+          },
+          "e-node"
+        ]
+      }
+    ]
+  },
+  ":148": "c-ns-flow-map-json-key-entry",
+  "c-ns-flow-map-json-key-entry": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      {
+        "c-flow-json-node": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "(any)": [
+          {
+            "(all)": [
+              {
+                "(???)": {
+                  "s-separate": [
+                    "n",
+                    "c"
+                  ]
+                }
+              },
+              {
+                "c-ns-flow-map-adjacent-value": [
+                  "n",
+                  "c"
+                ]
+              }
+            ]
+          },
+          "e-node"
+        ]
+      }
+    ]
+  },
+  ":149": "c-ns-flow-map-adjacent-value",
+  "c-ns-flow-map-adjacent-value": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      ":",
+      {
+        "(any)": [
+          {
+            "(all)": [
+              {
+                "(???)": {
+                  "s-separate": [
+                    "n",
+                    "c"
+                  ]
+                }
+              },
+              {
+                "ns-flow-node": [
+                  "n",
+                  "c"
+                ]
+              }
+            ]
+          },
+          "e-node"
+        ]
+      }
+    ]
+  },
+  ":150": "ns-flow-pair",
+  "ns-flow-pair": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(any)": [
+      {
+        "(all)": [
+          "?",
+          {
+            "s-separate": [
+              "n",
+              "c"
+            ]
+          },
+          {
+            "ns-flow-map-explicit-entry": [
+              "n",
+              "c"
+            ]
+          }
+        ]
+      },
+      {
+        "ns-flow-pair-entry": [
+          "n",
+          "c"
+        ]
+      }
+    ]
+  },
+  ":151": "ns-flow-pair-entry",
+  "ns-flow-pair-entry": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(any)": [
+      {
+        "ns-flow-pair-yaml-key-entry": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "c-ns-flow-map-empty-key-entry": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "c-ns-flow-pair-json-key-entry": [
+          "n",
+          "c"
+        ]
+      }
+    ]
+  },
+  ":152": "ns-flow-pair-yaml-key-entry",
+  "ns-flow-pair-yaml-key-entry": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      {
+        "ns-s-implicit-yaml-key": "flow-key"
+      },
+      {
+        "c-ns-flow-map-separate-value": [
+          "n",
+          "c"
+        ]
+      }
+    ]
+  },
+  ":153": "c-ns-flow-pair-json-key-entry",
+  "c-ns-flow-pair-json-key-entry": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      {
+        "c-s-implicit-json-key": "flow-key"
+      },
+      {
+        "c-ns-flow-map-adjacent-value": [
+          "n",
+          "c"
+        ]
+      }
+    ]
+  },
+  ":154": "ns-s-implicit-yaml-key",
+  "ns-s-implicit-yaml-key": {
+    "(...)": "c",
+    "(all)": [
+      {
+        "(max)": 1024
+      },
+      {
+        "ns-flow-yaml-node": [
+          null,
+          "c"
+        ]
+      },
+      {
+        "(???)": "s-separate-in-line"
+      }
+    ]
+  },
+  ":155": "c-s-implicit-json-key",
+  "c-s-implicit-json-key": {
+    "(...)": "c",
+    "(all)": [
+      {
+        "(max)": 1024
+      },
+      {
+        "c-flow-json-node": [
+          null,
+          "c"
+        ]
+      },
+      {
+        "(???)": "s-separate-in-line"
+      }
+    ]
+  },
+  ":156": "ns-flow-yaml-content",
+  "ns-flow-yaml-content": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "ns-plain": [
+      "n",
+      "c"
+    ]
+  },
+  ":157": "c-flow-json-content",
+  "c-flow-json-content": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(any)": [
+      {
+        "c-flow-sequence": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "c-flow-mapping": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "c-single-quoted": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "c-double-quoted": [
+          "n",
+          "c"
+        ]
+      }
+    ]
+  },
+  ":158": "ns-flow-content",
+  "ns-flow-content": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(any)": [
+      {
+        "ns-flow-yaml-content": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "c-flow-json-content": [
+          "n",
+          "c"
+        ]
+      }
+    ]
+  },
+  ":159": "ns-flow-yaml-node",
+  "ns-flow-yaml-node": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(any)": [
+      "c-ns-alias-node",
+      {
+        "ns-flow-yaml-content": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "(all)": [
+          {
+            "c-ns-properties": [
+              "n",
+              "c"
+            ]
+          },
+          {
+            "(any)": [
+              {
+                "(all)": [
+                  {
+                    "s-separate": [
+                      "n",
+                      "c"
+                    ]
+                  },
+                  {
+                    "ns-flow-yaml-content": [
+                      "n",
+                      "c"
+                    ]
+                  }
+                ]
+              },
+              "e-scalar"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  ":160": "c-flow-json-node",
+  "c-flow-json-node": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      {
+        "(???)": {
+          "(all)": [
+            {
+              "c-ns-properties": [
+                "n",
+                "c"
+              ]
+            },
+            {
+              "s-separate": [
+                "n",
+                "c"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "c-flow-json-content": [
+          "n",
+          "c"
+        ]
+      }
+    ]
+  },
+  ":161": "ns-flow-node",
+  "ns-flow-node": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(any)": [
+      "c-ns-alias-node",
+      {
+        "ns-flow-content": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "(all)": [
+          {
+            "c-ns-properties": [
+              "n",
+              "c"
+            ]
+          },
+          {
+            "(any)": [
+              {
+                "(all)": [
+                  {
+                    "s-separate": [
+                      "n",
+                      "c"
+                    ]
+                  },
+                  {
+                    "ns-flow-content": [
+                      "n",
+                      "c"
+                    ]
+                  }
+                ]
+              },
+              "e-scalar"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  ":162": "c-b-block-header",
+  "c-b-block-header": {
+    "(...)": [
+      "m",
+      "t"
+    ],
+    "(all)": [
+      {
+        "(any)": [
+          {
+            "(all)": [
+              {
+                "c-indentation-indicator": "m"
+              },
+              {
+                "c-chomping-indicator": "t"
+              }
+            ]
+          },
+          {
+            "(all)": [
+              {
+                "c-chomping-indicator": "t"
+              },
+              {
+                "c-indentation-indicator": "m"
+              }
+            ]
+          }
+        ]
+      },
+      "s-b-comment"
+    ]
+  },
+  ":163": "c-indentation-indicator",
+  "c-indentation-indicator": {
+    "(...)": "m",
+    "(any)": [
+      {
+        "(if)": "ns-dec-digit",
+        "(set)": [
+          "m",
+          {
+            "(ord)": "(match)"
+          }
+        ]
+      },
+      {
+        "(if)": "<empty>",
+        "(set)": [
+          "m",
+          "auto-detect"
+        ]
+      }
+    ]
+  },
+  ":164": "c-chomping-indicator",
+  "c-chomping-indicator": {
+    "(...)": "t",
+    "(any)": [
+      {
+        "(if)": "-",
+        "(set)": [
+          "t",
+          "strip"
+        ]
+      },
+      {
+        "(if)": "+",
+        "(set)": [
+          "t",
+          "keep"
+        ]
+      },
+      {
+        "(if)": "<empty>",
+        "(set)": [
+          "t",
+          "clip"
+        ]
+      }
+    ]
+  },
+  ":165": "b-chomped-last",
+  "b-chomped-last": {
+    "(...)": "t",
+    "(case)": {
+      "var": "t",
+      "clip": {
+        "(any)": [
+          "b-as-line-feed",
+          "<end-of-stream>"
+        ]
+      },
+      "keep": {
+        "(any)": [
+          "b-as-line-feed",
+          "<end-of-stream>"
+        ]
+      },
+      "strip": {
+        "(any)": [
+          "b-non-content",
+          "<end-of-stream>"
+        ]
+      }
+    }
+  },
+  ":166": "l-chomped-empty",
+  "l-chomped-empty": {
+    "(...)": [
+      "n",
+      "t"
+    ],
+    "(case)": {
+      "var": "t",
+      "clip": {
+        "l-strip-empty": "n"
+      },
+      "keep": {
+        "l-keep-empty": "n"
+      },
+      "strip": {
+        "l-strip-empty": "n"
+      }
+    }
+  },
+  ":167": "l-strip-empty",
+  "l-strip-empty": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "(***)": {
+          "(all)": [
+            {
+              "s-indent-le": "n"
+            },
+            "b-non-content"
+          ]
+        }
+      },
+      {
+        "(???)": {
+          "l-trail-comments": "n"
+        }
+      }
+    ]
+  },
+  ":168": "l-keep-empty",
+  "l-keep-empty": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "(***)": {
+          "l-empty": [
+            "n",
+            "block-in"
+          ]
+        }
+      },
+      {
+        "(???)": {
+          "l-trail-comments": "n"
+        }
+      }
+    ]
+  },
+  ":169": "l-trail-comments",
+  "l-trail-comments": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "s-indent-lt": "n"
+      },
+      "c-nb-comment-text",
+      "b-comment",
+      {
+        "(***)": "l-comment"
+      }
+    ]
+  },
+  ":170": "c-l+literal",
+  "c-l+literal": {
+    "(...)": "n",
+    "(all)": [
+      "|",
+      {
+        "c-b-block-header": [
+          "m",
+          "t"
+        ]
+      },
+      {
+        "l-literal-content": [
+          {
+            "(+)": [
+              "n",
+              "m"
+            ]
+          },
+          "t"
+        ]
+      }
+    ]
+  },
+  ":171": "l-nb-literal-text",
+  "l-nb-literal-text": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "(***)": {
+          "l-empty": [
+            "n",
+            "block-in"
+          ]
+        }
+      },
+      {
+        "s-indent": "n"
+      },
+      {
+        "(+++)": "nb-char"
+      }
+    ]
+  },
+  ":172": "b-nb-literal-next",
+  "b-nb-literal-next": {
+    "(...)": "n",
+    "(all)": [
+      "b-as-line-feed",
+      {
+        "l-nb-literal-text": "n"
+      }
+    ]
+  },
+  ":173": "l-literal-content",
+  "l-literal-content": {
+    "(...)": [
+      "n",
+      "t"
+    ],
+    "(all)": [
+      {
+        "(???)": {
+          "(all)": [
+            {
+              "l-nb-literal-text": "n"
+            },
+            {
+              "(***)": {
+                "b-nb-literal-next": "n"
+              }
+            },
+            {
+              "b-chomped-last": "t"
+            }
+          ]
+        }
+      },
+      {
+        "l-chomped-empty": [
+          "n",
+          "t"
+        ]
+      }
+    ]
+  },
+  ":174": "c-l+folded",
+  "c-l+folded": {
+    "(...)": "n",
+    "(all)": [
+      ">",
+      {
+        "c-b-block-header": [
+          "m",
+          "t"
+        ]
+      },
+      {
+        "l-folded-content": [
+          {
+            "(+)": [
+              "n",
+              "m"
+            ]
+          },
+          "t"
+        ]
+      }
+    ]
+  },
+  ":175": "s-nb-folded-text",
+  "s-nb-folded-text": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "s-indent": "n"
+      },
+      "ns-char",
+      {
+        "(***)": "nb-char"
+      }
+    ]
+  },
+  ":176": "l-nb-folded-lines",
+  "l-nb-folded-lines": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "s-nb-folded-text": "n"
+      },
+      {
+        "(***)": {
+          "(all)": [
+            {
+              "b-l-folded": [
+                "n",
+                "block-in"
+              ]
+            },
+            {
+              "s-nb-folded-text": "n"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  ":177": "s-nb-spaced-text",
+  "s-nb-spaced-text": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "s-indent": "n"
+      },
+      "s-white",
+      {
+        "(***)": "nb-char"
+      }
+    ]
+  },
+  ":178": "b-l-spaced",
+  "b-l-spaced": {
+    "(...)": "n",
+    "(all)": [
+      "b-as-line-feed",
+      {
+        "(***)": {
+          "l-empty": [
+            "n",
+            "block-in"
+          ]
+        }
+      }
+    ]
+  },
+  ":179": "l-nb-spaced-lines",
+  "l-nb-spaced-lines": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "s-nb-spaced-text": "n"
+      },
+      {
+        "(***)": {
+          "(all)": [
+            {
+              "b-l-spaced": "n"
+            },
+            {
+              "s-nb-spaced-text": "n"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  ":180": "l-nb-same-lines",
+  "l-nb-same-lines": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "(***)": {
+          "l-empty": [
+            "n",
+            "block-in"
+          ]
+        }
+      },
+      {
+        "(any)": [
+          {
+            "l-nb-folded-lines": "n"
+          },
+          {
+            "l-nb-spaced-lines": "n"
+          }
+        ]
+      }
+    ]
+  },
+  ":181": "l-nb-diff-lines",
+  "l-nb-diff-lines": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "l-nb-same-lines": "n"
+      },
+      {
+        "(***)": {
+          "(all)": [
+            "b-as-line-feed",
+            {
+              "l-nb-same-lines": "n"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  ":182": "l-folded-content",
+  "l-folded-content": {
+    "(...)": [
+      "n",
+      "t"
+    ],
+    "(all)": [
+      {
+        "(???)": {
+          "(all)": [
+            {
+              "l-nb-diff-lines": "n"
+            },
+            {
+              "b-chomped-last": "t"
+            }
+          ]
+        }
+      },
+      {
+        "l-chomped-empty": [
+          "n",
+          "t"
+        ]
+      }
+    ]
+  },
+  ":183": "l+block-sequence",
+  "l+block-sequence": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "(set)": [
+          "m",
+          "<auto-detect-indent>"
+        ]
+      },
+      {
+        "(+++)": {
+          "(all)": [
+            {
+              "s-indent": {
+                "(+)": [
+                  "n",
+                  "m"
+                ]
+              }
+            },
+            {
+              "c-l-block-seq-entry": {
+                "(+)": [
+                  "n",
+                  "m"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  ":184": "c-l-block-seq-entry",
+  "c-l-block-seq-entry": {
+    "(...)": "n",
+    "(all)": [
+      "-",
+      {
+        "(!==)": "ns-char"
+      },
+      {
+        "s-l+block-indented": [
+          "n",
+          "block-in"
+        ]
+      }
+    ]
+  },
+  ":185": "s-l+block-indented",
+  "s-l+block-indented": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(any)": [
+      {
+        "(all)": [
+          {
+            "s-indent": "m"
+          },
+          {
+            "(any)": [
+              {
+                "ns-l-compact-sequence": {
+                  "(+)": [
+                    "n",
+                    {
+                      "(+)": [
+                        1,
+                        "m"
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "ns-l-compact-mapping": {
+                  "(+)": [
+                    "n",
+                    {
+                      "(+)": [
+                        1,
+                        "m"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "s-l+block-node": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "(all)": [
+          "e-node",
+          "s-l-comments"
+        ]
+      }
+    ]
+  },
+  ":186": "ns-l-compact-sequence",
+  "ns-l-compact-sequence": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "c-l-block-seq-entry": "n"
+      },
+      {
+        "(***)": {
+          "(all)": [
+            {
+              "s-indent": "n"
+            },
+            {
+              "c-l-block-seq-entry": "n"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  ":187": "l+block-mapping",
+  "l+block-mapping": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "(set)": [
+          "m",
+          "<auto-detect-indent>"
+        ]
+      },
+      {
+        "(+++)": {
+          "(all)": [
+            {
+              "s-indent": {
+                "(+)": [
+                  "n",
+                  "m"
+                ]
+              }
+            },
+            {
+              "ns-l-block-map-entry": {
+                "(+)": [
+                  "n",
+                  "m"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  ":188": "ns-l-block-map-entry",
+  "ns-l-block-map-entry": {
+    "(...)": "n",
+    "(any)": [
+      {
+        "c-l-block-map-explicit-entry": "n"
+      },
+      {
+        "ns-l-block-map-implicit-entry": "n"
+      }
+    ]
+  },
+  ":189": "c-l-block-map-explicit-entry",
+  "c-l-block-map-explicit-entry": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "c-l-block-map-explicit-key": "n"
+      },
+      {
+        "(any)": [
+          {
+            "l-block-map-explicit-value": "n"
+          },
+          "e-node"
+        ]
+      }
+    ]
+  },
+  ":190": "c-l-block-map-explicit-key",
+  "c-l-block-map-explicit-key": {
+    "(...)": "n",
+    "(all)": [
+      "?",
+      {
+        "s-l+block-indented": [
+          "n",
+          "block-out"
+        ]
+      }
+    ]
+  },
+  ":191": "l-block-map-explicit-value",
+  "l-block-map-explicit-value": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "s-indent": "n"
+      },
+      ":",
+      {
+        "s-l+block-indented": [
+          "n",
+          "block-out"
+        ]
+      }
+    ]
+  },
+  ":192": "ns-l-block-map-implicit-entry",
+  "ns-l-block-map-implicit-entry": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "(any)": [
+          "ns-s-block-map-implicit-key",
+          "e-node"
+        ]
+      },
+      {
+        "c-l-block-map-implicit-value": "n"
+      }
+    ]
+  },
+  ":193": "ns-s-block-map-implicit-key",
+  "ns-s-block-map-implicit-key": {
+    "(any)": [
+      {
+        "c-s-implicit-json-key": "block-key"
+      },
+      {
+        "ns-s-implicit-yaml-key": "block-key"
+      }
+    ]
+  },
+  ":194": "c-l-block-map-implicit-value",
+  "c-l-block-map-implicit-value": {
+    "(...)": "n",
+    "(all)": [
+      ":",
+      {
+        "(any)": [
+          {
+            "s-l+block-node": [
+              "n",
+              "block-out"
+            ]
+          },
+          {
+            "(all)": [
+              "e-node",
+              "s-l-comments"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  ":195": "ns-l-compact-mapping",
+  "ns-l-compact-mapping": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "ns-l-block-map-entry": "n"
+      },
+      {
+        "(***)": {
+          "(all)": [
+            {
+              "s-indent": "n"
+            },
+            {
+              "ns-l-block-map-entry": "n"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  ":196": "s-l+block-node",
+  "s-l+block-node": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(any)": [
+      {
+        "s-l+block-in-block": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "s-l+flow-in-block": "n"
+      }
+    ]
+  },
+  ":197": "s-l+flow-in-block",
+  "s-l+flow-in-block": {
+    "(...)": "n",
+    "(all)": [
+      {
+        "s-separate": [
+          {
+            "(+)": [
+              "n",
+              1
+            ]
+          },
+          "flow-out"
+        ]
+      },
+      {
+        "ns-flow-node": [
+          {
+            "(+)": [
+              "n",
+              1
+            ]
+          },
+          "flow-out"
+        ]
+      },
+      "s-l-comments"
+    ]
+  },
+  ":198": "s-l+block-in-block",
+  "s-l+block-in-block": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(any)": [
+      {
+        "s-l+block-scalar": [
+          "n",
+          "c"
+        ]
+      },
+      {
+        "s-l+block-collection": [
+          "n",
+          "c"
+        ]
+      }
+    ]
+  },
+  ":199": "s-l+block-scalar",
+  "s-l+block-scalar": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      {
+        "s-separate": [
+          {
+            "(+)": [
+              "n",
+              1
+            ]
+          },
+          "c"
+        ]
+      },
+      {
+        "(???)": {
+          "(all)": [
+            {
+              "c-ns-properties": [
+                {
+                  "(+)": [
+                    "n",
+                    1
+                  ]
+                },
+                "c"
+              ]
+            },
+            {
+              "s-separate": [
+                {
+                  "(+)": [
+                    "n",
+                    1
+                  ]
+                },
+                "c"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "(any)": [
+          {
+            "c-l+literal": "n"
+          },
+          {
+            "c-l+folded": "n"
+          }
+        ]
+      }
+    ]
+  },
+  ":200": "s-l+block-collection",
+  "s-l+block-collection": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(all)": [
+      {
+        "(???)": {
+          "(all)": [
+            {
+              "s-separate": [
+                {
+                  "(+)": [
+                    "n",
+                    1
+                  ]
+                },
+                "c"
+              ]
+            },
+            {
+              "c-ns-properties": [
+                {
+                  "(+)": [
+                    "n",
+                    1
+                  ]
+                },
+                "c"
+              ]
+            }
+          ]
+        }
+      },
+      "s-l-comments",
+      {
+        "(any)": [
+          {
+            "l+block-sequence": {
+              "seq-spaces": [
+                "n",
+                "c"
+              ]
+            }
+          },
+          {
+            "l+block-mapping": "n"
+          }
+        ]
+      }
+    ]
+  },
+  ":201": "seq-spaces",
+  "seq-spaces": {
+    "(...)": [
+      "n",
+      "c"
+    ],
+    "(flip)": {
+      "var": "c",
+      "block-in": "n",
+      "block-out": {
+        "(-)": [
+          "n",
+          1
+        ]
+      }
+    }
+  },
+  ":202": "l-document-prefix",
+  "l-document-prefix": {
+    "(all)": [
+      {
+        "(???)": "c-byte-order-mark"
+      },
+      {
+        "(***)": "l-comment"
+      }
+    ]
+  },
+  ":203": "c-directives-end",
+  "c-directives-end": {
+    "(all)": [
+      "-",
+      "-",
+      "-"
+    ]
+  },
+  ":204": "c-document-end",
+  "c-document-end": {
+    "(all)": [
+      ".",
+      ".",
+      "."
+    ]
+  },
+  ":205": "l-document-suffix",
+  "l-document-suffix": {
+    "(all)": [
+      "c-document-end",
+      "s-l-comments"
+    ]
+  },
+  ":206": "c-forbidden",
+  "c-forbidden": {
+    "(all)": [
+      "<start-of-line>",
+      {
+        "(any)": [
+          "c-directives-end",
+          "c-document-end"
+        ]
+      },
+      {
+        "(any)": [
+          "b-char",
+          "s-white",
+          "<end-of-stream>"
+        ]
+      }
+    ]
+  },
+  ":207": "l-bare-document",
+  "l-bare-document": {
+    "(all)": [
+      {
+        "(exclude)": "c-forbidden"
+      },
+      {
+        "s-l+block-node": [
+          -1,
+          "block-in"
+        ]
+      }
+    ]
+  },
+  ":208": "l-explicit-document",
+  "l-explicit-document": {
+    "(all)": [
+      "c-directives-end",
+      {
+        "(any)": [
+          "l-bare-document",
+          {
+            "(all)": [
+              "e-node",
+              "s-l-comments"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  ":209": "l-directive-document",
+  "l-directive-document": {
+    "(all)": [
+      {
+        "(+++)": "l-directive"
+      },
+      "l-explicit-document"
+    ]
+  },
+  ":210": "l-any-document",
+  "l-any-document": {
+    "(any)": [
+      "l-directive-document",
+      "l-explicit-document",
+      "l-bare-document"
+    ]
+  },
+  ":211": "l-yaml-stream",
+  "l-yaml-stream": {
+    "(all)": [
+      "l-document-prefix",
+      {
+        "(???)": "l-any-document"
+      },
+      {
+        "(***)": {
+          "(any)": [
+            {
+              "(all)": [
+                "l-document-suffix",
+                {
+                  "(***)": "l-document-prefix"
+                },
+                {
+                  "(???)": "l-any-document"
+                }
+              ]
+            },
+            {
+              "(all)": [
+                "l-document-prefix",
+                {
+                  "(???)": "l-explicit-document"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
