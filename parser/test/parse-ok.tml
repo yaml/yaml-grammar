@@ -277,6 +277,7 @@ foo
 
 
 === Block mapping
+--- yaml
 foo: bar
 --- events
 +STR
