@@ -1,0 +1,71 @@
+stream: stream-item+
+
+stream-item:
+  - directive? line-end
+  - document
+
+document: (doc-start spaces)? block-value(0) (doc-end line-end)?
+
+block-value(n):
+  - block-scalar(n)
+  - block-map(n)
+  - block-seq(n)
+  - flow-scalar(n) line-end
+  - flow-map line-end
+  - flow-seq line-end
+
+block-scalar(n):
+  props(n)? block-scalar-header (spaces comment)? newline scalar-value
+flow-scalar(n):
+  - alias
+  - props(n)? scalar-value
+  - props(n)? single-quoted-scalar
+  - props(n)? double-quoted-scalar
+
+block-map(n): block-props(n)? block-map-pair(n)+
+block-map-pair(n): indent(n) block-map-key(n) map-value-ind non-content(m > n) block-value(m > n)
+block-map-key(n):
+  - explicit-key-ind non-content(m > n) block-value(m > n)
+  - flow-scalar(n) non-content(n)?
+
+block-seq(n): block-props(n)? block-seq-item(n)+
+block-seq-item(n): indent(n) seq-item-ind non-content(m > n) block-value(m > n)
+
+flow-map: props(n)? flow-map-start flow-nc? flow-body flow-sep? flow-map-end
+flow-seq: props(n)? flow-seq-start flow-nc? flow-body flow-sep? flow-seq-end
+
+flow-body: flow-item flow-nc? (flow-sep flow-item flow-nc?)*
+flow-nc: spaces | line-end spaces?
+flow-sep: comma flow-nc?
+flow-item: flow-value | flow-pair
+flow-pair: flow-value flow-nc? map-value-ind flow-nc? flow-value
+flow-value: (props(*) flow-nc)? (flow-scalar(*) | flow-map | flow-seq)
+
+props(n): (anchor | tag | anchor non-content(n) tag) non-content(n)
+block-props(n): indent(n) props(n) line-end
+
+line-end: (spaces? | spaces comment) newline (spaces? comment? newline)*
+non-content(n): spaces | line-end spaces(n)
+indent(n): spaces(m) # m = n; at line start, m -= length of preceding spaces & seq-item-ind
+
+doc-start: '---'
+doc-end: '...'
+newline: /\r?\n/
+spaces: / +/
+comment: /#.*/
+directive: /%.*/
+alias: /\*\S+/
+anchor: /&\S+/
+tag: /!\S+/
+seq-item-ind: '-'
+explicit-key-ind: '?'
+map-value-ind: ':'
+flow-map-start: '{'
+flow-map-end: '}'
+flow-seq-start: '['
+flow-seq-end: ']'
+comma: ','
+single-quoted-scalar: /'([^']|'')*'/
+double-quoted-scalar: /"()*"/
+block-scalar-header: /[|>]\d*[-+]?/
+scalar-value: /[^]*?/ # with some further restrictions

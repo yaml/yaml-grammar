@@ -1,0 +1,67 @@
+
+yaml-stream:
+  stream-line*
+  (
+    yaml-document-primary
+    stream-line*
+    (
+      yaml-document
+      stream-line*
+    )*
+  )?
+
+stream-line:
+  | stream-comment
+  | yaml-directive
+
+stream-comment:
+  | comment-line
+  | blank-line
+
+yaml-directive:
+  '%' ( 'YAML' | 'TAG' ) sp+ directive-arguments end
+
+yaml-document-primary:
+  yaml-head?
+  yaml-node-top
+  yaml-foot?
+
+yaml-document:
+  yaml-head
+  yaml-node-top
+  yaml-foot?
+
+#------------------------------------------------------------------------------
+# Terminal rules
+#------------------------------------------------------------------------------
+blank-line:
+  sp* end
+
+comment-line:
+  sp* '#' any* end
+
+yaml-head:
+  / '---' =<ws> /
+
+yaml-foot:
+  '...' end
+
+any:
+  /./
+
+ws:
+  /\s/
+
+sp:
+  /[\ \t]/
+
+end:
+  eol | eos
+
+eol:
+  /\r?\n/
+
+eos:
+  /\z/
+
+# vim: lisp sw=2:

@@ -1,0 +1,18 @@
+#!/usr/bin/env perl
+
+use v5.12;
+use XXX;
+
+my $text = do { local $/; <> };
+
+$text =~ s/^#.*//gm;
+
+my @parts = reverse split /\n\n+/, $text;
+
+while (@parts) {
+  my ($rule, $num) = splice @parts, 0, 2;
+  $num =~ s/.*?(\d+).*/$1/;
+  print "# $num\n$rule\n\n";
+}
+
+# vim: sw=2:

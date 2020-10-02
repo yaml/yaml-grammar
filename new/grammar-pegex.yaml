@@ -1,0 +1,211 @@
+---
++grammar: yaml
++toprule: yaml_stream
++version: 0.0.1
+EOS:
+  .rgx: \z
+__:
+  .rgx: (?:(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(?:\r?\n|\z))*
+any_node:
+  .any:
+  - .ref: yaml_alias
+  - .ref: yaml_node
+block_key:
+  .all:
+  - +max: 1
+    .ref: yaml_props
+  - .ref: block_key_scalar
+  - .ref: pair_separator
+block_key_scalar:
+  .any:
+  - .ref: double_quoted_scalar
+  - .ref: single_quoted_scalar
+  - .ref: block_plain_scalar
+block_mapping_or_scalar:
+  .all:
+  - .ref: block_indent
+  - .all:
+    - .ref: block_pair
+    - +min: 0
+      -flat: 1
+      .all:
+      - .all:
+        - .ref: __
+        - .ref: block_ondent
+      - .ref: block_pair
+  - .ref: block_undent
+block_node:
+  .any:
+  - .ref: block_sequence
+  - .ref: block_mapping_or_scalar
+  - .ref: block_scalar
+block_pair:
+  .all:
+  - .ref: block_key
+  - .ref: any_node
+block_plain_scalar:
+  .rgx: (?![&\*!\{\}\[\]%"'`\@\#])(.*?)(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(?=:\s|\r?\n|\z)
+block_scalar:
+  .any:
+  - .ref: literal_scalar
+  - .ref: folded_scalar
+  - .ref: double_quoted_scalar
+  - .ref: single_quoted_scalar
+  - .ref: block_plain_scalar
+block_sequence:
+  .all:
+  - .ref: block_sequence_indent
+  - .all:
+    - .ref: block_sequence_entry
+    - +min: 0
+      -flat: 1
+      .all:
+      - .all:
+        - .ref: __
+        - .ref: block_sequence_ondent
+      - .ref: block_sequence_entry
+  - .ref: block_sequence_undent
+block_sequence_entry:
+  .all:
+  - .ref: block_sequence_marker
+  - .ref: any_node
+block_sequence_marker:
+  .rgx: \-(?:(?=[\ \t])(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)|(?:(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(?:\r?\n|\z))*)
+directive_tag:
+  .rgx: '%TAG(?=[\ \t])(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)!(.*)!(?=[\ \t])(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(\S+)(?:(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(?:\r?\n|\z))*'
+directive_yaml:
+  .rgx: '%YAML(?=[\ \t])(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)1\.2(?:(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(?:\r?\n|\z))*'
+document_end:
+  .rgx: ''
+document_foot:
+  .rgx: \.\.\.(?:\r?\n|\z)
+document_head:
+  .rgx: \-\-\-
+document_start:
+  .rgx: (?=.)
+double_quoted_scalar:
+  .rgx: '"((?:\\"|[^"])*)"'
+flow_collection:
+  .any:
+  - .ref: flow_sequence
+  - .ref: flow_mapping
+flow_mapping:
+  .all:
+  - .ref: flow_mapping_start
+  - +max: 1
+    .all:
+    - .ref: flow_mapping_pair
+    - +min: 0
+      -flat: 1
+      .all:
+      - .ref: list_separator
+      - .ref: flow_mapping_pair
+    - +max: 1
+      .ref: list_separator
+  - .ref: flow_mapping_end
+flow_mapping_end:
+  .rgx: (?:(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(?:\r?\n|\z))*(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)\}(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)
+flow_mapping_pair:
+  .all:
+  - .any:
+    - .ref: json_key
+    - .all:
+      - .ref: flow_node
+      - .ref: pair_separator
+  - .ref: flow_node
+flow_mapping_start:
+  .rgx: \{(?:(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(?:\r?\n|\z))*(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)
+flow_node:
+  .any:
+  - .ref: yaml_alias
+  - .all:
+    - +max: 1
+      .ref: yaml_props
+    - .ref: x
+    - .any:
+      - .ref: flow_sequence
+      - .ref: flow_mapping
+      - .ref: flow_scalar
+flow_plain_scalar:
+  .rgx: (?![&\*!\{\}\[\]%"'`\@\#])(.*?)(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(?=[&\*!\{\}\[\]%"',]|:\ |,\ |\r?\n|\z)
+flow_scalar:
+  .any:
+  - .ref: double_quoted_scalar
+  - .ref: single_quoted_scalar
+  - .ref: flow_plain_scalar
+flow_sequence:
+  .all:
+  - .ref: flow_sequence_start
+  - +max: 1
+    .all:
+    - .ref: flow_node
+    - +min: 0
+      -flat: 1
+      .all:
+      - .ref: list_separator
+      - .ref: flow_node
+    - +max: 1
+      .ref: list_separator
+  - .ref: flow_sequence_end
+flow_sequence_end:
+  .rgx: (?:(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(?:\r?\n|\z))*(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)\](?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)
+flow_sequence_start:
+  .rgx: \[(?:(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(?:\r?\n|\z))*(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)
+json_key:
+  .rgx: '"((?:\\"|[^"])*)":(?=\S)'
+list_separator:
+  .rgx: (?:(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(?:\r?\n|\z))*(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?),(?:(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(?:\r?\n|\z))*(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)
+pair_separator:
+  .rgx: (?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?):(?=\s)(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)
+single_quoted_scalar:
+  .rgx: "'((?:''|[^'])*)'"
+stream_end:
+  .ref: EOS
+stream_start:
+  .rgx: (?:(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(?:\r?\n|\z))*
+x:
+  .rgx: (?:(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(?:\r?\n|\z))*(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)
+yaml_alias:
+  .rgx: \*(\w+)(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)
+yaml_document:
+  .all:
+  - +max: 1
+    .ref: directive_yaml
+  - +min: 0
+    .ref: directive_tag
+  - .any:
+    - .all:
+      - .ref: document_head
+      - .any:
+        - .all:
+          - .rgx: '[\ \t]+'
+          - .ref: block_scalar
+          - .ref: __
+        - .all:
+          - .ref: __
+          - .ref: yaml_node
+    - .all:
+      - .ref: document_start
+      - .ref: yaml_node
+  - .ref: __
+  - .any:
+    - .ref: document_foot
+    - .ref: document_end
+yaml_node:
+  .all:
+  - +max: 1
+    .ref: yaml_props
+  - .rgx: (?:(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(?:\r?\n|\z))*
+  - .any:
+    - .all:
+      - .rgx: (?=[\{\[])
+      - .ref: flow_collection
+    - .ref: block_node
+yaml_props:
+  .rgx: (?:(?:\&(\w+)(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?))(?:(\!\S*)(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?))?|(?:(\!\S*)(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?))(?:\&(\w+)(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?))?)((?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(?:(?:[\ \t]*(?:(?:(?<=\s)|(?<=^))\#.*)?)(?:\r?\n|\z))*)
+yaml_stream:
+  .all:
+  - .ref: stream_start
+  - +min: 0
+    .ref: yaml_document
+  - .ref: stream_end
