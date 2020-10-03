@@ -15,21 +15,38 @@ stream-line:
   | yaml-directive
 
 stream-comment:
-  | comment-line
+  | comment
   | blank-line
 
 yaml-directive:
-  '%' ( 'YAML' | 'TAG' ) sp+ directive-arguments end
+  '%' directive-name ( sp+ directive-argument )+ end
+
+directive-name:
+  /( [A-Z]+ )/
+
+directive-argument:
+  /(\S+)/
 
 yaml-document-primary:
   yaml-head?
-  yaml-node-top
+  yaml-node
   yaml-foot?
 
 yaml-document:
   yaml-head
-  yaml-node-top
+  yaml-node
   yaml-foot?
+
+yaml-node: flow-sequence
+
+flow-sequence:
+  '[' w1 ( yaml-node* % ( w1 ',' w1 ) w1 ']'
+
+w1:
+  sp* (sp comment )? (eol ondent sp*)*
+
+a? (t a?)?
+(a t? | t a?)?
 
 #------------------------------------------------------------------------------
 # Terminal rules
@@ -37,8 +54,8 @@ yaml-document:
 blank-line:
   sp* end
 
-comment-line:
-  sp* '#' any* end
+comment:
+  / '#' any* /
 
 yaml-head:
   / '---' =<ws> /
@@ -50,13 +67,13 @@ any:
   /./
 
 ws:
-  /\s/
+  (comment | /\s/
 
 sp:
   /[\ \t]/
 
 end:
-  eol | eos
+  ws (eol | eos
 
 eol:
   /\r?\n/
