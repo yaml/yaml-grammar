@@ -1,0 +1,121 @@
+#!/usr/bin/env coffee
+
+require 'ingy-prelude'
+require 'pegex'
+require 'pegex/parser'
+require 'pegex/grammar'
+require 'pegex/tree/wrap'
+
+main = (input_file='-')->
+  input = file_read input_file
+  parser = new Pegex.Parser
+    grammar: new Pegex.Grammar
+      text: grammar_text
+    receiver: new Receiver
+    debug: true
+  XXX parser.parse input
+
+grammar_text = """
+grammar: rule+ %% SPACE+
+
+rule: rule-name ':' + rule-expr
+
+rule-name: /( lowernum+ (: '-' lowernum+)* )/
+
+rule-expr: any-group
+
+any-group: /- '|'? -/ all-group ( /- '|' -/ all-group )*
+
+all-group: rule-part (- rule-part)*
+
+rule-part: (rule-item)1-2 % /+ ( '%'{1,2} ) +/
+
+# rule-item:
+#   | bracketed-group
+#   | whitespace-token
+#   | rule-reference
+#   | quoted-regex
+#   | regular-expression
+#   | error-message
+# 
+# rule-reference:
+#   /
+#     ( rule-modifier? )      # [=!.-+]
+#       (:                    # foo | <foo>
+#         ( rule-name ) |
+#         (: '<' ( rule-name ) '>' )
+#       )
+#     ( rule-quantifier? )    # [?*+] 2+ 2-3
+#     (! BLANK* ':' )         # Avoid parsing 'foo:'
+#   /                        # as a rule reference.
+# 
+# quoted-regex:
+#   / TICK ( [^ TICK ]* ) TICK /
+# 
+# regular-expression:
+#   /( group-modifier? )/
+#   '/'
+#   whitespace-start?
+#   (
+#   | whitespace-must
+#   | whitespace-maybe
+#   | quoted-regex
+#   | regex-rule-reference
+#   | +
+#   | regex-raw
+#   )*
+#   '/'
+# 
+# whitespace-start: / ([ PLUS DASH]) (! [ DASH TILDE ]) /
+# 
+# whitespace-must: /+ (: PLUS | DASH DASH )  (= [ SPACE SLASH CR NL ]) /
+# 
+# whitespace-maybe: /- DASH (= [ SPACE SLASH CR NL ]) /
+# 
+# regex-rule-reference:
+#   /
+#     (:
+#       + ( rule-name ) |
+#       (: '<' ( rule-name ) '>' )
+#     )
+#     (! BLANK* ':' )
+#   /
+# 
+# regex-raw:
+#   /
+#     (
+#       '(?'? '<' |
+#       (?:[^ WS SLASH TICK LANGLE ])+
+#     )
+#   /
+# 
+# bracketed-group:
+#     / ( group-modifier? ) '(' -/
+#     rule-group
+#     /- ')' ( rule-quantifier? ) /
+# 
+# whitespace-token:
+#     / ( (: PLUS | DASH | DASH DASH | TILDE | TILDE TILDE ) ) (= + )/
+# 
+# error-message:
+#     / '`' ( [^ '`' DOS ]* ) '`' /
+# 
+# rule-modifier: / [ BANG EQUAL PLUS DASH DOT ] /
+# 
+# group-modifier: / [ DASH DOT ] /
+# 
+# rule-quantifier:
+#     / (:
+#         [ STAR PLUS QMARK ] |
+#         DIGIT+ (: DASH DIGIT+ | PLUS)?
+#     ) /
+
+# ws: /(: WS+ | comment)/
+comment: / '#' ANY* EOL /
+lowernum: /[a-z0-9]/
+"""
+class Receiver extends Pegex.Tree.Wrap
+
+main(process.argv[2..]...)
+
+# vim: sw=2:
