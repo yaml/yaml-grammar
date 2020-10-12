@@ -6,11 +6,18 @@ SPEC12_URL := https://yaml.org/spec/1.2/spec.html
 SPEC12_TXT := yaml-spec-1.2.txt
 SPEC12_YAML := yaml-spec-1.2.yaml
 SPEC12_JSON := yaml-spec-1.2.json
+SPEC12_JSON := yaml-spec-1.2.json
+SPEC12_MMD := yaml-spec-1.2.mmd
+SPEC12_SVG := yaml-spec-1.2.svg
 SPEC12_COMMENTS := yaml-spec-1.2-comments.yaml
 SPEC12_YAML_PATCH := yaml-spec-1.2-patch.yaml
 SPEC12_JSON_PATCH := yaml-spec-1.2-patch.json
 
-BUILD := $(SPEC12_YAML_PATCH) $(SPEC12_JSON) $(SPEC12_JSON_PATCH)
+BUILD := \
+    $(SPEC12_YAML_PATCH) \
+    $(SPEC12_JSON) \
+    $(SPEC12_JSON_PATCH) \
+    $(SPEC12_SVG) \
 
 PATH := $(ROOT)/bin:$(PATH)
 PATH := $(ROOT)/node_modules/.bin:$(PATH)
@@ -39,6 +46,12 @@ $(SPEC12_YAML): $(SPEC12_TXT) Makefile bin
 
 $(SPEC12_JSON): $(SPEC12_YAML)
 	yaml-grammar-yaml-to-json < $< > $@
+
+$(SPEC12_SVG): $(SPEC12_MMD)
+	mmdc --output=$@ --input=$<
+
+$(SPEC12_MMD): $(SPEC12_YAML_PATCH)
+	yaml-grammar-to-mermaid < $< > $@
 
 $(SPEC12_COMMENTS): force
 	yaml-grammar-to-comments $(SPEC12_YAML) > $@

@@ -1,0 +1,57 @@
+#!/usr/bin/env coffee
+
+require 'ingy-prelude'
+yaml = require 'yaml'
+
+class Convert
+  constructor: ->
+    @grammar = yaml.parse file_read '-'
+    @name_to_num = {}
+    _.forEach @grammar, (val, key)=>
+      if m = key.match /^:\d+$/
+        @name_to_num[val] = key.replace /:/, 'R'
+    @graph = {}
+
+  run: (start='l-yaml-stream')->
+    @make_graph start
+
+    mmd = "graph TD\n"
+    name_to_num = @name_to_num
+    _.forEach @graph, (rules, rule)->
+      mmd += "\n"
+      num = name_to_num[rule]
+      mmd += "#{num}(#{rule})\n"
+      _.forEach rules, (val, rule)->
+        target = name_to_num[rule]
+        target ?= ":(#{rule})\n"
+        mmd += "#{num} --> #{target}\n"
+
+    out mmd
+
+  make_graph: (rule)->
+    body = @grammar[rule]
+    @graph[rule] = {}
+    rules = @get_rules body
+    _.merge @graph[rule], rules
+
+  get_rules: (body)->
+    rules = {}
+    if _.isPlainObject body
+      _.forEach body, (val, key)=>
+        _.merge rules, @get_rules val
+    else if _.isArray body
+      _.forEach body, (val)=>
+        _.merge rules, @get_rules val
+    else if _.isString body
+      if body.match /[a-z]-[a-z]/
+        rules[body] = true
+        if @grammar[body]?
+          @make_graph body unless @graph[body]?
+    return rules
+
+
+
+
+new Convert(process.argv[2..]).run()
+
+# vim: sw=2:
