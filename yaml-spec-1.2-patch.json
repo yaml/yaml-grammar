@@ -2024,31 +2024,19 @@
   },
   ":162": "c-b-block-header",
   "c-b-block-header": {
-    "(...)": [
-      "m",
-      "t"
-    ],
     "(all)": [
       {
         "(any)": [
           {
             "(all)": [
-              {
-                "c-indentation-indicator": "m"
-              },
-              {
-                "c-chomping-indicator": "t"
-              }
+              "c-indentation-indicator",
+              "c-chomping-indicator"
             ]
           },
           {
             "(all)": [
-              {
-                "c-chomping-indicator": "t"
-              },
-              {
-                "c-indentation-indicator": "m"
-              }
+              "c-chomping-indicator",
+              "c-indentation-indicator"
             ]
           }
         ]
@@ -2058,7 +2046,6 @@
   },
   ":163": "c-indentation-indicator",
   "c-indentation-indicator": {
-    "(...)": "m",
     "(any)": [
       {
         "(if)": "ns-dec-digit",
@@ -2080,7 +2067,6 @@
   },
   ":164": "c-chomping-indicator",
   "c-chomping-indicator": {
-    "(...)": "t",
     "(any)": [
       {
         "(if)": "-",

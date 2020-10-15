@@ -1,0 +1,40 @@
+diff --git a/yaml-spec-1.2-patch.yaml b/yaml-spec-1.2-patch.yaml
+index a80a485..9f22143 100644
+--- a/yaml-spec-1.2-patch.yaml
++++ b/yaml-spec-1.2-patch.yaml
+@@ -2543,15 +2543,14 @@ ns-flow-node:
+ #   s-b-comment
+ 
+ c-b-block-header:
+-  (...): [ m, t ]
+   (all):
+   - (any):
+     - (all):
+-      - c-indentation-indicator: m
+-      - c-chomping-indicator: t
++      - c-indentation-indicator
++      - c-chomping-indicator
+     - (all):
+-      - c-chomping-indicator: t
+-      - c-indentation-indicator: m
++      - c-chomping-indicator
++      - c-indentation-indicator
+   - s-b-comment
+ 
+ 
+@@ -2573,7 +2572,6 @@ c-b-block-header:
+ #   ( <empty> => m = auto-detect() )
+ 
+ c-indentation-indicator:
+-  (...): m
+   (any):
+   - (if): ns-dec-digit
+     (set): [ m, { (ord): (match) } ]
+@@ -2601,7 +2599,6 @@ c-indentation-indicator:
+ #   ( <empty> => t = clip )
+ 
+ c-chomping-indicator:
+-  (...): t
+   (any):
+   - (if): '-'
+     (set): [ t, "strip" ]
