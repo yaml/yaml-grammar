@@ -334,27 +334,38 @@
   The (max) function tells the parser that it can consider only the given
   number of characters to match the next rule.
 '162': |
-  This production is misleading. It claims to be called with 2 arguments, m and
-  t, but it is not called with any arguments. In reality it is supposed to
-  *create* 2 state variables m and t.
+  Productions 162-182 and 199 deal with folded and literal block scalars. These
+  productions are concerned with the variables:
 
-  It should actually be:
+    m - relative indentation columns or 'auto-detect()'
+    t - trailing whitespace indicator
 
-  c-b-block-header ::=
+  This production (162) is misleading. It claims to be called with 2 arguments,
+  `m` and `t`, but it is not called with any arguments. In reality it is
+  supposed to *create* 2 state variables `m` and `t`. To auto-detect `m` it
+  will need the value of `n` (the current indentation).
+
+  The spec rule 162 should actually be:
+
+  c-b-block-header(n) ::=
     ( ( c-indentation-indicator
     c-chomping-indicator )
     | ( c-chomping-indicator
-    c-indentation-indicator ) )
+    c-indentation-indicator(n) ) )
     s-b-comment
+
+  The original from the spec is left intact below, but the generated YAML uses
+  the version above.
 '163': |
-  This production should not receive any arguments. It creates a variable that
-  indicates the amount of indentation for a literal scalar.
+  This production should receive the `n` indentation variable. It creates an
+  `m` state variable that indicates the amount of relative indentation for a
+  literal or folded scalar.
 
   It should actually be:
 
-  c-indentation-indicator ::=
+  c-indentation-indicator(n) ::=
     ( ns-dec-digit => m = ns-dec-digit - x:30 )
-    ( <empty> => m = auto-detect() )
+    ( <empty> => m = auto-detect(n) )
 '164': |
   This production should not receive any arguments. It creates a variable that
   indicates how trailing whitespace should be interpreted.
@@ -365,6 +376,22 @@
     ( '-' => t = strip )
     ( '+' => t = keep )
     ( <empty> => t = clip )
+'170': |
+  This production needs to call c-b-block-header with the variable `n`.
+
+  It should actually be:
+
+  c-l+literal(n) ::=
+    '|' c-b-block-header(n)
+    l-literal-content(n+m,t)
+'174': |
+  This production needs to call c-b-block-header with the variable `n`.
+
+  It should actually be:
+
+  c-l+folded(n) ::=
+    '>' c-b-block-header(n)
+    l-folded-content(n+m,t)
 '183': |
   The <auto-detect-indent> rule is a "special" rule that finds the new level of
   indentation and returns the number of columns. The level must be greater than
@@ -376,3 +403,14 @@
   check that c-forbidden does not occur.
 
   This is a bad design choice for a formal grammar.
+'211': |
+  This production has a bug in the rule quantifers for l-document-prefix. It
+  should only be tried once (not multiple times).
+
+  It should actually be:
+
+  l-yaml-stream ::=
+    l-document-prefix l-any-document?
+    ( ( l-document-suffix+ l-document-prefix
+    l-any-document? )
+    | ( l-document-prefix l-explicit-document? ) )*

@@ -7,10 +7,11 @@ SPEC12_TXT := yaml-spec-1.2.txt
 SPEC12_YAML := yaml-spec-1.2.yaml
 SPEC12_JSON := yaml-spec-1.2.json
 SPEC12_COMMENTS := yaml-spec-1.2-comments.yaml
-SPEC12_YAML_PATCH := yaml-spec-1.2-patch.yaml
-SPEC12_JSON_PATCH := yaml-spec-1.2-patch.json
+SPEC12_YAML_PATCH := yaml-spec-1.2-yaml.patch
+SPEC12_PATCH_YAML := yaml-spec-1.2-patch.yaml
+SPEC12_PATCH_JSON := yaml-spec-1.2-patch.json
 
-BUILD := $(SPEC12_YAML_PATCH) $(SPEC12_JSON) $(SPEC12_JSON_PATCH)
+BUILD := $(SPEC12_PATCH_YAML) $(SPEC12_JSON) $(SPEC12_PATCH_JSON)
 
 PATH := $(ROOT)/bin:$(PATH)
 PATH := $(ROOT)/node_modules/.bin:$(PATH)
@@ -24,7 +25,7 @@ force:
 
 build: node_modules $(BUILD)
 
-build-yaml: $(SPEC12_YAML_PATCH)
+build-yaml: $(SPEC12_PATCH_YAML)
 
 comments: $(SPEC12_COMMENTS)
 
@@ -44,11 +45,11 @@ $(SPEC12_JSON): $(SPEC12_YAML)
 $(SPEC12_COMMENTS): force
 	yaml-grammar-to-comments $(SPEC12_YAML) > $@
 
-$(SPEC12_YAML_PATCH): $(SPEC12_YAML)
+$(SPEC12_PATCH_YAML): $(SPEC12_YAML) $(SPEC12_YAML_PATCH)
 	cp $< $@
-	for patch in $$(ls fix/* | sort); do (set -x; patch $@ $$patch); done
+	patch $@ $(SPEC12_YAML_PATCH)
 
-$(SPEC12_JSON_PATCH): $(SPEC12_YAML_PATCH)
+$(SPEC12_PATCH_JSON): $(SPEC12_PATCH_YAML)
 	yaml-grammar-yaml-to-json < $< > $@
 
 node_modules:

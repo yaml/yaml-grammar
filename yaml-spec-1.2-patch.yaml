@@ -2520,18 +2520,28 @@ ns-flow-node:
 
 
 #===============================================================================
-# This production is misleading. It claims to be called with 2 arguments, m and
-# t, but it is not called with any arguments. In reality it is supposed to
-# *create* 2 state variables m and t.
+# Productions 162-182 and 199 deal with folded and literal block scalars. These
+# productions are concerned with the variables:
 #
-# It should actually be:
+#   m - relative indentation columns or 'auto-detect()'
+#   t - trailing whitespace indicator
 #
-# c-b-block-header ::=
+# This production (162) is misleading. It claims to be called with 2 arguments,
+# `m` and `t`, but it is not called with any arguments. In reality it is
+# supposed to *create* 2 state variables `m` and `t`. To auto-detect `m` it
+# will need the value of `n` (the current indentation).
+#
+# The spec rule 162 should actually be:
+#
+# c-b-block-header(n) ::=
 #   ( ( c-indentation-indicator
 #   c-chomping-indicator )
 #   | ( c-chomping-indicator
-#   c-indentation-indicator ) )
+#   c-indentation-indicator(n) ) )
 #   s-b-comment
+#
+# The original from the spec is left intact below, but the generated YAML uses
+# the version above.
 #===============================================================================
 
 :162: c-b-block-header
@@ -2543,27 +2553,29 @@ ns-flow-node:
 #   s-b-comment
 
 c-b-block-header:
+  (...): n
   (all):
   - (any):
     - (all):
-      - c-indentation-indicator
+      - c-indentation-indicator: n
       - c-chomping-indicator
     - (all):
       - c-chomping-indicator
-      - c-indentation-indicator
+      - c-indentation-indicator: n
   - s-b-comment
 
 
 
 #===============================================================================
-# This production should not receive any arguments. It creates a variable that
-# indicates the amount of indentation for a literal scalar.
+# This production should receive the `n` indentation variable. It creates an
+# `m` state variable that indicates the amount of relative indentation for a
+# literal or folded scalar.
 #
 # It should actually be:
 #
-# c-indentation-indicator ::=
+# c-indentation-indicator(n) ::=
 #   ( ns-dec-digit => m = ns-dec-digit - x:30 )
-#   ( <empty> => m = auto-detect() )
+#   ( <empty> => m = auto-detect(n) )
 #===============================================================================
 
 :163: c-indentation-indicator
@@ -2572,11 +2584,12 @@ c-b-block-header:
 #   ( <empty> => m = auto-detect() )
 
 c-indentation-indicator:
+  (...): n
   (any):
   - (if): ns-dec-digit
     (set): [ m, { (ord): (match) } ]
   - (if): <empty>
-    (set): [ m, "auto-detect" ]
+    (set): [ m, { auto-detect: n } ]
 
 
 
@@ -2689,6 +2702,16 @@ l-trail-comments:
 ##### 8.1.2. Literal Style
 
 
+#===============================================================================
+# This production needs to call c-b-block-header with the variable `n`.
+#
+# It should actually be:
+#
+# c-l+literal(n) ::=
+#   '|' c-b-block-header(n)
+#   l-literal-content(n+m,t)
+#===============================================================================
+
 :170: c-l+literal
 # c-l+literal(n) ::=
 #   '|' c-b-block-header(m,t)
@@ -2698,7 +2721,7 @@ c-l+literal:
   (...): n
   (all):
   - '|'
-  - c-b-block-header: [ m, t ]
+  - c-b-block-header: n
   - l-literal-content: [ { (+): [ n, m ] }, t ]
 
 
@@ -2752,6 +2775,16 @@ l-literal-content:
 ##### 8.1.3. Folded Style
 
 
+#===============================================================================
+# This production needs to call c-b-block-header with the variable `n`.
+#
+# It should actually be:
+#
+# c-l+folded(n) ::=
+#   '>' c-b-block-header(n)
+#   l-folded-content(n+m,t)
+#===============================================================================
+
 :174: c-l+folded
 # c-l+folded(n) ::=
 #   '>' c-b-block-header(m,t)
@@ -2761,7 +2794,7 @@ c-l+folded:
   (...): n
   (all):
   - '>'
-  - c-b-block-header: [ m, t ]
+  - c-b-block-header: n
   - l-folded-content: [ { (+): [ n, m ] }, t ]
 
 
@@ -3355,12 +3388,25 @@ l-any-document:
 
 
 
-:211: l-yaml-stream
+#===============================================================================
+# This production has a bug in the rule quantifers for l-document-prefix. It
+# should only be tried once (not multiple times).
+#
+# It should actually be:
+#
 # l-yaml-stream ::=
 #   l-document-prefix l-any-document?
 #   ( ( l-document-suffix+ l-document-prefix
 #   l-any-document? )
 #   | ( l-document-prefix l-explicit-document? ) )*
+#===============================================================================
+
+:211: l-yaml-stream
+# l-yaml-stream ::=
+#   l-document-prefix* l-any-document?
+#   ( ( l-document-suffix+ l-document-prefix*
+#   l-any-document? )
+#   | ( l-document-prefix* l-explicit-document? ) )*
 
 # PATCH 01-211-l-document-prefix-bug
 l-yaml-stream:
