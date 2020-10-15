@@ -1,7 +1,7 @@
 yaml-grammar
 ============
 
-[The YAML 1.2 Specification's Grammar Productions as YAML](https://github.com/yaml/yaml-grammar/blob/spec/yaml-spec-1.2.yaml).
+[The YAML 1.2 Specification's Grammar Productions as YAML](https://github.com/yaml/yaml-grammar/blob/master/yaml-spec-1.2.yaml).
 
 # Overview
 
