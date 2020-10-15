@@ -2519,6 +2519,21 @@ ns-flow-node:
 ##### 8.1.1. Block Scalar Headers
 
 
+#===============================================================================
+# This production is misleading. It claims to be called with 2 arguments, m and
+# t, but it is not called with any arguments. In reality it is supposed to
+# *create* 2 state variables m and t.
+#
+# It should actually be:
+#
+# c-b-block-header ::=
+#   ( ( c-indentation-indicator
+#   c-chomping-indicator )
+#   | ( c-chomping-indicator
+#   c-indentation-indicator ) )
+#   s-b-comment
+#===============================================================================
+
 :162: c-b-block-header
 # c-b-block-header(m,t) ::=
 #   ( ( c-indentation-indicator(m)
@@ -2541,6 +2556,17 @@ c-b-block-header:
 
 
 
+#===============================================================================
+# This production should not receive any arguments. It creates a variable that
+# indicates the amount of indentation for a literal scalar.
+#
+# It should actually be:
+#
+# c-indentation-indicator ::=
+#   ( ns-dec-digit => m = ns-dec-digit - x:30 )
+#   ( <empty> => m = auto-detect() )
+#===============================================================================
+
 :163: c-indentation-indicator
 # c-indentation-indicator(m) ::=
 #   ( ns-dec-digit => m = ns-dec-digit - x:30 )
@@ -2555,6 +2581,18 @@ c-indentation-indicator:
     (set): [ m, "auto-detect" ]
 
 
+
+#===============================================================================
+# This production should not receive any arguments. It creates a variable that
+# indicates how trailing whitespace should be interpreted.
+#
+# It should actually be:
+#
+# c-chomping-indicator ::=
+#   ( '-' => t = strip )
+#   ( '+' => t = keep )
+#   ( <empty> => t = clip )
+#===============================================================================
 
 :164: c-chomping-indicator
 # c-chomping-indicator(t) ::=

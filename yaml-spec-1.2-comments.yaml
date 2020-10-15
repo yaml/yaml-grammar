@@ -333,6 +333,38 @@
 '154': |
   The (max) function tells the parser that it can consider only the given
   number of characters to match the next rule.
+'162': |
+  This production is misleading. It claims to be called with 2 arguments, m and
+  t, but it is not called with any arguments. In reality it is supposed to
+  *create* 2 state variables m and t.
+
+  It should actually be:
+
+  c-b-block-header ::=
+    ( ( c-indentation-indicator
+    c-chomping-indicator )
+    | ( c-chomping-indicator
+    c-indentation-indicator ) )
+    s-b-comment
+'163': |
+  This production should not receive any arguments. It creates a variable that
+  indicates the amount of indentation for a literal scalar.
+
+  It should actually be:
+
+  c-indentation-indicator ::=
+    ( ns-dec-digit => m = ns-dec-digit - x:30 )
+    ( <empty> => m = auto-detect() )
+'164': |
+  This production should not receive any arguments. It creates a variable that
+  indicates how trailing whitespace should be interpreted.
+
+  It should actually be:
+
+  c-chomping-indicator ::=
+    ( '-' => t = strip )
+    ( '+' => t = keep )
+    ( <empty> => t = clip )
 '183': |
   The <auto-detect-indent> rule is a "special" rule that finds the new level of
   indentation and returns the number of columns. The level must be greater than

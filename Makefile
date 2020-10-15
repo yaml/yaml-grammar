@@ -30,6 +30,7 @@ comments: $(SPEC12_COMMENTS)
 
 clean:
 	rm -fr node_modules
+	rm -f package-lock.json yaml-spec-1.2-patch.yaml.orig
 
 $(SPEC12_TXT):
 	lynx --dump $(SPEC12_URL) > $@
