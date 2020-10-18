@@ -3203,6 +3203,23 @@ s-l+block-scalar:
 
 
 
+#===============================================================================
+# This production tries to match collection properties and a collection. It has
+# a problem where it consumes a property that might be for the key of the first
+# pair of a mapping. To make sure the property applies to the collection itself
+# it should check for a newline after the property (in the same scope as the
+# property check).
+#
+# In other words, it would be more clearly written as this:
+#
+# s-l+block-collection(n,c) ::=
+#   ( s-separate(n+1,c)
+#   c-ns-properties(n+1,c) s-l-comments )?
+#   s-l-comments
+#   ( l+block-sequence(seq-spaces(n,c))
+#   | l+block-mapping(n) )
+#===============================================================================
+
 :200: s-l+block-collection
 # s-l+block-collection(n,c) ::=
 #   ( s-separate(n+1,c)
