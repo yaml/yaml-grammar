@@ -9,15 +9,20 @@
   YAML loader. It has also been converted to JSON in a file next to this one.
   The YAML file has lots of helpful comments. The JSON (of course) does not.
 
-  The purpose of this grammar-as-yaml file is to:
-  * Make the spec clearer and more precise to people implementing YAML parsers
-  * To generate 100% correct YAML parsers in most programming languages
+  The purpose of this grammar-as-yaml file is to make the spec clearer and more
+  precise to people implementing YAML parsers. The grammar in the YAML 1.2
+  specification is difficult to understand and in a few cases ambiguous or
+  incorrect.
 
   This grammar mirrors the 1.2 spec faithfully, but tries to express the rules
   in a more concrete and programatic fashion. Some of the rules that are more
-  difficult to understand have a comment section before them. Each rule
-  definition is preceded by the original YAML 1.2 spec rule text, formatted as
-  a comment.
+  difficult to understand, ambiguous or incorrect, have a comment section
+  before them. Each rule definition is preceded by the original YAML 1.2 spec
+  rule text, formatted as a comment.
+
+  The YAML Reference Parser project ( which can be found at
+  https://github.com/yaml/yaml-reference-parser/ ) uses this file to generate
+  100% correct YAML parsers in many programming languages.
 
 - |2+
 
@@ -339,78 +344,10 @@
 
     m - relative indentation columns or 'auto-detect()'
     t - trailing whitespace indicator
-
-  This production (162) is misleading. It claims to be called with 2 arguments,
-  `m` and `t`, but it is not called with any arguments. In reality it is
-  supposed to *create* 2 state variables `m` and `t`. To auto-detect `m` it
-  will need the value of `n` (the current indentation).
-
-  The spec rule 162 should actually be:
-
-  c-b-block-header(n) ::=
-    ( ( c-indentation-indicator
-    c-chomping-indicator )
-    | ( c-chomping-indicator
-    c-indentation-indicator(n) ) )
-    s-b-comment
-
-  The original from the spec is left intact below, but the generated YAML uses
-  the version above.
-'163': |
-  This production should receive the `n` indentation variable. It creates an
-  `m` state variable that indicates the amount of relative indentation for a
-  literal or folded scalar.
-
-  It should actually be:
-
-  c-indentation-indicator(n) ::=
-    ( ns-dec-digit => m = ns-dec-digit - x:30 )
-    ( <empty> => m = auto-detect(n) )
-'164': |
-  This production should not receive any arguments. It creates a variable that
-  indicates how trailing whitespace should be interpreted.
-
-  It should actually be:
-
-  c-chomping-indicator ::=
-    ( '-' => t = strip )
-    ( '+' => t = keep )
-    ( <empty> => t = clip )
-'170': |
-  This production needs to call c-b-block-header with the variable `n`.
-
-  It should actually be:
-
-  c-l+literal(n) ::=
-    '|' c-b-block-header(n)
-    l-literal-content(n+m,t)
-'174': |
-  This production needs to call c-b-block-header with the variable `n`.
-
-  It should actually be:
-
-  c-l+folded(n) ::=
-    '>' c-b-block-header(n)
-    l-folded-content(n+m,t)
 '183': |
   The <auto-detect-indent> rule is a "special" rule that finds the new level of
   indentation and returns the number of columns. The level must be greater than
   0. It does not consume the indentation.
-'200': |
-  This production tries to match collection properties and a collection. It has
-  a problem where it consumes a property that might be for the key of the first
-  pair of a mapping. To make sure the property applies to the collection itself
-  it should check for a newline after the property (in the same scope as the
-  property check).
-
-  In other words, it would be more clearly written as this:
-
-  s-l+block-collection(n,c) ::=
-    ( s-separate(n+1,c)
-    c-ns-properties(n+1,c) s-l-comments )?
-    s-l-comments
-    ( l+block-sequence(seq-spaces(n,c))
-    | l+block-mapping(n) )
 '207': |
   The l-bare-document is the topmost rule for parsing a document.
 
@@ -418,14 +355,3 @@
   check that c-forbidden does not occur.
 
   This is a bad design choice for a formal grammar.
-'211': |
-  This production has a bug in the rule quantifers for l-document-prefix. It
-  should only be tried once (not multiple times).
-
-  It should actually be:
-
-  l-yaml-stream ::=
-    l-document-prefix l-any-document?
-    ( ( l-document-suffix+ l-document-prefix
-    l-any-document? )
-    | ( l-document-prefix l-explicit-document? ) )*
