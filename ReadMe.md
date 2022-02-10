@@ -5,7 +5,7 @@ yaml-grammar
 
 # Overview
 
-The purpose of this project is present the YAML 1.2 Grammar as a machine readable and human comprehendable YAML file.
+The purpose of this project is to present the YAML 1.2 Grammar as a machine readable and human comprehendable YAML file.
 
 The [YAML 1.2 Spec](https://yaml.org/spec/1.2/spec.html) contains the formal grammar for YAML 1.2.
 The 211 grammar rules are formatted into the web page's HTML along with lots of textual descriptions of the language and grammar.
@@ -16,7 +16,7 @@ Creating a fully compliant parser has proven [almost impossible](http://matrix.y
 
 This project programmatically pulls out all of the rules, parsing them into data structures and storing the entire structured grammar data graph as YAML.
 The YAML output is commented and pretty printed.
-It is intended to be both a reference for people trying to understand the rules, and as a mechanism to automate the creation of YAML tools.
+It is intended to be both a reference for people trying to understand the rules and a mechanism to automate the creation of YAML tools.
 
 # Generating Compliant Parsers
 
