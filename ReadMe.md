@@ -1,7 +1,7 @@
 yaml-grammar
 ============
 
-[The YAML 1.2 Specification's Grammar Productions as YAML](https://github.com/yaml/yaml-grammar/blob/spec/yaml-spec-1.2.yaml).
+[The YAML 1.2 Specification's Grammar Productions as YAML](https://raw.githubusercontent.com/yaml/yaml-grammar/master/yaml-spec-1.2.yaml).
 
 # Overview
 
@@ -12,7 +12,7 @@ The 211 grammar rules are formatted into the web page's HTML along with lots of 
 The grammar uses a rare "Parameterized BNF" format, and some of the rule components are just textual comments indicating what should happen.
 
 Fully comprehending the YAML grammar is quite an undertaking for most mortals.
-Creating a fully compliant parser has proven [almost impossible](http://matrix.yaml.io/).
+Creating a fully compliant parser has proven [almost impossible](http://matrix.yaml.info/).
 
 This project programmatically pulls out all of the rules, parsing them into data structures and storing the entire structured grammar data graph as YAML.
 The YAML output is commented and pretty printed.
